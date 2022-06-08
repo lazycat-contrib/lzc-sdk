@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.devices;
+
+option go_package = "/devices";
+
+import "google/protobuf/wrappers.proto";
+
+service Devices {
+  rpc ListDevices(google.protobuf.StringValue) returns (ListDeviceReply) {}
+}
+
+message Device {
+  string peer_id = 1;
+  bool is_online = 2;
+
+  // 因为device api的监听端口可能会变化，所以此url有效性不会太长
+  string device_api_url = 3;
+}
+
+message ListDeviceReply {
+  repeated Device devices = 1;
+}
