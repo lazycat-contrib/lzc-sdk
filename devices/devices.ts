@@ -1,16 +1,20 @@
 /* eslint-disable */
-import * as Long from "long";
+import Long from "long";
 import { grpc } from "@improbable-eng/grpc-web";
 import * as _m0 from "protobufjs/minimal";
 import { BrowserHeaders } from "browser-headers";
 
-export const protobufPackage = "cloud.lazycat.apis.devices";
+export const protobufPackage = "cloud.lazycat.apis";
 
 export interface Device {
   peerId: string;
   isOnline: boolean;
   /** 因为device api的监听端口可能会变化，所以此url有效性不会太长 */
   deviceApiUrl: string;
+}
+
+export interface ListDeviceRequest {
+  uid: string;
 }
 
 export interface ListDeviceReply {
@@ -90,6 +94,60 @@ export const Device = {
   },
 };
 
+function createBaseListDeviceRequest(): ListDeviceRequest {
+  return { uid: "" };
+}
+
+export const ListDeviceRequest = {
+  encode(
+    message: ListDeviceRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.uid !== "") {
+      writer.uint32(10).string(message.uid);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ListDeviceRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseListDeviceRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.uid = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ListDeviceRequest {
+    return {
+      uid: isSet(object.uid) ? String(object.uid) : "",
+    };
+  },
+
+  toJSON(message: ListDeviceRequest): unknown {
+    const obj: any = {};
+    message.uid !== undefined && (obj.uid = message.uid);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<ListDeviceRequest>, I>>(
+    object: I
+  ): ListDeviceRequest {
+    const message = createBaseListDeviceRequest();
+    message.uid = object.uid ?? "";
+    return message;
+  },
+};
+
 function createBaseListDeviceReply(): ListDeviceReply {
   return { devices: [] };
 }
@@ -154,7 +212,7 @@ export const ListDeviceReply = {
 
 export interface Devices {
   ListDevices(
-    request: DeepPartial<string | undefined>,
+    request: DeepPartial<ListDeviceRequest>,
     metadata?: grpc.Metadata
   ): Promise<ListDeviceReply>;
 }
@@ -168,19 +226,19 @@ export class DevicesClientImpl implements Devices {
   }
 
   ListDevices(
-    request: DeepPartial<string | undefined>,
+    request: DeepPartial<ListDeviceRequest>,
     metadata?: grpc.Metadata
   ): Promise<ListDeviceReply> {
     return this.rpc.unary(
       DevicesListDevicesDesc,
-      string | undefined.fromPartial(request),
+      ListDeviceRequest.fromPartial(request),
       metadata
     );
   }
 }
 
 export const DevicesDesc = {
-  serviceName: "cloud.lazycat.apis.devices.Devices",
+  serviceName: "cloud.lazycat.apis.Devices",
 };
 
 export const DevicesListDevicesDesc: UnaryMethodDefinitionish = {
@@ -190,7 +248,7 @@ export const DevicesListDevicesDesc: UnaryMethodDefinitionish = {
   responseStream: false,
   requestType: {
     serializeBinary() {
-      return string | undefined.encode(this).finish();
+      return ListDeviceRequest.encode(this).finish();
     },
   } as any,
   responseType: {
@@ -305,8 +363,6 @@ export type Exact<P, I extends P> = P extends Builtin
         never
       >;
 
-// If you get a compile-error about 'Constructor<Long> and ... have no overlap',
-// add '--ts_proto_opt=esModuleInterop=true' as a flag when calling 'protoc'.
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();

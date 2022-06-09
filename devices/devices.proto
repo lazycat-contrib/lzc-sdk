@@ -1,13 +1,11 @@
 syntax = "proto3";
 
-package cloud.lazycat.apis.devices;
+package cloud.lazycat.apis;
 
 option go_package = "/devices";
 
-import "google/protobuf/wrappers.proto";
-
 service Devices {
-  rpc ListDevices(google.protobuf.StringValue) returns (ListDeviceReply) {}
+  rpc ListDevices(ListDeviceRequest) returns (ListDeviceReply) {}
 }
 
 message Device {
@@ -17,7 +15,9 @@ message Device {
   // 因为device api的监听端口可能会变化，所以此url有效性不会太长
   string device_api_url = 3;
 }
-
+message ListDeviceRequest {
+  string uid = 1;
+}
 message ListDeviceReply {
   repeated Device devices = 1;
 }
