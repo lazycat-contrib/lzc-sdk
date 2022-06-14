@@ -9,7 +9,11 @@ import "google/protobuf/timestamp.proto";
 
 // this service is provied by frontend server, backend code shouldn't use it.
 service BrowserOnly {
+  // 查询当前登陆用户对应信息
   rpc QueryUserInfo(google.protobuf.Empty) returns (UserInfo) {}
+
+  // 查询当前访问的lzcapp对应信息
+  rpc QueryAppInfo(google.protobuf.Empty) returns (AppInfo) {}
 }
 
 message UserInfo {
@@ -18,4 +22,10 @@ message UserInfo {
   string device_id = 2;
 
   google.protobuf.Timestamp when = 3;
+}
+
+message AppInfo {
+  string box_id = 1;
+  string app_id = 2;
+  string app_domain = 3;
 }

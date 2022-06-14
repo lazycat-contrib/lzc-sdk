@@ -23,7 +23,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BrowserOnlyClient interface {
+	// 查询当前登陆用户对应信息
 	QueryUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfo, error)
+	// 查询当前访问的lzcapp对应信息
+	QueryAppInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AppInfo, error)
 }
 
 type browserOnlyClient struct {
@@ -43,11 +46,23 @@ func (c *browserOnlyClient) QueryUserInfo(ctx context.Context, in *emptypb.Empty
 	return out, nil
 }
 
+func (c *browserOnlyClient) QueryAppInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AppInfo, error) {
+	out := new(AppInfo)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.BrowserOnly/QueryAppInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BrowserOnlyServer is the server API for BrowserOnly service.
 // All implementations must embed UnimplementedBrowserOnlyServer
 // for forward compatibility
 type BrowserOnlyServer interface {
+	// 查询当前登陆用户对应信息
 	QueryUserInfo(context.Context, *emptypb.Empty) (*UserInfo, error)
+	// 查询当前访问的lzcapp对应信息
+	QueryAppInfo(context.Context, *emptypb.Empty) (*AppInfo, error)
 	mustEmbedUnimplementedBrowserOnlyServer()
 }
 
@@ -57,6 +72,9 @@ type UnimplementedBrowserOnlyServer struct {
 
 func (UnimplementedBrowserOnlyServer) QueryUserInfo(context.Context, *emptypb.Empty) (*UserInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryUserInfo not implemented")
+}
+func (UnimplementedBrowserOnlyServer) QueryAppInfo(context.Context, *emptypb.Empty) (*AppInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryAppInfo not implemented")
 }
 func (UnimplementedBrowserOnlyServer) mustEmbedUnimplementedBrowserOnlyServer() {}
 
@@ -89,6 +107,24 @@ func _BrowserOnly_QueryUserInfo_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BrowserOnly_QueryAppInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BrowserOnlyServer).QueryAppInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.BrowserOnly/QueryAppInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BrowserOnlyServer).QueryAppInfo(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BrowserOnly_ServiceDesc is the grpc.ServiceDesc for BrowserOnly service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -99,6 +135,10 @@ var BrowserOnly_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QueryUserInfo",
 			Handler:    _BrowserOnly_QueryUserInfo_Handler,
+		},
+		{
+			MethodName: "QueryAppInfo",
+			Handler:    _BrowserOnly_QueryAppInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

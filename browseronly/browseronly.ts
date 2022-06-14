@@ -12,6 +12,12 @@ export interface UserInfo {
   when: Date | undefined;
 }
 
+export interface AppInfo {
+  boxId: string;
+  appId: string;
+  appDomain: string;
+}
+
 function createBaseUserInfo(): UserInfo {
   return { uid: "", deviceId: "", when: undefined };
 }
@@ -87,12 +93,88 @@ export const UserInfo = {
   },
 };
 
+function createBaseAppInfo(): AppInfo {
+  return { boxId: "", appId: "", appDomain: "" };
+}
+
+export const AppInfo = {
+  encode(
+    message: AppInfo,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.boxId !== "") {
+      writer.uint32(10).string(message.boxId);
+    }
+    if (message.appId !== "") {
+      writer.uint32(18).string(message.appId);
+    }
+    if (message.appDomain !== "") {
+      writer.uint32(26).string(message.appDomain);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): AppInfo {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseAppInfo();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.boxId = reader.string();
+          break;
+        case 2:
+          message.appId = reader.string();
+          break;
+        case 3:
+          message.appDomain = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): AppInfo {
+    return {
+      boxId: isSet(object.boxId) ? String(object.boxId) : "",
+      appId: isSet(object.appId) ? String(object.appId) : "",
+      appDomain: isSet(object.appDomain) ? String(object.appDomain) : "",
+    };
+  },
+
+  toJSON(message: AppInfo): unknown {
+    const obj: any = {};
+    message.boxId !== undefined && (obj.boxId = message.boxId);
+    message.appId !== undefined && (obj.appId = message.appId);
+    message.appDomain !== undefined && (obj.appDomain = message.appDomain);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<AppInfo>, I>>(object: I): AppInfo {
+    const message = createBaseAppInfo();
+    message.boxId = object.boxId ?? "";
+    message.appId = object.appId ?? "";
+    message.appDomain = object.appDomain ?? "";
+    return message;
+  },
+};
+
 /** this service is provied by frontend server, backend code shouldn't use it. */
 export interface BrowserOnly {
+  /** 查询当前登陆用户对应信息 */
   QueryUserInfo(
     request: DeepPartial<Empty>,
     metadata?: grpc.Metadata
   ): Promise<UserInfo>;
+  /** 查询当前访问的lzcapp对应信息 */
+  QueryAppInfo(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata
+  ): Promise<AppInfo>;
 }
 
 export class BrowserOnlyClientImpl implements BrowserOnly {
@@ -101,6 +183,7 @@ export class BrowserOnlyClientImpl implements BrowserOnly {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.QueryUserInfo = this.QueryUserInfo.bind(this);
+    this.QueryAppInfo = this.QueryAppInfo.bind(this);
   }
 
   QueryUserInfo(
@@ -109,6 +192,17 @@ export class BrowserOnlyClientImpl implements BrowserOnly {
   ): Promise<UserInfo> {
     return this.rpc.unary(
       BrowserOnlyQueryUserInfoDesc,
+      Empty.fromPartial(request),
+      metadata
+    );
+  }
+
+  QueryAppInfo(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata
+  ): Promise<AppInfo> {
+    return this.rpc.unary(
+      BrowserOnlyQueryAppInfoDesc,
       Empty.fromPartial(request),
       metadata
     );
@@ -133,6 +227,28 @@ export const BrowserOnlyQueryUserInfoDesc: UnaryMethodDefinitionish = {
     deserializeBinary(data: Uint8Array) {
       return {
         ...UserInfo.decode(data),
+        toObject() {
+          return this;
+        },
+      };
+    },
+  } as any,
+};
+
+export const BrowserOnlyQueryAppInfoDesc: UnaryMethodDefinitionish = {
+  methodName: "QueryAppInfo",
+  service: BrowserOnlyDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      return {
+        ...AppInfo.decode(data),
         toObject() {
           return this;
         },
