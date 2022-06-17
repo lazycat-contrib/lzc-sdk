@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -23,6 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DevicesClient interface {
 	ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error)
+	// 让当前hclient保持/打开与其他hclient的虚拟网络隧道
+	KeepConnect(ctx context.Context, opts ...grpc.CallOption) (Devices_KeepConnectClient, error)
 }
 
 type devicesClient struct {
@@ -42,11 +45,47 @@ func (c *devicesClient) ListDevices(ctx context.Context, in *ListDeviceRequest, 
 	return out, nil
 }
 
+func (c *devicesClient) KeepConnect(ctx context.Context, opts ...grpc.CallOption) (Devices_KeepConnectClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Devices_ServiceDesc.Streams[0], "/cloud.lazycat.apis.Devices/KeepConnect", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &devicesKeepConnectClient{stream}
+	return x, nil
+}
+
+type Devices_KeepConnectClient interface {
+	Send(*KeepConnectRequest) error
+	CloseAndRecv() (*emptypb.Empty, error)
+	grpc.ClientStream
+}
+
+type devicesKeepConnectClient struct {
+	grpc.ClientStream
+}
+
+func (x *devicesKeepConnectClient) Send(m *KeepConnectRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *devicesKeepConnectClient) CloseAndRecv() (*emptypb.Empty, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(emptypb.Empty)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // DevicesServer is the server API for Devices service.
 // All implementations must embed UnimplementedDevicesServer
 // for forward compatibility
 type DevicesServer interface {
 	ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error)
+	// 让当前hclient保持/打开与其他hclient的虚拟网络隧道
+	KeepConnect(Devices_KeepConnectServer) error
 	mustEmbedUnimplementedDevicesServer()
 }
 
@@ -56,6 +95,9 @@ type UnimplementedDevicesServer struct {
 
 func (UnimplementedDevicesServer) ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDevices not implemented")
+}
+func (UnimplementedDevicesServer) KeepConnect(Devices_KeepConnectServer) error {
+	return status.Errorf(codes.Unimplemented, "method KeepConnect not implemented")
 }
 func (UnimplementedDevicesServer) mustEmbedUnimplementedDevicesServer() {}
 
@@ -88,6 +130,32 @@ func _Devices_ListDevices_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Devices_KeepConnect_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(DevicesServer).KeepConnect(&devicesKeepConnectServer{stream})
+}
+
+type Devices_KeepConnectServer interface {
+	SendAndClose(*emptypb.Empty) error
+	Recv() (*KeepConnectRequest, error)
+	grpc.ServerStream
+}
+
+type devicesKeepConnectServer struct {
+	grpc.ServerStream
+}
+
+func (x *devicesKeepConnectServer) SendAndClose(m *emptypb.Empty) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *devicesKeepConnectServer) Recv() (*KeepConnectRequest, error) {
+	m := new(KeepConnectRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // Devices_ServiceDesc is the grpc.ServiceDesc for Devices service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -100,6 +168,12 @@ var Devices_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Devices_ListDevices_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "KeepConnect",
+			Handler:       _Devices_KeepConnect_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "devices/devices.proto",
 }

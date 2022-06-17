@@ -1,6 +1,10 @@
 import { GrpcWebImpl } from "./internal/grpcweb"
 
-import { DevicesClientImpl, Devices } from "./devices/devices"
+import { Empty } from "./google/protobuf/empty";
+
+import { Observable, Subscriber } from "rxjs";
+
+import { DevicesClientImpl, Devices, Device, KeepConnectRequest } from "./devices/devices"
 import { BrowserOnlyClientImpl, UserInfo, AppInfo } from "./browseronly/browseronly"
 import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./permissions/permissions"
 
@@ -10,14 +14,15 @@ import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clip
 import { grpc } from "@improbable-eng/grpc-web";
 
 
-const browserTransport = grpc.CrossBrowserHttpTransport({ withCredentials: true });
+const opt = {
+    debug: true,
+    transport: grpc.CrossBrowserHttpTransport({ withCredentials: true }),
+    streamingTransport: grpc.WebsocketTransport(),
+}
 
 export class lzcAPIGateway {
     constructor(host: string = window.origin) {
-        const rpc = new GrpcWebImpl(host, {
-            debug: true,
-            transport: browserTransport,
-        })
+        const rpc = new GrpcWebImpl(host, opt)
         this.devices = new DevicesClientImpl(rpc);
 
         let b = new BrowserOnlyClientImpl(rpc);
@@ -26,21 +31,39 @@ export class lzcAPIGateway {
 
         this.pm = new PermissionManagerClientImpl(rpc);
 
+
     }
 
     private pm : PermissionManager;
     public userinfo: Promise<UserInfo>;
     public appinfo: Promise<AppInfo>;
     public devices: Devices;
+
+    private keepDeviceSub: Subscriber<KeepConnectRequest>;
+
+    async keepConnect(d: string) {
+        if (!this.keepDeviceSub) {
+            let req = new Observable<KeepConnectRequest>(
+                subscriber => this.keepDeviceSub = subscriber
+            )
+            this.devices.KeepConnect(req)
+        }
+        this.keepDeviceSub.next({
+            sourceDevice: (await this.userinfo).deviceId,
+            open: true,
+            devices: [d],
+        })
+    }
 }
 
+function test() {
+    let cc = new lzcAPIGateway()
+
+}
 
 export class DeviceProxy {
     constructor(apiurl :string)  {
-        const rpc = new GrpcWebImpl(apiurl, {
-            debug: true,
-            transport: browserTransport,
-        })
+        const rpc = new GrpcWebImpl(apiurl, opt)
 
         this.dialog = new DialogManagerClientImpl(rpc)
         this.clipboard = new ClipboardManagerClientImpl(rpc)

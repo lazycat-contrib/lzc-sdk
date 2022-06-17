@@ -2,7 +2,16 @@
 import Long from "long";
 import { grpc } from "@improbable-eng/grpc-web";
 import * as _m0 from "protobufjs/minimal";
+import { Observable } from "rxjs";
 import { BrowserHeaders } from "browser-headers";
+import { Empty } from "../google/protobuf/empty";
+
+export interface KeepConnectRequest {
+  sourceDevice: string;
+  /** true表示建立连接、false表示断开连接 */
+  open: boolean;
+  devices: string[];
+}
 
 export interface Device {
   peerId: string;
@@ -18,6 +27,87 @@ export interface ListDeviceRequest {
 export interface ListDeviceReply {
   devices: Device[];
 }
+
+function createBaseKeepConnectRequest(): KeepConnectRequest {
+  return { sourceDevice: "", open: false, devices: [] };
+}
+
+export const KeepConnectRequest = {
+  encode(
+    message: KeepConnectRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.sourceDevice !== "") {
+      writer.uint32(10).string(message.sourceDevice);
+    }
+    if (message.open === true) {
+      writer.uint32(16).bool(message.open);
+    }
+    for (const v of message.devices) {
+      writer.uint32(26).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): KeepConnectRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKeepConnectRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.sourceDevice = reader.string();
+          break;
+        case 2:
+          message.open = reader.bool();
+          break;
+        case 3:
+          message.devices.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): KeepConnectRequest {
+    return {
+      sourceDevice: isSet(object.sourceDevice)
+        ? String(object.sourceDevice)
+        : "",
+      open: isSet(object.open) ? Boolean(object.open) : false,
+      devices: Array.isArray(object?.devices)
+        ? object.devices.map((e: any) => String(e))
+        : [],
+    };
+  },
+
+  toJSON(message: KeepConnectRequest): unknown {
+    const obj: any = {};
+    message.sourceDevice !== undefined &&
+      (obj.sourceDevice = message.sourceDevice);
+    message.open !== undefined && (obj.open = message.open);
+    if (message.devices) {
+      obj.devices = message.devices.map((e) => e);
+    } else {
+      obj.devices = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<KeepConnectRequest>, I>>(
+    object: I
+  ): KeepConnectRequest {
+    const message = createBaseKeepConnectRequest();
+    message.sourceDevice = object.sourceDevice ?? "";
+    message.open = object.open ?? false;
+    message.devices = object.devices?.map((e) => e) || [];
+    return message;
+  },
+};
 
 function createBaseDevice(): Device {
   return { peerId: "", isOnline: false, deviceApiUrl: "" };
@@ -213,6 +303,11 @@ export interface Devices {
     request: DeepPartial<ListDeviceRequest>,
     metadata?: grpc.Metadata
   ): Promise<ListDeviceReply>;
+  /** 让当前hclient保持/打开与其他hclient的虚拟网络隧道 */
+  KeepConnect(
+    request: Observable<DeepPartial<KeepConnectRequest>>,
+    metadata?: grpc.Metadata
+  ): Promise<Empty>;
 }
 
 export class DevicesClientImpl implements Devices {
@@ -221,6 +316,7 @@ export class DevicesClientImpl implements Devices {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.ListDevices = this.ListDevices.bind(this);
+    this.KeepConnect = this.KeepConnect.bind(this);
   }
 
   ListDevices(
@@ -232,6 +328,13 @@ export class DevicesClientImpl implements Devices {
       ListDeviceRequest.fromPartial(request),
       metadata
     );
+  }
+
+  KeepConnect(
+    request: Observable<DeepPartial<KeepConnectRequest>>,
+    metadata?: grpc.Metadata
+  ): Promise<Empty> {
+    throw new Error("ts-proto does not yet support client streaming!");
   }
 }
 

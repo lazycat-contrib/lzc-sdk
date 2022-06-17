@@ -4,8 +4,23 @@ package cloud.lazycat.apis;
 
 option go_package = "/devices";
 
+import "google/protobuf/empty.proto";
+
 service Devices {
   rpc ListDevices(ListDeviceRequest) returns (ListDeviceReply) {}
+
+  // 让当前hclient保持/打开与其他hclient的虚拟网络隧道
+  rpc KeepConnect(stream KeepConnectRequest) returns (google.protobuf.Empty) {}
+}
+
+
+message KeepConnectRequest {
+  string source_device = 1;
+
+  // true表示建立连接、false表示断开连接
+  bool open = 2;
+
+  repeated string devices = 3;
 }
 
 message Device {
