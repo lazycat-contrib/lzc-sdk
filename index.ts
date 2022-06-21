@@ -4,8 +4,8 @@ import { Empty } from "./google/protobuf/empty";
 
 import { Observable, Subscriber } from "rxjs";
 
-import { DevicesClientImpl, Devices, Device, KeepConnectRequest } from "./devices/devices"
-import { BrowserOnlyClientImpl, UserInfo, AppInfo } from "./browseronly/browseronly"
+import { DevicesClientImpl, Devices, Device } from "./devices/devices"
+import { BrowserOnly, BrowserOnlyClientImpl, UserInfo, AppInfo } from "./browseronly/browseronly"
 import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./permissions/permissions"
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog/dialog"
@@ -17,7 +17,7 @@ import { grpc } from "@improbable-eng/grpc-web";
 const opt = {
     debug: true,
     transport: grpc.CrossBrowserHttpTransport({ withCredentials: true }),
-    streamingTransport: grpc.WebsocketTransport(),
+    // streamingTransport: grpc.WebsocketTransport(),
 }
 
 export class lzcAPIGateway {
@@ -25,40 +25,31 @@ export class lzcAPIGateway {
         const rpc = new GrpcWebImpl(host, opt)
         this.devices = new DevicesClientImpl(rpc);
 
-        let b = new BrowserOnlyClientImpl(rpc);
-        this.userinfo = b.QueryUserInfo({})
-        this.appinfo = b.QueryAppInfo({})
+        this.bo = new BrowserOnlyClientImpl(rpc);
+        this.userinfo = this.bo.QueryUserInfo({})
+        this.appinfo = this.bo.QueryAppInfo({})
 
         this.pm = new PermissionManagerClientImpl(rpc);
-
-
+    }
+    private bo : BrowserOnly;
+    private pm : PermissionManager;
+    public async openDevices() {
+        return new Promise<void>((resolve, reject) => {
+            this.bo.PairAllDevices({}).subscribe({
+                error: (err) => reject(err),
+                complete: () => resolve(),
+            })
+        })
     }
 
-    private pm : PermissionManager;
     public userinfo: Promise<UserInfo>;
     public appinfo: Promise<AppInfo>;
     public devices: Devices;
-
-    private keepDeviceSub: Subscriber<KeepConnectRequest>;
-
-    async keepConnect(d: string) {
-        if (!this.keepDeviceSub) {
-            let req = new Observable<KeepConnectRequest>(
-                subscriber => this.keepDeviceSub = subscriber
-            )
-            this.devices.KeepConnect(req)
-        }
-        this.keepDeviceSub.next({
-            sourceDevice: (await this.userinfo).deviceId,
-            open: true,
-            devices: [d],
-        })
-    }
 }
 
-function test() {
+async function test() {
     let cc = new lzcAPIGateway()
-
+    cc.openDevices()
 }
 
 export class DeviceProxy {

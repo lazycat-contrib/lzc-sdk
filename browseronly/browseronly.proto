@@ -14,6 +14,10 @@ service BrowserOnly {
 
   // 查询当前访问的lzcapp对应信息
   rpc QueryAppInfo(google.protobuf.Empty) returns (AppInfo) {}
+
+
+  // 对devices.proto:_PairAllDeivces的自动封装
+  rpc PairAllDevices(google.protobuf.Empty) returns (stream google.protobuf.Empty) {}
 }
 
 message UserInfo {

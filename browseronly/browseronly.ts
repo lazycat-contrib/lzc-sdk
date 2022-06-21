@@ -2,8 +2,10 @@
 import Long from "long";
 import { grpc } from "@improbable-eng/grpc-web";
 import * as _m0 from "protobufjs/minimal";
+import { Observable } from "rxjs";
 import { Empty } from "../google/protobuf/empty";
 import { BrowserHeaders } from "browser-headers";
+import { share } from "rxjs/operators";
 import { Timestamp } from "../google/protobuf/timestamp";
 
 export interface UserInfo {
@@ -175,6 +177,11 @@ export interface BrowserOnly {
     request: DeepPartial<Empty>,
     metadata?: grpc.Metadata
   ): Promise<AppInfo>;
+  /** 对devices.proto:_PairAllDeivces的自动封装 */
+  PairAllDevices(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata
+  ): Observable<Empty>;
 }
 
 export class BrowserOnlyClientImpl implements BrowserOnly {
@@ -184,6 +191,7 @@ export class BrowserOnlyClientImpl implements BrowserOnly {
     this.rpc = rpc;
     this.QueryUserInfo = this.QueryUserInfo.bind(this);
     this.QueryAppInfo = this.QueryAppInfo.bind(this);
+    this.PairAllDevices = this.PairAllDevices.bind(this);
   }
 
   QueryUserInfo(
@@ -203,6 +211,17 @@ export class BrowserOnlyClientImpl implements BrowserOnly {
   ): Promise<AppInfo> {
     return this.rpc.unary(
       BrowserOnlyQueryAppInfoDesc,
+      Empty.fromPartial(request),
+      metadata
+    );
+  }
+
+  PairAllDevices(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata
+  ): Observable<Empty> {
+    return this.rpc.invoke(
+      BrowserOnlyPairAllDevicesDesc,
       Empty.fromPartial(request),
       metadata
     );
@@ -257,6 +276,28 @@ export const BrowserOnlyQueryAppInfoDesc: UnaryMethodDefinitionish = {
   } as any,
 };
 
+export const BrowserOnlyPairAllDevicesDesc: UnaryMethodDefinitionish = {
+  methodName: "PairAllDevices",
+  service: BrowserOnlyDesc,
+  requestStream: false,
+  responseStream: true,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      return {
+        ...Empty.decode(data),
+        toObject() {
+          return this;
+        },
+      };
+    },
+  } as any,
+};
+
 interface UnaryMethodDefinitionishR
   extends grpc.UnaryMethodDefinition<any, any> {
   requestStream: any;
@@ -271,13 +312,18 @@ interface Rpc {
     request: any,
     metadata: grpc.Metadata | undefined
   ): Promise<any>;
+  invoke<T extends UnaryMethodDefinitionish>(
+    methodDesc: T,
+    request: any,
+    metadata: grpc.Metadata | undefined
+  ): Observable<any>;
 }
 
 export class GrpcWebImpl {
   private host: string;
   private options: {
     transport?: grpc.TransportFactory;
-
+    streamingTransport?: grpc.TransportFactory;
     debug?: boolean;
     metadata?: grpc.Metadata;
   };
@@ -286,7 +332,7 @@ export class GrpcWebImpl {
     host: string,
     options: {
       transport?: grpc.TransportFactory;
-
+      streamingTransport?: grpc.TransportFactory;
       debug?: boolean;
       metadata?: grpc.Metadata;
     }
@@ -327,6 +373,47 @@ export class GrpcWebImpl {
         },
       });
     });
+  }
+
+  invoke<T extends UnaryMethodDefinitionish>(
+    methodDesc: T,
+    _request: any,
+    metadata: grpc.Metadata | undefined
+  ): Observable<any> {
+    // Status Response Codes (https://developers.google.com/maps-booking/reference/grpc-api/status_codes)
+    const upStreamCodes = [2, 4, 8, 9, 10, 13, 14, 15];
+    const DEFAULT_TIMEOUT_TIME: number = 3_000;
+    const request = { ..._request, ...methodDesc.requestType };
+    const maybeCombinedMetadata =
+      metadata && this.options.metadata
+        ? new BrowserHeaders({
+            ...this.options?.metadata.headersMap,
+            ...metadata?.headersMap,
+          })
+        : metadata || this.options.metadata;
+    return new Observable((observer) => {
+      const upStream = () => {
+        const client = grpc.invoke(methodDesc, {
+          host: this.host,
+          request,
+          transport: this.options.streamingTransport || this.options.transport,
+          metadata: maybeCombinedMetadata,
+          debug: this.options.debug,
+          onMessage: (next) => observer.next(next),
+          onEnd: (code: grpc.Code, message: string) => {
+            if (code === 0) {
+              observer.complete();
+            } else if (upStreamCodes.includes(code)) {
+              setTimeout(upStream, DEFAULT_TIMEOUT_TIME);
+            } else {
+              observer.error(new Error(`Error ${code} ${message}`));
+            }
+          },
+        });
+        observer.add(() => client.close());
+      };
+      upStream();
+    }).pipe(share());
   }
 }
 

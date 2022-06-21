@@ -7,20 +7,18 @@ option go_package = "/devices";
 import "google/protobuf/empty.proto";
 
 service Devices {
+  // 枚举当前登陆用户所有的设备信息
   rpc ListDevices(ListDeviceRequest) returns (ListDeviceReply) {}
 
-  // 让当前hclient保持/打开与其他hclient的虚拟网络隧道
-  rpc KeepConnect(stream KeepConnectRequest) returns (google.protobuf.Empty) {}
+  // 将发起请求的设备与登陆用户的其他所有设备建立其虚拟网络隧道
+  // 以便发起请求的浏览器可以绕过盒子直接访问其他节点上的设备API，比如剪贴板、文件拷贝等
+  // 后端代码本身就与任意设备建立好了虚拟网络隧道，因此不需要使用此API。
+  // 前端代码可以调用browseronly.proto:PairAllDeivce自动设置相关参数。
+  rpc PairAllDevices_(PairDeviceRequest) returns (stream google.protobuf.Empty) {}
 }
 
-
-message KeepConnectRequest {
-  string source_device = 1;
-
-  // true表示建立连接、false表示断开连接
-  bool open = 2;
-
-  repeated string devices = 3;
+message PairDeviceRequest {
+  string user_token = 1; //用户登陆时hserver返回的token
 }
 
 message Device {

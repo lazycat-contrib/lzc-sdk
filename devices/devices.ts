@@ -3,14 +3,13 @@ import Long from "long";
 import { grpc } from "@improbable-eng/grpc-web";
 import * as _m0 from "protobufjs/minimal";
 import { Observable } from "rxjs";
-import { BrowserHeaders } from "browser-headers";
 import { Empty } from "../google/protobuf/empty";
+import { BrowserHeaders } from "browser-headers";
+import { share } from "rxjs/operators";
 
-export interface KeepConnectRequest {
-  sourceDevice: string;
-  /** true表示建立连接、false表示断开连接 */
-  open: boolean;
-  devices: string[];
+export interface PairDeviceRequest {
+  /** 用户登陆时hserver返回的token */
+  userToken: string;
 }
 
 export interface Device {
@@ -28,42 +27,30 @@ export interface ListDeviceReply {
   devices: Device[];
 }
 
-function createBaseKeepConnectRequest(): KeepConnectRequest {
-  return { sourceDevice: "", open: false, devices: [] };
+function createBasePairDeviceRequest(): PairDeviceRequest {
+  return { userToken: "" };
 }
 
-export const KeepConnectRequest = {
+export const PairDeviceRequest = {
   encode(
-    message: KeepConnectRequest,
+    message: PairDeviceRequest,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.sourceDevice !== "") {
-      writer.uint32(10).string(message.sourceDevice);
-    }
-    if (message.open === true) {
-      writer.uint32(16).bool(message.open);
-    }
-    for (const v of message.devices) {
-      writer.uint32(26).string(v!);
+    if (message.userToken !== "") {
+      writer.uint32(10).string(message.userToken);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): KeepConnectRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): PairDeviceRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseKeepConnectRequest();
+    const message = createBasePairDeviceRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sourceDevice = reader.string();
-          break;
-        case 2:
-          message.open = reader.bool();
-          break;
-        case 3:
-          message.devices.push(reader.string());
+          message.userToken = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -73,38 +60,23 @@ export const KeepConnectRequest = {
     return message;
   },
 
-  fromJSON(object: any): KeepConnectRequest {
+  fromJSON(object: any): PairDeviceRequest {
     return {
-      sourceDevice: isSet(object.sourceDevice)
-        ? String(object.sourceDevice)
-        : "",
-      open: isSet(object.open) ? Boolean(object.open) : false,
-      devices: Array.isArray(object?.devices)
-        ? object.devices.map((e: any) => String(e))
-        : [],
+      userToken: isSet(object.userToken) ? String(object.userToken) : "",
     };
   },
 
-  toJSON(message: KeepConnectRequest): unknown {
+  toJSON(message: PairDeviceRequest): unknown {
     const obj: any = {};
-    message.sourceDevice !== undefined &&
-      (obj.sourceDevice = message.sourceDevice);
-    message.open !== undefined && (obj.open = message.open);
-    if (message.devices) {
-      obj.devices = message.devices.map((e) => e);
-    } else {
-      obj.devices = [];
-    }
+    message.userToken !== undefined && (obj.userToken = message.userToken);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<KeepConnectRequest>, I>>(
+  fromPartial<I extends Exact<DeepPartial<PairDeviceRequest>, I>>(
     object: I
-  ): KeepConnectRequest {
-    const message = createBaseKeepConnectRequest();
-    message.sourceDevice = object.sourceDevice ?? "";
-    message.open = object.open ?? false;
-    message.devices = object.devices?.map((e) => e) || [];
+  ): PairDeviceRequest {
+    const message = createBasePairDeviceRequest();
+    message.userToken = object.userToken ?? "";
     return message;
   },
 };
@@ -299,15 +271,21 @@ export const ListDeviceReply = {
 };
 
 export interface Devices {
+  /** 枚举当前登陆用户所有的设备信息 */
   ListDevices(
     request: DeepPartial<ListDeviceRequest>,
     metadata?: grpc.Metadata
   ): Promise<ListDeviceReply>;
-  /** 让当前hclient保持/打开与其他hclient的虚拟网络隧道 */
-  KeepConnect(
-    request: Observable<DeepPartial<KeepConnectRequest>>,
+  /**
+   * 将发起请求的设备与登陆用户的其他所有设备建立其虚拟网络隧道
+   * 以便发起请求的浏览器可以绕过盒子直接访问其他节点上的设备API，比如剪贴板、文件拷贝等
+   * 后端代码本身就与任意设备建立好了虚拟网络隧道，因此不需要使用此API。
+   * 前端代码可以调用browseronly.proto:PairAllDeivce自动设置相关参数。
+   */
+  PairAllDevices_(
+    request: DeepPartial<PairDeviceRequest>,
     metadata?: grpc.Metadata
-  ): Promise<Empty>;
+  ): Observable<Empty>;
 }
 
 export class DevicesClientImpl implements Devices {
@@ -316,7 +294,7 @@ export class DevicesClientImpl implements Devices {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.ListDevices = this.ListDevices.bind(this);
-    this.KeepConnect = this.KeepConnect.bind(this);
+    this.PairAllDevices_ = this.PairAllDevices_.bind(this);
   }
 
   ListDevices(
@@ -330,11 +308,15 @@ export class DevicesClientImpl implements Devices {
     );
   }
 
-  KeepConnect(
-    request: Observable<DeepPartial<KeepConnectRequest>>,
+  PairAllDevices_(
+    request: DeepPartial<PairDeviceRequest>,
     metadata?: grpc.Metadata
-  ): Promise<Empty> {
-    throw new Error("ts-proto does not yet support client streaming!");
+  ): Observable<Empty> {
+    return this.rpc.invoke(
+      DevicesPairAllDevices_Desc,
+      PairDeviceRequest.fromPartial(request),
+      metadata
+    );
   }
 }
 
@@ -364,6 +346,28 @@ export const DevicesListDevicesDesc: UnaryMethodDefinitionish = {
   } as any,
 };
 
+export const DevicesPairAllDevices_Desc: UnaryMethodDefinitionish = {
+  methodName: "PairAllDevices_",
+  service: DevicesDesc,
+  requestStream: false,
+  responseStream: true,
+  requestType: {
+    serializeBinary() {
+      return PairDeviceRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      return {
+        ...Empty.decode(data),
+        toObject() {
+          return this;
+        },
+      };
+    },
+  } as any,
+};
+
 interface UnaryMethodDefinitionishR
   extends grpc.UnaryMethodDefinition<any, any> {
   requestStream: any;
@@ -378,13 +382,18 @@ interface Rpc {
     request: any,
     metadata: grpc.Metadata | undefined
   ): Promise<any>;
+  invoke<T extends UnaryMethodDefinitionish>(
+    methodDesc: T,
+    request: any,
+    metadata: grpc.Metadata | undefined
+  ): Observable<any>;
 }
 
 export class GrpcWebImpl {
   private host: string;
   private options: {
     transport?: grpc.TransportFactory;
-
+    streamingTransport?: grpc.TransportFactory;
     debug?: boolean;
     metadata?: grpc.Metadata;
   };
@@ -393,7 +402,7 @@ export class GrpcWebImpl {
     host: string,
     options: {
       transport?: grpc.TransportFactory;
-
+      streamingTransport?: grpc.TransportFactory;
       debug?: boolean;
       metadata?: grpc.Metadata;
     }
@@ -434,6 +443,47 @@ export class GrpcWebImpl {
         },
       });
     });
+  }
+
+  invoke<T extends UnaryMethodDefinitionish>(
+    methodDesc: T,
+    _request: any,
+    metadata: grpc.Metadata | undefined
+  ): Observable<any> {
+    // Status Response Codes (https://developers.google.com/maps-booking/reference/grpc-api/status_codes)
+    const upStreamCodes = [2, 4, 8, 9, 10, 13, 14, 15];
+    const DEFAULT_TIMEOUT_TIME: number = 3_000;
+    const request = { ..._request, ...methodDesc.requestType };
+    const maybeCombinedMetadata =
+      metadata && this.options.metadata
+        ? new BrowserHeaders({
+            ...this.options?.metadata.headersMap,
+            ...metadata?.headersMap,
+          })
+        : metadata || this.options.metadata;
+    return new Observable((observer) => {
+      const upStream = () => {
+        const client = grpc.invoke(methodDesc, {
+          host: this.host,
+          request,
+          transport: this.options.streamingTransport || this.options.transport,
+          metadata: maybeCombinedMetadata,
+          debug: this.options.debug,
+          onMessage: (next) => observer.next(next),
+          onEnd: (code: grpc.Code, message: string) => {
+            if (code === 0) {
+              observer.complete();
+            } else if (upStreamCodes.includes(code)) {
+              setTimeout(upStream, DEFAULT_TIMEOUT_TIME);
+            } else {
+              observer.error(new Error(`Error ${code} ${message}`));
+            }
+          },
+        });
+        observer.add(() => client.close());
+      };
+      upStream();
+    }).pipe(share());
   }
 }
 
