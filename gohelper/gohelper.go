@@ -53,8 +53,10 @@ func NewAPIGateway() (*APIGateway, error) {
 		return nil, err
 	}
 	return &APIGateway{
-		cred:       cred,
-		conn:       conn,
+		cred: cred,
+		conn: conn,
+
+		Users:      users.NewUserManagerClient(conn),
 		Devices:    devices.NewDevicesClient(conn),
 		Permisions: permissions.NewPermissionManagerClient(conn),
 	}, nil
