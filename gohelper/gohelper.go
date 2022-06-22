@@ -43,6 +43,14 @@ func (gw *APIGateway) NewDeviceProxy(deviceapiurl string) (*DeviceProxy, error) 
 	}, nil
 }
 
+func NewAPIConn() (*grpc.ClientConn, error) {
+	cred, err := DialCred()
+	if err != nil {
+		return nil, err
+	}
+	return grpc.Dial("unix:"+APISocketPath, cred)
+}
+
 func NewAPIGateway() (*APIGateway, error) {
 	cred, err := DialCred()
 	if err != nil {
