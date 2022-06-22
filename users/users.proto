@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis;
+
+option go_package = "/users";
+
+service UserManager {
+  // 枚举当前登陆用户所有的设备信息
+  rpc ListUsers(ListUsersRequest) returns (ListUsersReply) {}
+}
+
+message ListUsersRequest {
+}
+
+message ListUsersReply {
+  repeated string uids = 1;
+}

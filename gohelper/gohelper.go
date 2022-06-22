@@ -1,47 +1,61 @@
 package gohelper
 
 import (
-	"crypto/tls"
-	"crypto/x509"
-	"io/ioutil"
+	"strings"
 
+	"gitee.com/linakesi/lzc-apis-protos/devices"
+	"gitee.com/linakesi/lzc-apis-protos/localdevice/clipboard"
+	"gitee.com/linakesi/lzc-apis-protos/localdevice/dialog"
+	"gitee.com/linakesi/lzc-apis-protos/permissions"
+	"gitee.com/linakesi/lzc-apis-protos/users"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 )
 
-func buildClientCredOption(caCrt string, appKey string, appCrt string) (grpc.DialOption, error) {
-	cert, err := tls.LoadX509KeyPair(appCrt, appKey)
-	if err != nil {
-		return nil, err
-	}
+type APIGateway struct {
+	conn *grpc.ClientConn
+	cred grpc.DialOption
 
-	certPool := x509.NewCertPool()
-	ca, err := ioutil.ReadFile(caCrt)
-	if err != nil {
-		return nil, err
-	}
-	if ok := certPool.AppendCertsFromPEM(ca); !ok {
-		return nil, err
-	}
-	cred := credentials.NewTLS(&tls.Config{
-		Certificates:       []tls.Certificate{cert},
-		InsecureSkipVerify: true,
-		RootCAs:            certPool,
-	})
-	return grpc.WithTransportCredentials(cred), nil
+	Users      users.UserManagerClient
+	Devices    devices.DevicesClient
+	Permisions permissions.PermissionManagerClient
 }
 
-var (
-	CAPath        = "/lzcapp/certs/box.crt"
-	APPCertPath   = "/lzcapp/certs/app.crt"
-	APPKeyPath    = "/lzcapp/certs/app.key"
-	APISocketPath = "/lzcapp/lzc-apis.socket"
-)
+type DeviceProxy struct {
+	conn *grpc.ClientConn
 
-func DialLZCAPI() (*grpc.ClientConn, error) {
-	cred, err := buildClientCredOption(CAPath, APPKeyPath, APPCertPath)
+	Clipboard clipboard.ClipboardManagerClient
+	Dialog    dialog.DialogManagerClient
+}
+
+func (gw *APIGateway) NewDeviceProxy(deviceapiurl string) (*DeviceProxy, error) {
+	apiurl := strings.TrimPrefix(deviceapiurl, "https://")
+
+	conn, err := grpc.Dial(apiurl, gw.cred)
 	if err != nil {
 		return nil, err
 	}
-	return grpc.Dial("unix:"+APISocketPath, cred)
+
+	return &DeviceProxy{
+		conn: conn,
+
+		Clipboard: clipboard.NewClipboardManagerClient(conn),
+		Dialog:    dialog.NewDialogManagerClient(conn),
+	}, nil
+}
+
+func NewAPIGateway() (*APIGateway, error) {
+	cred, err := DialCred()
+	if err != nil {
+		return nil, err
+	}
+	conn, err := grpc.Dial("unix:"+APISocketPath, cred)
+	if err != nil {
+		return nil, err
+	}
+	return &APIGateway{
+		cred:       cred,
+		conn:       conn,
+		Devices:    devices.NewDevicesClient(conn),
+		Permisions: permissions.NewPermissionManagerClient(conn),
+	}, nil
 }

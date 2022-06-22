@@ -5,6 +5,7 @@ import { Empty } from "./google/protobuf/empty";
 import { Observable, Subscriber } from "rxjs";
 
 import { DevicesClientImpl, Devices, Device } from "./devices/devices"
+import { UserManagerClientImpl, UserManager } from "./users/users"
 import { BrowserOnly, BrowserOnlyClientImpl, UserInfo, AppInfo } from "./browseronly/browseronly"
 import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./permissions/permissions"
 
@@ -24,10 +25,12 @@ export class lzcAPIGateway {
     constructor(host: string = window.origin) {
         const rpc = new GrpcWebImpl(host, opt)
         this.devices = new DevicesClientImpl(rpc);
+        this.users = new UserManagerClientImpl(rpc);
 
         this.bo = new BrowserOnlyClientImpl(rpc);
         this.userinfo = this.bo.QueryUserInfo({})
         this.appinfo = this.bo.QueryAppInfo({})
+
 
         this.pm = new PermissionManagerClientImpl(rpc);
     }
@@ -42,6 +45,7 @@ export class lzcAPIGateway {
         })
     }
 
+    public users: UserManager;
     public userinfo: Promise<UserInfo>;
     public appinfo: Promise<AppInfo>;
     public devices: Devices;
