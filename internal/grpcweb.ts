@@ -73,9 +73,6 @@ export class GrpcWebImpl {
     _request: any,
     metadata: grpc.Metadata | undefined
   ): Observable<any> {
-    // Status Response Codes (https://developers.google.com/maps-booking/reference/grpc-api/status_codes)
-    const upStreamCodes = [2, 4, 8, 9, 10, 13, 14, 15];
-    const DEFAULT_TIMEOUT_TIME: number = 3_000;
     const request = { ..._request, ...methodDesc.requestType };
     const maybeCombinedMetadata =
       metadata && this.options.metadata
@@ -96,8 +93,6 @@ export class GrpcWebImpl {
           onEnd: (code: grpc.Code, message: string) => {
             if (code === 0) {
               observer.complete();
-            } else if (upStreamCodes.includes(code)) {
-              setTimeout(upStream, DEFAULT_TIMEOUT_TIME);
             } else {
               observer.error(new Error(`Error ${code} ${message}`));
             }
