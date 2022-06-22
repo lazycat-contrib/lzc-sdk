@@ -12,7 +12,6 @@
   ],
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.15.0",
-    "@lazycatcloud/lzc-apis": "^0.0.2",
     "rxjs": "^7.5.5",
     "ts-proto": "^1.115.4"
   },
