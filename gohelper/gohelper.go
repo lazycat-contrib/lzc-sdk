@@ -27,6 +27,8 @@ type DeviceProxy struct {
 	Dialog    dialog.DialogManagerClient
 }
 
+func (d *DeviceProxy) Close() error { return d.conn.Close() }
+
 func (gw *APIGateway) NewDeviceProxy(deviceapiurl string) (*DeviceProxy, error) {
 	apiurl := strings.TrimPrefix(deviceapiurl, "https://")
 
