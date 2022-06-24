@@ -1,0 +1,9 @@
+version: "3.9"
+x-lazycat-app:
+  id: example-clip-sync
+  title: 剪贴板demo
+  summary: 测试剪贴板
+services:
+  demo:
+    build: .
+    pull_policy: build
