@@ -1,0 +1,11 @@
+services:
+  ${APP_ID}:
+    pull_policy: build
+    build: .
+    environment:
+      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
+      - APP_PORT=${DEV_PORT}
+    volumes:
+      - ./debug/ssh:/root/.ssh
+      - ./nginx.conf.template:/etc/nginx/templates/nginx.conf.template
+      - ./50x.html:/etc/nginx/50x.html

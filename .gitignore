@@ -1,3 +1,6 @@
 /node_modules/
 /package-lock.json
 /dist/
+/examples/serveless/node_modules/
+/examples/serveless/package-lock.json
+/examples/serveless/dist/

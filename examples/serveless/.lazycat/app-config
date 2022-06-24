@@ -1,0 +1,7 @@
+{
+  "APP_ID": "example-serverless",
+  "APP_DESCRIPTION": "演示纯前端的功能",
+  "APP_VERSION": "0.0.1",
+  "HTTP_SERVICE_PORT": "8080",
+  "BUILD_CONTEXT": ".lazycat/release"
+}

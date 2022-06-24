@@ -1,0 +1,15 @@
+version: "3.9"
+x-lazycat-app:
+  id: ${APP_ID}
+  title: ${APP_DESCRIPTION}
+  version: ${APP_VERSION}
+  description:
+  icon: icon.svg
+  categories:
+  screenshots:
+    - screenshot.png
+  ingress:
+    - service: ${APP_ID}
+      port: ${HTTP_SERVICE_PORT}
+      subdomain: ${APP_ID}
+      auth: auto

@@ -1,0 +1,8 @@
+services:
+  ${APP_ID}:
+    image: ${APP_IMAGE_NAME}
+    volumes:
+      - lzcapis-lzcapp:/lzcapp
+
+volumes:
+  lzcapis-lzcapp:
