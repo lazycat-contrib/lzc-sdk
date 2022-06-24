@@ -8,21 +8,20 @@ import (
 
 	"gitee.com/linakesi/lzc-apis-protos/gohelper"
 	"gitee.com/linakesi/lzc-apis-protos/localdevice/clipboard"
-	"github.com/libp2p/go-libp2p-core/peer"
 )
 
 type Device struct {
 	gw *gohelper.APIGateway
-	id peer.ID
+	id string
 
 	uid      string
 	devurl   string
 	isonline bool
 }
 
-type ClipCallback func(uid string, from peer.ID, content string)
+type ClipCallback func(uid string, from string, content string)
 
-func NewDevice(gw *gohelper.APIGateway, id peer.ID) *Device {
+func NewDevice(gw *gohelper.APIGateway, id string) *Device {
 	return &Device{gw: gw, id: id}
 }
 

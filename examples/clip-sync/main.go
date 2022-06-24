@@ -9,7 +9,6 @@ import (
 	pbdevices "gitee.com/linakesi/lzc-apis-protos/devices"
 	"gitee.com/linakesi/lzc-apis-protos/gohelper"
 	"gitee.com/linakesi/lzc-apis-protos/users"
-	"github.com/libp2p/go-libp2p-core/peer"
 )
 
 // 在后台定期，维护拓扑状态：UID<-->DeviceID的关系 (有可能变动,比如同一个设备上，切换了用户)
@@ -51,7 +50,9 @@ func (sd *SyncClipDaemon) Start(ctx context.Context) {
 			return
 		default:
 			err := sd.oneTick(ctx)
-			fmt.Println("TICK ERR:", err)
+			if err != nil {
+				fmt.Println("TICK ERR:", err)
+			}
 			time.Sleep(time.Second * 30)
 		}
 	}
@@ -71,14 +72,10 @@ func (sd *SyncClipDaemon) oneTick(ctx context.Context) error {
 		}
 
 		for _, dinfo := range repl.Devices {
-			did, err := peer.Decode(dinfo.PeerId)
-			if err != nil {
-				continue
-			}
-			_dp, loaded := sd.devices.LoadOrStore(did, NewDevice(sd.gw, did))
+			_dp, loaded := sd.devices.LoadOrStore(dinfo.PeerId, NewDevice(sd.gw, dinfo.PeerId))
 			_dp.(*Device).UpdateInfo(uid, dinfo.DeviceApiUrl, dinfo.IsOnline)
 			if !loaded {
-				fmt.Printf("Found New Device: %s@%s IsOnline:%v\n", uid, did, dinfo.IsOnline)
+				fmt.Printf("Found New Device: %s@%s IsOnline:%v\n", uid, dinfo.PeerId, dinfo.IsOnline)
 				go _dp.(*Device).RegisterCallback(ctx, sd.OnNewClipContent)
 			}
 		}
@@ -99,7 +96,7 @@ func (sd *SyncClipDaemon) userDevices(uid string) []*Device {
 	return all
 }
 
-func (sd *SyncClipDaemon) OnNewClipContent(uid string, from peer.ID, content string) {
+func (sd *SyncClipDaemon) OnNewClipContent(uid string, from string, content string) {
 	if !sd.LastConentChanged(uid, content) {
 		return
 	}
