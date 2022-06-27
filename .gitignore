@@ -4,3 +4,4 @@
 /examples/serveless/node_modules/
 /examples/serveless/package-lock.json
 /examples/serveless/dist/
+/.cache/
