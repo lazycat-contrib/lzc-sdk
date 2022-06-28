@@ -10,17 +10,16 @@ import "google/protobuf/timestamp.proto";
 // this service is provied by frontend server, backend code shouldn't use it.
 service BrowserOnlyProxy {
   // 查询当前登陆用户对应信息
-  rpc QueryUserInfo(google.protobuf.Empty) returns (UserInfo) {}
+  rpc QuerySessionInfo(google.protobuf.Empty) returns (SessionInfo) {}
 
   // 查询当前访问的lzcapp对应信息
   rpc QueryAppInfo(google.protobuf.Empty) returns (AppInfo) {}
-
 
   // 对devices.proto:_PairAllDeivces的自动封装
   rpc PairAllDevices(google.protobuf.Empty) returns (stream google.protobuf.Empty) {}
 }
 
-message UserInfo {
+message SessionInfo {
   string uid = 1;
 
   string device_id = 2;

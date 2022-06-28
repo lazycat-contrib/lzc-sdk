@@ -2,13 +2,146 @@
 import Long from "long";
 import { grpc } from "@improbable-eng/grpc-web";
 import * as _m0 from "protobufjs/minimal";
+import { Empty } from "../google/protobuf/empty";
 import { BrowserHeaders } from "browser-headers";
+
+export interface UserID {
+  uid: string;
+}
+
+export interface UserInfo {
+  uid: string;
+  nickname: string;
+  avatar: string;
+}
 
 export interface ListUsersRequest {}
 
 export interface ListUsersReply {
   uids: string[];
 }
+
+function createBaseUserID(): UserID {
+  return { uid: "" };
+}
+
+export const UserID = {
+  encode(
+    message: UserID,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.uid !== "") {
+      writer.uint32(10).string(message.uid);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserID {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserID();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.uid = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserID {
+    return {
+      uid: isSet(object.uid) ? String(object.uid) : "",
+    };
+  },
+
+  toJSON(message: UserID): unknown {
+    const obj: any = {};
+    message.uid !== undefined && (obj.uid = message.uid);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UserID>, I>>(object: I): UserID {
+    const message = createBaseUserID();
+    message.uid = object.uid ?? "";
+    return message;
+  },
+};
+
+function createBaseUserInfo(): UserInfo {
+  return { uid: "", nickname: "", avatar: "" };
+}
+
+export const UserInfo = {
+  encode(
+    message: UserInfo,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.uid !== "") {
+      writer.uint32(10).string(message.uid);
+    }
+    if (message.nickname !== "") {
+      writer.uint32(18).string(message.nickname);
+    }
+    if (message.avatar !== "") {
+      writer.uint32(26).string(message.avatar);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserInfo {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserInfo();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.uid = reader.string();
+          break;
+        case 2:
+          message.nickname = reader.string();
+          break;
+        case 3:
+          message.avatar = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserInfo {
+    return {
+      uid: isSet(object.uid) ? String(object.uid) : "",
+      nickname: isSet(object.nickname) ? String(object.nickname) : "",
+      avatar: isSet(object.avatar) ? String(object.avatar) : "",
+    };
+  },
+
+  toJSON(message: UserInfo): unknown {
+    const obj: any = {};
+    message.uid !== undefined && (obj.uid = message.uid);
+    message.nickname !== undefined && (obj.nickname = message.nickname);
+    message.avatar !== undefined && (obj.avatar = message.avatar);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UserInfo>, I>>(object: I): UserInfo {
+    const message = createBaseUserInfo();
+    message.uid = object.uid ?? "";
+    message.nickname = object.nickname ?? "";
+    message.avatar = object.avatar ?? "";
+    return message;
+  },
+};
 
 function createBaseListUsersRequest(): ListUsersRequest {
   return {};
@@ -115,11 +248,19 @@ export const ListUsersReply = {
 };
 
 export interface UserManager {
-  /** 枚举当前登陆用户所有的设备信息 */
   ListUsers(
     request: DeepPartial<ListUsersRequest>,
     metadata?: grpc.Metadata
   ): Promise<ListUsersReply>;
+  QueryUserInfo(
+    request: DeepPartial<UserID>,
+    metadata?: grpc.Metadata
+  ): Promise<UserInfo>;
+  /** 更新nickname和avator */
+  UpdateUserInfo(
+    request: DeepPartial<UserInfo>,
+    metadata?: grpc.Metadata
+  ): Promise<Empty>;
 }
 
 export class UserManagerClientImpl implements UserManager {
@@ -128,6 +269,8 @@ export class UserManagerClientImpl implements UserManager {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.ListUsers = this.ListUsers.bind(this);
+    this.QueryUserInfo = this.QueryUserInfo.bind(this);
+    this.UpdateUserInfo = this.UpdateUserInfo.bind(this);
   }
 
   ListUsers(
@@ -137,6 +280,28 @@ export class UserManagerClientImpl implements UserManager {
     return this.rpc.unary(
       UserManagerListUsersDesc,
       ListUsersRequest.fromPartial(request),
+      metadata
+    );
+  }
+
+  QueryUserInfo(
+    request: DeepPartial<UserID>,
+    metadata?: grpc.Metadata
+  ): Promise<UserInfo> {
+    return this.rpc.unary(
+      UserManagerQueryUserInfoDesc,
+      UserID.fromPartial(request),
+      metadata
+    );
+  }
+
+  UpdateUserInfo(
+    request: DeepPartial<UserInfo>,
+    metadata?: grpc.Metadata
+  ): Promise<Empty> {
+    return this.rpc.unary(
+      UserManagerUpdateUserInfoDesc,
+      UserInfo.fromPartial(request),
       metadata
     );
   }
@@ -160,6 +325,50 @@ export const UserManagerListUsersDesc: UnaryMethodDefinitionish = {
     deserializeBinary(data: Uint8Array) {
       return {
         ...ListUsersReply.decode(data),
+        toObject() {
+          return this;
+        },
+      };
+    },
+  } as any,
+};
+
+export const UserManagerQueryUserInfoDesc: UnaryMethodDefinitionish = {
+  methodName: "QueryUserInfo",
+  service: UserManagerDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return UserID.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      return {
+        ...UserInfo.decode(data),
+        toObject() {
+          return this;
+        },
+      };
+    },
+  } as any,
+};
+
+export const UserManagerUpdateUserInfoDesc: UnaryMethodDefinitionish = {
+  methodName: "UpdateUserInfo",
+  service: UserManagerDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return UserInfo.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      return {
+        ...Empty.decode(data),
         toObject() {
           return this;
         },
@@ -271,4 +480,8 @@ type Exact<P, I extends P> = P extends Builtin
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

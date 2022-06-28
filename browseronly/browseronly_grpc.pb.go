@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BrowserOnlyProxyClient interface {
 	// 查询当前登陆用户对应信息
-	QueryUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfo, error)
+	QuerySessionInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SessionInfo, error)
 	// 查询当前访问的lzcapp对应信息
 	QueryAppInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AppInfo, error)
 	// 对devices.proto:_PairAllDeivces的自动封装
@@ -39,9 +39,9 @@ func NewBrowserOnlyProxyClient(cc grpc.ClientConnInterface) BrowserOnlyProxyClie
 	return &browserOnlyProxyClient{cc}
 }
 
-func (c *browserOnlyProxyClient) QueryUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfo, error) {
-	out := new(UserInfo)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.BrowserOnlyProxy/QueryUserInfo", in, out, opts...)
+func (c *browserOnlyProxyClient) QuerySessionInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SessionInfo, error) {
+	out := new(SessionInfo)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.BrowserOnlyProxy/QuerySessionInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func (x *browserOnlyProxyPairAllDevicesClient) Recv() (*emptypb.Empty, error) {
 // for forward compatibility
 type BrowserOnlyProxyServer interface {
 	// 查询当前登陆用户对应信息
-	QueryUserInfo(context.Context, *emptypb.Empty) (*UserInfo, error)
+	QuerySessionInfo(context.Context, *emptypb.Empty) (*SessionInfo, error)
 	// 查询当前访问的lzcapp对应信息
 	QueryAppInfo(context.Context, *emptypb.Empty) (*AppInfo, error)
 	// 对devices.proto:_PairAllDeivces的自动封装
@@ -106,8 +106,8 @@ type BrowserOnlyProxyServer interface {
 type UnimplementedBrowserOnlyProxyServer struct {
 }
 
-func (UnimplementedBrowserOnlyProxyServer) QueryUserInfo(context.Context, *emptypb.Empty) (*UserInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryUserInfo not implemented")
+func (UnimplementedBrowserOnlyProxyServer) QuerySessionInfo(context.Context, *emptypb.Empty) (*SessionInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QuerySessionInfo not implemented")
 }
 func (UnimplementedBrowserOnlyProxyServer) QueryAppInfo(context.Context, *emptypb.Empty) (*AppInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryAppInfo not implemented")
@@ -128,20 +128,20 @@ func RegisterBrowserOnlyProxyServer(s grpc.ServiceRegistrar, srv BrowserOnlyProx
 	s.RegisterService(&BrowserOnlyProxy_ServiceDesc, srv)
 }
 
-func _BrowserOnlyProxy_QueryUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BrowserOnlyProxy_QuerySessionInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BrowserOnlyProxyServer).QueryUserInfo(ctx, in)
+		return srv.(BrowserOnlyProxyServer).QuerySessionInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.BrowserOnlyProxy/QueryUserInfo",
+		FullMethod: "/cloud.lazycat.apis.BrowserOnlyProxy/QuerySessionInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BrowserOnlyProxyServer).QueryUserInfo(ctx, req.(*emptypb.Empty))
+		return srv.(BrowserOnlyProxyServer).QuerySessionInfo(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -193,8 +193,8 @@ var BrowserOnlyProxy_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*BrowserOnlyProxyServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "QueryUserInfo",
-			Handler:    _BrowserOnlyProxy_QueryUserInfo_Handler,
+			MethodName: "QuerySessionInfo",
+			Handler:    _BrowserOnlyProxy_QuerySessionInfo_Handler,
 		},
 		{
 			MethodName: "QueryAppInfo",

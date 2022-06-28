@@ -6,7 +6,7 @@ import { Observable, Subscriber } from "rxjs";
 
 import { DevicesClientImpl, Devices, Device } from "./devices/devices"
 import { UserManagerClientImpl, UserManager } from "./users/users"
-import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, UserInfo, AppInfo } from "./browseronly/browseronly"
+import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, SessionInfo, AppInfo } from "./browseronly/browseronly"
 import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./permissions/permissions"
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog/dialog"
@@ -29,9 +29,8 @@ export class lzcAPIGateway {
         this.users = new UserManagerClientImpl(rpc);
 
         this.bo = new BrowserOnlyProxyClientImpl(rpc);
-        this.userinfo = this.bo.QueryUserInfo({})
+        this.session = this.bo.QuerySessionInfo({})
         this.appinfo = this.bo.QueryAppInfo({})
-
 
         this.pm = new PermissionManagerClientImpl(rpc);
     }
@@ -47,7 +46,14 @@ export class lzcAPIGateway {
     }
 
     public users: UserManager;
-    public userinfo: Promise<UserInfo>;
+
+    public session: Promise<SessionInfo>;
+
+    /**
+     * @deprecated 请使用lzcAPIGateway.session查询此信息
+     */
+    public userinfo: Promise<SessionInfo>;
+
     public appinfo: Promise<AppInfo>;
     public devices: Devices;
 }

@@ -8,7 +8,7 @@ import { BrowserHeaders } from "browser-headers";
 import { share } from "rxjs/operators";
 import { Timestamp } from "../google/protobuf/timestamp";
 
-export interface UserInfo {
+export interface SessionInfo {
   uid: string;
   deviceId: string;
   when: Date | undefined;
@@ -20,13 +20,13 @@ export interface AppInfo {
   appDomain: string;
 }
 
-function createBaseUserInfo(): UserInfo {
+function createBaseSessionInfo(): SessionInfo {
   return { uid: "", deviceId: "", when: undefined };
 }
 
-export const UserInfo = {
+export const SessionInfo = {
   encode(
-    message: UserInfo,
+    message: SessionInfo,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
     if (message.uid !== "") {
@@ -44,10 +44,10 @@ export const UserInfo = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserInfo {
+  decode(input: _m0.Reader | Uint8Array, length?: number): SessionInfo {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserInfo();
+    const message = createBaseSessionInfo();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -70,7 +70,7 @@ export const UserInfo = {
     return message;
   },
 
-  fromJSON(object: any): UserInfo {
+  fromJSON(object: any): SessionInfo {
     return {
       uid: isSet(object.uid) ? String(object.uid) : "",
       deviceId: isSet(object.deviceId) ? String(object.deviceId) : "",
@@ -78,7 +78,7 @@ export const UserInfo = {
     };
   },
 
-  toJSON(message: UserInfo): unknown {
+  toJSON(message: SessionInfo): unknown {
     const obj: any = {};
     message.uid !== undefined && (obj.uid = message.uid);
     message.deviceId !== undefined && (obj.deviceId = message.deviceId);
@@ -86,8 +86,10 @@ export const UserInfo = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<UserInfo>, I>>(object: I): UserInfo {
-    const message = createBaseUserInfo();
+  fromPartial<I extends Exact<DeepPartial<SessionInfo>, I>>(
+    object: I
+  ): SessionInfo {
+    const message = createBaseSessionInfo();
     message.uid = object.uid ?? "";
     message.deviceId = object.deviceId ?? "";
     message.when = object.when ?? undefined;
@@ -168,10 +170,10 @@ export const AppInfo = {
 /** this service is provied by frontend server, backend code shouldn't use it. */
 export interface BrowserOnlyProxy {
   /** 查询当前登陆用户对应信息 */
-  QueryUserInfo(
+  QuerySessionInfo(
     request: DeepPartial<Empty>,
     metadata?: grpc.Metadata
-  ): Promise<UserInfo>;
+  ): Promise<SessionInfo>;
   /** 查询当前访问的lzcapp对应信息 */
   QueryAppInfo(
     request: DeepPartial<Empty>,
@@ -189,17 +191,17 @@ export class BrowserOnlyProxyClientImpl implements BrowserOnlyProxy {
 
   constructor(rpc: Rpc) {
     this.rpc = rpc;
-    this.QueryUserInfo = this.QueryUserInfo.bind(this);
+    this.QuerySessionInfo = this.QuerySessionInfo.bind(this);
     this.QueryAppInfo = this.QueryAppInfo.bind(this);
     this.PairAllDevices = this.PairAllDevices.bind(this);
   }
 
-  QueryUserInfo(
+  QuerySessionInfo(
     request: DeepPartial<Empty>,
     metadata?: grpc.Metadata
-  ): Promise<UserInfo> {
+  ): Promise<SessionInfo> {
     return this.rpc.unary(
-      BrowserOnlyProxyQueryUserInfoDesc,
+      BrowserOnlyProxyQuerySessionInfoDesc,
       Empty.fromPartial(request),
       metadata
     );
@@ -232,8 +234,8 @@ export const BrowserOnlyProxyDesc = {
   serviceName: "cloud.lazycat.apis.BrowserOnlyProxy",
 };
 
-export const BrowserOnlyProxyQueryUserInfoDesc: UnaryMethodDefinitionish = {
-  methodName: "QueryUserInfo",
+export const BrowserOnlyProxyQuerySessionInfoDesc: UnaryMethodDefinitionish = {
+  methodName: "QuerySessionInfo",
   service: BrowserOnlyProxyDesc,
   requestStream: false,
   responseStream: false,
@@ -245,7 +247,7 @@ export const BrowserOnlyProxyQueryUserInfoDesc: UnaryMethodDefinitionish = {
   responseType: {
     deserializeBinary(data: Uint8Array) {
       return {
-        ...UserInfo.decode(data),
+        ...SessionInfo.decode(data),
         toObject() {
           return this;
         },
