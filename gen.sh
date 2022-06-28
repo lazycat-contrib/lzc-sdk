@@ -3,8 +3,7 @@
 set -e
 
 
-mkdir ./.cache >& /dev/null || true
-mkdir ./java >& /dev/null || true
+mkdir -p ./.cache/java >& /dev/null || true
 
 if [[ ! -f ./.cache/protoc-gen-grpc-java ]]; then
     wget https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/1.47.0/protoc-gen-grpc-java-1.47.0-linux-x86_64.exe -O ./.cache/protoc-gen-grpc-java
@@ -16,6 +15,8 @@ protoc -I . \
        --ts_proto_opt=outputClientImpl=grpc-web --ts_proto_opt=exportCommonSymbols=false --ts_proto_opt=esModuleInterop=true \
        --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=.\
        --plugin=./.cache/protoc-gen-grpc-java \
-       --java_out=./java \
-       --grpc-java_out=./java \
+       --java_out=./.cache/java \
+       --grpc-java_out=./.cache/java \
        */*.proto localdevice/*/*.proto
+
+jar -c -f cloud.lazycat.apis.jar -C ./.cache/java/ .
