@@ -11,6 +11,7 @@ import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, Permiss
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog/dialog"
 import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clipboard/clipboard"
+import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo/photo"
 
 import { grpc } from "@improbable-eng/grpc-web";
 
@@ -57,13 +58,15 @@ async function test() {
 }
 
 export class DeviceProxy {
-    constructor(apiurl :string)  {
+    constructor(apiurl :string) {
         const rpc = new GrpcWebImpl(apiurl, opt)
 
         this.dialog = new DialogManagerClientImpl(rpc)
         this.clipboard = new ClipboardManagerClientImpl(rpc)
+        this.photolibrary = new PhotoLibraryClientImpl(rpc)
     }
 
     public dialog : DialogManager;
     public clipboard: ClipboardManager;
+    public photolibrary: PhotoLibrary;
 }

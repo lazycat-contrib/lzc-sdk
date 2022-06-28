@@ -6,6 +6,7 @@ import (
 	"gitee.com/linakesi/lzc-apis-protos/devices"
 	"gitee.com/linakesi/lzc-apis-protos/localdevice/clipboard"
 	"gitee.com/linakesi/lzc-apis-protos/localdevice/dialog"
+	"gitee.com/linakesi/lzc-apis-protos/localdevice/photo"
 	"gitee.com/linakesi/lzc-apis-protos/permissions"
 	"gitee.com/linakesi/lzc-apis-protos/users"
 	"google.golang.org/grpc"
@@ -23,8 +24,9 @@ type APIGateway struct {
 type DeviceProxy struct {
 	conn *grpc.ClientConn
 
-	Clipboard clipboard.ClipboardManagerClient
-	Dialog    dialog.DialogManagerClient
+	Clipboard    clipboard.ClipboardManagerClient
+	Dialog       dialog.DialogManagerClient
+	PhotoLibrary photo.PhotoLibraryClient
 }
 
 func (d *DeviceProxy) Close() error { return d.conn.Close() }
@@ -40,8 +42,9 @@ func (gw *APIGateway) NewDeviceProxy(deviceapiurl string) (*DeviceProxy, error) 
 	return &DeviceProxy{
 		conn: conn,
 
-		Clipboard: clipboard.NewClipboardManagerClient(conn),
-		Dialog:    dialog.NewDialogManagerClient(conn),
+		Clipboard:    clipboard.NewClipboardManagerClient(conn),
+		Dialog:       dialog.NewDialogManagerClient(conn),
+		PhotoLibrary: photo.NewPhotoLibraryClient(conn),
 	}, nil
 }
 
