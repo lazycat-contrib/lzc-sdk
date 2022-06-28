@@ -8,7 +8,7 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 // this service is provied by frontend server, backend code shouldn't use it.
-service BrowserOnly {
+service BrowserOnlyProxy {
   // 查询当前登陆用户对应信息
   rpc QueryUserInfo(google.protobuf.Empty) returns (UserInfo) {}
 

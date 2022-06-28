@@ -166,7 +166,7 @@ export const AppInfo = {
 };
 
 /** this service is provied by frontend server, backend code shouldn't use it. */
-export interface BrowserOnly {
+export interface BrowserOnlyProxy {
   /** 查询当前登陆用户对应信息 */
   QueryUserInfo(
     request: DeepPartial<Empty>,
@@ -184,7 +184,7 @@ export interface BrowserOnly {
   ): Observable<Empty>;
 }
 
-export class BrowserOnlyClientImpl implements BrowserOnly {
+export class BrowserOnlyProxyClientImpl implements BrowserOnlyProxy {
   private readonly rpc: Rpc;
 
   constructor(rpc: Rpc) {
@@ -199,7 +199,7 @@ export class BrowserOnlyClientImpl implements BrowserOnly {
     metadata?: grpc.Metadata
   ): Promise<UserInfo> {
     return this.rpc.unary(
-      BrowserOnlyQueryUserInfoDesc,
+      BrowserOnlyProxyQueryUserInfoDesc,
       Empty.fromPartial(request),
       metadata
     );
@@ -210,7 +210,7 @@ export class BrowserOnlyClientImpl implements BrowserOnly {
     metadata?: grpc.Metadata
   ): Promise<AppInfo> {
     return this.rpc.unary(
-      BrowserOnlyQueryAppInfoDesc,
+      BrowserOnlyProxyQueryAppInfoDesc,
       Empty.fromPartial(request),
       metadata
     );
@@ -221,20 +221,20 @@ export class BrowserOnlyClientImpl implements BrowserOnly {
     metadata?: grpc.Metadata
   ): Observable<Empty> {
     return this.rpc.invoke(
-      BrowserOnlyPairAllDevicesDesc,
+      BrowserOnlyProxyPairAllDevicesDesc,
       Empty.fromPartial(request),
       metadata
     );
   }
 }
 
-export const BrowserOnlyDesc = {
-  serviceName: "cloud.lazycat.apis.BrowserOnly",
+export const BrowserOnlyProxyDesc = {
+  serviceName: "cloud.lazycat.apis.BrowserOnlyProxy",
 };
 
-export const BrowserOnlyQueryUserInfoDesc: UnaryMethodDefinitionish = {
+export const BrowserOnlyProxyQueryUserInfoDesc: UnaryMethodDefinitionish = {
   methodName: "QueryUserInfo",
-  service: BrowserOnlyDesc,
+  service: BrowserOnlyProxyDesc,
   requestStream: false,
   responseStream: false,
   requestType: {
@@ -254,9 +254,9 @@ export const BrowserOnlyQueryUserInfoDesc: UnaryMethodDefinitionish = {
   } as any,
 };
 
-export const BrowserOnlyQueryAppInfoDesc: UnaryMethodDefinitionish = {
+export const BrowserOnlyProxyQueryAppInfoDesc: UnaryMethodDefinitionish = {
   methodName: "QueryAppInfo",
-  service: BrowserOnlyDesc,
+  service: BrowserOnlyProxyDesc,
   requestStream: false,
   responseStream: false,
   requestType: {
@@ -276,9 +276,9 @@ export const BrowserOnlyQueryAppInfoDesc: UnaryMethodDefinitionish = {
   } as any,
 };
 
-export const BrowserOnlyPairAllDevicesDesc: UnaryMethodDefinitionish = {
+export const BrowserOnlyProxyPairAllDevicesDesc: UnaryMethodDefinitionish = {
   methodName: "PairAllDevices",
-  service: BrowserOnlyDesc,
+  service: BrowserOnlyProxyDesc,
   requestStream: false,
   responseStream: true,
   requestType: {

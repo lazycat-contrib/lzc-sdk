@@ -19,50 +19,50 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// BrowserOnlyClient is the client API for BrowserOnly service.
+// BrowserOnlyProxyClient is the client API for BrowserOnlyProxy service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type BrowserOnlyClient interface {
+type BrowserOnlyProxyClient interface {
 	// 查询当前登陆用户对应信息
 	QueryUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfo, error)
 	// 查询当前访问的lzcapp对应信息
 	QueryAppInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AppInfo, error)
 	// 对devices.proto:_PairAllDeivces的自动封装
-	PairAllDevices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (BrowserOnly_PairAllDevicesClient, error)
+	PairAllDevices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (BrowserOnlyProxy_PairAllDevicesClient, error)
 }
 
-type browserOnlyClient struct {
+type browserOnlyProxyClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewBrowserOnlyClient(cc grpc.ClientConnInterface) BrowserOnlyClient {
-	return &browserOnlyClient{cc}
+func NewBrowserOnlyProxyClient(cc grpc.ClientConnInterface) BrowserOnlyProxyClient {
+	return &browserOnlyProxyClient{cc}
 }
 
-func (c *browserOnlyClient) QueryUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfo, error) {
+func (c *browserOnlyProxyClient) QueryUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfo, error) {
 	out := new(UserInfo)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.BrowserOnly/QueryUserInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.BrowserOnlyProxy/QueryUserInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *browserOnlyClient) QueryAppInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AppInfo, error) {
+func (c *browserOnlyProxyClient) QueryAppInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AppInfo, error) {
 	out := new(AppInfo)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.BrowserOnly/QueryAppInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.BrowserOnlyProxy/QueryAppInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *browserOnlyClient) PairAllDevices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (BrowserOnly_PairAllDevicesClient, error) {
-	stream, err := c.cc.NewStream(ctx, &BrowserOnly_ServiceDesc.Streams[0], "/cloud.lazycat.apis.BrowserOnly/PairAllDevices", opts...)
+func (c *browserOnlyProxyClient) PairAllDevices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (BrowserOnlyProxy_PairAllDevicesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &BrowserOnlyProxy_ServiceDesc.Streams[0], "/cloud.lazycat.apis.BrowserOnlyProxy/PairAllDevices", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &browserOnlyPairAllDevicesClient{stream}
+	x := &browserOnlyProxyPairAllDevicesClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -72,16 +72,16 @@ func (c *browserOnlyClient) PairAllDevices(ctx context.Context, in *emptypb.Empt
 	return x, nil
 }
 
-type BrowserOnly_PairAllDevicesClient interface {
+type BrowserOnlyProxy_PairAllDevicesClient interface {
 	Recv() (*emptypb.Empty, error)
 	grpc.ClientStream
 }
 
-type browserOnlyPairAllDevicesClient struct {
+type browserOnlyProxyPairAllDevicesClient struct {
 	grpc.ClientStream
 }
 
-func (x *browserOnlyPairAllDevicesClient) Recv() (*emptypb.Empty, error) {
+func (x *browserOnlyProxyPairAllDevicesClient) Recv() (*emptypb.Empty, error) {
 	m := new(emptypb.Empty)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -89,122 +89,122 @@ func (x *browserOnlyPairAllDevicesClient) Recv() (*emptypb.Empty, error) {
 	return m, nil
 }
 
-// BrowserOnlyServer is the server API for BrowserOnly service.
-// All implementations must embed UnimplementedBrowserOnlyServer
+// BrowserOnlyProxyServer is the server API for BrowserOnlyProxy service.
+// All implementations must embed UnimplementedBrowserOnlyProxyServer
 // for forward compatibility
-type BrowserOnlyServer interface {
+type BrowserOnlyProxyServer interface {
 	// 查询当前登陆用户对应信息
 	QueryUserInfo(context.Context, *emptypb.Empty) (*UserInfo, error)
 	// 查询当前访问的lzcapp对应信息
 	QueryAppInfo(context.Context, *emptypb.Empty) (*AppInfo, error)
 	// 对devices.proto:_PairAllDeivces的自动封装
-	PairAllDevices(*emptypb.Empty, BrowserOnly_PairAllDevicesServer) error
-	mustEmbedUnimplementedBrowserOnlyServer()
+	PairAllDevices(*emptypb.Empty, BrowserOnlyProxy_PairAllDevicesServer) error
+	mustEmbedUnimplementedBrowserOnlyProxyServer()
 }
 
-// UnimplementedBrowserOnlyServer must be embedded to have forward compatible implementations.
-type UnimplementedBrowserOnlyServer struct {
+// UnimplementedBrowserOnlyProxyServer must be embedded to have forward compatible implementations.
+type UnimplementedBrowserOnlyProxyServer struct {
 }
 
-func (UnimplementedBrowserOnlyServer) QueryUserInfo(context.Context, *emptypb.Empty) (*UserInfo, error) {
+func (UnimplementedBrowserOnlyProxyServer) QueryUserInfo(context.Context, *emptypb.Empty) (*UserInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryUserInfo not implemented")
 }
-func (UnimplementedBrowserOnlyServer) QueryAppInfo(context.Context, *emptypb.Empty) (*AppInfo, error) {
+func (UnimplementedBrowserOnlyProxyServer) QueryAppInfo(context.Context, *emptypb.Empty) (*AppInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryAppInfo not implemented")
 }
-func (UnimplementedBrowserOnlyServer) PairAllDevices(*emptypb.Empty, BrowserOnly_PairAllDevicesServer) error {
+func (UnimplementedBrowserOnlyProxyServer) PairAllDevices(*emptypb.Empty, BrowserOnlyProxy_PairAllDevicesServer) error {
 	return status.Errorf(codes.Unimplemented, "method PairAllDevices not implemented")
 }
-func (UnimplementedBrowserOnlyServer) mustEmbedUnimplementedBrowserOnlyServer() {}
+func (UnimplementedBrowserOnlyProxyServer) mustEmbedUnimplementedBrowserOnlyProxyServer() {}
 
-// UnsafeBrowserOnlyServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to BrowserOnlyServer will
+// UnsafeBrowserOnlyProxyServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BrowserOnlyProxyServer will
 // result in compilation errors.
-type UnsafeBrowserOnlyServer interface {
-	mustEmbedUnimplementedBrowserOnlyServer()
+type UnsafeBrowserOnlyProxyServer interface {
+	mustEmbedUnimplementedBrowserOnlyProxyServer()
 }
 
-func RegisterBrowserOnlyServer(s grpc.ServiceRegistrar, srv BrowserOnlyServer) {
-	s.RegisterService(&BrowserOnly_ServiceDesc, srv)
+func RegisterBrowserOnlyProxyServer(s grpc.ServiceRegistrar, srv BrowserOnlyProxyServer) {
+	s.RegisterService(&BrowserOnlyProxy_ServiceDesc, srv)
 }
 
-func _BrowserOnly_QueryUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BrowserOnlyProxy_QueryUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BrowserOnlyServer).QueryUserInfo(ctx, in)
+		return srv.(BrowserOnlyProxyServer).QueryUserInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.BrowserOnly/QueryUserInfo",
+		FullMethod: "/cloud.lazycat.apis.BrowserOnlyProxy/QueryUserInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BrowserOnlyServer).QueryUserInfo(ctx, req.(*emptypb.Empty))
+		return srv.(BrowserOnlyProxyServer).QueryUserInfo(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BrowserOnly_QueryAppInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BrowserOnlyProxy_QueryAppInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BrowserOnlyServer).QueryAppInfo(ctx, in)
+		return srv.(BrowserOnlyProxyServer).QueryAppInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.BrowserOnly/QueryAppInfo",
+		FullMethod: "/cloud.lazycat.apis.BrowserOnlyProxy/QueryAppInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BrowserOnlyServer).QueryAppInfo(ctx, req.(*emptypb.Empty))
+		return srv.(BrowserOnlyProxyServer).QueryAppInfo(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BrowserOnly_PairAllDevices_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _BrowserOnlyProxy_PairAllDevices_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(emptypb.Empty)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(BrowserOnlyServer).PairAllDevices(m, &browserOnlyPairAllDevicesServer{stream})
+	return srv.(BrowserOnlyProxyServer).PairAllDevices(m, &browserOnlyProxyPairAllDevicesServer{stream})
 }
 
-type BrowserOnly_PairAllDevicesServer interface {
+type BrowserOnlyProxy_PairAllDevicesServer interface {
 	Send(*emptypb.Empty) error
 	grpc.ServerStream
 }
 
-type browserOnlyPairAllDevicesServer struct {
+type browserOnlyProxyPairAllDevicesServer struct {
 	grpc.ServerStream
 }
 
-func (x *browserOnlyPairAllDevicesServer) Send(m *emptypb.Empty) error {
+func (x *browserOnlyProxyPairAllDevicesServer) Send(m *emptypb.Empty) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-// BrowserOnly_ServiceDesc is the grpc.ServiceDesc for BrowserOnly service.
+// BrowserOnlyProxy_ServiceDesc is the grpc.ServiceDesc for BrowserOnlyProxy service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var BrowserOnly_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cloud.lazycat.apis.BrowserOnly",
-	HandlerType: (*BrowserOnlyServer)(nil),
+var BrowserOnlyProxy_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "cloud.lazycat.apis.BrowserOnlyProxy",
+	HandlerType: (*BrowserOnlyProxyServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "QueryUserInfo",
-			Handler:    _BrowserOnly_QueryUserInfo_Handler,
+			Handler:    _BrowserOnlyProxy_QueryUserInfo_Handler,
 		},
 		{
 			MethodName: "QueryAppInfo",
-			Handler:    _BrowserOnly_QueryAppInfo_Handler,
+			Handler:    _BrowserOnlyProxy_QueryAppInfo_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "PairAllDevices",
-			Handler:       _BrowserOnly_PairAllDevices_Handler,
+			Handler:       _BrowserOnlyProxy_PairAllDevices_Handler,
 			ServerStreams: true,
 		},
 	},

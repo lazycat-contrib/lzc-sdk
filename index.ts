@@ -6,7 +6,7 @@ import { Observable, Subscriber } from "rxjs";
 
 import { DevicesClientImpl, Devices, Device } from "./devices/devices"
 import { UserManagerClientImpl, UserManager } from "./users/users"
-import { BrowserOnly, BrowserOnlyClientImpl, UserInfo, AppInfo } from "./browseronly/browseronly"
+import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, UserInfo, AppInfo } from "./browseronly/browseronly"
 import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./permissions/permissions"
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog/dialog"
@@ -28,14 +28,14 @@ export class lzcAPIGateway {
         this.devices = new DevicesClientImpl(rpc);
         this.users = new UserManagerClientImpl(rpc);
 
-        this.bo = new BrowserOnlyClientImpl(rpc);
+        this.bo = new BrowserOnlyProxyClientImpl(rpc);
         this.userinfo = this.bo.QueryUserInfo({})
         this.appinfo = this.bo.QueryAppInfo({})
 
 
         this.pm = new PermissionManagerClientImpl(rpc);
     }
-    private bo : BrowserOnly;
+    private bo : BrowserOnlyProxy;
     private pm : PermissionManager;
     public async openDevices() {
         return new Promise<void>((resolve, reject) => {
