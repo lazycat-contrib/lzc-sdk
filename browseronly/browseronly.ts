@@ -8,6 +8,11 @@ import { BrowserHeaders } from "browser-headers";
 import { share } from "rxjs/operators";
 import { Timestamp } from "../google/protobuf/timestamp";
 
+export interface APIServerInfo {
+  frontendVersion: string;
+  backendVersion: string;
+}
+
 export interface SessionInfo {
   uid: string;
   deviceId: string;
@@ -19,6 +24,75 @@ export interface AppInfo {
   appId: string;
   appDomain: string;
 }
+
+function createBaseAPIServerInfo(): APIServerInfo {
+  return { frontendVersion: "", backendVersion: "" };
+}
+
+export const APIServerInfo = {
+  encode(
+    message: APIServerInfo,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.frontendVersion !== "") {
+      writer.uint32(10).string(message.frontendVersion);
+    }
+    if (message.backendVersion !== "") {
+      writer.uint32(18).string(message.backendVersion);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): APIServerInfo {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseAPIServerInfo();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.frontendVersion = reader.string();
+          break;
+        case 2:
+          message.backendVersion = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): APIServerInfo {
+    return {
+      frontendVersion: isSet(object.frontendVersion)
+        ? String(object.frontendVersion)
+        : "",
+      backendVersion: isSet(object.backendVersion)
+        ? String(object.backendVersion)
+        : "",
+    };
+  },
+
+  toJSON(message: APIServerInfo): unknown {
+    const obj: any = {};
+    message.frontendVersion !== undefined &&
+      (obj.frontendVersion = message.frontendVersion);
+    message.backendVersion !== undefined &&
+      (obj.backendVersion = message.backendVersion);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<APIServerInfo>, I>>(
+    object: I
+  ): APIServerInfo {
+    const message = createBaseAPIServerInfo();
+    message.frontendVersion = object.frontendVersion ?? "";
+    message.backendVersion = object.backendVersion ?? "";
+    return message;
+  },
+};
 
 function createBaseSessionInfo(): SessionInfo {
   return { uid: "", deviceId: "", when: undefined };
@@ -184,6 +258,10 @@ export interface BrowserOnlyProxy {
     request: DeepPartial<Empty>,
     metadata?: grpc.Metadata
   ): Observable<Empty>;
+  QueryAPIServerInfo(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata
+  ): Promise<APIServerInfo>;
 }
 
 export class BrowserOnlyProxyClientImpl implements BrowserOnlyProxy {
@@ -194,6 +272,7 @@ export class BrowserOnlyProxyClientImpl implements BrowserOnlyProxy {
     this.QuerySessionInfo = this.QuerySessionInfo.bind(this);
     this.QueryAppInfo = this.QueryAppInfo.bind(this);
     this.PairAllDevices = this.PairAllDevices.bind(this);
+    this.QueryAPIServerInfo = this.QueryAPIServerInfo.bind(this);
   }
 
   QuerySessionInfo(
@@ -224,6 +303,17 @@ export class BrowserOnlyProxyClientImpl implements BrowserOnlyProxy {
   ): Observable<Empty> {
     return this.rpc.invoke(
       BrowserOnlyProxyPairAllDevicesDesc,
+      Empty.fromPartial(request),
+      metadata
+    );
+  }
+
+  QueryAPIServerInfo(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata
+  ): Promise<APIServerInfo> {
+    return this.rpc.unary(
+      BrowserOnlyProxyQueryAPIServerInfoDesc,
       Empty.fromPartial(request),
       metadata
     );
@@ -299,6 +389,29 @@ export const BrowserOnlyProxyPairAllDevicesDesc: UnaryMethodDefinitionish = {
     },
   } as any,
 };
+
+export const BrowserOnlyProxyQueryAPIServerInfoDesc: UnaryMethodDefinitionish =
+  {
+    methodName: "QueryAPIServerInfo",
+    service: BrowserOnlyProxyDesc,
+    requestStream: false,
+    responseStream: false,
+    requestType: {
+      serializeBinary() {
+        return Empty.encode(this).finish();
+      },
+    } as any,
+    responseType: {
+      deserializeBinary(data: Uint8Array) {
+        return {
+          ...APIServerInfo.decode(data),
+          toObject() {
+            return this;
+          },
+        };
+      },
+    } as any,
+  };
 
 interface UnaryMethodDefinitionishR
   extends grpc.UnaryMethodDefinition<any, any> {

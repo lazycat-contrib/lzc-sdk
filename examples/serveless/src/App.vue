@@ -20,10 +20,10 @@ export default {
     let cc = new lzcAPIGateway()
 
     window.cc = cc;
-    let ui = await cc.userinfo
-    console.log("当前信息:", ui)
+    let s = await cc.session
+    console.log("当前信息:", s)
 
-    this.devices = (await cc.devices.ListDevices({"uid": ui.uid})).devices
+    this.devices = (await cc.devices.ListDevices({"uid": s.uid})).devices
 
     // cc.devices.KeepConnect({
     //     devices: this.devices.map( (d)=>{ return d.peerId }),

@@ -17,6 +17,13 @@ service BrowserOnlyProxy {
 
   // 对devices.proto:_PairAllDeivces的自动封装
   rpc PairAllDevices(google.protobuf.Empty) returns (stream google.protobuf.Empty) {}
+
+  rpc QueryAPIServerInfo(google.protobuf.Empty) returns (APIServerInfo) {}
+}
+
+message APIServerInfo {
+  string frontend_version = 1;
+  string backend_version = 2;
 }
 
 message SessionInfo {

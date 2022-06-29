@@ -29,6 +29,7 @@ type BrowserOnlyProxyClient interface {
 	QueryAppInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AppInfo, error)
 	// 对devices.proto:_PairAllDeivces的自动封装
 	PairAllDevices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (BrowserOnlyProxy_PairAllDevicesClient, error)
+	QueryAPIServerInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*APIServerInfo, error)
 }
 
 type browserOnlyProxyClient struct {
@@ -89,6 +90,15 @@ func (x *browserOnlyProxyPairAllDevicesClient) Recv() (*emptypb.Empty, error) {
 	return m, nil
 }
 
+func (c *browserOnlyProxyClient) QueryAPIServerInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*APIServerInfo, error) {
+	out := new(APIServerInfo)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.BrowserOnlyProxy/QueryAPIServerInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BrowserOnlyProxyServer is the server API for BrowserOnlyProxy service.
 // All implementations must embed UnimplementedBrowserOnlyProxyServer
 // for forward compatibility
@@ -99,6 +109,7 @@ type BrowserOnlyProxyServer interface {
 	QueryAppInfo(context.Context, *emptypb.Empty) (*AppInfo, error)
 	// 对devices.proto:_PairAllDeivces的自动封装
 	PairAllDevices(*emptypb.Empty, BrowserOnlyProxy_PairAllDevicesServer) error
+	QueryAPIServerInfo(context.Context, *emptypb.Empty) (*APIServerInfo, error)
 	mustEmbedUnimplementedBrowserOnlyProxyServer()
 }
 
@@ -114,6 +125,9 @@ func (UnimplementedBrowserOnlyProxyServer) QueryAppInfo(context.Context, *emptyp
 }
 func (UnimplementedBrowserOnlyProxyServer) PairAllDevices(*emptypb.Empty, BrowserOnlyProxy_PairAllDevicesServer) error {
 	return status.Errorf(codes.Unimplemented, "method PairAllDevices not implemented")
+}
+func (UnimplementedBrowserOnlyProxyServer) QueryAPIServerInfo(context.Context, *emptypb.Empty) (*APIServerInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryAPIServerInfo not implemented")
 }
 func (UnimplementedBrowserOnlyProxyServer) mustEmbedUnimplementedBrowserOnlyProxyServer() {}
 
@@ -185,6 +199,24 @@ func (x *browserOnlyProxyPairAllDevicesServer) Send(m *emptypb.Empty) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _BrowserOnlyProxy_QueryAPIServerInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BrowserOnlyProxyServer).QueryAPIServerInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.BrowserOnlyProxy/QueryAPIServerInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BrowserOnlyProxyServer).QueryAPIServerInfo(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BrowserOnlyProxy_ServiceDesc is the grpc.ServiceDesc for BrowserOnlyProxy service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -199,6 +231,10 @@ var BrowserOnlyProxy_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QueryAppInfo",
 			Handler:    _BrowserOnlyProxy_QueryAppInfo_Handler,
+		},
+		{
+			MethodName: "QueryAPIServerInfo",
+			Handler:    _BrowserOnlyProxy_QueryAPIServerInfo_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
