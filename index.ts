@@ -24,6 +24,7 @@ const opt = {
 
 export class lzcAPIGateway {
     constructor(host: string = window.origin) {
+        host = host.replace(/\/+$/, '')
         const rpc = new GrpcWebImpl(host, opt)
         this.devices = new DevicesClientImpl(rpc);
         this.users = new UserManagerClientImpl(rpc);
