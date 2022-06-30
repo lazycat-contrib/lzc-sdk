@@ -23,6 +23,17 @@ const opt = {
     // streamingTransport: grpc.WebsocketTransport(),
 }
 
+
+
+async function buildCurrentDevice(cc: lzcAPIGateway) : Promise<DeviceProxy>{
+    let s = await cc.session
+    let uid = s.uid
+    let ds = await cc.devices.ListDevices({uid})
+    let d = ds.devices.find((d) => d.peerId == s.deviceId)
+    return new DeviceProxy(d.deviceApiUrl)
+}
+
+
 export class lzcAPIGateway {
     constructor(host: string = window.origin) {
         host = host.replace(/\/+$/, '')
@@ -35,6 +46,8 @@ export class lzcAPIGateway {
         this.appinfo = this.bo.QueryAppInfo({})
 
         this.pm = new PermissionManagerClientImpl(rpc);
+
+        this.currentDevice = buildCurrentDevice(this)
     }
     private bo : BrowserOnlyProxy;
     private pm : PermissionManager;
@@ -55,6 +68,8 @@ export class lzcAPIGateway {
      * @deprecated 请使用lzcAPIGateway.session查询此信息
      */
     public userinfo: Promise<SessionInfo>;
+
+    public currentDevice: Promise<DeviceProxy>;
 
     public appinfo: Promise<AppInfo>;
     public devices: Devices;
