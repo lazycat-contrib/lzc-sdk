@@ -20,3 +20,8 @@ protoc -I . \
        */*.proto localdevice/*/*.proto
 
 jar -c -f cloud.lazycat.apis.jar -C ./.cache/java/ .
+
+
+pushd gohelper/
+go build
+popd

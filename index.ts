@@ -12,6 +12,7 @@ import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, Permiss
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog/dialog"
 import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clipboard/clipboard"
 import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo/photo"
+import { NetworkManagerClientImpl, NetworkManager } from "./localdevice/network/network"
 
 import { grpc } from "@improbable-eng/grpc-web";
 
@@ -71,9 +72,11 @@ export class DeviceProxy {
         this.dialog = new DialogManagerClientImpl(rpc)
         this.clipboard = new ClipboardManagerClientImpl(rpc)
         this.photolibrary = new PhotoLibraryClientImpl(rpc)
+        this.network = new NetworkManagerClientImpl(rpc)
     }
 
     public dialog : DialogManager;
     public clipboard: ClipboardManager;
     public photolibrary: PhotoLibrary;
+    public network: NetworkManager;
 }

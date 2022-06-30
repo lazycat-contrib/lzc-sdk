@@ -6,6 +6,7 @@ import (
 	"gitee.com/linakesi/lzc-apis-protos/devices"
 	"gitee.com/linakesi/lzc-apis-protos/localdevice/clipboard"
 	"gitee.com/linakesi/lzc-apis-protos/localdevice/dialog"
+	"gitee.com/linakesi/lzc-apis-protos/localdevice/network"
 	"gitee.com/linakesi/lzc-apis-protos/localdevice/photo"
 	"gitee.com/linakesi/lzc-apis-protos/permissions"
 	"gitee.com/linakesi/lzc-apis-protos/users"
@@ -27,6 +28,7 @@ type DeviceProxy struct {
 	Clipboard    clipboard.ClipboardManagerClient
 	Dialog       dialog.DialogManagerClient
 	PhotoLibrary photo.PhotoLibraryClient
+	Network      network.NetworkManagerClient
 }
 
 func (d *DeviceProxy) Close() error { return d.conn.Close() }
@@ -45,6 +47,7 @@ func (gw *APIGateway) NewDeviceProxy(deviceapiurl string) (*DeviceProxy, error) 
 		Clipboard:    clipboard.NewClipboardManagerClient(conn),
 		Dialog:       dialog.NewDialogManagerClient(conn),
 		PhotoLibrary: photo.NewPhotoLibraryClient(conn),
+		Network:      network.NewNetworkManagerClient(conn),
 	}, nil
 }
 
