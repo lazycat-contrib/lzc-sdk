@@ -17,6 +17,12 @@ export interface Device {
   isOnline: boolean;
   /** 因为device api的监听端口可能会变化，所以此url有效性不会太长 */
   deviceApiUrl: string;
+  /**
+   * 由盒子维护的设备唯一ID，此ID是
+   * 根据客户端的多个特征推理出来的稳定ID
+   * 应用程序可以假设此ID是稳定不变的(实际依旧有可能变化)
+   */
+  uniqueDeivceId: string;
 }
 
 export interface ListDeviceRequest {
@@ -82,7 +88,7 @@ export const PairDeviceRequest = {
 };
 
 function createBaseDevice(): Device {
-  return { peerId: "", isOnline: false, deviceApiUrl: "" };
+  return { peerId: "", isOnline: false, deviceApiUrl: "", uniqueDeivceId: "" };
 }
 
 export const Device = {
@@ -98,6 +104,9 @@ export const Device = {
     }
     if (message.deviceApiUrl !== "") {
       writer.uint32(26).string(message.deviceApiUrl);
+    }
+    if (message.uniqueDeivceId !== "") {
+      writer.uint32(34).string(message.uniqueDeivceId);
     }
     return writer;
   },
@@ -118,6 +127,9 @@ export const Device = {
         case 3:
           message.deviceApiUrl = reader.string();
           break;
+        case 4:
+          message.uniqueDeivceId = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -133,6 +145,9 @@ export const Device = {
       deviceApiUrl: isSet(object.deviceApiUrl)
         ? String(object.deviceApiUrl)
         : "",
+      uniqueDeivceId: isSet(object.uniqueDeivceId)
+        ? String(object.uniqueDeivceId)
+        : "",
     };
   },
 
@@ -142,6 +157,8 @@ export const Device = {
     message.isOnline !== undefined && (obj.isOnline = message.isOnline);
     message.deviceApiUrl !== undefined &&
       (obj.deviceApiUrl = message.deviceApiUrl);
+    message.uniqueDeivceId !== undefined &&
+      (obj.uniqueDeivceId = message.uniqueDeivceId);
     return obj;
   },
 
@@ -150,6 +167,7 @@ export const Device = {
     message.peerId = object.peerId ?? "";
     message.isOnline = object.isOnline ?? false;
     message.deviceApiUrl = object.deviceApiUrl ?? "";
+    message.uniqueDeivceId = object.uniqueDeivceId ?? "";
     return message;
   },
 };
