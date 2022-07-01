@@ -11,7 +11,9 @@ protoc -I . \
        --plugin=/usr/bin/protoc-gen-grpc-java \
        --java_out=./.cache/java \
        --grpc-java_out=./.cache/java \
-       */*.proto localdevice/*/*.proto
+       sys/*/*.proto \
+       localdevice/*/*.proto \
+       */*.proto
 
 # jar -c -f cloud.lazycat.apis.jar -C ./.cache/java/ .
 # pushd gohelper/
