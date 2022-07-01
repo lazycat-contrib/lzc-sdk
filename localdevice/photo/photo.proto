@@ -4,7 +4,6 @@ package cloud.lazycat.localdevice.apis;
 
 option go_package = "/photo";
 
-import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 service PhotoLibrary {
@@ -12,12 +11,23 @@ service PhotoLibrary {
   rpc ListAlbums(ListAlbumsRequest) returns (ListAlbumsReply) {}
 
   // 存储一张图片到某个相册中
-  rpc PutPhoto(PutPhotoRequest) returns (google.protobuf.Empty) {}
+  rpc PutPhoto(PutPhotoRequest) returns (PutPhotoReply) {}
 
-  rpc DeletePhoto(DeletePhotoRequest) returns (google.protobuf.Empty) {}
+  rpc DeletePhoto(DeletePhotoRequest) returns (DeletePhotoReply) {}
 
   // 枚举具体相册中的图片元信息
   rpc ListPhotoMetas(ListPhotoMetasRequest) returns (stream PhotoMeta) {}
+}
+
+
+message PutPhotoReply {
+  // 新添加图片的id
+  string id = 1;
+}
+
+message DeletePhotoReply {
+  // 删除失败的图片id
+  repeated string failed_id = 1;
 }
 
 message DeletePhotoRequest {

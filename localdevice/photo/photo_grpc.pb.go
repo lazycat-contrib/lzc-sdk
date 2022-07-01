@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -26,7 +25,8 @@ type PhotoLibraryClient interface {
 	// 列举所有的系统相册
 	ListAlbums(ctx context.Context, in *ListAlbumsRequest, opts ...grpc.CallOption) (*ListAlbumsReply, error)
 	// 存储一张图片到某个相册中
-	PutPhoto(ctx context.Context, in *PutPhotoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	PutPhoto(ctx context.Context, in *PutPhotoRequest, opts ...grpc.CallOption) (*PutPhotoReply, error)
+	DeletePhoto(ctx context.Context, in *DeletePhotoRequest, opts ...grpc.CallOption) (*DeletePhotoReply, error)
 	// 枚举具体相册中的图片元信息
 	ListPhotoMetas(ctx context.Context, in *ListPhotoMetasRequest, opts ...grpc.CallOption) (PhotoLibrary_ListPhotoMetasClient, error)
 }
@@ -48,9 +48,18 @@ func (c *photoLibraryClient) ListAlbums(ctx context.Context, in *ListAlbumsReque
 	return out, nil
 }
 
-func (c *photoLibraryClient) PutPhoto(ctx context.Context, in *PutPhotoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *photoLibraryClient) PutPhoto(ctx context.Context, in *PutPhotoRequest, opts ...grpc.CallOption) (*PutPhotoReply, error) {
+	out := new(PutPhotoReply)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.localdevice.apis.PhotoLibrary/PutPhoto", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *photoLibraryClient) DeletePhoto(ctx context.Context, in *DeletePhotoRequest, opts ...grpc.CallOption) (*DeletePhotoReply, error) {
+	out := new(DeletePhotoReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.localdevice.apis.PhotoLibrary/DeletePhoto", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +105,8 @@ type PhotoLibraryServer interface {
 	// 列举所有的系统相册
 	ListAlbums(context.Context, *ListAlbumsRequest) (*ListAlbumsReply, error)
 	// 存储一张图片到某个相册中
-	PutPhoto(context.Context, *PutPhotoRequest) (*emptypb.Empty, error)
+	PutPhoto(context.Context, *PutPhotoRequest) (*PutPhotoReply, error)
+	DeletePhoto(context.Context, *DeletePhotoRequest) (*DeletePhotoReply, error)
 	// 枚举具体相册中的图片元信息
 	ListPhotoMetas(*ListPhotoMetasRequest, PhotoLibrary_ListPhotoMetasServer) error
 	mustEmbedUnimplementedPhotoLibraryServer()
@@ -109,8 +119,11 @@ type UnimplementedPhotoLibraryServer struct {
 func (UnimplementedPhotoLibraryServer) ListAlbums(context.Context, *ListAlbumsRequest) (*ListAlbumsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListAlbums not implemented")
 }
-func (UnimplementedPhotoLibraryServer) PutPhoto(context.Context, *PutPhotoRequest) (*emptypb.Empty, error) {
+func (UnimplementedPhotoLibraryServer) PutPhoto(context.Context, *PutPhotoRequest) (*PutPhotoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PutPhoto not implemented")
+}
+func (UnimplementedPhotoLibraryServer) DeletePhoto(context.Context, *DeletePhotoRequest) (*DeletePhotoReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePhoto not implemented")
 }
 func (UnimplementedPhotoLibraryServer) ListPhotoMetas(*ListPhotoMetasRequest, PhotoLibrary_ListPhotoMetasServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListPhotoMetas not implemented")
@@ -164,6 +177,24 @@ func _PhotoLibrary_PutPhoto_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PhotoLibrary_DeletePhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePhotoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PhotoLibraryServer).DeletePhoto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.localdevice.apis.PhotoLibrary/DeletePhoto",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PhotoLibraryServer).DeletePhoto(ctx, req.(*DeletePhotoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PhotoLibrary_ListPhotoMetas_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(ListPhotoMetasRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -199,6 +230,10 @@ var PhotoLibrary_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PutPhoto",
 			Handler:    _PhotoLibrary_PutPhoto_Handler,
+		},
+		{
+			MethodName: "DeletePhoto",
+			Handler:    _PhotoLibrary_DeletePhoto_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

@@ -3,10 +3,23 @@ import Long from "long";
 import { grpc } from "@improbable-eng/grpc-web";
 import * as _m0 from "protobufjs/minimal";
 import { Observable } from "rxjs";
-import { Empty } from "../../google/protobuf/empty";
 import { BrowserHeaders } from "browser-headers";
 import { share } from "rxjs/operators";
 import { Timestamp } from "../../google/protobuf/timestamp";
+
+export interface PutPhotoReply {
+  /** 新添加图片的id */
+  id: string;
+}
+
+export interface DeletePhotoReply {
+  /** 删除失败的图片id */
+  failedId: string[];
+}
+
+export interface DeletePhotoRequest {
+  id: string[];
+}
 
 export interface ListPhotoMetasRequest {
   /** 相册ID, 若为空，则表示返回所有相册中的图片 */
@@ -48,6 +61,178 @@ export interface PutPhotoRequest {
   url: string;
   fileName?: string | undefined;
 }
+
+function createBasePutPhotoReply(): PutPhotoReply {
+  return { id: "" };
+}
+
+export const PutPhotoReply = {
+  encode(
+    message: PutPhotoReply,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PutPhotoReply {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePutPhotoReply();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PutPhotoReply {
+    return {
+      id: isSet(object.id) ? String(object.id) : "",
+    };
+  },
+
+  toJSON(message: PutPhotoReply): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<PutPhotoReply>, I>>(
+    object: I
+  ): PutPhotoReply {
+    const message = createBasePutPhotoReply();
+    message.id = object.id ?? "";
+    return message;
+  },
+};
+
+function createBaseDeletePhotoReply(): DeletePhotoReply {
+  return { failedId: [] };
+}
+
+export const DeletePhotoReply = {
+  encode(
+    message: DeletePhotoReply,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    for (const v of message.failedId) {
+      writer.uint32(10).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DeletePhotoReply {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDeletePhotoReply();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.failedId.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DeletePhotoReply {
+    return {
+      failedId: Array.isArray(object?.failedId)
+        ? object.failedId.map((e: any) => String(e))
+        : [],
+    };
+  },
+
+  toJSON(message: DeletePhotoReply): unknown {
+    const obj: any = {};
+    if (message.failedId) {
+      obj.failedId = message.failedId.map((e) => e);
+    } else {
+      obj.failedId = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<DeletePhotoReply>, I>>(
+    object: I
+  ): DeletePhotoReply {
+    const message = createBaseDeletePhotoReply();
+    message.failedId = object.failedId?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseDeletePhotoRequest(): DeletePhotoRequest {
+  return { id: [] };
+}
+
+export const DeletePhotoRequest = {
+  encode(
+    message: DeletePhotoRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    for (const v of message.id) {
+      writer.uint32(10).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DeletePhotoRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDeletePhotoRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DeletePhotoRequest {
+    return {
+      id: Array.isArray(object?.id) ? object.id.map((e: any) => String(e)) : [],
+    };
+  },
+
+  toJSON(message: DeletePhotoRequest): unknown {
+    const obj: any = {};
+    if (message.id) {
+      obj.id = message.id.map((e) => e);
+    } else {
+      obj.id = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<DeletePhotoRequest>, I>>(
+    object: I
+  ): DeletePhotoRequest {
+    const message = createBaseDeletePhotoRequest();
+    message.id = object.id?.map((e) => e) || [];
+    return message;
+  },
+};
 
 function createBaseListPhotoMetasRequest(): ListPhotoMetasRequest {
   return {
@@ -573,7 +758,11 @@ export interface PhotoLibrary {
   PutPhoto(
     request: DeepPartial<PutPhotoRequest>,
     metadata?: grpc.Metadata
-  ): Promise<Empty>;
+  ): Promise<PutPhotoReply>;
+  DeletePhoto(
+    request: DeepPartial<DeletePhotoRequest>,
+    metadata?: grpc.Metadata
+  ): Promise<DeletePhotoReply>;
   /** 枚举具体相册中的图片元信息 */
   ListPhotoMetas(
     request: DeepPartial<ListPhotoMetasRequest>,
@@ -588,6 +777,7 @@ export class PhotoLibraryClientImpl implements PhotoLibrary {
     this.rpc = rpc;
     this.ListAlbums = this.ListAlbums.bind(this);
     this.PutPhoto = this.PutPhoto.bind(this);
+    this.DeletePhoto = this.DeletePhoto.bind(this);
     this.ListPhotoMetas = this.ListPhotoMetas.bind(this);
   }
 
@@ -605,10 +795,21 @@ export class PhotoLibraryClientImpl implements PhotoLibrary {
   PutPhoto(
     request: DeepPartial<PutPhotoRequest>,
     metadata?: grpc.Metadata
-  ): Promise<Empty> {
+  ): Promise<PutPhotoReply> {
     return this.rpc.unary(
       PhotoLibraryPutPhotoDesc,
       PutPhotoRequest.fromPartial(request),
+      metadata
+    );
+  }
+
+  DeletePhoto(
+    request: DeepPartial<DeletePhotoRequest>,
+    metadata?: grpc.Metadata
+  ): Promise<DeletePhotoReply> {
+    return this.rpc.unary(
+      PhotoLibraryDeletePhotoDesc,
+      DeletePhotoRequest.fromPartial(request),
       metadata
     );
   }
@@ -664,7 +865,29 @@ export const PhotoLibraryPutPhotoDesc: UnaryMethodDefinitionish = {
   responseType: {
     deserializeBinary(data: Uint8Array) {
       return {
-        ...Empty.decode(data),
+        ...PutPhotoReply.decode(data),
+        toObject() {
+          return this;
+        },
+      };
+    },
+  } as any,
+};
+
+export const PhotoLibraryDeletePhotoDesc: UnaryMethodDefinitionish = {
+  methodName: "DeletePhoto",
+  service: PhotoLibraryDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return DeletePhotoRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      return {
+        ...DeletePhotoReply.decode(data),
         toObject() {
           return this;
         },
