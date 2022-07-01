@@ -14,8 +14,14 @@ service PhotoLibrary {
   // 存储一张图片到某个相册中
   rpc PutPhoto(PutPhotoRequest) returns (google.protobuf.Empty) {}
 
+  rpc DeletePhoto(DeletePhotoRequest) returns (google.protobuf.Empty) {}
+
   // 枚举具体相册中的图片元信息
   rpc ListPhotoMetas(ListPhotoMetasRequest) returns (stream PhotoMeta) {}
+}
+
+message DeletePhotoRequest {
+  repeated string id = 1;
 }
 
 message ListPhotoMetasRequest {
