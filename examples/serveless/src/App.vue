@@ -36,7 +36,7 @@ export default {
       let dp = new DeviceProxy(d.deviceApiUrl)
       let pid = d.peerId
 
-      if (ui.deviceId == pid) {
+      if (s.deviceId == pid) {
         //当前设备
         window.dp = dp
       }
