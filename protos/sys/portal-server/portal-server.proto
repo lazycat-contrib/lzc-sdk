@@ -1,0 +1,178 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.sys;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "/portal-server";
+
+service HPortalSys {
+  // 用auth-token反向查询登陆的设备以及UID
+  rpc QueryLogin(AuthToken) returns (LoginInfo) {}
+
+  // 根据UID返回所有的设备列表
+  rpc ListDevices(ListDeviceRequest) returns (ListDeviceReply) {}
+  rpc QueryDeviceByID(PeerID) returns (Device) {}
+
+  rpc QueryBoxInfo(google.protobuf.Empty) returns (BoxInfo) {}
+
+
+  // 获取盒子所属域名下或下一级域名的https证书。
+  // 注意不是所有ACME服务器都支持泛域名。
+  rpc GetDomainCert(DomainCertRequest) returns (DomainCertReply) {}
+
+
+  // 在部署具体app前，调用此接口获取app证书
+  // APP证书格式为:
+  //   Issuer: O = $BOX.ORIGIN, CN = $BOX.DOMAIN, serialNumber = $BOX.ID
+  //   Subject: O = $BOX.ORIGIN, CN = $APP.DOMAIN, serialNumber = '$UID@$APP.ID || $APP.ID'
+  // Issuer为box.crt，通过QueryBoxInfo查询到BoxInfo.BoxCrt。并且box.crt的公钥与box.id是一一对应关系。
+  //
+  // 盒子内部组件可以直接通过QueryBoxInfo来验证信任链是否合法，盒子外部系统需要通过其他机制比如libp2p.identify去验证box.crt的合法性。
+  //
+  rpc GetAppCert(AppCertRequest) returns (AppCertReply) {}
+
+
+  // 申请额外的外部可访问的IP,并配置对应访问域名
+  rpc AllocVirtualExternalIP(AllocVEIPRequest) returns (AllocVEIPReply) {}
+  // 释放虚拟IP
+  rpc FreeVirtualExternalIP(FreeVEIPRequest)  returns (FreeVEIPReply) {}
+
+  rpc PairDevices(PairDevicesRequest) returns (stream google.protobuf.Empty) {}
+
+  rpc ListUsers(google.protobuf.Empty) returns (ListUsersReply) {}
+}
+
+message ListUsersReply {
+  repeated string uids = 1;
+}
+
+message PairDevicesRequest {
+  string src_id = 1;
+  repeated string other_ids = 2;
+}
+
+message AllocVEIPRequest {
+  // 简短说明使用原因，方便后续管理
+  string usage = 1;
+
+  // 关联的子域名。hserver会自动将$subdomain.$boxdomain的AAAA/A记录关联到对应的IP上
+  // 1. 外部系统需要自行确保subdomain不会冲突
+  string subdomain = 2;
+}
+message AllocVEIPReply {
+  string ip = 1;
+}
+
+message FreeVEIPRequest {
+  string ip = 1;
+
+  // 释放VEIP时为了避免DNS cache的问题，会在删除对应DNS record后等待一定时间后再真实的释放对应VEIP
+  // 不指定则默认为10分钟
+  int32 wait_second = 2;
+}
+message FreeVEIPReply {
+}
+
+message AppCertRequest {
+  string appid = 1;
+
+  // 单实例则为空，多实例为APP所部署时的UID
+  string uid = 2;
+
+  // 证书有效时间，单位s
+  int32 valid_seconds = 3;
+}
+
+message AppCertReply {
+  // PEM格式的证书
+  string cert = 1;
+
+  // PEM格式的私钥
+  string private_key = 2;
+}
+
+
+message AuthToken {
+  // 登陆时服务器返回的token
+  string token = 1;
+
+  // 若设置了此地址，则在未检测到auth-token时，
+  // 可以使用返回信息中的autologin_token_request_url进行自动查找auth-token
+  // 此地址一般时ingress等组件上提供的服务。
+  // 会通过html post form形式调用，附带token和redirect两个字段
+  // token为自动搜索到的token，redirect为AuthToken.autologin_redirect_url的值。
+  // 若token为空表示自动搜索token失败。
+  string autologin_token_post_url = 2;
+
+  string access_ip = 3;
+
+  string autologin_redirect_url = 4;
+}
+
+message LoginInfo {
+  string uid = 1;
+
+  string device_id = 2;
+
+  google.protobuf.Timestamp when = 3;
+
+  // 若uid为空, ingress应该返回此html内容给浏览器进行自动登陆。
+  // 此html片段会尝试与hclient通讯获取auth-token后post到AuthToken.autologin_token_post_url上
+  string autologin_token_request_content = 4;
+}
+
+
+message PeerID {
+  string id = 1;
+}
+
+message BoxInfo {
+  // 中心化服务器地址, 默认为origin.lazycat.cloud
+  string origin_server = 1;
+
+  // fc03:1136:38/40地址
+  string virtual_ip = 2;
+
+  // p2p节点id
+  string box_id = 3;
+
+  // 注册到origin-server内的名称
+  string box_name = 4;
+
+  // 从origin-server获取到的域名
+  string box_domain = 5;
+
+  // 证书管理器已经就续
+  bool cert_ready = 6;
+
+
+  // PEM格式的盒子证书, 作为盒子系统其他app cert的CA证书。
+  string box_cert = 7;
+}
+
+message DomainCertRequest {
+  string domain = 1;
+}
+message DomainCertReply {
+  string cert = 1;
+  string key = 2;
+}
+
+
+message Device {
+  string peer_id = 1;
+  bool is_online = 2;
+
+  // 因为device api的监听端口可能会变化，所以此url有效性不会太长
+  string device_api_url = 3;
+}
+
+message ListDeviceRequest {
+  string uid = 1;
+}
+
+message ListDeviceReply {
+  repeated Device devices = 1;
+}

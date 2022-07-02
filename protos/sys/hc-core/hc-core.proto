@@ -1,0 +1,127 @@
+syntax = "proto3";
+package cloud.lazycat.apis.sys;
+import "google/protobuf/empty.proto";
+option go_package = "/hc-core";
+
+service CoreSystem {
+  /*
+    应用管理
+  */
+  // List 列出所有已安装的应用
+  rpc List(ListOptRequest) returns (AppIdList) {}
+
+  // Apply 安装或更新一个 app
+  rpc Apply(RawData) returns (google.protobuf.Empty) {}
+
+  // Remove 移除一个 app
+  rpc Remove(DeleteRequest) returns (google.protobuf.Empty) {}
+
+  // Disable 禁用一个 app
+  rpc Disable(QueryRequest) returns (google.protobuf.Empty) {}
+
+  // Enable 启用一个 app
+  rpc Enable(QueryRequest) returns (google.protobuf.Empty) {}
+
+  // Query 查询 app 的元信息
+  rpc Query(QueryRequest) returns (AppMetadataArray) {}
+
+
+  /*
+    状态管理
+  */
+  // 查询所有 app 的所有实例状态
+  rpc Status(google.protobuf.Empty) returns (AppsStatus) {}
+
+  // 查询 app 的所有实例状态
+  rpc AppStatus(AppId) returns (InstancesStatus) {}
+
+  // 查询实例状态
+  rpc InstanceStatus(InstanceInfo) returns (StatusInfo) {}
+
+  // 添加一个实例
+  rpc InstanceAdd(InstanceInfo) returns (google.protobuf.Empty) {}
+
+  // 删除一个实例
+  rpc InstanceRemove(InstanceInfo) returns (google.protobuf.Empty) {}
+
+  // 暂停一个实例
+  rpc InstancePause(InstanceInfo) returns (google.protobuf.Empty) {}
+
+  // 继续一个实例
+  rpc InstanceResume(InstanceInfo) returns (google.protobuf.Empty) {}
+}
+
+enum ListOptType {
+  ALL = 0;  // 列出所有
+  SYS = 1;  // 仅列出系统应用
+  APP = 2;  // 仅列出用户应用
+}
+
+message ListOptRequest {
+  ListOptType opt = 1;
+}
+
+message AppId {
+  string AppId = 1;
+}
+
+message InstanceInfo {
+  string AppId = 1;
+  string UserId = 2;
+}
+
+message DeleteRequest {
+  string AppId = 1;
+  bool DeleteAllData = 2;
+}
+
+message AppIdList {
+  repeated string appIdList = 1;
+}
+
+message QueryRequest {
+  repeated string appIdList = 1;
+  ListOptType opt = 2;
+}
+
+message AppMetadata {
+  string id = 1;
+  bool system = 2;
+  bool userApp = 3;
+  string version = 4;
+}
+
+message AppMetadataArray {
+  repeated AppMetadata metadata = 1;
+}
+
+message StatusInfo {
+  enum StatusType {
+    STOPPED = 0;
+    STOPPING = 1;
+    BUILDING = 2;
+    DOWNLOADING = 3;
+    HOOKING = 4;
+    STARTING = 5;
+    RUNNING = 6;
+    INSUFFICIENT = 7;
+    PAUSED = 8;
+    DEAD = 9;
+    ERROR = 10;
+    DISABLED = 11;
+  }
+  StatusType status = 1;
+  string errMsg = 2;
+}
+
+message InstancesStatus {
+  map<string, StatusInfo> instancesStatus = 1;
+}
+
+message AppsStatus {
+  map<string, InstancesStatus> appsStatus = 1;
+}
+
+message RawData {
+  bytes data = 1;
+}

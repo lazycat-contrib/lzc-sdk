@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.localdevice;
+
+option go_package = "/clipboard";
+
+// 当前只支持mime为text类型的剪贴板
+
+service ClipboardManager {
+  rpc Read(ReadClipRequest) returns (ReadClipReply) {}
+  rpc Write(WriteClipRequest) returns (WriteClipReply) {}
+  rpc Watch(ReadClipRequest) returns (stream ReadClipReply) {}
+}
+
+message ReadClipRequest {
+  string mime = 1; //目前只支持text/plain和image/png
+}
+message ReadClipReply {
+  bytes content = 1;
+}
+
+message WriteClipRequest {
+  string mimie = 1;
+  bytes content = 2;
+}
+message WriteClipReply {
+}

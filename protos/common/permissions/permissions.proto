@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.common;
+
+option go_package = "/permissions";
+
+// this service is provied by frontend server, backend code shouldn't use it.
+service PermissionManager {
+  rpc RequestPermission(PermissionDesc) returns (PermissionToken) {}
+}
+
+message PermissionDesc {
+  string target_id = 1; // default to current box.
+  string user_id = 2; // should empty or equal userinfo.uid when request from browser
+  string service_name = 3; // cloud.lazycat.apis.XX || cloud.lazycat.devices.apis.YY
+  string method_name = 4;  // *
+}
+
+enum TokenType {
+  HttpCookie = 0;
+  HttpHeader = 1;
+}
+message PermissionToken {
+  TokenType key_type = 1;
+  string key_name = 2;
+  string key_value = 3;
+}

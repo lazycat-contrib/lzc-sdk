@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.localdevice;
+
+option go_package = "/photo";
+
+import "google/protobuf/timestamp.proto";
+
+service PhotoLibrary {
+  // 列举所有的系统相册
+  rpc ListAlbums(ListAlbumsRequest) returns (ListAlbumsReply) {}
+
+  // 存储一张图片到某个相册中
+  rpc PutPhoto(PutPhotoRequest) returns (PutPhotoReply) {}
+
+  rpc DeletePhoto(DeletePhotoRequest) returns (DeletePhotoReply) {}
+
+  // 枚举具体相册中的图片元信息
+  rpc ListPhotoMetas(ListPhotoMetasRequest) returns (stream PhotoMeta) {}
+}
+
+
+message PutPhotoReply {
+  // 新添加图片的id
+  string id = 1;
+}
+
+message DeletePhotoReply {
+  // 删除失败的图片id
+  repeated string failed_id = 1;
+}
+
+message DeletePhotoRequest {
+  repeated string id = 1;
+}
+
+message ListPhotoMetasRequest {
+  // 相册ID, 若为空，则表示返回所有相册中的图片
+  repeated string album_ids = 1;
+
+  int32 thumbnail_width = 2;
+  int32 thumbnail_height = 3;
+
+  bool need_file_name = 4;
+  bool need_album_ids = 5;
+}
+
+message PhotoMeta {
+  string id = 1;
+  string photo_url = 2; //浏览器直接可以使用的url, 可能是device domain下的一个文件或是一个data url
+  string thumbnail_url = 3;
+  string width = 4;
+  string height = 5;
+  repeated string album_ids = 6;
+
+
+  optional string file_name = 7;
+  optional google.protobuf.Timestamp creation_date = 8;
+  optional float latitude = 9;
+  optional float longitude = 10;
+}
+
+message Album {
+  string id = 1;
+  string title = 2;
+}
+
+message ListAlbumsRequest {
+}
+message ListAlbumsReply {
+  repeated Album albums = 1;
+}
+
+message PutPhotoRequest {
+  string album_id = 1;
+
+  // 图片路径, 支持dataurl
+  string url = 2;
+
+  optional string file_name = 3;
+}
