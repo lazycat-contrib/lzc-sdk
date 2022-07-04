@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type APIGatewayClient interface {
 	QueryGatewayInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GatewayInfo, error)
-	RegisterGRPCService(ctx context.Context, in *GRPCServiceInfo, opts ...grpc.CallOption) (*RegisterReply, error)
+	RegisterService(ctx context.Context, in *ServiceInfo, opts ...grpc.CallOption) (*RegisterReply, error)
 }
 
 type aPIGatewayClient struct {
@@ -44,9 +44,9 @@ func (c *aPIGatewayClient) QueryGatewayInfo(ctx context.Context, in *emptypb.Emp
 	return out, nil
 }
 
-func (c *aPIGatewayClient) RegisterGRPCService(ctx context.Context, in *GRPCServiceInfo, opts ...grpc.CallOption) (*RegisterReply, error) {
+func (c *aPIGatewayClient) RegisterService(ctx context.Context, in *ServiceInfo, opts ...grpc.CallOption) (*RegisterReply, error) {
 	out := new(RegisterReply)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.APIGateway/RegisterGRPCService", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.APIGateway/RegisterService", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (c *aPIGatewayClient) RegisterGRPCService(ctx context.Context, in *GRPCServ
 // for forward compatibility
 type APIGatewayServer interface {
 	QueryGatewayInfo(context.Context, *emptypb.Empty) (*GatewayInfo, error)
-	RegisterGRPCService(context.Context, *GRPCServiceInfo) (*RegisterReply, error)
+	RegisterService(context.Context, *ServiceInfo) (*RegisterReply, error)
 	mustEmbedUnimplementedAPIGatewayServer()
 }
 
@@ -69,8 +69,8 @@ type UnimplementedAPIGatewayServer struct {
 func (UnimplementedAPIGatewayServer) QueryGatewayInfo(context.Context, *emptypb.Empty) (*GatewayInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryGatewayInfo not implemented")
 }
-func (UnimplementedAPIGatewayServer) RegisterGRPCService(context.Context, *GRPCServiceInfo) (*RegisterReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RegisterGRPCService not implemented")
+func (UnimplementedAPIGatewayServer) RegisterService(context.Context, *ServiceInfo) (*RegisterReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterService not implemented")
 }
 func (UnimplementedAPIGatewayServer) mustEmbedUnimplementedAPIGatewayServer() {}
 
@@ -103,20 +103,20 @@ func _APIGateway_QueryGatewayInfo_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _APIGateway_RegisterGRPCService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GRPCServiceInfo)
+func _APIGateway_RegisterService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ServiceInfo)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(APIGatewayServer).RegisterGRPCService(ctx, in)
+		return srv.(APIGatewayServer).RegisterService(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.APIGateway/RegisterGRPCService",
+		FullMethod: "/cloud.lazycat.apis.common.APIGateway/RegisterService",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(APIGatewayServer).RegisterGRPCService(ctx, req.(*GRPCServiceInfo))
+		return srv.(APIGatewayServer).RegisterService(ctx, req.(*ServiceInfo))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -133,8 +133,8 @@ var APIGateway_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _APIGateway_QueryGatewayInfo_Handler,
 		},
 		{
-			MethodName: "RegisterGRPCService",
-			Handler:    _APIGateway_RegisterGRPCService_Handler,
+			MethodName: "RegisterService",
+			Handler:    _APIGateway_RegisterService_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
