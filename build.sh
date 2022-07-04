@@ -4,7 +4,7 @@ set -e
 
 OUT_GO=$(pwd)/lang/go/
 OUT_JS=$(pwd)/lang/js/
-OUT_JAVA=$(pwd)/lang/java/
+OUT_JAVA=$(pwd)/lang/java/lib/src/main/java/
 
 JS_PLUGIN_PATH=$(pwd)/lang/js/node_modules/.bin/protoc-gen-ts_proto
 
