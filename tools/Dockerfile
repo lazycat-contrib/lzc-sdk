@@ -3,7 +3,7 @@ RUN echo 'Server = http://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch'
 
 # RUN pacman-db-upgrade
 # RUN pacman -Syyu --noconfirm
-RUN pacman -Sy --noconfirm grpc go nodejs wget
+RUN pacman -Sy --noconfirm grpc go nodejs wget jdk11-openjdk maven
 
 RUN wget https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/1.47.0/protoc-gen-grpc-java-1.47.0-linux-x86_64.exe \
     -O /usr/bin/protoc-gen-grpc-java
