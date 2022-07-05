@@ -7,6 +7,7 @@ binary
 cd ./sdk
 lcd ./java_api_workspace/target/
 prompt
+del $PUTFILE
 put $PUTFILE
 bye
 #here document
