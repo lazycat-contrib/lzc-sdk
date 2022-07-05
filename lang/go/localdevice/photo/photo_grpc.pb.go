@@ -29,6 +29,13 @@ type PhotoLibraryClient interface {
 	DeletePhoto(ctx context.Context, in *DeletePhotoRequest, opts ...grpc.CallOption) (*DeletePhotoReply, error)
 	// 枚举具体相册中的图片元信息
 	ListPhotoMetas(ctx context.Context, in *ListPhotoMetasRequest, opts ...grpc.CallOption) (PhotoLibrary_ListPhotoMetasClient, error)
+	QueryPhoto(ctx context.Context, in *QueryPhotoRequest, opts ...grpc.CallOption) (*PhotoMeta, error)
+	// PhotoHashSet的大小是不固定的，可能超出protobuf但message的限制(4MB)，因此以stream
+	// 的形式返回。
+	// 目前有两个使用场景
+	// 1. 浏览器访问此接口获取某个图片是否在本地存在
+	// 2. 服务端获取此集合并与服务器中存在的图片进行对比，获取未同步到服务器中的图片ID集合
+	QueryPhotoHash(ctx context.Context, in *QueryPhotoHashRequest, opts ...grpc.CallOption) (PhotoLibrary_QueryPhotoHashClient, error)
 }
 
 type photoLibraryClient struct {
@@ -98,6 +105,47 @@ func (x *photoLibraryListPhotoMetasClient) Recv() (*PhotoMeta, error) {
 	return m, nil
 }
 
+func (c *photoLibraryClient) QueryPhoto(ctx context.Context, in *QueryPhotoRequest, opts ...grpc.CallOption) (*PhotoMeta, error) {
+	out := new(PhotoMeta)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.PhotoLibrary/QueryPhoto", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *photoLibraryClient) QueryPhotoHash(ctx context.Context, in *QueryPhotoHashRequest, opts ...grpc.CallOption) (PhotoLibrary_QueryPhotoHashClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PhotoLibrary_ServiceDesc.Streams[1], "/cloud.lazycat.apis.localdevice.PhotoLibrary/QueryPhotoHash", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &photoLibraryQueryPhotoHashClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PhotoLibrary_QueryPhotoHashClient interface {
+	Recv() (*PhotoHashSet, error)
+	grpc.ClientStream
+}
+
+type photoLibraryQueryPhotoHashClient struct {
+	grpc.ClientStream
+}
+
+func (x *photoLibraryQueryPhotoHashClient) Recv() (*PhotoHashSet, error) {
+	m := new(PhotoHashSet)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // PhotoLibraryServer is the server API for PhotoLibrary service.
 // All implementations must embed UnimplementedPhotoLibraryServer
 // for forward compatibility
@@ -109,6 +157,13 @@ type PhotoLibraryServer interface {
 	DeletePhoto(context.Context, *DeletePhotoRequest) (*DeletePhotoReply, error)
 	// 枚举具体相册中的图片元信息
 	ListPhotoMetas(*ListPhotoMetasRequest, PhotoLibrary_ListPhotoMetasServer) error
+	QueryPhoto(context.Context, *QueryPhotoRequest) (*PhotoMeta, error)
+	// PhotoHashSet的大小是不固定的，可能超出protobuf但message的限制(4MB)，因此以stream
+	// 的形式返回。
+	// 目前有两个使用场景
+	// 1. 浏览器访问此接口获取某个图片是否在本地存在
+	// 2. 服务端获取此集合并与服务器中存在的图片进行对比，获取未同步到服务器中的图片ID集合
+	QueryPhotoHash(*QueryPhotoHashRequest, PhotoLibrary_QueryPhotoHashServer) error
 	mustEmbedUnimplementedPhotoLibraryServer()
 }
 
@@ -127,6 +182,12 @@ func (UnimplementedPhotoLibraryServer) DeletePhoto(context.Context, *DeletePhoto
 }
 func (UnimplementedPhotoLibraryServer) ListPhotoMetas(*ListPhotoMetasRequest, PhotoLibrary_ListPhotoMetasServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListPhotoMetas not implemented")
+}
+func (UnimplementedPhotoLibraryServer) QueryPhoto(context.Context, *QueryPhotoRequest) (*PhotoMeta, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryPhoto not implemented")
+}
+func (UnimplementedPhotoLibraryServer) QueryPhotoHash(*QueryPhotoHashRequest, PhotoLibrary_QueryPhotoHashServer) error {
+	return status.Errorf(codes.Unimplemented, "method QueryPhotoHash not implemented")
 }
 func (UnimplementedPhotoLibraryServer) mustEmbedUnimplementedPhotoLibraryServer() {}
 
@@ -216,6 +277,45 @@ func (x *photoLibraryListPhotoMetasServer) Send(m *PhotoMeta) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _PhotoLibrary_QueryPhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryPhotoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PhotoLibraryServer).QueryPhoto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.localdevice.PhotoLibrary/QueryPhoto",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PhotoLibraryServer).QueryPhoto(ctx, req.(*QueryPhotoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PhotoLibrary_QueryPhotoHash_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(QueryPhotoHashRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PhotoLibraryServer).QueryPhotoHash(m, &photoLibraryQueryPhotoHashServer{stream})
+}
+
+type PhotoLibrary_QueryPhotoHashServer interface {
+	Send(*PhotoHashSet) error
+	grpc.ServerStream
+}
+
+type photoLibraryQueryPhotoHashServer struct {
+	grpc.ServerStream
+}
+
+func (x *photoLibraryQueryPhotoHashServer) Send(m *PhotoHashSet) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // PhotoLibrary_ServiceDesc is the grpc.ServiceDesc for PhotoLibrary service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -235,11 +335,20 @@ var PhotoLibrary_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeletePhoto",
 			Handler:    _PhotoLibrary_DeletePhoto_Handler,
 		},
+		{
+			MethodName: "QueryPhoto",
+			Handler:    _PhotoLibrary_QueryPhoto_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "ListPhotoMetas",
 			Handler:       _PhotoLibrary_ListPhotoMetas_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "QueryPhotoHash",
+			Handler:       _PhotoLibrary_QueryPhotoHash_Handler,
 			ServerStreams: true,
 		},
 	},

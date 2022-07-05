@@ -17,8 +17,32 @@ service PhotoLibrary {
 
   // 枚举具体相册中的图片元信息
   rpc ListPhotoMetas(ListPhotoMetasRequest) returns (stream PhotoMeta) {}
+
+  rpc QueryPhoto(QueryPhotoRequest) returns (PhotoMeta) {}
+
+  // PhotoHashSet的大小是不固定的，可能超出protobuf但message的限制(4MB)，因此以stream
+  // 的形式返回。
+  // 目前有两个使用场景
+  // 1. 浏览器访问此接口获取某个图片是否在本地存在
+  // 2. 服务端获取此集合并与服务器中存在的图片进行对比，获取未同步到服务器中的图片ID集合
+  rpc QueryPhotoHash(QueryPhotoHashRequest) returns (stream PhotoHashSet) {}
 }
 
+message QueryPhotoHashRequest {
+  // changed_after语义为: changed_after之后的新增文件都会加入返回的集合里,
+  // 与文件本身的modify time无关。
+  google.protobuf.Timestamp changed_after = 1;
+}
+
+message PhotoHashSet {
+  // hash --> id
+  map<string, string> entry = 1;
+}
+
+
+message QueryPhotoRequest {
+  string id = 1;
+}
 
 message PutPhotoReply {
   // 新添加图片的id

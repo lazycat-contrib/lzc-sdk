@@ -1,6 +1,6 @@
 {
   "name": "@lazycatcloud/lzc-apis",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "author": "snyh",
   "scripts": {
     "p22rebuild": "docker run -ti -w $(pwd) -v $(pwd):$(pwd) --rm registry.lazycat.cloud/lzc/lzc-api-protoc ./protoc/gen.sh",
@@ -17,5 +17,9 @@
   },
   "devDependencies": {
     "typescript": "^4.7.3"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   }
 }
