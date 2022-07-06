@@ -25,6 +25,12 @@ const _ = grpc.SupportPackageIsVersion7
 type APIGatewayClient interface {
 	QueryGatewayInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GatewayInfo, error)
 	RegisterService(ctx context.Context, in *ServiceInfo, opts ...grpc.CallOption) (*RegisterReply, error)
+	// 访问http service前，需要申请auth信息以便Gateway可以识别来源对应的
+	// 真实appid。
+	// 返回值尽量交由浏览器前端设置xhr对应参数。如果确实无法做到(比如img src中)，则
+	// 可以通过https://$appdomain/$service_proxy/的形式由/usr/bin/lzcapp代为
+	// 转发。此前缀可以通过BrowserOnlyProxy.proto接口获取到。
+	AccessHTTPService(ctx context.Context, in *AccessHTTPServiceRequest, opts ...grpc.CallOption) (*HTTPAccessInfo, error)
 }
 
 type aPIGatewayClient struct {
@@ -53,12 +59,27 @@ func (c *aPIGatewayClient) RegisterService(ctx context.Context, in *ServiceInfo,
 	return out, nil
 }
 
+func (c *aPIGatewayClient) AccessHTTPService(ctx context.Context, in *AccessHTTPServiceRequest, opts ...grpc.CallOption) (*HTTPAccessInfo, error) {
+	out := new(HTTPAccessInfo)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.APIGateway/AccessHTTPService", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // APIGatewayServer is the server API for APIGateway service.
 // All implementations must embed UnimplementedAPIGatewayServer
 // for forward compatibility
 type APIGatewayServer interface {
 	QueryGatewayInfo(context.Context, *emptypb.Empty) (*GatewayInfo, error)
 	RegisterService(context.Context, *ServiceInfo) (*RegisterReply, error)
+	// 访问http service前，需要申请auth信息以便Gateway可以识别来源对应的
+	// 真实appid。
+	// 返回值尽量交由浏览器前端设置xhr对应参数。如果确实无法做到(比如img src中)，则
+	// 可以通过https://$appdomain/$service_proxy/的形式由/usr/bin/lzcapp代为
+	// 转发。此前缀可以通过BrowserOnlyProxy.proto接口获取到。
+	AccessHTTPService(context.Context, *AccessHTTPServiceRequest) (*HTTPAccessInfo, error)
 	mustEmbedUnimplementedAPIGatewayServer()
 }
 
@@ -71,6 +92,9 @@ func (UnimplementedAPIGatewayServer) QueryGatewayInfo(context.Context, *emptypb.
 }
 func (UnimplementedAPIGatewayServer) RegisterService(context.Context, *ServiceInfo) (*RegisterReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterService not implemented")
+}
+func (UnimplementedAPIGatewayServer) AccessHTTPService(context.Context, *AccessHTTPServiceRequest) (*HTTPAccessInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AccessHTTPService not implemented")
 }
 func (UnimplementedAPIGatewayServer) mustEmbedUnimplementedAPIGatewayServer() {}
 
@@ -121,6 +145,24 @@ func _APIGateway_RegisterService_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _APIGateway_AccessHTTPService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccessHTTPServiceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(APIGatewayServer).AccessHTTPService(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.common.APIGateway/AccessHTTPService",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(APIGatewayServer).AccessHTTPService(ctx, req.(*AccessHTTPServiceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // APIGateway_ServiceDesc is the grpc.ServiceDesc for APIGateway service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -135,6 +177,10 @@ var APIGateway_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterService",
 			Handler:    _APIGateway_RegisterService_Handler,
+		},
+		{
+			MethodName: "AccessHTTPService",
+			Handler:    _APIGateway_AccessHTTPService_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

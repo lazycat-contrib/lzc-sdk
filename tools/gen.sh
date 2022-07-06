@@ -8,6 +8,13 @@ OUT_JAVA=$(pwd)/lang/java/lib/src/main/java/
 
 JS_PLUGIN_PATH=$(pwd)/lang/js/node_modules/.bin/protoc-gen-ts_proto
 
+if [[ -e $JS_PLUGIN_PATH ]]; then
+    pushd lang/js/
+    npm install
+    popd
+fi
+
+
 mkdir -p $OUT_GO $OUT_JS $OUT_JAVA
 
 pushd protos
@@ -35,6 +42,11 @@ cp -r lang/java/lib/src java_api_workspace/
 
 pushd java_api_workspace
 echo "java package start... "
-mvn -Dmaven.test.skip=true clean package
+# mvn -Dmaven.test.skip=true clean package
 echo "java package complete... "
+popd
+
+
+pushd lang/js/
+npm run build
 popd

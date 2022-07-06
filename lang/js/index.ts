@@ -8,6 +8,7 @@ import { DevicesClientImpl, Devices, Device } from "./common/devices/devices"
 import { UserManagerClientImpl, UserManager } from "./common/users/users"
 import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, SessionInfo, AppInfo } from "./common/browseronly/browseronly"
 import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./common/permissions/permissions"
+import { APIGateway, APIGatewayClientImpl } from "./common/gateway/gateway"
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog/dialog"
 import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clipboard/clipboard"
@@ -44,12 +45,14 @@ export class lzcAPIGateway {
         this.bo = new BrowserOnlyProxyClientImpl(rpc);
         this.session = this.bo.QuerySessionInfo({})
         this.appinfo = this.bo.QueryAppInfo({})
+        this.gw = new APIGatewayClientImpl(rpc);
 
         this.pm = new PermissionManagerClientImpl(rpc);
 
         this.currentDevice = buildCurrentDevice(this)
     }
     private bo : BrowserOnlyProxy;
+    private gw : APIGateway;
     private pm : PermissionManager;
     public async openDevices() {
         return new Promise<void>((resolve, reject) => {
@@ -63,11 +66,6 @@ export class lzcAPIGateway {
     public users: UserManager;
 
     public session: Promise<SessionInfo>;
-
-    /**
-     * @deprecated 请使用lzcAPIGateway.session查询此信息
-     */
-    public userinfo: Promise<SessionInfo>;
 
     public currentDevice: Promise<DeviceProxy>;
 

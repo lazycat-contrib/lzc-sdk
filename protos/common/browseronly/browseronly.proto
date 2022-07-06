@@ -38,4 +38,11 @@ message AppInfo {
   string box_id = 1;
   string app_id = 2;
   string app_domain = 3;
+
+  // APIGateway对所有而http service服务强制要求设置http header类型的
+  // AuthInfo. 但有些场景无法使用XHR去设置自定义的http header，导致访问
+  // 这些服务很困难，因此由/usr/bin/lzcapp统一提供一个代理服务来设置这个
+  // header. 此字段即是对应代理出来的URL前缀。默认为"/_lzc"，可以通过启动
+  // 参数调整。
+  string http_api_proxy_path = 4;
 }

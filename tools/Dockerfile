@@ -3,7 +3,7 @@ RUN echo 'Server = http://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch'
 
 # RUN pacman-db-upgrade
 # RUN pacman -Syyu --noconfirm
-RUN pacman -Sy --noconfirm grpc go nodejs wget jdk11-openjdk maven
+RUN pacman -Sy --noconfirm grpc go nodejs wget
 
 RUN wget https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/1.47.0/protoc-gen-grpc-java-1.47.0-linux-x86_64.exe \
     -O /usr/bin/protoc-gen-grpc-java
@@ -14,5 +14,10 @@ ENV GOPROXY=https://goproxy.cn
 
 RUN go install github.com/golang/protobuf/protoc-gen-go@v1.5.2
 RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2.0
+
+
+RUN pacman -Sy --noconfirm  jdk11-openjdk maven npm
+
+RUN npm config set registry https://registry.npm.taobao.org/
 
 CMD ["/usr/bin/protoc"]

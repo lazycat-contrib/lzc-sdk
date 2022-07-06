@@ -8,7 +8,15 @@ import "google/protobuf/empty.proto";
 
 service APIGateway {
   rpc QueryGatewayInfo(google.protobuf.Empty) returns (GatewayInfo) {}
+
   rpc RegisterService(ServiceInfo) returns (RegisterReply) {}
+
+  // 访问http service前，需要申请auth信息以便Gateway可以识别来源对应的
+  // 真实appid。
+  // 返回值尽量交由浏览器前端设置xhr对应参数。如果确实无法做到(比如img src中)，则
+  // 可以通过https://$appdomain/$service_proxy/的形式由/usr/bin/lzcapp代为
+  // 转发。此前缀可以通过BrowserOnlyProxy.proto接口获取到。
+  rpc AccessHTTPService(AccessHTTPServiceRequest) returns (HTTPAccessInfo) {}
 }
 
 message GatewayInfo {
@@ -60,6 +68,21 @@ message RegisterReply {
 
   // gateway会对appid以及uid进行合法性检测，并在将request传递到service后端前，
   // 设置到对应的grpc metadata或http header中，具体的字段名称会通过app_id_key以及user_id_key返回
-  string app_id_key = 3;
-  string user_id_key = 4;
+  string appid_key = 3;
+  string uid_key = 4;
+}
+
+
+message AccessHTTPServiceRequest {
+  string service_name = 1;
+}
+
+message HTTPAccessInfo {
+  // 对应服务的URL
+  string service_url = 1;
+
+  // 若token_headername不为空，
+  // 则必须设置名称为$token_headername的http header为$token_value
+  string auth_headername = 2;
+  string auth_value = 3;
 }

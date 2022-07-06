@@ -7,3 +7,4 @@
 /lang/js/node_modules/
 /lang/js/sys/
 /lang/js/common/
+/lang/js/package-lock.json
