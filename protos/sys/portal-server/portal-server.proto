@@ -86,11 +86,15 @@ message AppCertRequest {
 }
 
 message AppCertReply {
-  // PEM格式的证书
+  // PEM格式的APP证书
   string cert = 1;
 
-  // PEM格式的私钥
+  // PEM格式的APP私钥
   string private_key = 2;
+
+  // 盒子证书，同一盒子内所有app的box_cert都是相同的，
+  // 可以作为CA证书的角色来使用
+  string box_cert = 3;
 }
 
 
