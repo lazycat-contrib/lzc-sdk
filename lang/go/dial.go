@@ -10,10 +10,10 @@ import (
 )
 
 var (
-	CAPath        = "/lzcapp/certs/box.crt"
-	APPCertPath   = "/lzcapp/certs/app.crt"
-	APPKeyPath    = "/lzcapp/certs/app.key"
-	APISocketPath = "/lzcapp/lzc-apis.socket"
+	CAPath        = "/lzcapp/run/certs/box.crt"
+	APPCertPath   = "/lzcapp/run/certs/app.crt"
+	APPKeyPath    = "/lzcapp/run/certs/app.key"
+	APISocketPath = "/lzcapp/run/sys/lzc-apis.socket"
 )
 
 func buildClientCredOption(caCrt string, appKey string, appCrt string) (grpc.DialOption, error) {
