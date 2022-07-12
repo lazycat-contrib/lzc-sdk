@@ -82,6 +82,7 @@ message PhotoMeta {
   optional google.protobuf.Timestamp creation_date = 8;
   optional float latitude = 9;
   optional float longitude = 10;
+  optional google.protobuf.Timestamp taken_date = 11;
 }
 
 message Album {
