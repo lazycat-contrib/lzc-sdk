@@ -4,16 +4,16 @@ import { Empty } from "./google/protobuf/empty";
 
 import { Observable, Subscriber } from "rxjs";
 
-import { DevicesClientImpl, Devices, Device } from "./common/devices/devices"
-import { UserManagerClientImpl, UserManager } from "./common/users/users"
-import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, SessionInfo, AppInfo } from "./common/browseronly/browseronly"
-import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./common/permissions/permissions"
-import { APIGateway, APIGatewayClientImpl } from "./common/gateway/gateway"
+import { DevicesClientImpl, Devices, Device } from "./common/devices"
+import { UserManagerClientImpl, UserManager } from "./common/users"
+import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, SessionInfo, AppInfo } from "./common/browseronly"
+import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./common/permissions"
+import { APIGateway, APIGatewayClientImpl } from "./common/gateway"
 
-import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog/dialog"
-import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clipboard/clipboard"
-import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo/photo"
-import { NetworkManagerClientImpl, NetworkManager } from "./localdevice/network/network"
+import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog"
+import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clipboard"
+import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo"
+import { NetworkManagerClientImpl, NetworkManager } from "./localdevice/network"
 
 import { grpc } from "@improbable-eng/grpc-web";
 

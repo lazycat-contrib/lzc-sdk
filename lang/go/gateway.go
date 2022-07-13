@@ -3,13 +3,9 @@ package gohelper
 import (
 	"strings"
 
-	"gitee.com/linakesi/lzc-apis-protos/lang/go/common/devices"
-	"gitee.com/linakesi/lzc-apis-protos/lang/go/common/permissions"
-	"gitee.com/linakesi/lzc-apis-protos/lang/go/common/users"
-	"gitee.com/linakesi/lzc-apis-protos/lang/go/localdevice/clipboard"
-	"gitee.com/linakesi/lzc-apis-protos/lang/go/localdevice/dialog"
-	"gitee.com/linakesi/lzc-apis-protos/lang/go/localdevice/network"
-	"gitee.com/linakesi/lzc-apis-protos/lang/go/localdevice/photo"
+	"gitee.com/linakesi/lzc-apis-protos/lang/go/common"
+	"gitee.com/linakesi/lzc-apis-protos/lang/go/localdevice"
+
 	"google.golang.org/grpc"
 )
 
@@ -17,18 +13,18 @@ type APIGateway struct {
 	conn *grpc.ClientConn
 	cred grpc.DialOption
 
-	Users      users.UserManagerClient
-	Devices    devices.DevicesClient
-	Permisions permissions.PermissionManagerClient
+	Users      common.UserManagerClient
+	Devices    common.DevicesClient
+	Permisions common.PermissionManagerClient
 }
 
 type DeviceProxy struct {
 	conn *grpc.ClientConn
 
-	Clipboard    clipboard.ClipboardManagerClient
-	Dialog       dialog.DialogManagerClient
-	PhotoLibrary photo.PhotoLibraryClient
-	Network      network.NetworkManagerClient
+	Clipboard    localdevice.ClipboardManagerClient
+	Dialog       localdevice.DialogManagerClient
+	PhotoLibrary localdevice.PhotoLibraryClient
+	Network      localdevice.NetworkManagerClient
 }
 
 func (d *DeviceProxy) Close() error { return d.conn.Close() }
@@ -44,10 +40,10 @@ func (gw *APIGateway) NewDeviceProxy(deviceapiurl string) (*DeviceProxy, error) 
 	return &DeviceProxy{
 		conn: conn,
 
-		Clipboard:    clipboard.NewClipboardManagerClient(conn),
-		Dialog:       dialog.NewDialogManagerClient(conn),
-		PhotoLibrary: photo.NewPhotoLibraryClient(conn),
-		Network:      network.NewNetworkManagerClient(conn),
+		Clipboard:    localdevice.NewClipboardManagerClient(conn),
+		Dialog:       localdevice.NewDialogManagerClient(conn),
+		PhotoLibrary: localdevice.NewPhotoLibraryClient(conn),
+		Network:      localdevice.NewNetworkManagerClient(conn),
 	}, nil
 }
 
@@ -72,8 +68,8 @@ func NewAPIGateway() (*APIGateway, error) {
 		cred: cred,
 		conn: conn,
 
-		Users:      users.NewUserManagerClient(conn),
-		Devices:    devices.NewDevicesClient(conn),
-		Permisions: permissions.NewPermissionManagerClient(conn),
+		Users:      common.NewUserManagerClient(conn),
+		Devices:    common.NewDevicesClient(conn),
+		Permisions: common.NewPermissionManagerClient(conn),
 	}, nil
 }

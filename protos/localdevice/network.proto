@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.localdevice;
+
+option go_package = "/localdevice";
+
+import "google/protobuf/empty.proto";
+
+service NetworkManager {
+  rpc Query(google.protobuf.Empty) returns (NetworkInformation) {}
+}
+
+enum ConnectionType {
+  Unknown = 0;
+  CELL_NONE = 1;
+
+  ETHERNET = 2;
+
+  WIFI = 3;
+
+  CELL = 4;
+  CELL_2G = 5;
+  CELL_3G = 6;
+  CELL_4G = 7;
+  CELL_5G = 8;
+}
+
+message NetworkInformation {
+  ConnectionType ctype = 1;
+
+  bool IsOnline = 2;
+}

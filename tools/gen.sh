@@ -33,8 +33,8 @@ protoc -I . \
        --plugin=$JS_PLUGIN_PATH \
        --plugin=/usr/bin/protoc-gen-grpc-java \
        ./sys/*/*.proto \
-       ./localdevice/*/*.proto \
-       ./common/*/*.proto
+       ./localdevice/*.proto \
+       ./common/*.proto
 popd
 
 
