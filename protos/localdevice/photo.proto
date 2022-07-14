@@ -82,7 +82,7 @@ message PhotoMeta {
 
   optional string file_name = 10;
   optional google.protobuf.Timestamp creation_date = 11;
-  optional float latitude = 12
+  optional float latitude = 12;
   optional float longitude = 13;
   optional google.protobuf.Timestamp taken_date = 14;
 
