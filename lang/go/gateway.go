@@ -14,7 +14,7 @@ type APIGateway struct {
 	cred grpc.DialOption
 
 	Users      common.UserManagerClient
-	Devices    common.DevicesClient
+	Devices    common.EndDeviceServiceClient
 	Permisions common.PermissionManagerClient
 }
 
@@ -69,7 +69,7 @@ func NewAPIGateway() (*APIGateway, error) {
 		conn: conn,
 
 		Users:      common.NewUserManagerClient(conn),
-		Devices:    common.NewDevicesClient(conn),
+		Devices:    common.NewEndDeviceServiceClient(conn),
 		Permisions: common.NewPermissionManagerClient(conn),
 	}, nil
 }

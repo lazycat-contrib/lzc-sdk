@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 OUT_GO=$(pwd)/lang/go/
@@ -8,14 +7,18 @@ OUT_JAVA=$(pwd)/lang/java/lib/src/main/java/
 
 JS_PLUGIN_PATH=$(pwd)/lang/js/node_modules/.bin/protoc-gen-ts_proto
 
-if [[ -e $JS_PLUGIN_PATH ]]; then
+if [[ ! -e $JS_PLUGIN_PATH ]]; then
     pushd lang/js/
     npm install
     popd
 fi
 
 
-mkdir -p $OUT_GO $OUT_JS $OUT_JAVA
+rm -rf $OUT_GO/{common,localdevice} || true
+rm -rf $OUT_JS/{common,localdevice,sys} || true
+rm -rf $OUT_JAVA/ || true
+mkdir -p $OUT_JAVA || true
+
 
 pushd protos
 

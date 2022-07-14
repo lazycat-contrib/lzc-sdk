@@ -4,7 +4,7 @@ import { Empty } from "./google/protobuf/empty";
 
 import { Observable, Subscriber } from "rxjs";
 
-import { DevicesClientImpl, Devices, Device } from "./common/devices"
+import { EndDeviceServiceClientImpl, EndDeviceService, EndDevice } from "./common/end_device"
 import { UserManagerClientImpl, UserManager } from "./common/users"
 import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, SessionInfo, AppInfo } from "./common/browseronly"
 import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./common/permissions"
@@ -26,12 +26,12 @@ const opt = {
 
 
 
-async function buildCurrentDevice(cc: lzcAPIGateway) : Promise<DeviceProxy>{
+async function buildCurrentDevice(cc: lzcAPIGateway) : Promise<EndDeviceProxy>{
     let s = await cc.session
     let uid = s.uid
-    let ds = await cc.devices.ListDevices({uid})
+    let ds = await cc.devices.ListEndDevices({uid})
     let d = ds.devices.find((d) => d.peerId == s.deviceId)
-    return new DeviceProxy(d.deviceApiUrl)
+    return new EndDeviceProxy(d.deviceApiUrl)
 }
 
 
@@ -39,7 +39,7 @@ export class lzcAPIGateway {
     constructor(host: string = window.origin) {
         host = host.replace(/\/+$/, '')
         const rpc = new GrpcWebImpl(host, opt)
-        this.devices = new DevicesClientImpl(rpc);
+        this.devices = new EndDeviceServiceClientImpl(rpc);
         this.users = new UserManagerClientImpl(rpc);
 
         this.bo = new BrowserOnlyProxyClientImpl(rpc);
@@ -67,10 +67,10 @@ export class lzcAPIGateway {
 
     public session: Promise<SessionInfo>;
 
-    public currentDevice: Promise<DeviceProxy>;
+    public currentDevice: Promise<EndDeviceProxy>;
 
     public appinfo: Promise<AppInfo>;
-    public devices: Devices;
+    public devices: EndDeviceService;
 }
 
 async function test() {
@@ -78,7 +78,7 @@ async function test() {
     cc.openDevices()
 }
 
-export class DeviceProxy {
+export class EndDeviceProxy {
     constructor(apiurl :string) {
         const rpc = new GrpcWebImpl(apiurl, opt)
 
