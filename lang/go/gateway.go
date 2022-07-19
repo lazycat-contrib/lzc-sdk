@@ -13,9 +13,10 @@ type APIGateway struct {
 	conn *grpc.ClientConn
 	cred grpc.DialOption
 
-	Users      common.UserManagerClient
-	Devices    common.EndDeviceServiceClient
-	Permisions common.PermissionManagerClient
+	Users            common.UserManagerClient
+	Devices          common.EndDeviceServiceClient
+	Permisions       common.PermissionManagerClient
+	PeripheralDevice common.PeripheralDeviceServiceClient
 }
 
 type DeviceProxy struct {
@@ -68,8 +69,9 @@ func NewAPIGateway() (*APIGateway, error) {
 		cred: cred,
 		conn: conn,
 
-		Users:      common.NewUserManagerClient(conn),
-		Devices:    common.NewEndDeviceServiceClient(conn),
-		Permisions: common.NewPermissionManagerClient(conn),
+		Users:            common.NewUserManagerClient(conn),
+		Devices:          common.NewEndDeviceServiceClient(conn),
+		Permisions:       common.NewPermissionManagerClient(conn),
+		PeripheralDevice: common.NewPeripheralDeviceServiceClient(conn),
 	}, nil
 }

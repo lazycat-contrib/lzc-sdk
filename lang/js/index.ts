@@ -9,6 +9,7 @@ import { UserManagerClientImpl, UserManager } from "./common/users"
 import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, SessionInfo, AppInfo } from "./common/browseronly"
 import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./common/permissions"
 import { APIGateway, APIGatewayClientImpl } from "./common/gateway"
+import { PeripheralDeviceService, PeripheralDeviceServiceClientImpl } from "./common/peripheral_device"
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog"
 import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clipboard"
@@ -49,11 +50,15 @@ export class lzcAPIGateway {
 
         this.pm = new PermissionManagerClientImpl(rpc);
 
+        this.pd = new PeripheralDeviceServiceClientImpl(rpc);
+
         this.currentDevice = buildCurrentDevice(this)
     }
     private bo : BrowserOnlyProxy;
     private gw : APIGateway;
     private pm : PermissionManager;
+    private pd : PeripheralDeviceService;
+
     public async openDevices() {
         return new Promise<void>((resolve, reject) => {
             this.bo.PairAllDevices({}).subscribe({
