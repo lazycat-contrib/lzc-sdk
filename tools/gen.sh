@@ -45,7 +45,7 @@ cp -r lang/java/lib/src java_api_workspace/
 
 pushd java_api_workspace
 echo "java package start... "
-# mvn -Dmaven.test.skip=true clean package
+mvn -Dmaven.test.skip=true clean package
 echo "java package complete... "
 popd
 

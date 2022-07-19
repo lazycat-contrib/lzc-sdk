@@ -91,9 +91,15 @@ message PhotoMeta {
 message Album {
   string id = 1;
   string title = 2;
+  int32 image_count = 3;
+  int32 video_count = 4;
+  string cover_image_url = 5;
 }
 
 message ListAlbumsRequest {
+   optional int32 thumbnail_width = 1;
+   optional int32 thumbnail_height = 2;
+   optional int32 thumbnail_choose_way = 3;
 }
 message ListAlbumsReply {
   repeated Album albums = 1;
