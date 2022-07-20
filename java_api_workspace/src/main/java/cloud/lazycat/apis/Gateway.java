@@ -1,14 +1,18 @@
+package cloud.lazycat.apis;
+
 import cloud.lazycat.apis.common.EndDeviceServiceGrpc;
 import cloud.lazycat.apis.common.PermissionManagerGrpc;
 import cloud.lazycat.apis.common.UserManagerGrpc;
-import cloud.lazycat.apis.localdevice.*;
+import cloud.lazycat.apis.localdevice.ClipboardManagerGrpc;
+import cloud.lazycat.apis.localdevice.DialogManagerGrpc;
+import cloud.lazycat.apis.localdevice.NetworkManagerGrpc;
+import cloud.lazycat.apis.localdevice.PhotoLibraryGrpc;
 import io.grpc.ChannelCredentials;
 import io.grpc.Grpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
 import java.io.IOException;
-import java.util.List;
 
 public class Gateway {
 
@@ -27,7 +31,7 @@ public class Gateway {
 
 
         ManagedChannel channel = Grpc.newChannelBuilderForAddress(host,
-                port,CredUtil.DialCred()).build();
+                port, CredUtil.DialCred()).build();
 
         DeviceProxy deviceProxy = new DeviceProxy();
         deviceProxy.channel = channel;
@@ -50,14 +54,14 @@ public class Gateway {
         APIGateWay apiGateWay = new APIGateWay();
         apiGateWay.cred = CredUtil.DialCred();;
         ManagedChannel channel =
-                Grpc.newChannelBuilder(unixProtocol + CredUtil.APISocetPath, cred).build();
+                Grpc.newChannelBuilder(unixProtocol + CredUtil.APISocetPath, apiGateWay.cred).build();
         apiGateWay.user = UserManagerGrpc.newBlockingStub(channel);
         apiGateWay.endDevice = EndDeviceServiceGrpc.newBlockingStub(channel);
         apiGateWay.permission = PermissionManagerGrpc.newBlockingStub(channel);
         return apiGateWay;
     }
 
-    static class APIGateWay {
+   public static class APIGateWay {
         public ManagedChannel channel;
         public ChannelCredentials cred;
         public UserManagerGrpc.UserManagerBlockingStub user;
@@ -66,7 +70,7 @@ public class Gateway {
 
     }
 
-    static class DeviceProxy {
+    public static class DeviceProxy {
         public ManagedChannel channel;
         public ClipboardManagerGrpc.ClipboardManagerBlockingStub clipboard;
         public DialogManagerGrpc.DialogManagerBlockingStub dialog;

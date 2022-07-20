@@ -9,3 +9,10 @@
 /lang/js/common/
 /lang/js/package-lock.json
 /.idea/
+/java_api_workspace/.idea/
+/examples/java-demo-gateway/.gradle/
+/examples/java-demo-gateway/.idea/
+/examples/java-demo-gateway/build/
+/java_api_workspace/target/cloud-lazycat-apis-1.0.jar
+/java_api_workspace/target/cloud-lazycat-apis-1.0-jar-with-dependencies.jar
+/examples/java-demo-gateway/lib/cloud-lazycat-apis-1.0-jar-with-dependencies.jar

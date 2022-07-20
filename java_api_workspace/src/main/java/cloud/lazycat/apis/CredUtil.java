@@ -1,3 +1,5 @@
+package cloud.lazycat.apis;
+
 import io.grpc.ChannelCredentials;
 import io.grpc.TlsChannelCredentials;
 
