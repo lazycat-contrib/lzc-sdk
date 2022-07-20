@@ -1,6 +1,6 @@
 {
   "name": "@lazycatcloud/lzc-apis",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "author": "snyh",
   "scripts": {
     "p22rebuild": "docker run -ti -w $(pwd) -v $(pwd):$(pwd) --rm registry.lazycat.cloud/lzc/lzc-api-protoc ./protoc/gen.sh",
