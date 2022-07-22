@@ -113,3 +113,7 @@ message PutPhotoRequest {
 
   optional string file_name = 3;
 }
+
+message PhotoMetas {
+  repeated PhotoMeta photoMetas = 1;
+}
