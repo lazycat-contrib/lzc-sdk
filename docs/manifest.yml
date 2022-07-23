@@ -1,0 +1,47 @@
+lzc-sdk-version: 0.1  #决定了manifest文件格式以及/usr/bin/lzcapp的版本
+
+package: abc.example.com #app的唯一标识符
+version: 2.0.2           #app的版本
+
+name: 测试abc
+description: 简单易用的英语学习软件
+icon: ./abc.png #必须是当前pkg内路径，会提供给启动器等地方使用. 截图、关键字、分类等信息在上架商店时单独提供
+
+license: https://choosealicense.com/licenses/mit/
+homepage: http://github.com/snyh/abc #出现bug时候提交反馈的地方
+author: snyh@snyh.org
+
+permissions: #静态权限列表
+  - CLOUD.LAZYCAT.APIS.USER_DOCUMENT
+  - CLOUD.LAZYCAT.APIS.END_DEVICES
+
+#application作为一个特殊的container运行，对应的service名称为固定的`app`，其他service可以通过此名称与app进行通讯
+application:
+  subdomain: abc  #期望的app域名，如果系统中已经有对应域名则会提示用户选择其他域名。最终app分配到的域名以/lzcapp/run/app.subdomain为准
+
+  public_path: /api/public  #默认情况下所有路径都需要登陆后才能访问，public_path之下的路径允许非登陆情况下访问
+
+  router:
+    - /api/=exec://8000,/lzcapp/pkg/backend.bin     #格式与/usr/bin/lzcapp -up参数一致
+    - /=file:///lzcapp/pkg/
+
+  ingress:
+    - type: tcp      #tcp or udp
+      port: 22:2222  #冒号前的端口为$appdomain下的端口，冒号后为特定service ip上的端口
+      service: db    #为空则为此app容器内的端口,也可以指定为db等其他service的名称
+
+  image: alpine:3.16  #可选的运行环境，为空则使用sdk对应版本的镜像。若上架到商店，则此处的镜像必须上传到商店仓库统一托管。
+
+  depends_on: db
+
+
+services: #传统docker镜像启动方式，如果需要数据库等配套容器一起运行则可以在这里申明。传统app如nextcloud、aria2c也可以使用这种方式进行兼容运行
+  db: #目前只支持以下参数，network,ipc之类的配置字段(故意)不支持
+    image: bitnami/wordpress:5.8.2
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes: #仅支持以/lzcapp开头的挂载点，且遵循仅var,tmp,cache等目录可写的原则
+      - /lzcapp/var/db/:/data
+      - /lzcapp/cache/db:/cache/
+    command: "/usr/bin/nextcloud"
+    #depends_on:
