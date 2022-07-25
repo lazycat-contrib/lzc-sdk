@@ -94,6 +94,8 @@ message Album {
   int32 image_count = 3;
   int32 video_count = 4;
   string cover_image_url = 5;
+  // 封面文件(图）id
+  string cover_image_id = 6;
 }
 
 message ListAlbumsRequest {
