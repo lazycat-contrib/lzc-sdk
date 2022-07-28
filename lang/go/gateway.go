@@ -5,6 +5,7 @@ import (
 
 	"gitee.com/linakesi/lzc-apis-protos/lang/go/common"
 	"gitee.com/linakesi/lzc-apis-protos/lang/go/localdevice"
+	"gitee.com/linakesi/lzc-apis-protos/lang/go/sys"
 
 	"google.golang.org/grpc"
 )
@@ -17,6 +18,9 @@ type APIGateway struct {
 	Devices          common.EndDeviceServiceClient
 	Permisions       common.PermissionManagerClient
 	PeripheralDevice common.PeripheralDeviceServiceClient
+
+	OSUpgrader sys.OSUpgradeServiceClient
+	OSSnapshot sys.OSSnapshotServiceClient
 }
 
 type DeviceProxy struct {
@@ -68,6 +72,9 @@ func NewAPIGateway() (*APIGateway, error) {
 	return &APIGateway{
 		cred: cred,
 		conn: conn,
+
+		OSUpgrader: sys.NewOSUpgradeServiceClient(conn),
+		OSSnapshot: sys.NewOSSnapshotServiceClient(conn),
 
 		Users:            common.NewUserManagerClient(conn),
 		Devices:          common.NewEndDeviceServiceClient(conn),

@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.sys;
+
+option go_package = "/sys";
+
+service OSSnapshotService {
+}

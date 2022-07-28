@@ -11,6 +11,9 @@ import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, Permiss
 import { APIGateway, APIGatewayClientImpl } from "./common/gateway"
 import { PeripheralDeviceService, PeripheralDeviceServiceClientImpl } from "./common/peripheral_device"
 
+import { OSSnapshotService, OSSnapshotServiceClientImpl } from "./sys/OS_snapshot"
+import { OSUpgradeService, OSUpgradeServiceClientImpl } from "./sys/OS_upgrader"
+
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog"
 import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clipboard"
 import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo"
@@ -52,6 +55,9 @@ export class lzcAPIGateway {
 
         this.pd = new PeripheralDeviceServiceClientImpl(rpc);
 
+        this.osUpgrader = new OSUpgradeServiceClientImpl(rpc);
+        this.osSnapshot = new OSSnapshotServiceClientImpl(rpc);
+
         this.currentDevice = buildCurrentDevice(this)
     }
     private bo : BrowserOnlyProxy;
@@ -73,6 +79,9 @@ export class lzcAPIGateway {
     public session: Promise<SessionInfo>;
 
     public currentDevice: Promise<EndDeviceProxy>;
+
+    public osUpgrader: OSUpgradeService
+    public osSnapshot: OSSnapshotService
 
     public appinfo: Promise<AppInfo>;
     public devices: EndDeviceService;

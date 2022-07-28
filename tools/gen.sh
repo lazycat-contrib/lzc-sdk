@@ -36,6 +36,7 @@ protoc -I . \
        --plugin=$JS_PLUGIN_PATH \
        --plugin=/usr/bin/protoc-gen-grpc-java \
        ./sys/*/*.proto \
+       ./sys/*.proto \
        ./localdevice/*.proto \
        ./common/*.proto
 popd
@@ -43,11 +44,17 @@ popd
 
 cp -r lang/java/lib/src java_api_workspace/
 
-pushd java_api_workspace
-echo "java package start... "
-mvn -Dmaven.test.skip=true clean package
-echo "java package complete... "
-popd
+
+if [[ "$ENABLE_JAR" == "" ]]; then
+    echo "Skip generate JAR, You can enable generating jar by set env 'ENABLE_JAR'"
+else
+    pushd java_api_workspace
+    echo "java package start... "
+    #mvn -Dmaven.test.skip=true clean package
+    echo "java package complete... "
+    popd
+fi
+
 
 
 pushd lang/js/
