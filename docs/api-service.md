@@ -26,8 +26,8 @@ import (
 )
 ...
 
-type myService {
-}
+    type myService { //具体的API实现
+    }
 
 	s := grpc.NewServer() //创建一个grpc server对象
 	myService.RegisterMyServiceServer(s, &serviceImpl{}) //在此grpc server上注册一个服务实现
@@ -52,7 +52,7 @@ type myService {
 	gw.RegisterService(context.TODO(), &pbgw.ServiceInfo{
 		ServiceType: pbgw.ServiceType_GRPC,
 		ServiceName: myService.MyService_ServiceDesc.ServiceName, //固定字段，由proto文件自动生成
-		ServiceAddr: "http://myservice-myservice.lzcapp:3999", //根据lzcdns规范曝露服务地址。
+		ServiceAddr: "myservice-myservice.lzcapp:3999", //根据lzcdns规范曝露服务地址，支持unix socket/tcp等，这里不要写http前缀
     })
 
 ```
