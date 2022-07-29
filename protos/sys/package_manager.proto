@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.sys;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "/sys";
+
+
+/*
+  - pkg代表一个静态的lpk文件
+  - app代表一个安装后的应用(正在运行或没有运行)，是由某个pkg进行部署后产生的
+  - 除了app外，系统插件、系统服务等也会以pkg的形式进行传播、部署
+ */
+
+service PackageManager {
+  rpc Install(PkgURL) returns (google.protobuf.Empty) {}
+
+  rpc Uninstall(PkgDescription) returns (google.protobuf.Empty) {}
+
+  rpc ListApplication(google.protobuf.Empty) returns (stream AppDescription) {}
+}
+
+message PkgURL {
+  // 内部地址
+  //     http://pkgm.api-server.lzcapp/tmp/xxxx-0.2.1.lpk
+  // 或外网地址
+  //     https://repo.lazycat.cloud/a/c/accc-0.2.1.lpk
+  string url = 1;
+
+  // pkg对应的sha512值，若不为空pm会对此进行cache
+  string sha512 = 2;
+}
+
+message PkgDescription {
+  string id = 1;
+}
+
+message AppDescription {
+  string id = 1;
+
+  string version = 2;
+
+  string title = 3;
+
+  string icon = 4;
+
+  string appdomain = 5;
+
+  bool running = 6;
+}

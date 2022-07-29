@@ -7,6 +7,7 @@
 package hc_core
 
 import (
+	sys "/sys"
 	context "context"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -27,6 +28,7 @@ type CoreSystemClient interface {
 	List(ctx context.Context, in *ListOptRequest, opts ...grpc.CallOption) (*AppIdList, error)
 	// Apply 安装或更新一个 app
 	Apply(ctx context.Context, in *RawData, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Apply2(ctx context.Context, in *sys.PkgURL, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Remove 移除一个 app
 	Remove(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Disable 禁用一个 app
@@ -71,6 +73,15 @@ func (c *coreSystemClient) List(ctx context.Context, in *ListOptRequest, opts ..
 func (c *coreSystemClient) Apply(ctx context.Context, in *RawData, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.CoreSystem/Apply", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreSystemClient) Apply2(ctx context.Context, in *sys.PkgURL, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.CoreSystem/Apply2", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -184,6 +195,7 @@ type CoreSystemServer interface {
 	List(context.Context, *ListOptRequest) (*AppIdList, error)
 	// Apply 安装或更新一个 app
 	Apply(context.Context, *RawData) (*emptypb.Empty, error)
+	Apply2(context.Context, *sys.PkgURL) (*emptypb.Empty, error)
 	// Remove 移除一个 app
 	Remove(context.Context, *DeleteRequest) (*emptypb.Empty, error)
 	// Disable 禁用一个 app
@@ -218,6 +230,9 @@ func (UnimplementedCoreSystemServer) List(context.Context, *ListOptRequest) (*Ap
 }
 func (UnimplementedCoreSystemServer) Apply(context.Context, *RawData) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Apply not implemented")
+}
+func (UnimplementedCoreSystemServer) Apply2(context.Context, *sys.PkgURL) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Apply2 not implemented")
 }
 func (UnimplementedCoreSystemServer) Remove(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Remove not implemented")
@@ -297,6 +312,24 @@ func _CoreSystem_Apply_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CoreSystemServer).Apply(ctx, req.(*RawData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CoreSystem_Apply2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(sys.PkgURL)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreSystemServer).Apply2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.CoreSystem/Apply2",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreSystemServer).Apply2(ctx, req.(*sys.PkgURL))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -513,6 +546,10 @@ var CoreSystem_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Apply",
 			Handler:    _CoreSystem_Apply_Handler,
+		},
+		{
+			MethodName: "Apply2",
+			Handler:    _CoreSystem_Apply2_Handler,
 		},
 		{
 			MethodName: "Remove",

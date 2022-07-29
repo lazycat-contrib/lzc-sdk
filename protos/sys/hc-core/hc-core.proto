@@ -3,6 +3,8 @@ package cloud.lazycat.apis.sys;
 import "google/protobuf/empty.proto";
 option go_package = "/hc-core";
 
+import "sys/package_manager.proto";
+
 service CoreSystem {
   /*
     应用管理
@@ -12,6 +14,8 @@ service CoreSystem {
 
   // Apply 安装或更新一个 app
   rpc Apply(RawData) returns (google.protobuf.Empty) {}
+
+  rpc Apply2(cloud.lazycat.apis.sys.PkgURL) returns (google.protobuf.Empty) {}
 
   // Remove 移除一个 app
   rpc Remove(DeleteRequest) returns (google.protobuf.Empty) {}
