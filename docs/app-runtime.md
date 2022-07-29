@@ -5,10 +5,12 @@ app container的文件系统视角里，除了正常的linux rootfs外，还存�
 
 - /lzcapp/run/
 
+  - /lzcapp/run/appdomain  #app分配到的域名全称
+
   - /lzcapp/run/sys/lzc-api.socket
     LZCAPI的入口文件，文件权限777。平台提供的所有API服务都通过这个socket暴露
 
-  - /lzcapp/run/app.crt,app.key,box.crt
+  - /lzcapp/run/certs/app.crt,app.key,box.crt
      app证明自身的文件，其中app.key为400，其他为444
 
   - /lzcapp/run/mnt/

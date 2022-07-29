@@ -7,7 +7,7 @@
 package hc_core
 
 import (
-	sys "/sys"
+	sys "gitee.com/linakesi/lzc-apis-protos/lang/go/sys"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"

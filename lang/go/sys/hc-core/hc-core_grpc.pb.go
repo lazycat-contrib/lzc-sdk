@@ -7,8 +7,8 @@
 package hc_core
 
 import (
-	sys "/sys"
 	context "context"
+	sys "gitee.com/linakesi/lzc-apis-protos/lang/go/sys"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
