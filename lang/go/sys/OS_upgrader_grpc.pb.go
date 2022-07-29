@@ -7,7 +7,11 @@
 package sys
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,6 +23,18 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OSUpgradeServiceClient interface {
+	// 获取当前系统的版本状态
+	Local(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LocalSystemVersionInfo, error)
+	// 获取远程系统的版本状态
+	Remote(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RemoteSystemVersionInfo, error)
+	// 开始下载某个版本（非阻塞）
+	Download(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取下载进度
+	Progress(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UpgradeProgressInfo, error)
+	// 切换到某个版本（需要重启生效）
+	Switch(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 重启
+	Reboot(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type oSUpgradeServiceClient struct {
@@ -29,10 +45,76 @@ func NewOSUpgradeServiceClient(cc grpc.ClientConnInterface) OSUpgradeServiceClie
 	return &oSUpgradeServiceClient{cc}
 }
 
+func (c *oSUpgradeServiceClient) Local(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LocalSystemVersionInfo, error) {
+	out := new(LocalSystemVersionInfo)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Local", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSUpgradeServiceClient) Remote(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RemoteSystemVersionInfo, error) {
+	out := new(RemoteSystemVersionInfo)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Remote", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSUpgradeServiceClient) Download(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Download", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSUpgradeServiceClient) Progress(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UpgradeProgressInfo, error) {
+	out := new(UpgradeProgressInfo)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Progress", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSUpgradeServiceClient) Switch(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Switch", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSUpgradeServiceClient) Reboot(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Reboot", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OSUpgradeServiceServer is the server API for OSUpgradeService service.
 // All implementations must embed UnimplementedOSUpgradeServiceServer
 // for forward compatibility
 type OSUpgradeServiceServer interface {
+	// 获取当前系统的版本状态
+	Local(context.Context, *emptypb.Empty) (*LocalSystemVersionInfo, error)
+	// 获取远程系统的版本状态
+	Remote(context.Context, *emptypb.Empty) (*RemoteSystemVersionInfo, error)
+	// 开始下载某个版本（非阻塞）
+	Download(context.Context, *SystemVersion) (*emptypb.Empty, error)
+	// 获取下载进度
+	Progress(context.Context, *emptypb.Empty) (*UpgradeProgressInfo, error)
+	// 切换到某个版本（需要重启生效）
+	Switch(context.Context, *SystemVersion) (*emptypb.Empty, error)
+	// 重启
+	Reboot(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOSUpgradeServiceServer()
 }
 
@@ -40,6 +122,24 @@ type OSUpgradeServiceServer interface {
 type UnimplementedOSUpgradeServiceServer struct {
 }
 
+func (UnimplementedOSUpgradeServiceServer) Local(context.Context, *emptypb.Empty) (*LocalSystemVersionInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Local not implemented")
+}
+func (UnimplementedOSUpgradeServiceServer) Remote(context.Context, *emptypb.Empty) (*RemoteSystemVersionInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Remote not implemented")
+}
+func (UnimplementedOSUpgradeServiceServer) Download(context.Context, *SystemVersion) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Download not implemented")
+}
+func (UnimplementedOSUpgradeServiceServer) Progress(context.Context, *emptypb.Empty) (*UpgradeProgressInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Progress not implemented")
+}
+func (UnimplementedOSUpgradeServiceServer) Switch(context.Context, *SystemVersion) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Switch not implemented")
+}
+func (UnimplementedOSUpgradeServiceServer) Reboot(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Reboot not implemented")
+}
 func (UnimplementedOSUpgradeServiceServer) mustEmbedUnimplementedOSUpgradeServiceServer() {}
 
 // UnsafeOSUpgradeServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -53,13 +153,146 @@ func RegisterOSUpgradeServiceServer(s grpc.ServiceRegistrar, srv OSUpgradeServic
 	s.RegisterService(&OSUpgradeService_ServiceDesc, srv)
 }
 
+func _OSUpgradeService_Local_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSUpgradeServiceServer).Local(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/Local",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSUpgradeServiceServer).Local(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSUpgradeService_Remote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSUpgradeServiceServer).Remote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/Remote",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSUpgradeServiceServer).Remote(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSUpgradeService_Download_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SystemVersion)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSUpgradeServiceServer).Download(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/Download",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSUpgradeServiceServer).Download(ctx, req.(*SystemVersion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSUpgradeService_Progress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSUpgradeServiceServer).Progress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/Progress",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSUpgradeServiceServer).Progress(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSUpgradeService_Switch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SystemVersion)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSUpgradeServiceServer).Switch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/Switch",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSUpgradeServiceServer).Switch(ctx, req.(*SystemVersion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSUpgradeService_Reboot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSUpgradeServiceServer).Reboot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/Reboot",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSUpgradeServiceServer).Reboot(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OSUpgradeService_ServiceDesc is the grpc.ServiceDesc for OSUpgradeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var OSUpgradeService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "cloud.lazycat.apis.sys.OSUpgradeService",
 	HandlerType: (*OSUpgradeServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "sys/OS_upgrader.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Local",
+			Handler:    _OSUpgradeService_Local_Handler,
+		},
+		{
+			MethodName: "Remote",
+			Handler:    _OSUpgradeService_Remote_Handler,
+		},
+		{
+			MethodName: "Download",
+			Handler:    _OSUpgradeService_Download_Handler,
+		},
+		{
+			MethodName: "Progress",
+			Handler:    _OSUpgradeService_Progress_Handler,
+		},
+		{
+			MethodName: "Switch",
+			Handler:    _OSUpgradeService_Switch_Handler,
+		},
+		{
+			MethodName: "Reboot",
+			Handler:    _OSUpgradeService_Reboot_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "sys/OS_upgrader.proto",
 }
