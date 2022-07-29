@@ -1,4 +1,4 @@
-lzc-sdk-version: 0.1  #决定了manifest文件格式以及/usr/bin/lzcapp的版本
+lzc-sdk-version: 0.1  #决定了manifest文件格式以及/usr/bin/lzcinit的版本
 
 package: abc.example.com #app的唯一标识符
 version: 2.0.2           #app的版本
@@ -11,7 +11,7 @@ license: https://choosealicense.com/licenses/mit/
 homepage: http://github.com/snyh/abc #出现bug时候提交反馈的地方
 author: snyh@snyh.org
 
-permissions: #静态权限列表
+permissions: #静态权限列表, 还在设计中，方向是权限定义以及权限要求都在protos文件中定义，然后扫描proto文件生成规则列表嵌入到api-server中
   - CLOUD.LAZYCAT.APIS.USER_DOCUMENT
   - CLOUD.LAZYCAT.APIS.END_DEVICES
 
