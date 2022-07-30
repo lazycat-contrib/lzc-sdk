@@ -10,6 +10,7 @@ import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, SessionInfo, AppInfo } fr
 import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./common/permissions"
 import { APIGateway, APIGatewayClientImpl } from "./common/gateway"
 import { PeripheralDeviceService, PeripheralDeviceServiceClientImpl } from "./common/peripheral_device"
+import { PackageManager, PackageManagerClientImpl } from "./sys/package_manager"
 
 import { OSSnapshotService, OSSnapshotServiceClientImpl } from "./sys/OS_snapshot"
 import { OSUpgradeService, OSUpgradeServiceClientImpl } from "./sys/OS_upgrader"
@@ -52,6 +53,7 @@ export class lzcAPIGateway {
         this.gw = new APIGatewayClientImpl(rpc);
 
         this.pm = new PermissionManagerClientImpl(rpc);
+        this.pkgm = new PackageManagerClientImpl(rpc);
 
         this.pd = new PeripheralDeviceServiceClientImpl(rpc);
 
@@ -74,6 +76,7 @@ export class lzcAPIGateway {
         })
     }
 
+    public pkgm: PackageManager;
     public users: UserManager;
 
     public session: Promise<SessionInfo>;

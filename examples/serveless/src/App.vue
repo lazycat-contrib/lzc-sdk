@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { lzcAPIGateway, DeviceProxy } from "@lazycatcloud/lzc-apis"
+import { lzcAPIGateway, EndDeviceProxy } from "@lazycatcloud/lzc-apis"
 
 export default {
   async mounted() {
@@ -23,7 +23,7 @@ export default {
     let s = await cc.session
     console.log("当前信息:", s)
 
-    this.devices = (await cc.devices.ListDevices({"uid": s.uid})).devices
+    this.devices = (await cc.devices.ListEndDevices({"uid": s.uid})).devices
 
     // cc.devices.KeepConnect({
     //     devices: this.devices.map( (d)=>{ return d.peerId }),
@@ -33,7 +33,7 @@ export default {
     // })
 
     for (const d of this.devices) {
-      let dp = new DeviceProxy(d.deviceApiUrl)
+      let dp = new EndDeviceProxy(d.deviceApiUrl)
       let pid = d.peerId
 
       if (s.deviceId == pid) {
