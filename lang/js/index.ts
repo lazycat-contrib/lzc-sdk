@@ -7,7 +7,7 @@ import { Observable, Subscriber } from "rxjs";
 import { EndDeviceServiceClientImpl, EndDeviceService, EndDevice } from "./common/end_device"
 import { UserManagerClientImpl, UserManager } from "./common/users"
 import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, SessionInfo, AppInfo } from "./common/browseronly"
-import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./common/permissions"
+import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./common/security_context"
 import { APIGateway, APIGatewayClientImpl } from "./common/gateway"
 import { PeripheralDeviceService, PeripheralDeviceServiceClientImpl } from "./common/peripheral_device"
 import { PackageManager, PackageManagerClientImpl } from "./sys/package_manager"

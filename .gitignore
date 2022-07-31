@@ -18,3 +18,4 @@
 /examples/java-demo-gateway/lib/cloud-lazycat-apis-1.0-jar-with-dependencies.jar
 /java_api_workspace/src/main/java/cloud/lazycat/apis/
 /java_api_workspace/target/
+/tools/protoc-gen-lzc/protoc-gen-lzc

@@ -4,6 +4,7 @@ package cloud.lazycat.apis.common;
 
 option go_package = "/common";
 
+import "common/security_context.proto";
 import "google/protobuf/empty.proto";
 
 // 外围设备管理服务
@@ -13,7 +14,10 @@ service PeripheralDeviceService {
   rpc ListRemovableDisk(google.protobuf.Empty) returns (ListRemovableDiskReply) {}
 
   // 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partion_uuid目录下
-  rpc MountFilesystem(MountFilesystemRequest) returns (google.protobuf.Empty) {}
+  rpc MountFilesystem(MountFilesystemRequest) returns (google.protobuf.Empty) {
+    option (cloud.lazycat.apis.common.scontext).require_permissions = USER_DOCUMENT;
+  }
+
   rpc UmountFilesystem(UmountFilesystemRequest) returns (google.protobuf.Empty) {}
 }
 

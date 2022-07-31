@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.common;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/common";
+
+enum Permission {
+  // 是否允许挂载用户文档数据
+  USER_DOCUMENT = 0;
+
+  // 是否允许安装软件
+  INSTALL_PACKAGE = 1;
+
+  // 是否允许挂载可移动存储设备
+  ACCESS_REMOVEABLE_STOREAGE = 2;
+
+  // 是否允许生成访问EndDevice的访问凭证, EndDevice会进行具体API的权限验证
+  ACCESS_ENDDEVICE = 1000;
+
+  ENDDEVICE_CLIPBOARD = 1001;
+  ENDDEVICE_NETWORK_INFO = 1002;
+  ENDDEVICE_PHOTOLIBRARY = 1003;
+}
+
+enum UserCert {
+  NONE_USER = 0;
+
+  // 普通用户凭证
+  ANY_USER = 1;
+
+  // 管理员凭证
+  ADMIN_USER = 2;
+
+  // APP凭证
+  APP_USER = 3;
+}
+
+message SecurityContext {
+  repeated Permission require_permissions = 1;
+  UserCert require_user = 2;
+}
+
+extend google.protobuf.MethodOptions {
+  optional SecurityContext scontext = 70000;
+}
+
+service PermissionManager {
+  rpc Request(PermissionDesc) returns (PermissionToken) {}
+  rpc Check(CheckPermissionRequest) returns (PermissionStatus) {}
+}
+
+message PermissionDesc {
+  // 申请权限的原因说明
+  string reason = 1;
+
+  // 权限列表
+  repeated Permission permissions = 2;
+}
+
+// 后续调用lzc-apis时，需要带上此token
+message PermissionToken {
+  string token = 1;
+}
+
+message PermissionStatus {
+}
+
+message CheckPermissionRequest {
+  Permission perm = 1;
+}

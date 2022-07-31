@@ -6,4 +6,4 @@ COPY dist .
 EXPOSE $HTTP_SERVICE_PORT
 
 ENV HTTP_SERVICE_PORT ${HTTP_SERVICE_PORT}
-CMD lzcapp --listen :8080 -up "/=file:///app"
+CMD lzcinit --listen :8080 -up "/=file:///app"
