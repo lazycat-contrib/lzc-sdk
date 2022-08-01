@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package cloud.lazycat.apis.localdevice;
 
-option go_package = "/localdevice";
+option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/localdevice";
 
 import "google/protobuf/empty.proto";
 

@@ -4,7 +4,7 @@ package cloud.lazycat.apis.common;
 
 import "google/protobuf/empty.proto";
 
-option go_package = "/common";
+option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/common";
 
 service UserManager {
   rpc ListUsers(ListUsersRequest) returns (ListUsersReply) {}
