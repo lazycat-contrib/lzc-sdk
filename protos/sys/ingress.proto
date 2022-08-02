@@ -2,7 +2,53 @@ syntax = "proto3";
 
 package cloud.lazycat.apis.sys;
 
+import "google/protobuf/empty.proto";
+
 option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/sys";
 
 service IngressService {
+
+    // 阻止一个用户对指定 app 的访问
+    rpc BlockAdd(IngressBlockRequest)  returns (google.protobuf.Empty) {}
+
+    // 恢复一个用户对指定 app 的访问权限
+    rpc BlockDel(IngressBlockRequest) returns (google.protobuf.Empty) {}
+
+    // 恢复一个用户对所有 app 的访问权限
+    rpc BlockDelAll(IngressBlockDelAllRequest) returns (google.protobuf.Empty) {}
+
+    // 查询一个用户是否被阻止访问指定 app
+    rpc BlockGet(IngressBlockGetRequest) returns (IngressBlockGetResponse) {}
+
+    // 列出一个用户的所有被阻止访问的 app 列表
+    rpc BlockList(IngressBlockListRequest) returns (IngressBlockListResponse) {}
+
+    // 清空黑名单
+    rpc BlockClear(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+}
+
+message IngressBlockRequest {
+    string UserId = 1;
+    repeated string AppIdList = 2;
+}
+
+message IngressBlockDelAllRequest {
+    string UserId = 1;
+}
+
+message IngressBlockListRequest {
+    string UserId = 1;
+}
+
+message IngressBlockListResponse {
+    repeated string AppIdList = 1;
+}
+
+message IngressBlockGetRequest {
+    string UserId = 1;
+    string AppId = 2;
+}
+
+message IngressBlockGetResponse {
+    bool IsBlocked = 1;
 }
