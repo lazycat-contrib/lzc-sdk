@@ -45,6 +45,7 @@ func main() {
 			fmt.Fprintf(g, "case %q: \n//%v\nreturn %s;", mn, perms, perms2ints(perms))
 		}
 		g.P("}")
+		g.P("return nil")
 		g.P("}")
 		g.P()
 
@@ -63,7 +64,7 @@ func ExtractScontext(file *protogen.File, rules map[string][]P.Permission) {
 			if !proto.HasExtension(o, P.E_Scontext) {
 				continue
 			}
-			ext := proto.GetExtension(o, P.E_Scontext).(*P.SecurityContext)
+			ext := proto.GetExtension(o, P.E_Scontext).(*P.SecurityContextRequire)
 
 			rules[fmt.Sprintf("%s", m.Desc.FullName())] = ext.RequirePermissions
 		}

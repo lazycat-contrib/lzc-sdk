@@ -21,9 +21,11 @@ application:
 
   public_path: /api/public  #默认情况下所有路径都需要登陆后才能访问，public_path之下的路径允许非登陆情况下访问
 
+  api_acl: "http://127.0.0.1:1234/acl" #app对于浏览器发起的behalf_of_uid的过滤，如果acl通过则会传递到lzc api services否则403
+
   routes:
-    - /api/=exec://8000,/lzcapp/pkg/build/backend.bin     #格式与/usr/bin/lzcinit -up参数一致
-    - /=file:///lzcapp/pkg/
+    - /api/=exec://8000,/lzcapp/pkg/content/bin/backend     #格式与/usr/bin/lzcinit -up参数一致
+    - /=file:///lzcapp/pkg/content/dist/
 
   ingress:
     - type: tcp      #tcp or udp

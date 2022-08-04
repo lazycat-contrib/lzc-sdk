@@ -16,7 +16,7 @@ option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/sys";
 service PackageManager {
   rpc Install(PkgURL) returns (google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_permissions = INSTALL_PACKAGE;
-    option (cloud.lazycat.apis.common.scontext).require_user = ADMIN_USER;
+    option (cloud.lazycat.apis.common.scontext).require_user_class = ADMIN_USER;
   }
 
   rpc Uninstall(PkgDescription) returns (google.protobuf.Empty) {}

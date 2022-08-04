@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PermissionManagerClient interface {
 	Request(ctx context.Context, in *PermissionDesc, opts ...grpc.CallOption) (*PermissionToken, error)
-	Check(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*PermissionStatus, error)
+	Has(ctx context.Context, in *HasPermissionRequest, opts ...grpc.CallOption) (*PermissionStatus, error)
 }
 
 type permissionManagerClient struct {
@@ -43,9 +43,9 @@ func (c *permissionManagerClient) Request(ctx context.Context, in *PermissionDes
 	return out, nil
 }
 
-func (c *permissionManagerClient) Check(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*PermissionStatus, error) {
+func (c *permissionManagerClient) Has(ctx context.Context, in *HasPermissionRequest, opts ...grpc.CallOption) (*PermissionStatus, error) {
 	out := new(PermissionStatus)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.PermissionManager/Check", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.PermissionManager/Has", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *permissionManagerClient) Check(ctx context.Context, in *CheckPermission
 // for forward compatibility
 type PermissionManagerServer interface {
 	Request(context.Context, *PermissionDesc) (*PermissionToken, error)
-	Check(context.Context, *CheckPermissionRequest) (*PermissionStatus, error)
+	Has(context.Context, *HasPermissionRequest) (*PermissionStatus, error)
 	mustEmbedUnimplementedPermissionManagerServer()
 }
 
@@ -68,8 +68,8 @@ type UnimplementedPermissionManagerServer struct {
 func (UnimplementedPermissionManagerServer) Request(context.Context, *PermissionDesc) (*PermissionToken, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Request not implemented")
 }
-func (UnimplementedPermissionManagerServer) Check(context.Context, *CheckPermissionRequest) (*PermissionStatus, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Check not implemented")
+func (UnimplementedPermissionManagerServer) Has(context.Context, *HasPermissionRequest) (*PermissionStatus, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Has not implemented")
 }
 func (UnimplementedPermissionManagerServer) mustEmbedUnimplementedPermissionManagerServer() {}
 
@@ -102,20 +102,20 @@ func _PermissionManager_Request_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PermissionManager_Check_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckPermissionRequest)
+func _PermissionManager_Has_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HasPermissionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PermissionManagerServer).Check(ctx, in)
+		return srv.(PermissionManagerServer).Has(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.PermissionManager/Check",
+		FullMethod: "/cloud.lazycat.apis.common.PermissionManager/Has",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionManagerServer).Check(ctx, req.(*CheckPermissionRequest))
+		return srv.(PermissionManagerServer).Has(ctx, req.(*HasPermissionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -132,8 +132,8 @@ var PermissionManager_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PermissionManager_Request_Handler,
 		},
 		{
-			MethodName: "Check",
-			Handler:    _PermissionManager_Check_Handler,
+			MethodName: "Has",
+			Handler:    _PermissionManager_Has_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

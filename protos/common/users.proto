@@ -4,6 +4,8 @@ package cloud.lazycat.apis.common;
 
 import "google/protobuf/empty.proto";
 
+import "common/security_context.proto";
+
 option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/common";
 
 service UserManager {
@@ -16,6 +18,7 @@ service UserManager {
 }
 
 message UserID {
+  option (target_uid_field) = 1;
   string uid = 1;
 }
 
