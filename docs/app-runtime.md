@@ -25,12 +25,24 @@ app container的文件系统视角里，除了正常的linux rootfs外，还存�
 
 - /lzcapp/cache/              #app存放的任意数据，不属于备份数据，在空间不足时可能会被清理掉
 
-- /lzcapp/pkg/                #只读目录，内容为app pkg解压后的内容
-
 - /tmp                        #app存放的任意数据，不属于备份数据，在程序重启时一定会被清理掉
+
+- /lzcapp/pkg/                #只读目录，内容为app pkg解压后的内容. 仅lpk格式类型的app会存在此目录，系统app等没有此目录
+ - /lzcapp/pkg/manifest.yml   # lpk:/manifest.yml本身
+ - /lzcapp/pkg/icon.png       # lpk:/manifest.yml:icon对应文件的数据
+ - /lzcapp/pkg/content/       # lpk:/content.tar解压后的内容
+
 
 
 1. 其他目录均为只读文件系统，如需修改，需要自行修改APP配置清单并获取对应权限。
 2. 由用户产生或用户应该期望在文件管理器中看到的文稿数据，应该统一放到/lzcapp/run/mnt/home/$uid/目录下。
 3. 系统视角不存在公共目录。文件放到/lzcapp/run/mnt/home/$uid/shared目录即表示共享，由系统组件抽取并由UI模拟公共目录效果。
 4. /tmp目录不放置到/lzcapp是考虑到大部分软件组件会假设/tmp的存在且由权限写入。
+
+
+LPK格式
+=======
+LPK为一个后缀为`.lpk`，以zip压缩方式，压缩了一个目录。其目录结构为
+
+- /manifest.yml  # 对应 lzc app manifest格式
+- /content.tar   # app本身的实际程序以及资源文件等任意文件，一般提供给manifest.yml:routes,icon等字段使用
