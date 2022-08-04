@@ -12,14 +12,26 @@ service OSUpgradeService {
   // 获取远程系统的版本状态
   rpc Remote(google.protobuf.Empty) returns (RemoteSystemVersionInfo) {}
 
-  // 开始下载某个版本（非阻塞）
-  rpc Download(SystemVersion) returns (google.protobuf.Empty) {}
+  // 选择远程某个版本，获取到大小准备下载
+  rpc Select(SystemVersion) returns (google.protobuf.Empty) {}
+
+  // 开始下载
+  rpc Start(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+
+  // 暂停下载
+  rpc Pause(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 
   // 获取下载进度
   rpc Progress(google.protobuf.Empty) returns (UpgradeProgressInfo) {}
 
+  // 安装当前已下好的版本
+  rpc Install(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+
   // 切换到某个版本（需要重启生效）
   rpc Switch(SystemVersion) returns (google.protobuf.Empty) {}
+
+  // 清理（阻塞）
+  rpc Prune(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 
   // 重启
   rpc Reboot(google.protobuf.Empty) returns (google.protobuf.Empty) {}
@@ -44,19 +56,25 @@ message RemoteSystemVersionInfo {
   repeated string versions = 3;
 }
 
+enum DownloaderStatus {
+  ready = 0;
+  downloading = 1;
+  paused = 2;
+  completed = 3;
+  error = 4;
+}
+
 message UpgradeProgressInfo {
   // 正在下载的系统版本，（为空表示没有正在下载的进度，后面所有字段都没有意义）
   string version = 1;
 
+  DownloaderStatus status = 2;
+
   // 已下载的大小（字节）
-  int64 complete = 2;
+  int64 complete = 3;
 
   // 总需要下载的大小（字节）
-  int64 total = 3;
-
-  // 是否已下载完成（若发生错误，则该值永远不可能为 true）
-  //     在实际使用时需要不停地轮循请求检查 completed 和 error 这两个字段
-  bool completed = 4;
+  int64 total = 4;
 
   // 错误信息（在没有错误时该值为空）
   string error = 5;

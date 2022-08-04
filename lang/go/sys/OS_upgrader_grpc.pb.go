@@ -27,12 +27,20 @@ type OSUpgradeServiceClient interface {
 	Local(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LocalSystemVersionInfo, error)
 	// 获取远程系统的版本状态
 	Remote(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RemoteSystemVersionInfo, error)
-	// 开始下载某个版本（非阻塞）
-	Download(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 选择远程某个版本，获取到大小准备下载
+	Select(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 开始下载
+	Start(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 暂停下载
+	Pause(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 获取下载进度
 	Progress(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UpgradeProgressInfo, error)
+	// 安装当前已下好的版本
+	Install(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 切换到某个版本（需要重启生效）
 	Switch(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 清理（阻塞）
+	Prune(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 重启
 	Reboot(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -63,9 +71,27 @@ func (c *oSUpgradeServiceClient) Remote(ctx context.Context, in *emptypb.Empty, 
 	return out, nil
 }
 
-func (c *oSUpgradeServiceClient) Download(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *oSUpgradeServiceClient) Select(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Download", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Select", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSUpgradeServiceClient) Start(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Start", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSUpgradeServiceClient) Pause(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Pause", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -81,9 +107,27 @@ func (c *oSUpgradeServiceClient) Progress(ctx context.Context, in *emptypb.Empty
 	return out, nil
 }
 
+func (c *oSUpgradeServiceClient) Install(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Install", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *oSUpgradeServiceClient) Switch(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Switch", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSUpgradeServiceClient) Prune(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Prune", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -107,12 +151,20 @@ type OSUpgradeServiceServer interface {
 	Local(context.Context, *emptypb.Empty) (*LocalSystemVersionInfo, error)
 	// 获取远程系统的版本状态
 	Remote(context.Context, *emptypb.Empty) (*RemoteSystemVersionInfo, error)
-	// 开始下载某个版本（非阻塞）
-	Download(context.Context, *SystemVersion) (*emptypb.Empty, error)
+	// 选择远程某个版本，获取到大小准备下载
+	Select(context.Context, *SystemVersion) (*emptypb.Empty, error)
+	// 开始下载
+	Start(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 暂停下载
+	Pause(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 获取下载进度
 	Progress(context.Context, *emptypb.Empty) (*UpgradeProgressInfo, error)
+	// 安装当前已下好的版本
+	Install(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 切换到某个版本（需要重启生效）
 	Switch(context.Context, *SystemVersion) (*emptypb.Empty, error)
+	// 清理（阻塞）
+	Prune(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 重启
 	Reboot(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOSUpgradeServiceServer()
@@ -128,14 +180,26 @@ func (UnimplementedOSUpgradeServiceServer) Local(context.Context, *emptypb.Empty
 func (UnimplementedOSUpgradeServiceServer) Remote(context.Context, *emptypb.Empty) (*RemoteSystemVersionInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Remote not implemented")
 }
-func (UnimplementedOSUpgradeServiceServer) Download(context.Context, *SystemVersion) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Download not implemented")
+func (UnimplementedOSUpgradeServiceServer) Select(context.Context, *SystemVersion) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Select not implemented")
+}
+func (UnimplementedOSUpgradeServiceServer) Start(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Start not implemented")
+}
+func (UnimplementedOSUpgradeServiceServer) Pause(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Pause not implemented")
 }
 func (UnimplementedOSUpgradeServiceServer) Progress(context.Context, *emptypb.Empty) (*UpgradeProgressInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Progress not implemented")
 }
+func (UnimplementedOSUpgradeServiceServer) Install(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Install not implemented")
+}
 func (UnimplementedOSUpgradeServiceServer) Switch(context.Context, *SystemVersion) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Switch not implemented")
+}
+func (UnimplementedOSUpgradeServiceServer) Prune(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Prune not implemented")
 }
 func (UnimplementedOSUpgradeServiceServer) Reboot(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Reboot not implemented")
@@ -189,20 +253,56 @@ func _OSUpgradeService_Remote_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OSUpgradeService_Download_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _OSUpgradeService_Select_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SystemVersion)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OSUpgradeServiceServer).Download(ctx, in)
+		return srv.(OSUpgradeServiceServer).Select(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/Download",
+		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/Select",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OSUpgradeServiceServer).Download(ctx, req.(*SystemVersion))
+		return srv.(OSUpgradeServiceServer).Select(ctx, req.(*SystemVersion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSUpgradeService_Start_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSUpgradeServiceServer).Start(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/Start",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSUpgradeServiceServer).Start(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSUpgradeService_Pause_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSUpgradeServiceServer).Pause(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/Pause",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSUpgradeServiceServer).Pause(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -225,6 +325,24 @@ func _OSUpgradeService_Progress_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OSUpgradeService_Install_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSUpgradeServiceServer).Install(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/Install",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSUpgradeServiceServer).Install(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OSUpgradeService_Switch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SystemVersion)
 	if err := dec(in); err != nil {
@@ -239,6 +357,24 @@ func _OSUpgradeService_Switch_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OSUpgradeServiceServer).Switch(ctx, req.(*SystemVersion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSUpgradeService_Prune_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSUpgradeServiceServer).Prune(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/Prune",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSUpgradeServiceServer).Prune(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -277,16 +413,32 @@ var OSUpgradeService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OSUpgradeService_Remote_Handler,
 		},
 		{
-			MethodName: "Download",
-			Handler:    _OSUpgradeService_Download_Handler,
+			MethodName: "Select",
+			Handler:    _OSUpgradeService_Select_Handler,
+		},
+		{
+			MethodName: "Start",
+			Handler:    _OSUpgradeService_Start_Handler,
+		},
+		{
+			MethodName: "Pause",
+			Handler:    _OSUpgradeService_Pause_Handler,
 		},
 		{
 			MethodName: "Progress",
 			Handler:    _OSUpgradeService_Progress_Handler,
 		},
 		{
+			MethodName: "Install",
+			Handler:    _OSUpgradeService_Install_Handler,
+		},
+		{
 			MethodName: "Switch",
 			Handler:    _OSUpgradeService_Switch_Handler,
+		},
+		{
+			MethodName: "Prune",
+			Handler:    _OSUpgradeService_Prune_Handler,
 		},
 		{
 			MethodName: "Reboot",
