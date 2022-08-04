@@ -25,6 +25,9 @@ service IngressService {
 
     // 清空黑名单
     rpc BlockClear(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+
+    // 获取指定 app 最后一次被访问的时刻
+    rpc GetAppLastAccessTime(IngressAppLastAccessTimeRequest) returns (IngressAppLastAccessTimeResponse) {}
 }
 
 message IngressBlockRequest {
@@ -51,4 +54,12 @@ message IngressBlockGetRequest {
 
 message IngressBlockGetResponse {
     bool IsBlocked = 1;
+}
+
+message IngressAppLastAccessTimeRequest {
+    string AppId = 1;
+}
+
+message IngressAppLastAccessTimeResponse {
+    int64 UnixTime = 1;
 }

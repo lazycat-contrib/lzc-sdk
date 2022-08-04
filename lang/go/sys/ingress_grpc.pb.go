@@ -35,6 +35,8 @@ type IngressServiceClient interface {
 	BlockList(ctx context.Context, in *IngressBlockListRequest, opts ...grpc.CallOption) (*IngressBlockListResponse, error)
 	// 清空黑名单
 	BlockClear(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取指定 app 最后一次被访问的时刻
+	GetAppLastAccessTime(ctx context.Context, in *IngressAppLastAccessTimeRequest, opts ...grpc.CallOption) (*IngressAppLastAccessTimeResponse, error)
 }
 
 type ingressServiceClient struct {
@@ -99,6 +101,15 @@ func (c *ingressServiceClient) BlockClear(ctx context.Context, in *emptypb.Empty
 	return out, nil
 }
 
+func (c *ingressServiceClient) GetAppLastAccessTime(ctx context.Context, in *IngressAppLastAccessTimeRequest, opts ...grpc.CallOption) (*IngressAppLastAccessTimeResponse, error) {
+	out := new(IngressAppLastAccessTimeResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.IngressService/GetAppLastAccessTime", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IngressServiceServer is the server API for IngressService service.
 // All implementations must embed UnimplementedIngressServiceServer
 // for forward compatibility
@@ -115,6 +126,8 @@ type IngressServiceServer interface {
 	BlockList(context.Context, *IngressBlockListRequest) (*IngressBlockListResponse, error)
 	// 清空黑名单
 	BlockClear(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 获取指定 app 最后一次被访问的时刻
+	GetAppLastAccessTime(context.Context, *IngressAppLastAccessTimeRequest) (*IngressAppLastAccessTimeResponse, error)
 	mustEmbedUnimplementedIngressServiceServer()
 }
 
@@ -139,6 +152,9 @@ func (UnimplementedIngressServiceServer) BlockList(context.Context, *IngressBloc
 }
 func (UnimplementedIngressServiceServer) BlockClear(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BlockClear not implemented")
+}
+func (UnimplementedIngressServiceServer) GetAppLastAccessTime(context.Context, *IngressAppLastAccessTimeRequest) (*IngressAppLastAccessTimeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppLastAccessTime not implemented")
 }
 func (UnimplementedIngressServiceServer) mustEmbedUnimplementedIngressServiceServer() {}
 
@@ -261,6 +277,24 @@ func _IngressService_BlockClear_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IngressService_GetAppLastAccessTime_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IngressAppLastAccessTimeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IngressServiceServer).GetAppLastAccessTime(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.IngressService/GetAppLastAccessTime",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IngressServiceServer).GetAppLastAccessTime(ctx, req.(*IngressAppLastAccessTimeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IngressService_ServiceDesc is the grpc.ServiceDesc for IngressService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -291,6 +325,10 @@ var IngressService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BlockClear",
 			Handler:    _IngressService_BlockClear_Handler,
+		},
+		{
+			MethodName: "GetAppLastAccessTime",
+			Handler:    _IngressService_GetAppLastAccessTime_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
