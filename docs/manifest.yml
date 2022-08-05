@@ -5,7 +5,6 @@ version: 2.0.2           #app的版本
 
 name: 测试abc
 description: 简单易用的英语学习软件
-icon: ./abc.png #必须是当前pkg内路径，会提供给启动器等地方使用. 截图、关键字、分类等信息在上架商店时单独提供
 
 license: https://choosealicense.com/licenses/mit/
 homepage: http://github.com/snyh/abc #出现bug时候提交反馈的地方

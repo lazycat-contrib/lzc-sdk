@@ -29,10 +29,8 @@ app container的文件系统视角里，除了正常的linux rootfs外，还存�
 
 - /lzcapp/pkg/                #只读目录，内容为app pkg解压后的内容. 仅lpk格式类型的app会存在此目录，系统app等没有此目录
  - /lzcapp/pkg/manifest.yml   # lpk:/manifest.yml本身
- - /lzcapp/pkg/icon.png       # lpk:/manifest.yml:icon对应文件的数据
+ - /lzcapp/pkg/icon.png       # lpk:/icon.png
  - /lzcapp/pkg/content/       # lpk:/content.tar解压后的内容
-
-
 
 1. 其他目录均为只读文件系统，如需修改，需要自行修改APP配置清单并获取对应权限。
 2. 由用户产生或用户应该期望在文件管理器中看到的文稿数据，应该统一放到/lzcapp/run/mnt/home/$uid/目录下。
@@ -44,5 +42,19 @@ LPK格式
 =======
 LPK为一个后缀为`.lpk`，以zip压缩方式，压缩了一个目录。其目录结构为
 
-- /manifest.yml  # 对应 lzc app manifest格式
+- /manifest.yml  # 对应[lzc app manifest.yml](./manifest.yml)
 - /content.tar   # app本身的实际程序以及资源文件等任意文件，一般提供给manifest.yml:routes,icon等字段使用
+- /icon.png      # 程序图标，必须有且只支持png格式
+
+一个包签名后还会额外新增以下3个文件
+
+- /sign.sha256   # 除了sbign开头外所有其他顶层目录下普通文件的文件名和对应的sha256值,类似`sha256sum $(find -type f -maxdepth 1)`
+- /sign.by.crt   # 签名使用的证书，系统安装和运行时会检测对应证书来源是否安全
+- /sign.data     # 使用/sign.by.crt的公钥对/sign.sha256签名后的数据
+
+
+其他:
+
+- 推荐将icon,vue dist, program bin等都直接嵌入到lpk内部，而非通过docker image的形式传播
+- lpk的内容会原封不动的解压到app container内的/lzcapp/pkg/目录下,因此启动参数等可以依赖与这个路径进行配置
+- lpk不仅仅可以作为lzcapp的载体格式，将来还可以作为系统插件等组件的载体格式。
