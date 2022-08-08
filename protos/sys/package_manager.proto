@@ -31,8 +31,8 @@ message PkgURL {
   //     https://repo.lazycat.cloud/a/c/accc-0.2.1.lpk
   string url = 1;
 
-  // pkg对应的sha512值，若不为空pm会对此进行cache
-  string sha512 = 2;
+  // pkg对应的sha256值，若不为空pm会对此进行cache
+  string sha256 = 2;
 }
 
 message PkgDescription {
