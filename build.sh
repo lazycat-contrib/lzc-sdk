@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-docker run -ti -w $(pwd) -v $(pwd):$(pwd) --rm registry.lazycat.cloud/lzc/lzc-api-protoc ./tools/gen.sh
+docker run -ti -w $(pwd) -v $(pwd):$(pwd) -e ENABLE_JAR=1 --rm registry.lazycat.cloud/lzc/lzc-api-protoc ./tools/gen.sh
 
 #必须先生成lang/go的内容后才能生成security content rules
 pushd tools/protoc-gen-lzc/

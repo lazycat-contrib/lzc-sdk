@@ -27,7 +27,26 @@ service PhotoLibrary {
   // 2. 服务端获取此集合并与服务器中存在的图片进行对比，获取未同步到服务器中的图片ID集合
   rpc QueryPhotoHash(QueryPhotoHashRequest) returns (stream PhotoHashSet) {}
 }
+// 查询照片信息的排序方式
+enum PhotoMetasSortType{
 
+  // 创建时间降序
+  CREATE_DATE_DESC = 0;
+  // 拍照时间降序
+  TAKEN_DATE_DESC  = 1;
+  // 创建时间升序
+  CREATE_DATE_ASC = 2;
+  // 拍摄时间升序
+  TAKEN_DATE_ASC = 3;
+  // 创建时间,拍摄时间降序
+  CREATE_TAKEN_DESC = 4;
+  // 创建时间,拍摄时间升序
+  CREATE_TAKEN_ASC = 5;
+  // 拍摄时间，创建时间 降序
+  TOKEN_CREATE_DESC = 6;
+ // 拍摄时间，创建时间升序
+  TOKEN_CREATE_ASC = 7;
+}
 message QueryPhotoHashRequest {
   // changed_after语义为: changed_after之后的新增文件都会加入返回的集合里,
   // 与文件本身的modify time无关。
@@ -67,6 +86,14 @@ message ListPhotoMetasRequest {
 
   bool need_file_name = 4;
   bool need_album_ids = 5;
+  // 不填写默认按照创建时间降序排序
+  optional PhotoMetasSortType stype = 6;
+  // 查询第几页(不填写默认为第一页)
+  optional uint32 page_num = 7;
+  // （每页返回的数据条数，不填写将返回所有数据）
+  optional  uint32 page_size = 8;
+  // 是否过滤视频 （默认false,照片和视频信息一起返回)
+  optional bool is_filter_video = 9;
 }
 
 message PhotoMeta {
