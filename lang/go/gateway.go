@@ -1,6 +1,7 @@
 package gohelper
 
 import (
+	"context"
 	"strings"
 
 	"gitee.com/linakesi/lzc-apis-protos/lang/go/common"
@@ -53,23 +54,24 @@ func (gw *APIGateway) NewDeviceProxy(deviceapiurl string) (*DeviceProxy, error) 
 	}, nil
 }
 
-func NewAPIConn() (*grpc.ClientConn, error) {
+func NewAPIConn(ctx context.Context) (*grpc.ClientConn, error) {
 	cred, err := DialCred()
 	if err != nil {
 		return nil, err
 	}
-	return grpc.Dial("unix:"+APISocketPath, cred)
+	return grpc.DialContext(ctx, "unix:"+APISocketPath, grpc.WithBlock(), cred)
 }
 
-func NewAPIGateway() (*APIGateway, error) {
+func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
 	cred, err := DialCred()
 	if err != nil {
 		return nil, err
 	}
-	conn, err := grpc.Dial("unix:"+APISocketPath, cred)
+	conn, err := grpc.DialContext(ctx, "unix:"+APISocketPath, grpc.WithBlock(), cred)
 	if err != nil {
 		return nil, err
 	}
+
 	return &APIGateway{
 		cred: cred,
 		conn: conn,
