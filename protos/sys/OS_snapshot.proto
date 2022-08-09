@@ -39,7 +39,7 @@ service OSSnapshotService {
     rpc SnapshotRestore(SnapshotRequest) returns (google.protobuf.Empty) {}
 
     // 备份快照到已注册的备份池
-    rpc SnapshotBackupAdd(SnapshotBackupRequest) returns (google.protobuf.Empty) {}
+    rpc SnapshotBackupAdd(SnapshotBackupTransferRequest) returns (google.protobuf.Empty) {}
 
     // 将指定数据集快照从备份池中移除
     rpc SnapshotBackupDel(SnapshotBackupRequest) returns (google.protobuf.Empty) {}
@@ -48,7 +48,19 @@ service OSSnapshotService {
     rpc SnapshotBackupList(SnapshotBackupListRequest) returns (SnapshotListResponse) {}
 
     // 将某个快照备份还原
-    rpc SnapshotBackupRestore(SnapshotBackupRequest) returns (google.protobuf.Empty) {}
+    rpc SnapshotBackupRestore(SnapshotBackupTransferRequest) returns (google.protobuf.Empty) {}
+
+    // 获取当前运行状态
+    rpc GetStatus(google.protobuf.Empty) returns (SnapshotStatusResponse) {}
+
+    // 停止当前正在进行的任务
+    rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+}
+
+enum SnapshotManagerStatus {
+    Stopped = 0;
+    Running = 1;
+    Waiting = 2;
 }
 
 message SnapshotBackupPoolRequest {
@@ -86,7 +98,19 @@ message SnapshotBackupRequest {
     string SnapshotName = 3;
 }
 
+message SnapshotBackupTransferRequest {
+    string PoolName = 1;
+    string DatasetPath = 2;
+    string SnapshotName = 3;
+    // 若存在可恢复的传输任务，是否不尝试恢复，重新传输
+    bool NoResume = 4;
+}
+
 message SnapshotBackupListRequest {
     string PoolName = 1;
     string DatasetPath = 2;
+}
+
+message SnapshotStatusResponse {
+    SnapshotManagerStatus Status = 1;
 }

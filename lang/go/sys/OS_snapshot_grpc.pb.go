@@ -44,13 +44,17 @@ type OSSnapshotServiceClient interface {
 	// 将数据集回滚到指定快照的状态（数据集中较新的快照会被丢弃）
 	SnapshotRestore(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 备份快照到已注册的备份池
-	SnapshotBackupAdd(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SnapshotBackupAdd(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 将指定数据集快照从备份池中移除
 	SnapshotBackupDel(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列举指定备份池中某个数据集的快照名称
 	SnapshotBackupList(ctx context.Context, in *SnapshotBackupListRequest, opts ...grpc.CallOption) (*SnapshotListResponse, error)
 	// 将某个快照备份还原
-	SnapshotBackupRestore(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SnapshotBackupRestore(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取当前运行状态
+	GetStatus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotStatusResponse, error)
+	// 停止当前正在进行的任务
+	Stop(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type oSSnapshotServiceClient struct {
@@ -151,7 +155,7 @@ func (c *oSSnapshotServiceClient) SnapshotRestore(ctx context.Context, in *Snaps
 	return out, nil
 }
 
-func (c *oSSnapshotServiceClient) SnapshotBackupAdd(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *oSSnapshotServiceClient) SnapshotBackupAdd(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupAdd", in, out, opts...)
 	if err != nil {
@@ -178,9 +182,27 @@ func (c *oSSnapshotServiceClient) SnapshotBackupList(ctx context.Context, in *Sn
 	return out, nil
 }
 
-func (c *oSSnapshotServiceClient) SnapshotBackupRestore(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *oSSnapshotServiceClient) SnapshotBackupRestore(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupRestore", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) GetStatus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotStatusResponse, error) {
+	out := new(SnapshotStatusResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/GetStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) Stop(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/Stop", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -212,13 +234,17 @@ type OSSnapshotServiceServer interface {
 	// 将数据集回滚到指定快照的状态（数据集中较新的快照会被丢弃）
 	SnapshotRestore(context.Context, *SnapshotRequest) (*emptypb.Empty, error)
 	// 备份快照到已注册的备份池
-	SnapshotBackupAdd(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error)
+	SnapshotBackupAdd(context.Context, *SnapshotBackupTransferRequest) (*emptypb.Empty, error)
 	// 将指定数据集快照从备份池中移除
 	SnapshotBackupDel(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error)
 	// 列举指定备份池中某个数据集的快照名称
 	SnapshotBackupList(context.Context, *SnapshotBackupListRequest) (*SnapshotListResponse, error)
 	// 将某个快照备份还原
-	SnapshotBackupRestore(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error)
+	SnapshotBackupRestore(context.Context, *SnapshotBackupTransferRequest) (*emptypb.Empty, error)
+	// 获取当前运行状态
+	GetStatus(context.Context, *emptypb.Empty) (*SnapshotStatusResponse, error)
+	// 停止当前正在进行的任务
+	Stop(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOSSnapshotServiceServer()
 }
 
@@ -256,7 +282,7 @@ func (UnimplementedOSSnapshotServiceServer) SnapshotList(context.Context, *Snaps
 func (UnimplementedOSSnapshotServiceServer) SnapshotRestore(context.Context, *SnapshotRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapshotRestore not implemented")
 }
-func (UnimplementedOSSnapshotServiceServer) SnapshotBackupAdd(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error) {
+func (UnimplementedOSSnapshotServiceServer) SnapshotBackupAdd(context.Context, *SnapshotBackupTransferRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapshotBackupAdd not implemented")
 }
 func (UnimplementedOSSnapshotServiceServer) SnapshotBackupDel(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error) {
@@ -265,8 +291,14 @@ func (UnimplementedOSSnapshotServiceServer) SnapshotBackupDel(context.Context, *
 func (UnimplementedOSSnapshotServiceServer) SnapshotBackupList(context.Context, *SnapshotBackupListRequest) (*SnapshotListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapshotBackupList not implemented")
 }
-func (UnimplementedOSSnapshotServiceServer) SnapshotBackupRestore(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error) {
+func (UnimplementedOSSnapshotServiceServer) SnapshotBackupRestore(context.Context, *SnapshotBackupTransferRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapshotBackupRestore not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) GetStatus(context.Context, *emptypb.Empty) (*SnapshotStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) Stop(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Stop not implemented")
 }
 func (UnimplementedOSSnapshotServiceServer) mustEmbedUnimplementedOSSnapshotServiceServer() {}
 
@@ -462,7 +494,7 @@ func _OSSnapshotService_SnapshotRestore_Handler(srv interface{}, ctx context.Con
 }
 
 func _OSSnapshotService_SnapshotBackupAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SnapshotBackupRequest)
+	in := new(SnapshotBackupTransferRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -474,7 +506,7 @@ func _OSSnapshotService_SnapshotBackupAdd_Handler(srv interface{}, ctx context.C
 		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupAdd",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OSSnapshotServiceServer).SnapshotBackupAdd(ctx, req.(*SnapshotBackupRequest))
+		return srv.(OSSnapshotServiceServer).SnapshotBackupAdd(ctx, req.(*SnapshotBackupTransferRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -516,7 +548,7 @@ func _OSSnapshotService_SnapshotBackupList_Handler(srv interface{}, ctx context.
 }
 
 func _OSSnapshotService_SnapshotBackupRestore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SnapshotBackupRequest)
+	in := new(SnapshotBackupTransferRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -528,7 +560,43 @@ func _OSSnapshotService_SnapshotBackupRestore_Handler(srv interface{}, ctx conte
 		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupRestore",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OSSnapshotServiceServer).SnapshotBackupRestore(ctx, req.(*SnapshotBackupRequest))
+		return srv.(OSSnapshotServiceServer).SnapshotBackupRestore(ctx, req.(*SnapshotBackupTransferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_GetStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).GetStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/GetStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).GetStatus(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_Stop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).Stop(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/Stop",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).Stop(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -595,6 +663,14 @@ var OSSnapshotService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SnapshotBackupRestore",
 			Handler:    _OSSnapshotService_SnapshotBackupRestore_Handler,
+		},
+		{
+			MethodName: "GetStatus",
+			Handler:    _OSSnapshotService_GetStatus_Handler,
+		},
+		{
+			MethodName: "Stop",
+			Handler:    _OSSnapshotService_Stop_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
