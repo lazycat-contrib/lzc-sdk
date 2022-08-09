@@ -25,7 +25,7 @@ const (
 type PhotoMetasSortType int32
 
 const (
-	// 创建事件降序
+	// 创建时间降序
 	PhotoMetasSortType_CREATE_DATE_DESC PhotoMetasSortType = 0
 	// 拍照时间降序
 	PhotoMetasSortType_TAKEN_DATE_DESC PhotoMetasSortType = 1
@@ -39,7 +39,7 @@ const (
 	PhotoMetasSortType_CREATE_TAKEN_ASC PhotoMetasSortType = 5
 	// 拍摄时间，创建时间 降序
 	PhotoMetasSortType_TOKEN_CREATE_DESC PhotoMetasSortType = 6
-	// 拍摄时间， 创建时间升序
+	// 拍摄时间，创建时间升序
 	PhotoMetasSortType_TOKEN_CREATE_ASC PhotoMetasSortType = 7
 )
 
@@ -392,7 +392,7 @@ type ListPhotoMetasRequest struct {
 	ThumbnailHeight int32    `protobuf:"varint,3,opt,name=thumbnail_height,json=thumbnailHeight,proto3" json:"thumbnail_height,omitempty"`
 	NeedFileName    bool     `protobuf:"varint,4,opt,name=need_file_name,json=needFileName,proto3" json:"need_file_name,omitempty"`
 	NeedAlbumIds    bool     `protobuf:"varint,5,opt,name=need_album_ids,json=needAlbumIds,proto3" json:"need_album_ids,omitempty"`
-	// 不填写 默认按照创建时间降序排序
+	// 不填写默认按照创建时间降序排序
 	Stype *PhotoMetasSortType `protobuf:"varint,6,opt,name=stype,proto3,enum=cloud.lazycat.apis.localdevice.PhotoMetasSortType,oneof" json:"stype,omitempty"`
 	// 查询第几页(不填写默认为第一页)
 	PageNum *uint32 `protobuf:"varint,7,opt,name=page_num,json=pageNum,proto3,oneof" json:"page_num,omitempty"`
