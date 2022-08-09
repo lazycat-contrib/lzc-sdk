@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
-	pbdevices "gitee.com/linakesi/lzc-apis-protos/devices"
-	"gitee.com/linakesi/lzc-apis-protos/gohelper"
-	"gitee.com/linakesi/lzc-apis-protos/users"
+	lzcapis "gitee.com/linakesi/lzc-apis-protos/lang/go"
+	pbdevices "gitee.com/linakesi/lzc-apis-protos/lang/go/common"
+	pbusers "gitee.com/linakesi/lzc-apis-protos/lang/go/common"
 )
 
 // 在后台定期，维护拓扑状态：UID<-->DeviceID的关系 (有可能变动,比如同一个设备上，切换了用户)
@@ -25,7 +25,7 @@ import (
 // 8. 将剪贴板内容依次同步到剩余设备中
 
 type SyncClipDaemon struct {
-	gw *gohelper.APIGateway
+	gw *lzcapis.APIGateway
 
 	devices     sync.Map // map[peer.id]*Device
 	lastcontent sync.Map //map[uid]content
@@ -59,13 +59,13 @@ func (sd *SyncClipDaemon) Start(ctx context.Context) {
 }
 
 func (sd *SyncClipDaemon) oneTick(ctx context.Context) error {
-	repl, err := sd.gw.Users.ListUsers(ctx, &users.ListUsersRequest{})
+	repl, err := sd.gw.Users.ListUsers(ctx, &pbusers.ListUsersRequest{})
 	if err != nil {
 		return err
 	}
 
 	for _, uid := range repl.Uids {
-		repl, err := sd.gw.Devices.ListDevices(ctx, &pbdevices.ListDeviceRequest{Uid: uid})
+		repl, err := sd.gw.Devices.ListEndDevices(ctx, &pbdevices.ListEndDeviceRequest{Uid: uid})
 		if err != nil {
 			fmt.Printf("List User %q Devices failed:", err)
 			continue
@@ -121,7 +121,7 @@ func (sd *SyncClipDaemon) OnNewClipContent(uid string, from string, content stri
 }
 
 func main() {
-	apigw, err := gohelper.NewAPIGateway()
+	apigw, err := lzcapis.NewAPIGateway(context.Background())
 	if err != nil {
 		fmt.Println("无法创建LZCAPI", err)
 		return

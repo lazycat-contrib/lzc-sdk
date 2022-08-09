@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"time"
 
-	"gitee.com/linakesi/lzc-apis-protos/gohelper"
-	"gitee.com/linakesi/lzc-apis-protos/localdevice/clipboard"
+	lzcapis "gitee.com/linakesi/lzc-apis-protos/lang/go"
+
+	pbclipboard "gitee.com/linakesi/lzc-apis-protos/lang/go/localdevice"
 )
 
 type Device struct {
-	gw *gohelper.APIGateway
+	gw *lzcapis.APIGateway
 	id string
 
 	uid      string
@@ -21,7 +22,7 @@ type Device struct {
 
 type ClipCallback func(uid string, from string, content string)
 
-func NewDevice(gw *gohelper.APIGateway, id string) *Device {
+func NewDevice(gw *lzcapis.APIGateway, id string) *Device {
 	return &Device{gw: gw, id: id}
 }
 
@@ -42,7 +43,7 @@ func (d *Device) RegisterCallback(ctx context.Context, cb ClipCallback) error {
 			fmt.Println("Can't connect with end device", d.devurl, err)
 			return
 		}
-		wc, err := dp.Clipboard.Watch(ctx, &clipboard.ReadClipRequest{})
+		wc, err := dp.Clipboard.Watch(ctx, &pbclipboard.ReadClipRequest{})
 		if err != nil {
 			fmt.Println("WATCH ERRROR:", d.devurl, err)
 			return
@@ -83,6 +84,6 @@ func (d *Device) WriteClipboard(ctx context.Context, content string) error {
 		return err
 	}
 	defer dp.Close()
-	_, err = dp.Clipboard.Write(ctx, &clipboard.WriteClipRequest{Content: []byte(content)})
+	_, err = dp.Clipboard.Write(ctx, &pbclipboard.WriteClipRequest{Content: []byte(content)})
 	return err
 }
