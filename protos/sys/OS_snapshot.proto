@@ -2,7 +2,91 @@ syntax = "proto3";
 
 package cloud.lazycat.apis.sys;
 
+import "google/protobuf/empty.proto";
+
 option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/sys";
 
 service OSSnapshotService {
+
+    // 添加快照备份池（必须是已存在的 ZFS 池）
+    rpc BackupPoolAdd(SnapshotBackupPoolRequest) returns (google.protobuf.Empty) {}
+
+    // 移除快照备份池（对应 ZFS 池不会被删除）
+    rpc BackupPoolDel(SnapshotBackupPoolRequest) returns (google.protobuf.Empty) {}
+
+    // 列举已注册的快照备份池
+    rpc BackupPoolList(google.protobuf.Empty) returns (SnapshotBackupPoolListResponse) {}
+
+    // 创建数据集并挂载到指定路径（若已存在，不会重复创建）
+    rpc DatasetAdd(SnapshotDatasetRequest) returns (google.protobuf.Empty) {}
+
+    // 删除数据集
+    rpc DatasetDel(SnapshotDatasetRequest) returns (google.protobuf.Empty) {}
+
+    // 列举所有数据集路径
+    rpc DatasetList(google.protobuf.Empty) returns (SnapshotDatasetListResponse) {}
+
+    // 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
+    rpc SnapshotAdd(SnapshotDatasetRequest) returns (google.protobuf.Empty) {}
+
+    // 根据名称删除指定数据集中的一个快照
+    rpc SnapshotDel(SnapshotRequest) returns (google.protobuf.Empty) {}
+
+    // 列举指定数据集下所有快照名称
+    rpc SnapshotList(SnapshotDatasetRequest) returns (SnapshotListResponse) {}
+
+    // 将数据集回滚到指定快照的状态（数据集中较新的快照会被丢弃）
+    rpc SnapshotRestore(SnapshotRequest) returns (google.protobuf.Empty) {}
+
+    // 备份快照到已注册的备份池
+    rpc SnapshotBackupAdd(SnapshotBackupRequest) returns (google.protobuf.Empty) {}
+
+    // 将指定数据集快照从备份池中移除
+    rpc SnapshotBackupDel(SnapshotBackupRequest) returns (google.protobuf.Empty) {}
+
+    // 列举指定备份池中某个数据集的快照名称
+    rpc SnapshotBackupList(SnapshotBackupListRequest) returns (SnapshotListResponse) {}
+
+    // 将某个快照备份还原
+    rpc SnapshotBackupRestore(SnapshotBackupRequest) returns (google.protobuf.Empty) {}
+}
+
+message SnapshotBackupPoolRequest {
+    // 用于备份的 ZFS 池的名称
+    string PoolName = 1;
+}
+
+message SnapshotBackupPoolListResponse {
+    repeated string PoolNameList = 1;
+}
+
+message SnapshotDatasetRequest {
+    // 数据集挂载点的绝对路径。
+    // 对应的数据集名称会根据路径自动生成，无需客户端关注
+    string DatasetPath = 1;
+}
+
+message SnapshotDatasetListResponse {
+    repeated string DatasetPathList = 1;
+}
+
+message SnapshotRequest {
+    string DatasetPath = 1;
+    // 快照名称（"@" 之后的部分）
+    string SnapshotName = 2;
+}
+
+message SnapshotListResponse {
+    repeated string SnapshotNameList = 1;
+}
+
+message SnapshotBackupRequest {
+    string PoolName = 1;
+    string DatasetPath = 2;
+    string SnapshotName = 3;
+}
+
+message SnapshotBackupListRequest {
+    string PoolName = 1;
+    string DatasetPath = 2;
 }

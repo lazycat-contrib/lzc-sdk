@@ -7,7 +7,11 @@
 package sys
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,6 +23,34 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OSSnapshotServiceClient interface {
+	// 添加快照备份池（必须是已存在的 ZFS 池）
+	BackupPoolAdd(ctx context.Context, in *SnapshotBackupPoolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 移除快照备份池（对应 ZFS 池不会被删除）
+	BackupPoolDel(ctx context.Context, in *SnapshotBackupPoolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 列举已注册的快照备份池
+	BackupPoolList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotBackupPoolListResponse, error)
+	// 创建数据集并挂载到指定路径（若已存在，不会重复创建）
+	DatasetAdd(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 删除数据集
+	DatasetDel(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 列举所有数据集路径
+	DatasetList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error)
+	// 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
+	SnapshotAdd(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 根据名称删除指定数据集中的一个快照
+	SnapshotDel(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 列举指定数据集下所有快照名称
+	SnapshotList(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*SnapshotListResponse, error)
+	// 将数据集回滚到指定快照的状态（数据集中较新的快照会被丢弃）
+	SnapshotRestore(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 备份快照到已注册的备份池
+	SnapshotBackupAdd(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 将指定数据集快照从备份池中移除
+	SnapshotBackupDel(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 列举指定备份池中某个数据集的快照名称
+	SnapshotBackupList(ctx context.Context, in *SnapshotBackupListRequest, opts ...grpc.CallOption) (*SnapshotListResponse, error)
+	// 将某个快照备份还原
+	SnapshotBackupRestore(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type oSSnapshotServiceClient struct {
@@ -29,10 +61,164 @@ func NewOSSnapshotServiceClient(cc grpc.ClientConnInterface) OSSnapshotServiceCl
 	return &oSSnapshotServiceClient{cc}
 }
 
+func (c *oSSnapshotServiceClient) BackupPoolAdd(ctx context.Context, in *SnapshotBackupPoolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/BackupPoolAdd", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) BackupPoolDel(ctx context.Context, in *SnapshotBackupPoolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/BackupPoolDel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) BackupPoolList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotBackupPoolListResponse, error) {
+	out := new(SnapshotBackupPoolListResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/BackupPoolList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) DatasetAdd(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/DatasetAdd", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) DatasetDel(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/DatasetDel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) DatasetList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error) {
+	out := new(SnapshotDatasetListResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/DatasetList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) SnapshotAdd(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotAdd", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) SnapshotDel(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotDel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) SnapshotList(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*SnapshotListResponse, error) {
+	out := new(SnapshotListResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) SnapshotRestore(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotRestore", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) SnapshotBackupAdd(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupAdd", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) SnapshotBackupDel(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupDel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) SnapshotBackupList(ctx context.Context, in *SnapshotBackupListRequest, opts ...grpc.CallOption) (*SnapshotListResponse, error) {
+	out := new(SnapshotListResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) SnapshotBackupRestore(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupRestore", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OSSnapshotServiceServer is the server API for OSSnapshotService service.
 // All implementations must embed UnimplementedOSSnapshotServiceServer
 // for forward compatibility
 type OSSnapshotServiceServer interface {
+	// 添加快照备份池（必须是已存在的 ZFS 池）
+	BackupPoolAdd(context.Context, *SnapshotBackupPoolRequest) (*emptypb.Empty, error)
+	// 移除快照备份池（对应 ZFS 池不会被删除）
+	BackupPoolDel(context.Context, *SnapshotBackupPoolRequest) (*emptypb.Empty, error)
+	// 列举已注册的快照备份池
+	BackupPoolList(context.Context, *emptypb.Empty) (*SnapshotBackupPoolListResponse, error)
+	// 创建数据集并挂载到指定路径（若已存在，不会重复创建）
+	DatasetAdd(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error)
+	// 删除数据集
+	DatasetDel(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error)
+	// 列举所有数据集路径
+	DatasetList(context.Context, *emptypb.Empty) (*SnapshotDatasetListResponse, error)
+	// 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
+	SnapshotAdd(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error)
+	// 根据名称删除指定数据集中的一个快照
+	SnapshotDel(context.Context, *SnapshotRequest) (*emptypb.Empty, error)
+	// 列举指定数据集下所有快照名称
+	SnapshotList(context.Context, *SnapshotDatasetRequest) (*SnapshotListResponse, error)
+	// 将数据集回滚到指定快照的状态（数据集中较新的快照会被丢弃）
+	SnapshotRestore(context.Context, *SnapshotRequest) (*emptypb.Empty, error)
+	// 备份快照到已注册的备份池
+	SnapshotBackupAdd(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error)
+	// 将指定数据集快照从备份池中移除
+	SnapshotBackupDel(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error)
+	// 列举指定备份池中某个数据集的快照名称
+	SnapshotBackupList(context.Context, *SnapshotBackupListRequest) (*SnapshotListResponse, error)
+	// 将某个快照备份还原
+	SnapshotBackupRestore(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOSSnapshotServiceServer()
 }
 
@@ -40,6 +226,48 @@ type OSSnapshotServiceServer interface {
 type UnimplementedOSSnapshotServiceServer struct {
 }
 
+func (UnimplementedOSSnapshotServiceServer) BackupPoolAdd(context.Context, *SnapshotBackupPoolRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BackupPoolAdd not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) BackupPoolDel(context.Context, *SnapshotBackupPoolRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BackupPoolDel not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) BackupPoolList(context.Context, *emptypb.Empty) (*SnapshotBackupPoolListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BackupPoolList not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) DatasetAdd(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DatasetAdd not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) DatasetDel(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DatasetDel not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) DatasetList(context.Context, *emptypb.Empty) (*SnapshotDatasetListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DatasetList not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) SnapshotAdd(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapshotAdd not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) SnapshotDel(context.Context, *SnapshotRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapshotDel not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) SnapshotList(context.Context, *SnapshotDatasetRequest) (*SnapshotListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapshotList not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) SnapshotRestore(context.Context, *SnapshotRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapshotRestore not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) SnapshotBackupAdd(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapshotBackupAdd not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) SnapshotBackupDel(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapshotBackupDel not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) SnapshotBackupList(context.Context, *SnapshotBackupListRequest) (*SnapshotListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapshotBackupList not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) SnapshotBackupRestore(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapshotBackupRestore not implemented")
+}
 func (UnimplementedOSSnapshotServiceServer) mustEmbedUnimplementedOSSnapshotServiceServer() {}
 
 // UnsafeOSSnapshotServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -53,13 +281,322 @@ func RegisterOSSnapshotServiceServer(s grpc.ServiceRegistrar, srv OSSnapshotServ
 	s.RegisterService(&OSSnapshotService_ServiceDesc, srv)
 }
 
+func _OSSnapshotService_BackupPoolAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotBackupPoolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).BackupPoolAdd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/BackupPoolAdd",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).BackupPoolAdd(ctx, req.(*SnapshotBackupPoolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_BackupPoolDel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotBackupPoolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).BackupPoolDel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/BackupPoolDel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).BackupPoolDel(ctx, req.(*SnapshotBackupPoolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_BackupPoolList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).BackupPoolList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/BackupPoolList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).BackupPoolList(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_DatasetAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotDatasetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).DatasetAdd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/DatasetAdd",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).DatasetAdd(ctx, req.(*SnapshotDatasetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_DatasetDel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotDatasetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).DatasetDel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/DatasetDel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).DatasetDel(ctx, req.(*SnapshotDatasetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_DatasetList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).DatasetList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/DatasetList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).DatasetList(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_SnapshotAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotDatasetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).SnapshotAdd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotAdd",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).SnapshotAdd(ctx, req.(*SnapshotDatasetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_SnapshotDel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).SnapshotDel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotDel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).SnapshotDel(ctx, req.(*SnapshotRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_SnapshotList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotDatasetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).SnapshotList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).SnapshotList(ctx, req.(*SnapshotDatasetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_SnapshotRestore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).SnapshotRestore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotRestore",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).SnapshotRestore(ctx, req.(*SnapshotRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_SnapshotBackupAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotBackupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).SnapshotBackupAdd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupAdd",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).SnapshotBackupAdd(ctx, req.(*SnapshotBackupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_SnapshotBackupDel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotBackupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).SnapshotBackupDel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupDel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).SnapshotBackupDel(ctx, req.(*SnapshotBackupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_SnapshotBackupList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotBackupListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).SnapshotBackupList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).SnapshotBackupList(ctx, req.(*SnapshotBackupListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_SnapshotBackupRestore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotBackupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).SnapshotBackupRestore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupRestore",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).SnapshotBackupRestore(ctx, req.(*SnapshotBackupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OSSnapshotService_ServiceDesc is the grpc.ServiceDesc for OSSnapshotService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var OSSnapshotService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "cloud.lazycat.apis.sys.OSSnapshotService",
 	HandlerType: (*OSSnapshotServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "sys/OS_snapshot.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "BackupPoolAdd",
+			Handler:    _OSSnapshotService_BackupPoolAdd_Handler,
+		},
+		{
+			MethodName: "BackupPoolDel",
+			Handler:    _OSSnapshotService_BackupPoolDel_Handler,
+		},
+		{
+			MethodName: "BackupPoolList",
+			Handler:    _OSSnapshotService_BackupPoolList_Handler,
+		},
+		{
+			MethodName: "DatasetAdd",
+			Handler:    _OSSnapshotService_DatasetAdd_Handler,
+		},
+		{
+			MethodName: "DatasetDel",
+			Handler:    _OSSnapshotService_DatasetDel_Handler,
+		},
+		{
+			MethodName: "DatasetList",
+			Handler:    _OSSnapshotService_DatasetList_Handler,
+		},
+		{
+			MethodName: "SnapshotAdd",
+			Handler:    _OSSnapshotService_SnapshotAdd_Handler,
+		},
+		{
+			MethodName: "SnapshotDel",
+			Handler:    _OSSnapshotService_SnapshotDel_Handler,
+		},
+		{
+			MethodName: "SnapshotList",
+			Handler:    _OSSnapshotService_SnapshotList_Handler,
+		},
+		{
+			MethodName: "SnapshotRestore",
+			Handler:    _OSSnapshotService_SnapshotRestore_Handler,
+		},
+		{
+			MethodName: "SnapshotBackupAdd",
+			Handler:    _OSSnapshotService_SnapshotBackupAdd_Handler,
+		},
+		{
+			MethodName: "SnapshotBackupDel",
+			Handler:    _OSSnapshotService_SnapshotBackupDel_Handler,
+		},
+		{
+			MethodName: "SnapshotBackupList",
+			Handler:    _OSSnapshotService_SnapshotBackupList_Handler,
+		},
+		{
+			MethodName: "SnapshotBackupRestore",
+			Handler:    _OSSnapshotService_SnapshotBackupRestore_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "sys/OS_snapshot.proto",
 }
