@@ -112,6 +112,7 @@ message PhotoMeta {
   optional float latitude = 12;
   optional float longitude = 13;
   optional google.protobuf.Timestamp taken_date = 14;
+  optional google.protobuf.Timestamp modified_date = 15;
 
 }
 
