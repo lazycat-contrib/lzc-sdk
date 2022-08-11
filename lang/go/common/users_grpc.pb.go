@@ -23,10 +23,22 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserManagerClient interface {
-	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersReply, error)
+	//  获取所有盒子用户的uid信息(允许任意有效用户)
+	ListUIDs(ctx context.Context, in *ListUIDsRequest, opts ...grpc.CallOption) (*ListUIDsReply, error)
+	//  根据用户uid查询用户信息(允许任意有效用户)
 	QueryUserInfo(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*UserInfo, error)
-	// 更新nickname和avator
-	UpdateUserInfo(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  更新指定uid用户的nickname和avator(允许用户修改自己的用户信息)
+	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  修改指定uid的用户角色(管理员角色允许调用)
+	ChangeRole(ctx context.Context, in *ChangeRoleReqeust, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  通过验证旧密码修改新的密码(允许用户重置自己的密码)
+	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 删除用户信息(管理员角色允许调用)
+	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 创建用户信息(管理员角色允许调用)
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 强制重置用户密码（管理员角色允许调用)
+	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type userManagerClient struct {
@@ -37,9 +49,9 @@ func NewUserManagerClient(cc grpc.ClientConnInterface) UserManagerClient {
 	return &userManagerClient{cc}
 }
 
-func (c *userManagerClient) ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersReply, error) {
-	out := new(ListUsersReply)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.UserManager/ListUsers", in, out, opts...)
+func (c *userManagerClient) ListUIDs(ctx context.Context, in *ListUIDsRequest, opts ...grpc.CallOption) (*ListUIDsReply, error) {
+	out := new(ListUIDsReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.UserManager/ListUIDs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -55,9 +67,54 @@ func (c *userManagerClient) QueryUserInfo(ctx context.Context, in *UserID, opts 
 	return out, nil
 }
 
-func (c *userManagerClient) UpdateUserInfo(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *userManagerClient) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.UserManager/UpdateUserInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userManagerClient) ChangeRole(ctx context.Context, in *ChangeRoleReqeust, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.UserManager/ChangeRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userManagerClient) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.UserManager/ResetPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userManagerClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.UserManager/DeleteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userManagerClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.UserManager/CreateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userManagerClient) ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.UserManager/ForceResetPassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,10 +125,22 @@ func (c *userManagerClient) UpdateUserInfo(ctx context.Context, in *UserInfo, op
 // All implementations must embed UnimplementedUserManagerServer
 // for forward compatibility
 type UserManagerServer interface {
-	ListUsers(context.Context, *ListUsersRequest) (*ListUsersReply, error)
+	//  获取所有盒子用户的uid信息(允许任意有效用户)
+	ListUIDs(context.Context, *ListUIDsRequest) (*ListUIDsReply, error)
+	//  根据用户uid查询用户信息(允许任意有效用户)
 	QueryUserInfo(context.Context, *UserID) (*UserInfo, error)
-	// 更新nickname和avator
-	UpdateUserInfo(context.Context, *UserInfo) (*emptypb.Empty, error)
+	//  更新指定uid用户的nickname和avator(允许用户修改自己的用户信息)
+	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*emptypb.Empty, error)
+	//  修改指定uid的用户角色(管理员角色允许调用)
+	ChangeRole(context.Context, *ChangeRoleReqeust) (*emptypb.Empty, error)
+	//  通过验证旧密码修改新的密码(允许用户重置自己的密码)
+	ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error)
+	// 删除用户信息(管理员角色允许调用)
+	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
+	// 创建用户信息(管理员角色允许调用)
+	CreateUser(context.Context, *CreateUserRequest) (*emptypb.Empty, error)
+	// 强制重置用户密码（管理员角色允许调用)
+	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUserManagerServer()
 }
 
@@ -79,14 +148,29 @@ type UserManagerServer interface {
 type UnimplementedUserManagerServer struct {
 }
 
-func (UnimplementedUserManagerServer) ListUsers(context.Context, *ListUsersRequest) (*ListUsersReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListUsers not implemented")
+func (UnimplementedUserManagerServer) ListUIDs(context.Context, *ListUIDsRequest) (*ListUIDsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUIDs not implemented")
 }
 func (UnimplementedUserManagerServer) QueryUserInfo(context.Context, *UserID) (*UserInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryUserInfo not implemented")
 }
-func (UnimplementedUserManagerServer) UpdateUserInfo(context.Context, *UserInfo) (*emptypb.Empty, error) {
+func (UnimplementedUserManagerServer) UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInfo not implemented")
+}
+func (UnimplementedUserManagerServer) ChangeRole(context.Context, *ChangeRoleReqeust) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeRole not implemented")
+}
+func (UnimplementedUserManagerServer) ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
+}
+func (UnimplementedUserManagerServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedUserManagerServer) CreateUser(context.Context, *CreateUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedUserManagerServer) ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ForceResetPassword not implemented")
 }
 func (UnimplementedUserManagerServer) mustEmbedUnimplementedUserManagerServer() {}
 
@@ -101,20 +185,20 @@ func RegisterUserManagerServer(s grpc.ServiceRegistrar, srv UserManagerServer) {
 	s.RegisterService(&UserManager_ServiceDesc, srv)
 }
 
-func _UserManager_ListUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListUsersRequest)
+func _UserManager_ListUIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUIDsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserManagerServer).ListUsers(ctx, in)
+		return srv.(UserManagerServer).ListUIDs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.UserManager/ListUsers",
+		FullMethod: "/cloud.lazycat.apis.common.UserManager/ListUIDs",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserManagerServer).ListUsers(ctx, req.(*ListUsersRequest))
+		return srv.(UserManagerServer).ListUIDs(ctx, req.(*ListUIDsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -138,7 +222,7 @@ func _UserManager_QueryUserInfo_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _UserManager_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInfo)
+	in := new(UpdateUserInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -150,7 +234,97 @@ func _UserManager_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/cloud.lazycat.apis.common.UserManager/UpdateUserInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserManagerServer).UpdateUserInfo(ctx, req.(*UserInfo))
+		return srv.(UserManagerServer).UpdateUserInfo(ctx, req.(*UpdateUserInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserManager_ChangeRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeRoleReqeust)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserManagerServer).ChangeRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.common.UserManager/ChangeRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserManagerServer).ChangeRole(ctx, req.(*ChangeRoleReqeust))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserManager_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserManagerServer).ResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.common.UserManager/ResetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserManagerServer).ResetPassword(ctx, req.(*ResetPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserManager_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserManagerServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.common.UserManager/DeleteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserManagerServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserManager_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserManagerServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.common.UserManager/CreateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserManagerServer).CreateUser(ctx, req.(*CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserManager_ForceResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForceResetPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserManagerServer).ForceResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.common.UserManager/ForceResetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserManagerServer).ForceResetPassword(ctx, req.(*ForceResetPasswordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -163,8 +337,8 @@ var UserManager_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*UserManagerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ListUsers",
-			Handler:    _UserManager_ListUsers_Handler,
+			MethodName: "ListUIDs",
+			Handler:    _UserManager_ListUIDs_Handler,
 		},
 		{
 			MethodName: "QueryUserInfo",
@@ -173,6 +347,26 @@ var UserManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUserInfo",
 			Handler:    _UserManager_UpdateUserInfo_Handler,
+		},
+		{
+			MethodName: "ChangeRole",
+			Handler:    _UserManager_ChangeRole_Handler,
+		},
+		{
+			MethodName: "ResetPassword",
+			Handler:    _UserManager_ResetPassword_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _UserManager_DeleteUser_Handler,
+		},
+		{
+			MethodName: "CreateUser",
+			Handler:    _UserManager_CreateUser_Handler,
+		},
+		{
+			MethodName: "ForceResetPassword",
+			Handler:    _UserManager_ForceResetPassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
