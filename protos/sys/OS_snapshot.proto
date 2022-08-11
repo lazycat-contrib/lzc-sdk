@@ -26,6 +26,9 @@ service OSSnapshotService {
     // 列举所有数据集路径
     rpc DatasetList(google.protobuf.Empty) returns (SnapshotDatasetListResponse) {}
 
+    // 列举指定备份池中的所有数据集路径
+    rpc DatasetBackupList(SnapshotBackupPoolRequest) returns (SnapshotDatasetListResponse) {}
+
     // 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
     rpc SnapshotAdd(SnapshotDatasetRequest) returns (google.protobuf.Empty) {}
 
@@ -53,8 +56,8 @@ service OSSnapshotService {
     // 获取当前运行状态
     rpc GetStatus(google.protobuf.Empty) returns (SnapshotStatusResponse) {}
 
-    // 停止当前正在进行的任务
-    rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+    // 停止当前正在进行的传输任务
+    rpc StopTransfer(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }
 
 enum SnapshotManagerStatus {

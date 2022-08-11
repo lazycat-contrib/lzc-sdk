@@ -35,6 +35,8 @@ type OSSnapshotServiceClient interface {
 	DatasetDel(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列举所有数据集路径
 	DatasetList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error)
+	// 列举指定备份池中的所有数据集路径
+	DatasetBackupList(ctx context.Context, in *SnapshotBackupPoolRequest, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error)
 	// 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
 	SnapshotAdd(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据名称删除指定数据集中的一个快照
@@ -53,8 +55,8 @@ type OSSnapshotServiceClient interface {
 	SnapshotBackupRestore(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 获取当前运行状态
 	GetStatus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotStatusResponse, error)
-	// 停止当前正在进行的任务
-	Stop(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 停止当前正在进行的传输任务
+	StopTransfer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type oSSnapshotServiceClient struct {
@@ -113,6 +115,15 @@ func (c *oSSnapshotServiceClient) DatasetDel(ctx context.Context, in *SnapshotDa
 func (c *oSSnapshotServiceClient) DatasetList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error) {
 	out := new(SnapshotDatasetListResponse)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/DatasetList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) DatasetBackupList(ctx context.Context, in *SnapshotBackupPoolRequest, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error) {
+	out := new(SnapshotDatasetListResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/DatasetBackupList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -200,9 +211,9 @@ func (c *oSSnapshotServiceClient) GetStatus(ctx context.Context, in *emptypb.Emp
 	return out, nil
 }
 
-func (c *oSSnapshotServiceClient) Stop(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *oSSnapshotServiceClient) StopTransfer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/Stop", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/StopTransfer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -225,6 +236,8 @@ type OSSnapshotServiceServer interface {
 	DatasetDel(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error)
 	// 列举所有数据集路径
 	DatasetList(context.Context, *emptypb.Empty) (*SnapshotDatasetListResponse, error)
+	// 列举指定备份池中的所有数据集路径
+	DatasetBackupList(context.Context, *SnapshotBackupPoolRequest) (*SnapshotDatasetListResponse, error)
 	// 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
 	SnapshotAdd(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error)
 	// 根据名称删除指定数据集中的一个快照
@@ -243,8 +256,8 @@ type OSSnapshotServiceServer interface {
 	SnapshotBackupRestore(context.Context, *SnapshotBackupTransferRequest) (*emptypb.Empty, error)
 	// 获取当前运行状态
 	GetStatus(context.Context, *emptypb.Empty) (*SnapshotStatusResponse, error)
-	// 停止当前正在进行的任务
-	Stop(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 停止当前正在进行的传输任务
+	StopTransfer(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOSSnapshotServiceServer()
 }
 
@@ -269,6 +282,9 @@ func (UnimplementedOSSnapshotServiceServer) DatasetDel(context.Context, *Snapsho
 }
 func (UnimplementedOSSnapshotServiceServer) DatasetList(context.Context, *emptypb.Empty) (*SnapshotDatasetListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DatasetList not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) DatasetBackupList(context.Context, *SnapshotBackupPoolRequest) (*SnapshotDatasetListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DatasetBackupList not implemented")
 }
 func (UnimplementedOSSnapshotServiceServer) SnapshotAdd(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapshotAdd not implemented")
@@ -297,8 +313,8 @@ func (UnimplementedOSSnapshotServiceServer) SnapshotBackupRestore(context.Contex
 func (UnimplementedOSSnapshotServiceServer) GetStatus(context.Context, *emptypb.Empty) (*SnapshotStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
 }
-func (UnimplementedOSSnapshotServiceServer) Stop(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Stop not implemented")
+func (UnimplementedOSSnapshotServiceServer) StopTransfer(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StopTransfer not implemented")
 }
 func (UnimplementedOSSnapshotServiceServer) mustEmbedUnimplementedOSSnapshotServiceServer() {}
 
@@ -417,6 +433,24 @@ func _OSSnapshotService_DatasetList_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OSSnapshotServiceServer).DatasetList(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_DatasetBackupList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotBackupPoolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).DatasetBackupList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/DatasetBackupList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).DatasetBackupList(ctx, req.(*SnapshotBackupPoolRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -583,20 +617,20 @@ func _OSSnapshotService_GetStatus_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OSSnapshotService_Stop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _OSSnapshotService_StopTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OSSnapshotServiceServer).Stop(ctx, in)
+		return srv.(OSSnapshotServiceServer).StopTransfer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/Stop",
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/StopTransfer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OSSnapshotServiceServer).Stop(ctx, req.(*emptypb.Empty))
+		return srv.(OSSnapshotServiceServer).StopTransfer(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -631,6 +665,10 @@ var OSSnapshotService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DatasetList",
 			Handler:    _OSSnapshotService_DatasetList_Handler,
+		},
+		{
+			MethodName: "DatasetBackupList",
+			Handler:    _OSSnapshotService_DatasetBackupList_Handler,
 		},
 		{
 			MethodName: "SnapshotAdd",
@@ -669,8 +707,8 @@ var OSSnapshotService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OSSnapshotService_GetStatus_Handler,
 		},
 		{
-			MethodName: "Stop",
-			Handler:    _OSSnapshotService_Stop_Handler,
+			MethodName: "StopTransfer",
+			Handler:    _OSSnapshotService_StopTransfer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
