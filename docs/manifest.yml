@@ -20,11 +20,27 @@ application:
 
   public_path: /api/public  #默认情况下所有路径都需要登陆后才能访问，public_path之下的路径允许非登陆情况下访问
 
-  api_acl: "http://127.0.0.1:1234/acl" #app对于浏览器发起的behalf_of_uid的过滤，如果acl通过则会传递到lzc api services否则403
-
   routes:
     - /api/=exec://8000,/lzcapp/pkg/content/bin/backend     #格式与/usr/bin/lzcinit -up参数一致
     - /=file:///lzcapp/pkg/content/dist/
+
+  handlers:
+    acl_handler: http://127.0.0.1:1234/acl #app对于浏览器发起的behalf_of_uid的过滤，如果acl通过则会传递到lzc api services否则403
+
+    # 当routes中https/http/exec类型的反代出现错误时，则渲染对应模板。
+    # 若错误类型为无法返回任何数据，则会生成一个502响应，比如上游游服务器不存在或网络不通等完全获取不到一个http response的情况。
+    #
+    # 其他情况则根据http response status code，选择对应的模板
+    # 若命中错误处理页面, 则http response status code本身不会进行修改
+    #
+    # 页面渲染使用此数据结构
+      # struct {
+      #    StatusCode int
+      #    ErrorDetail string #无法获取http response的情况下，此字段会显示对应错误信息，并将StatusCode设置为502
+      # }
+    error_page_templates:
+      502: /lzcapp/pkg/content/errors/502.html.tpl
+      404: /lzcapp/pkg/content/errors/404.html.tpl
 
   ingress:
     - protocol: tcp  #tcp or udp
