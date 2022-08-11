@@ -27,8 +27,10 @@ message APIServerInfo {
 }
 
 message SessionInfo {
+  // 当前登陆用户
   string uid = 1;
 
+  // 当前登陆设备
   string device_id = 2;
 
   google.protobuf.Timestamp when = 3;

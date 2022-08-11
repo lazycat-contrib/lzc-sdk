@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.common;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/common";
+
+service BoxService {
+  rpc QueryInfo(google.protobuf.Empty) returns (BoxInfo) {}
+
+  rpc ChangeDisplayName(ChangeDisplayNameRequest) returns (google.protobuf.Empty) {}
+
+  rpc Shutdown(ShutdownRequest) returns (google.protobuf.Empty) {}
+}
+
+message BoxInfo {
+  // 硬件唯一ID,出厂后则不再变化
+  string udid = 1;
+
+  // 盒子的唯一名称，此名称是向中心化服务器注册产生，创建后不可修改
+  string box_name = 2;
+
+  // 盒子的唯一域名
+  string box_domain = 3;
+
+  // 盒子内部显示名称，可以随意修改，若不设置则为box_name
+  string display_name = 4;
+
+  message DiskSpace {
+    int64 total = 1;
+
+    int64 free = 2;
+  }
+  DiskSpace disk_space = 5;
+}
+
+message ChangeDisplayNameRequest {
+  string display_name = 1;
+}
+
+message ShutdownRequest {
+  enum Action {
+    Poweroff = 0;
+
+    Halt = 1;
+
+    Reboot = 2;
+
+    HybridSleep = 3;
+  }
+
+  Action action = 1;
+
+  string reasone = 2;
+}

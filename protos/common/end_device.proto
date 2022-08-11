@@ -3,8 +3,8 @@ syntax = "proto3";
 package cloud.lazycat.apis.common;
 
 option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/common";
-
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 
 
@@ -34,6 +34,15 @@ message EndDevice {
   // 根据客户端的多个特征推理出来的稳定ID
   // 应用程序可以假设此ID是稳定不变的(实际依旧有可能变化)
   string unique_deivce_id = 4;
+
+  // 设备型号，如果可以获取到
+  string model = 5;
+
+  // 设备名称，如果可以获取到
+  string name = 6;
+
+  // 设备第一次允许登陆的时间戳
+  google.protobuf.Timestamp binding_time = 7;
 }
 
 message ListEndDeviceRequest {
