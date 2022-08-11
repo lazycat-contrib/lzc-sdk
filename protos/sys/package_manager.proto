@@ -14,14 +14,26 @@ option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/sys";
  */
 
 service PackageManager {
+  // 根据 URL 和 校验码（可选），安装应用
   rpc Install(PkgURL) returns (google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_permissions = INSTALL_PACKAGE;
-    option (cloud.lazycat.apis.common.scontext).require_user_class = ADMIN_USER;
   }
 
-  rpc Uninstall(PkgDescription) returns (google.protobuf.Empty) {}
+  // 根据 AppId 卸载应用
+  rpc Uninstall(UninstallRequest) returns (google.protobuf.Empty) {
+    option (cloud.lazycat.apis.common.scontext).require_permissions = INSTALL_PACKAGE;
+  }
 
-  rpc ListApplication(google.protobuf.Empty) returns (stream AppDescription) {}
+  // 查询用户安装的特定应用的详情
+  rpc QueryApplication(QueryApplicationRequest) returns (QueryApplicationResponse) {}
+
+  // 获取应用占用的存储空间详情
+  rpc QueryAppStorageUsage(QueryAppStorageUsageRequest) returns (AppStorageUsage) {}
+
+  // 设置某个用户是否可以安装应用
+  rpc SetUserPermissions(SetUserPermissionsRequest) returns (google.protobuf.Empty) {
+    option (cloud.lazycat.apis.common.scontext).require_user_class = ADMIN_USER;
+  }
 }
 
 message PkgURL {
@@ -31,24 +43,77 @@ message PkgURL {
   //     https://repo.lazycat.cloud/a/c/accc-0.2.1.lpk
   string url = 1;
 
-  // pkg对应的sha256值，若不为空pm会对此进行cache
+  // pkg对应的sha256值，若不为空，
+  // 1. 本地有对应包的缓存，则会直接使用缓存
+  // 2. 本地若没有缓存，则会从 url 下载包，并校验包的 sha256 值
   string sha256 = 2;
 }
 
-message PkgDescription {
-  string id = 1;
+message UninstallRequest {
+  string appid = 1;
+
+  // 卸载后是否清空 data 目录 (/lzcapp/var)
+  bool clear_data = 2;
 }
 
 message AppDescription {
-  string id = 1;
+  string appid = 1;
 
   string version = 2;
 
   string title = 3;
 
+  // 应用图标所在的 url，如 https://apis.$boxdomain/icon/$appid.png
   string icon = 4;
 
-  string appdomain = 5;
+  // 应用所在的域名，如 app.box.heiyu.space
+  string domain = 5;
+}
 
-  bool running = 6;
+message QueryApplicationRequest {
+  // 需要查询的 AppId 的列表，如果列表为空，则查询所有的应用
+  repeated string appid_list = 1;
+}
+
+message QueryApplicationResponse {
+  repeated AppDescription desc_list = 1;
+}
+
+message QueryAppStorageUsageRequest {
+  string appid = 1;
+
+  bool need_pkg = 2;
+  bool need_data = 3;
+  bool need_cache = 4;
+  bool need_tmp = 5;
+
+  bool need_userdata = 6;
+}
+
+message AppStorageUsage {
+  // 应用本身占用的大小 (/lzcapp/pkg)
+  uint64 pkg = 1;
+
+  // 应用数据的大小 (所有用户产生的应用数据大小) (/lzcapp/var)
+  uint64 data = 2;
+
+  // 应用缓存的大小 (/lzcapp/cache)
+  uint64 cache = 3;
+
+  // 应用临时文件的大小 (/tmp)
+  uint64 tmp = 4;
+
+  // 各个用户产生的应用数据大小 (/lzcapp/var/userdata/$uid)
+  map<string, uint64> userdata = 5;
+}
+
+message SetUserPermissionsRequest {
+  // 用户的 uid
+  string uid = 1;
+
+  // 是否允许 uid 安装应用
+  bool allow_install_app = 2;
+
+  // 是否允许 uid 卸载应用
+  bool allow_uninstall_app = 3;
 }
