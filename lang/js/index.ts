@@ -61,6 +61,8 @@ export class lzcAPIGateway {
         this.osSnapshot = new OSSnapshotServiceClientImpl(rpc);
 
         this.currentDevice = buildCurrentDevice(this)
+
+        dumpInfo(this.bo)
     }
     private bo : BrowserOnlyProxy;
     private gw : APIGateway;
@@ -109,4 +111,22 @@ export class EndDeviceProxy {
     public clipboard: ClipboardManager;
     public photolibrary: PhotoLibrary;
     public network: NetworkManager;
+}
+
+
+import pkg from './package.json';
+
+async function dumpInfo(bo :BrowserOnlyProxy) {
+    function capsule(title, info) {
+        console.log(
+            `%c ${title} %c ${info} %c`,
+            'background:#35495E; padding: 1px; border-radius: 3px 0 0 3px; color: #fff;',
+            `background:#3488ff; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff;`,
+            'background:transparent'
+        )
+    }
+    capsule(`The ${pkg.name} version is`, `${pkg.version}`)
+
+    let info = await bo.QueryAPIServerInfo({})
+    capsule(`LZC SDK Version is`, `${info.frontendVersion}`)
 }
