@@ -31,10 +31,12 @@ type OSSnapshotServiceClient interface {
 	BackupPoolList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotBackupPoolListResponse, error)
 	// 创建数据集并挂载到指定路径（若已存在，不会重复创建）
 	DatasetAdd(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 删除数据集
+	// 删除数据集（及其所有快照）
 	DatasetDel(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列举所有数据集路径
 	DatasetList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error)
+	// 删除备份池中指定数据集（及其所有快照）
+	DatasetBackupDel(ctx context.Context, in *SnapshotDatasetBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列举指定备份池中的所有数据集路径
 	DatasetBackupList(ctx context.Context, in *SnapshotBackupPoolRequest, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error)
 	// 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
@@ -45,7 +47,7 @@ type OSSnapshotServiceClient interface {
 	SnapshotList(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*SnapshotListResponse, error)
 	// 将数据集回滚到指定快照的状态（数据集中较新的快照会被丢弃）
 	SnapshotRestore(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 备份快照到已注册的备份池
+	// 备份快照到已注册的备份池（若对应数据集不存在，则会自动创建）
 	SnapshotBackupAdd(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 将指定数据集快照从备份池中移除
 	SnapshotBackupDel(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -115,6 +117,15 @@ func (c *oSSnapshotServiceClient) DatasetDel(ctx context.Context, in *SnapshotDa
 func (c *oSSnapshotServiceClient) DatasetList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error) {
 	out := new(SnapshotDatasetListResponse)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/DatasetList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSSnapshotServiceClient) DatasetBackupDel(ctx context.Context, in *SnapshotDatasetBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/DatasetBackupDel", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -232,10 +243,12 @@ type OSSnapshotServiceServer interface {
 	BackupPoolList(context.Context, *emptypb.Empty) (*SnapshotBackupPoolListResponse, error)
 	// 创建数据集并挂载到指定路径（若已存在，不会重复创建）
 	DatasetAdd(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error)
-	// 删除数据集
+	// 删除数据集（及其所有快照）
 	DatasetDel(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error)
 	// 列举所有数据集路径
 	DatasetList(context.Context, *emptypb.Empty) (*SnapshotDatasetListResponse, error)
+	// 删除备份池中指定数据集（及其所有快照）
+	DatasetBackupDel(context.Context, *SnapshotDatasetBackupRequest) (*emptypb.Empty, error)
 	// 列举指定备份池中的所有数据集路径
 	DatasetBackupList(context.Context, *SnapshotBackupPoolRequest) (*SnapshotDatasetListResponse, error)
 	// 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
@@ -246,7 +259,7 @@ type OSSnapshotServiceServer interface {
 	SnapshotList(context.Context, *SnapshotDatasetRequest) (*SnapshotListResponse, error)
 	// 将数据集回滚到指定快照的状态（数据集中较新的快照会被丢弃）
 	SnapshotRestore(context.Context, *SnapshotRequest) (*emptypb.Empty, error)
-	// 备份快照到已注册的备份池
+	// 备份快照到已注册的备份池（若对应数据集不存在，则会自动创建）
 	SnapshotBackupAdd(context.Context, *SnapshotBackupTransferRequest) (*emptypb.Empty, error)
 	// 将指定数据集快照从备份池中移除
 	SnapshotBackupDel(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error)
@@ -282,6 +295,9 @@ func (UnimplementedOSSnapshotServiceServer) DatasetDel(context.Context, *Snapsho
 }
 func (UnimplementedOSSnapshotServiceServer) DatasetList(context.Context, *emptypb.Empty) (*SnapshotDatasetListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DatasetList not implemented")
+}
+func (UnimplementedOSSnapshotServiceServer) DatasetBackupDel(context.Context, *SnapshotDatasetBackupRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DatasetBackupDel not implemented")
 }
 func (UnimplementedOSSnapshotServiceServer) DatasetBackupList(context.Context, *SnapshotBackupPoolRequest) (*SnapshotDatasetListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DatasetBackupList not implemented")
@@ -433,6 +449,24 @@ func _OSSnapshotService_DatasetList_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OSSnapshotServiceServer).DatasetList(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSSnapshotService_DatasetBackupDel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotDatasetBackupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSSnapshotServiceServer).DatasetBackupDel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/DatasetBackupDel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSSnapshotServiceServer).DatasetBackupDel(ctx, req.(*SnapshotDatasetBackupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -665,6 +699,10 @@ var OSSnapshotService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DatasetList",
 			Handler:    _OSSnapshotService_DatasetList_Handler,
+		},
+		{
+			MethodName: "DatasetBackupDel",
+			Handler:    _OSSnapshotService_DatasetBackupDel_Handler,
 		},
 		{
 			MethodName: "DatasetBackupList",
