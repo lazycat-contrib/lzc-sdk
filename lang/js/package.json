@@ -1,6 +1,6 @@
 {
-  "name": "@lazycatcloud/lzc-apis",
-  "version": "0.0.23",
+  "name": "@lazycatcloud/sdk",
+  "version": "0.1.1",
   "author": "snyh",
   "scripts": {
     "build": "tsc"

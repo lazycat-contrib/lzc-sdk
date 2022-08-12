@@ -6,7 +6,7 @@ import "google/protobuf/empty.proto";
 
 import "common/security_context.proto";
 
-option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/common";
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/common";
 
 service UserManager {
   //  获取所有盒子用户的uid信息(允许任意有效用户)

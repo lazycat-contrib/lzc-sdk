@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	lzcapis "gitee.com/linakesi/lzc-apis-protos/lang/go"
+	lzcapis "gitee.com/linakesi/lzc-sdk/lang/go"
 
-	pbclipboard "gitee.com/linakesi/lzc-apis-protos/lang/go/localdevice"
+	pbclipboard "gitee.com/linakesi/lzc-sdk/lang/go/localdevice"
 )
 
 type Device struct {

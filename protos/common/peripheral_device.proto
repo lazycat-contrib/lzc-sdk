@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package cloud.lazycat.apis.common;
 
-option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/common";
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/common";
 
 import "common/security_context.proto";
 import "google/protobuf/empty.proto";

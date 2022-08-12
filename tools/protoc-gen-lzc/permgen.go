@@ -8,7 +8,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/pluginpb"
 
-	P "gitee.com/linakesi/lzc-apis-protos/lang/go/common"
+	P "gitee.com/linakesi/lzc-sdk/lang/go/common"
 )
 
 func perms2ints(ps []P.Permission) string {

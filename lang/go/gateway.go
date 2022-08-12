@@ -4,9 +4,9 @@ import (
 	"context"
 	"strings"
 
-	"gitee.com/linakesi/lzc-apis-protos/lang/go/common"
-	"gitee.com/linakesi/lzc-apis-protos/lang/go/localdevice"
-	"gitee.com/linakesi/lzc-apis-protos/lang/go/sys"
+	"gitee.com/linakesi/lzc-sdk/lang/go/common"
+	"gitee.com/linakesi/lzc-sdk/lang/go/localdevice"
+	"gitee.com/linakesi/lzc-sdk/lang/go/sys"
 
 	"google.golang.org/grpc"
 )

@@ -38,9 +38,11 @@ app container的文件系统视角里，除了正常的linux rootfs外，还存�
 4. /tmp目录不放置到/lzcapp是考虑到大部分软件组件会假设/tmp的存在且由权限写入。
 
 
-LPK格式
+LPK格式0.1
 =======
 LPK为一个后缀为`.lpk`，以zip压缩方式，压缩了一个目录。其目录结构为
+
+- /version       # lpk本身的版本号，固定为0.1。版本号决定了后续文件的语义，以及pkgm是否支持此版本对应的lpk
 
 - /manifest.yml  # 对应[lzc app manifest.yml](./manifest.yml)
 - /content.tar   # app本身的实际程序以及资源文件等任意文件，一般提供给manifest.yml:routes,icon等字段使用

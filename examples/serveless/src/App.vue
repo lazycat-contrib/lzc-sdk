@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { lzcAPIGateway, EndDeviceProxy } from "@lazycatcloud/lzc-apis"
+import { lzcAPIGateway, EndDeviceProxy } from "@lazycatcloud/sdk"
 
 export default {
   async mounted() {

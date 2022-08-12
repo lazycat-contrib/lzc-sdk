@@ -2,7 +2,7 @@ module lzc-clip
 
 go 1.18
 
-require gitee.com/linakesi/lzc-apis-protos v0.0.0-20220809092513-3b64cb66583e
+require gitee.com/linakesi/lzc-sdk v0.0.0-00010101000000-000000000000
 
 require (
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -14,4 +14,4 @@ require (
 	google.golang.org/protobuf v1.28.0 // indirect
 )
 
-replace gitee.com/linakesi/lzc-apis-protos => ../../
+replace gitee.com/linakesi/lzc-sdk => ../../

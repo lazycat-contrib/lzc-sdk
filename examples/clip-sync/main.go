@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
-	lzcapis "gitee.com/linakesi/lzc-apis-protos/lang/go"
-	pbdevices "gitee.com/linakesi/lzc-apis-protos/lang/go/common"
-	pbusers "gitee.com/linakesi/lzc-apis-protos/lang/go/common"
+	lzcapis "gitee.com/linakesi/lzc-sdk/lang/go"
+	pbdevices "gitee.com/linakesi/lzc-sdk/lang/go/common"
+	pbusers "gitee.com/linakesi/lzc-sdk/lang/go/common"
 )
 
 // 在后台定期，维护拓扑状态：UID<-->DeviceID的关系 (有可能变动,比如同一个设备上，切换了用户)
@@ -59,7 +59,7 @@ func (sd *SyncClipDaemon) Start(ctx context.Context) {
 }
 
 func (sd *SyncClipDaemon) oneTick(ctx context.Context) error {
-	repl, err := sd.gw.Users.ListUsers(ctx, &pbusers.ListUsersRequest{})
+	repl, err := sd.gw.Users.ListUIDs(ctx, &pbusers.ListUIDsRequest{})
 	if err != nil {
 		return err
 	}

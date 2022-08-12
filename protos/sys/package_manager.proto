@@ -5,7 +5,7 @@ package cloud.lazycat.apis.sys;
 import "google/protobuf/empty.proto";
 import "common/security_context.proto";
 
-option go_package = "gitee.com/linakesi/lzc-apis-protos/lang/go/sys";
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 
 /*
   - pkg代表一个静态的lpk文件

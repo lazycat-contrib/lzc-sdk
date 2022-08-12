@@ -1,4 +1,4 @@
-module gitee.com/linakesi/lzc-apis-protos
+module gitee.com/linakesi/lzc-sdk
 
 go 1.18
 
