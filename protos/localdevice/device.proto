@@ -11,7 +11,7 @@ service DeviceService {
 }
 
 message DeviceInfo {
-  string os = 1;
-  string cpu = 2;
+  string OS = 1;
+  string CPU = 2;
   string name = 3;
 }
