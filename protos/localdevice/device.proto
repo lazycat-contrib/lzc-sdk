@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.localdevice;
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
+
+import "google/protobuf/empty.proto";
+
+service DeviceService {
+  rpc Query(google.protobuf.Empty) returns (DeviceInfo) {}
+}
+
+message DeviceInfo {
+  string os = 1;
+  string cpu = 2;
+  string name = 3;
+}

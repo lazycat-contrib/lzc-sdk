@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { lzcAPIGateway, EndDeviceProxy } from "@lazycatcloud/sdk"
+import { lzcAPIGateway } from "@lazycatcloud/sdk"
 
 export default {
   async mounted() {
@@ -25,32 +25,16 @@ export default {
 
     this.devices = (await cc.devices.ListEndDevices({"uid": s.uid})).devices
 
-    // cc.devices.KeepConnect({
-    //     devices: this.devices.map( (d)=>{ return d.peerId }),
-    // }).subscribe({
-    //   err: err => console.log("keep connect err:",err),
-    //   complete: ()=> console.log("keep connect done"),
-    // })
+    let dp = await cc.currentDevice
+    window.dp = dp
 
-    for (const d of this.devices) {
-      let dp = new EndDeviceProxy(d.deviceApiUrl)
-      let pid = d.peerId
-
-      if (s.deviceId == pid) {
-        //当前设备
-        window.dp = dp
-      }
-      console.log("列表", pid)
-
-
-      dp.clipboard.Watch({"mime":"text/plain"}).subscribe({
-        next: x => {
-          this.$set(this.clip, pid, new TextDecoder("utf-8").decode(x.content));
-        },
-        error: err => this.clip = err,
-        complete: ()=> alert("clipboard terminated!"),
-      })
-    }
+    dp.clipboard.Watch({"mime":"text/plain"}).subscribe({
+      next: x => {
+        this.$set(this.clip, "local", new TextDecoder("utf-8").decode(x.content));
+      },
+      error: err => this.clip = err,
+      complete: ()=> alert("clipboard terminated!"),
+    })
   },
   methods: {
     async test_read() {

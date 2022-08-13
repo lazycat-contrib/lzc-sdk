@@ -19,6 +19,7 @@ import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog"
 import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clipboard"
 import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo"
 import { NetworkManagerClientImpl, NetworkManager } from "./localdevice/network"
+import { DeviceServiceClientImpl, DeviceService } from "./localdevice/device"
 
 import { grpc } from "@improbable-eng/grpc-web";
 
@@ -106,8 +107,10 @@ export class EndDeviceProxy {
         this.clipboard = new ClipboardManagerClientImpl(rpc)
         this.photolibrary = new PhotoLibraryClientImpl(rpc)
         this.network = new NetworkManagerClientImpl(rpc)
+        this.device = new DeviceServiceClientImpl(rpc)
     }
 
+    public device : DeviceService;
     public dialog : DialogManager;
     public clipboard: ClipboardManager;
     public photolibrary: PhotoLibrary;

@@ -42,6 +42,9 @@ func main() {
 		g.P("func ListPermission(methodName string) []int {")
 		g.P("switch (methodName) {")
 		for mn, perms := range rules {
+			if len(perms) == 0 {
+				continue
+			}
 			fmt.Fprintf(g, "case %q: \n//%v\nreturn %s;", mn, perms, perms2ints(perms))
 		}
 		g.P("}")

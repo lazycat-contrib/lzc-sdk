@@ -28,6 +28,7 @@ type APIGateway struct {
 type DeviceProxy struct {
 	conn *grpc.ClientConn
 
+	Device       localdevice.DeviceServiceClient
 	Clipboard    localdevice.ClipboardManagerClient
 	Dialog       localdevice.DialogManagerClient
 	PhotoLibrary localdevice.PhotoLibraryClient
@@ -47,6 +48,7 @@ func (gw *APIGateway) NewDeviceProxy(deviceapiurl string) (*DeviceProxy, error) 
 	return &DeviceProxy{
 		conn: conn,
 
+		Device:       localdevice.NewDeviceServiceClient(conn),
 		Clipboard:    localdevice.NewClipboardManagerClient(conn),
 		Dialog:       localdevice.NewDialogManagerClient(conn),
 		PhotoLibrary: localdevice.NewPhotoLibraryClient(conn),
