@@ -1,0 +1,8 @@
+lzc-sdk-version: 0.1
+package: serverless
+version: 0.0.1
+name: serverless-懒猫云
+application:
+  subdomain: serverless
+  routes:
+    - /=file:///lzcapp/pkg/content/

@@ -1,5 +1,6 @@
 <template>
 <div class="app-list">
+  <p>当前设备信息: {{ device_info }}</p>
   <p>剪贴板内容:  </p>
 
   <div v-for="(cc, id) in clip" :key="id">
@@ -28,6 +29,8 @@ export default {
     let dp = await cc.currentDevice
     window.dp = dp
 
+    this.device_info = await dp.device.Query({})
+
     dp.clipboard.Watch({"mime":"text/plain"}).subscribe({
       next: x => {
         this.$set(this.clip, "local", new TextDecoder("utf-8").decode(x.content));
@@ -48,6 +51,7 @@ export default {
       test_content:"",
       clip: {},
       "devices": [],
+      device_info: "loading",
     };
   },
 };
