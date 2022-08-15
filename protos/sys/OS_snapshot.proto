@@ -45,7 +45,7 @@ service OSSnapshotService {
     rpc SnapshotRestore(SnapshotRequest) returns (google.protobuf.Empty) {}
 
     // 备份快照到已注册的备份池（若对应数据集不存在，则会自动创建）
-    rpc SnapshotBackupAdd(SnapshotBackupTransferRequest) returns (google.protobuf.Empty) {}
+    rpc SnapshotBackupAdd(SnapshotBackupTransferRequest) returns (SnapshotBackupTransferResponse) {}
 
     // 将指定数据集快照从备份池中移除
     rpc SnapshotBackupDel(SnapshotBackupRequest) returns (google.protobuf.Empty) {}
@@ -54,7 +54,7 @@ service OSSnapshotService {
     rpc SnapshotBackupList(SnapshotBackupListRequest) returns (SnapshotListResponse) {}
 
     // 将某个快照备份还原
-    rpc SnapshotBackupRestore(SnapshotBackupTransferRequest) returns (google.protobuf.Empty) {}
+    rpc SnapshotBackupRestore(SnapshotBackupTransferRequest) returns (SnapshotBackupTransferResponse) {}
 
     // 获取当前运行状态
     rpc GetStatus(google.protobuf.Empty) returns (SnapshotStatusResponse) {}
@@ -66,7 +66,14 @@ service OSSnapshotService {
 enum SnapshotManagerStatus {
     Stopped = 0;
     Running = 1;
-    Waiting = 2;
+}
+
+enum SnapshotTransferMode {
+    Normal = 0;
+    // 若存在可恢复的传输任务，是否不尝试恢复，重新传输
+    NoResume = 1;
+    // 不进行传输，只预估传输的数据量
+    DryRun = 2;
 }
 
 message SnapshotBackupPoolRequest {
@@ -113,8 +120,14 @@ message SnapshotBackupTransferRequest {
     string PoolName = 1;
     string DatasetPath = 2;
     string SnapshotName = 3;
-    // 若存在可恢复的传输任务，是否不尝试恢复，重新传输
-    bool NoResume = 4;
+    SnapshotTransferMode TransferMode = 4;
+}
+
+message SnapshotBackupTransferResponse {
+    // 若存在可恢复的传输任务，则为已传输的数据量
+    // 当 TransferMode 为 NoResume 时，忽略该字段
+    uint64 BytesSent = 1;
+    uint64 BytesTotal = 2;
 }
 
 message SnapshotBackupListRequest {
@@ -124,4 +137,9 @@ message SnapshotBackupListRequest {
 
 message SnapshotStatusResponse {
     SnapshotManagerStatus Status = 1;
+    // 最近一次传输任务中，已传输的数据量
+    uint64 BytesSent = 2;
+    // 最近一次传输任务中，预估的总数据量。
+    // 实际需要传输的数据量一般会略小于该数值。判断传输任务是否完成，以 Status 字段为准
+    uint64 BytesTotal = 3;
 }

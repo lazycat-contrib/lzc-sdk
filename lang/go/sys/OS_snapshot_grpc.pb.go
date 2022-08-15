@@ -48,13 +48,13 @@ type OSSnapshotServiceClient interface {
 	// 将数据集回滚到指定快照的状态（数据集中较新的快照会被丢弃）
 	SnapshotRestore(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 备份快照到已注册的备份池（若对应数据集不存在，则会自动创建）
-	SnapshotBackupAdd(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SnapshotBackupAdd(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*SnapshotBackupTransferResponse, error)
 	// 将指定数据集快照从备份池中移除
 	SnapshotBackupDel(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列举指定备份池中某个数据集的快照名称
 	SnapshotBackupList(ctx context.Context, in *SnapshotBackupListRequest, opts ...grpc.CallOption) (*SnapshotListResponse, error)
 	// 将某个快照备份还原
-	SnapshotBackupRestore(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SnapshotBackupRestore(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*SnapshotBackupTransferResponse, error)
 	// 获取当前运行状态
 	GetStatus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotStatusResponse, error)
 	// 停止当前正在进行的传输任务
@@ -177,8 +177,8 @@ func (c *oSSnapshotServiceClient) SnapshotRestore(ctx context.Context, in *Snaps
 	return out, nil
 }
 
-func (c *oSSnapshotServiceClient) SnapshotBackupAdd(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *oSSnapshotServiceClient) SnapshotBackupAdd(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*SnapshotBackupTransferResponse, error) {
+	out := new(SnapshotBackupTransferResponse)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupAdd", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -204,8 +204,8 @@ func (c *oSSnapshotServiceClient) SnapshotBackupList(ctx context.Context, in *Sn
 	return out, nil
 }
 
-func (c *oSSnapshotServiceClient) SnapshotBackupRestore(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *oSSnapshotServiceClient) SnapshotBackupRestore(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*SnapshotBackupTransferResponse, error) {
+	out := new(SnapshotBackupTransferResponse)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotBackupRestore", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -260,13 +260,13 @@ type OSSnapshotServiceServer interface {
 	// 将数据集回滚到指定快照的状态（数据集中较新的快照会被丢弃）
 	SnapshotRestore(context.Context, *SnapshotRequest) (*emptypb.Empty, error)
 	// 备份快照到已注册的备份池（若对应数据集不存在，则会自动创建）
-	SnapshotBackupAdd(context.Context, *SnapshotBackupTransferRequest) (*emptypb.Empty, error)
+	SnapshotBackupAdd(context.Context, *SnapshotBackupTransferRequest) (*SnapshotBackupTransferResponse, error)
 	// 将指定数据集快照从备份池中移除
 	SnapshotBackupDel(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error)
 	// 列举指定备份池中某个数据集的快照名称
 	SnapshotBackupList(context.Context, *SnapshotBackupListRequest) (*SnapshotListResponse, error)
 	// 将某个快照备份还原
-	SnapshotBackupRestore(context.Context, *SnapshotBackupTransferRequest) (*emptypb.Empty, error)
+	SnapshotBackupRestore(context.Context, *SnapshotBackupTransferRequest) (*SnapshotBackupTransferResponse, error)
 	// 获取当前运行状态
 	GetStatus(context.Context, *emptypb.Empty) (*SnapshotStatusResponse, error)
 	// 停止当前正在进行的传输任务
@@ -314,7 +314,7 @@ func (UnimplementedOSSnapshotServiceServer) SnapshotList(context.Context, *Snaps
 func (UnimplementedOSSnapshotServiceServer) SnapshotRestore(context.Context, *SnapshotRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapshotRestore not implemented")
 }
-func (UnimplementedOSSnapshotServiceServer) SnapshotBackupAdd(context.Context, *SnapshotBackupTransferRequest) (*emptypb.Empty, error) {
+func (UnimplementedOSSnapshotServiceServer) SnapshotBackupAdd(context.Context, *SnapshotBackupTransferRequest) (*SnapshotBackupTransferResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapshotBackupAdd not implemented")
 }
 func (UnimplementedOSSnapshotServiceServer) SnapshotBackupDel(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error) {
@@ -323,7 +323,7 @@ func (UnimplementedOSSnapshotServiceServer) SnapshotBackupDel(context.Context, *
 func (UnimplementedOSSnapshotServiceServer) SnapshotBackupList(context.Context, *SnapshotBackupListRequest) (*SnapshotListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapshotBackupList not implemented")
 }
-func (UnimplementedOSSnapshotServiceServer) SnapshotBackupRestore(context.Context, *SnapshotBackupTransferRequest) (*emptypb.Empty, error) {
+func (UnimplementedOSSnapshotServiceServer) SnapshotBackupRestore(context.Context, *SnapshotBackupTransferRequest) (*SnapshotBackupTransferResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapshotBackupRestore not implemented")
 }
 func (UnimplementedOSSnapshotServiceServer) GetStatus(context.Context, *emptypb.Empty) (*SnapshotStatusResponse, error) {
