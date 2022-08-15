@@ -40,7 +40,7 @@ type OSSnapshotServiceClient interface {
 	// 列举指定备份池中的所有数据集路径
 	DatasetBackupList(ctx context.Context, in *SnapshotBackupPoolRequest, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error)
 	// 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
-	SnapshotAdd(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SnapshotAdd(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据名称删除指定数据集中的一个快照
 	SnapshotDel(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列举指定数据集下所有快照名称
@@ -141,7 +141,7 @@ func (c *oSSnapshotServiceClient) DatasetBackupList(ctx context.Context, in *Sna
 	return out, nil
 }
 
-func (c *oSSnapshotServiceClient) SnapshotAdd(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *oSSnapshotServiceClient) SnapshotAdd(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotAdd", in, out, opts...)
 	if err != nil {
@@ -252,7 +252,7 @@ type OSSnapshotServiceServer interface {
 	// 列举指定备份池中的所有数据集路径
 	DatasetBackupList(context.Context, *SnapshotBackupPoolRequest) (*SnapshotDatasetListResponse, error)
 	// 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
-	SnapshotAdd(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error)
+	SnapshotAdd(context.Context, *SnapshotRequest) (*emptypb.Empty, error)
 	// 根据名称删除指定数据集中的一个快照
 	SnapshotDel(context.Context, *SnapshotRequest) (*emptypb.Empty, error)
 	// 列举指定数据集下所有快照名称
@@ -302,7 +302,7 @@ func (UnimplementedOSSnapshotServiceServer) DatasetBackupDel(context.Context, *S
 func (UnimplementedOSSnapshotServiceServer) DatasetBackupList(context.Context, *SnapshotBackupPoolRequest) (*SnapshotDatasetListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DatasetBackupList not implemented")
 }
-func (UnimplementedOSSnapshotServiceServer) SnapshotAdd(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error) {
+func (UnimplementedOSSnapshotServiceServer) SnapshotAdd(context.Context, *SnapshotRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapshotAdd not implemented")
 }
 func (UnimplementedOSSnapshotServiceServer) SnapshotDel(context.Context, *SnapshotRequest) (*emptypb.Empty, error) {
@@ -490,7 +490,7 @@ func _OSSnapshotService_DatasetBackupList_Handler(srv interface{}, ctx context.C
 }
 
 func _OSSnapshotService_SnapshotAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SnapshotDatasetRequest)
+	in := new(SnapshotRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -502,7 +502,7 @@ func _OSSnapshotService_SnapshotAdd_Handler(srv interface{}, ctx context.Context
 		FullMethod: "/cloud.lazycat.apis.sys.OSSnapshotService/SnapshotAdd",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OSSnapshotServiceServer).SnapshotAdd(ctx, req.(*SnapshotDatasetRequest))
+		return srv.(OSSnapshotServiceServer).SnapshotAdd(ctx, req.(*SnapshotRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

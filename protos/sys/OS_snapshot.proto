@@ -33,7 +33,7 @@ service OSSnapshotService {
     rpc DatasetBackupList(SnapshotBackupPoolRequest) returns (SnapshotDatasetListResponse) {}
 
     // 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
-    rpc SnapshotAdd(SnapshotDatasetRequest) returns (google.protobuf.Empty) {}
+    rpc SnapshotAdd(SnapshotRequest) returns (google.protobuf.Empty) {}
 
     // 根据名称删除指定数据集中的一个快照
     rpc SnapshotDel(SnapshotRequest) returns (google.protobuf.Empty) {}
