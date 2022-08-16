@@ -94,6 +94,8 @@ message ListPhotoMetasRequest {
   optional  uint32 page_size = 8;
   // 是否过滤视频 （默认false,照片和视频信息一起返回)
   optional bool is_filter_video = 9;
+  // 给定文件的修改时间过滤meta信息返回
+  optional google.protobuf.Timestamp filter_by_modified_date = 10 ;
 }
 
 message PhotoMeta {
