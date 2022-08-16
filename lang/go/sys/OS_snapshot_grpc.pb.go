@@ -39,7 +39,7 @@ type OSSnapshotServiceClient interface {
 	DatasetBackupDel(ctx context.Context, in *SnapshotDatasetBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列举指定备份池中的所有数据集路径
 	DatasetBackupList(ctx context.Context, in *SnapshotBackupPoolRequest, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error)
-	// 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
+	// 为指定数据集创建快照（同一个数据集下的快照名称不能重复）
 	SnapshotAdd(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据名称删除指定数据集中的一个快照
 	SnapshotDel(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -251,7 +251,7 @@ type OSSnapshotServiceServer interface {
 	DatasetBackupDel(context.Context, *SnapshotDatasetBackupRequest) (*emptypb.Empty, error)
 	// 列举指定备份池中的所有数据集路径
 	DatasetBackupList(context.Context, *SnapshotBackupPoolRequest) (*SnapshotDatasetListResponse, error)
-	// 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
+	// 为指定数据集创建快照（同一个数据集下的快照名称不能重复）
 	SnapshotAdd(context.Context, *SnapshotRequest) (*emptypb.Empty, error)
 	// 根据名称删除指定数据集中的一个快照
 	SnapshotDel(context.Context, *SnapshotRequest) (*emptypb.Empty, error)

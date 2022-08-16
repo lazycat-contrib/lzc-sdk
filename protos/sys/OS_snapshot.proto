@@ -32,7 +32,7 @@ service OSSnapshotService {
     // 列举指定备份池中的所有数据集路径
     rpc DatasetBackupList(SnapshotBackupPoolRequest) returns (SnapshotDatasetListResponse) {}
 
-    // 为指定数据集创建快照（同一个数据集每秒最多只能创建一个快照）
+    // 为指定数据集创建快照（同一个数据集下的快照名称不能重复）
     rpc SnapshotAdd(SnapshotRequest) returns (google.protobuf.Empty) {}
 
     // 根据名称删除指定数据集中的一个快照
