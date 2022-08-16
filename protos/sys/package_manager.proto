@@ -56,7 +56,7 @@ message UninstallRequest {
   bool clear_data = 2;
 }
 
-message AppDescription {
+message AppInfo {
   string appid = 1;
 
   string version = 2;
@@ -76,7 +76,7 @@ message QueryApplicationRequest {
 }
 
 message QueryApplicationResponse {
-  repeated AppDescription desc_list = 1;
+  repeated AppInfo info_list = 1;
 }
 
 message QueryAppStorageUsageRequest {
