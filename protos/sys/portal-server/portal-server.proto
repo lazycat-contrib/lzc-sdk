@@ -4,7 +4,7 @@ package cloud.lazycat.apis.sys;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
-
+import "common/users.proto";
 option go_package = "/portal-server";
 
 service HPortalSys {
@@ -41,7 +41,22 @@ service HPortalSys {
 
   rpc PairDevices(PairDevicesRequest) returns (stream google.protobuf.Empty) {}
 
+  // -------------------------  user rpc  start  ----------------------------------------
+  //  查询所有UID
   rpc ListUsers(google.protobuf.Empty) returns (ListUsersReply) {}
+  //  根据用户uid查询用户信息
+  rpc QueryRole(UserID) returns (QueryRoleReply) {}
+  //  修改指定uid的用户角色
+  rpc ChangeRole(cloud.lazycat.apis.common.ChangeRoleReqeust) returns(google.protobuf.Empty){}
+  //  通过验证旧密码修改新的密码
+  rpc ResetPassword(ResetPasswordRequest) returns(google.protobuf.Empty){}
+  //  删除用户信息
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty){}
+  //  创建用户信息
+  rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty){}
+  //  强制重置用户密码
+  rpc ForceResetPassword(ForceResetPasswordRequest) returns (google.protobuf.Empty){}
+  // ------------------------- user rpc end  -----------------------------------------
 }
 
 message ListUsersReply {
@@ -179,4 +194,37 @@ message ListDeviceRequest {
 
 message ListDeviceReply {
   repeated Device devices = 1;
+}
+
+message UserID {
+  string uid = 1;
+}
+
+
+
+message QueryRoleReply {
+  string uid = 1;
+  cloud.lazycat.apis.common.Role role = 4;
+}
+
+
+message ResetPasswordRequest{
+  string uid = 1;
+  string old_password = 2;
+  string new_password = 3;
+}
+
+message DeleteUserRequest {
+  string uid = 1;
+}
+
+message CreateUserRequest{
+  string uid = 1;
+  string password = 2;
+  cloud.lazycat.apis.common.Role role = 3;
+}
+
+message ForceResetPasswordRequest{
+  string uid = 1;
+  string new_password = 2;
 }
