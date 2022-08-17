@@ -40,7 +40,8 @@ async function buildCurrentDevice(cc: lzcAPIGateway) : Promise<EndDeviceProxy>{
     let ds = await cc.devices.ListEndDevices({uid})
     let d = ds.devices.find((d) => d.peerId == s.deviceId)
     let u = new URL(d.deviceApiUrl)
-    return new EndDeviceProxy("https://local.d.heiyu.space:" + u.port.toString())
+
+    return new EndDeviceProxy("https://" + u.host.replace(".d.", ".local."))
 }
 
 
