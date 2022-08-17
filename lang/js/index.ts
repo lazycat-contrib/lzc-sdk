@@ -6,6 +6,7 @@ import { Observable, Subscriber } from "rxjs";
 
 import { EndDeviceServiceClientImpl, EndDeviceService, EndDevice } from "./common/end_device"
 import { UserManagerClientImpl, UserManager } from "./common/users"
+import { BoxService, BoxServiceClientImpl } from "./common/box"
 import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, SessionInfo, AppInfo } from "./common/browseronly"
 import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./common/security_context"
 import { APIGateway, APIGatewayClientImpl } from "./common/gateway"
@@ -14,6 +15,7 @@ import { PackageManager, PackageManagerClientImpl } from "./sys/package_manager"
 
 import { OSSnapshotService, OSSnapshotServiceClientImpl } from "./sys/OS_snapshot"
 import { OSUpgradeService, OSUpgradeServiceClientImpl } from "./sys/OS_upgrader"
+import { IngressService, IngressServiceClientImpl } from "./sys/ingress"
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog"
 import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clipboard"
@@ -49,6 +51,7 @@ export class lzcAPIGateway {
         this.devices = new EndDeviceServiceClientImpl(rpc);
         this.users = new UserManagerClientImpl(rpc);
 
+        this.bs = new BoxServiceClientImpl(rpc);
         this.bo = new BrowserOnlyProxyClientImpl(rpc);
         this.session = this.bo.QuerySessionInfo({})
         this.appinfo = this.bo.QueryAppInfo({})
@@ -58,6 +61,8 @@ export class lzcAPIGateway {
         this.pkgm = new PackageManagerClientImpl(rpc);
 
         this.pd = new PeripheralDeviceServiceClientImpl(rpc);
+
+        this.ig = new IngressServiceClientImpl(rpc);
 
         this.osUpgrader = new OSUpgradeServiceClientImpl(rpc);
         this.osSnapshot = new OSSnapshotServiceClientImpl(rpc);
@@ -70,6 +75,8 @@ export class lzcAPIGateway {
     private gw : APIGateway;
     private pm : PermissionManager;
     private pd : PeripheralDeviceService;
+    private ig : IngressService;
+    private bs : BoxService;
 
     public async openDevices() {
         return new Promise<void>((resolve, reject) => {
