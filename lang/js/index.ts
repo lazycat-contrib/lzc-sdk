@@ -51,7 +51,6 @@ export class lzcAPIGateway {
         this.devices = new EndDeviceServiceClientImpl(rpc);
         this.users = new UserManagerClientImpl(rpc);
 
-        this.bs = new BoxServiceClientImpl(rpc);
         this.bo = new BrowserOnlyProxyClientImpl(rpc);
         this.session = this.bo.QuerySessionInfo({})
         this.appinfo = this.bo.QueryAppInfo({})
@@ -62,7 +61,8 @@ export class lzcAPIGateway {
 
         this.pd = new PeripheralDeviceServiceClientImpl(rpc);
 
-        this.ig = new IngressServiceClientImpl(rpc);
+        this.ingress = new IngressServiceClientImpl(rpc);
+        this.box = new BoxServiceClientImpl(rpc);
 
         this.osUpgrader = new OSUpgradeServiceClientImpl(rpc);
         this.osSnapshot = new OSSnapshotServiceClientImpl(rpc);
@@ -75,8 +75,6 @@ export class lzcAPIGateway {
     private gw : APIGateway;
     private pm : PermissionManager;
     private pd : PeripheralDeviceService;
-    private ig : IngressService;
-    private bs : BoxService;
 
     public async openDevices() {
         return new Promise<void>((resolve, reject) => {
@@ -89,6 +87,8 @@ export class lzcAPIGateway {
 
     public pkgm: PackageManager;
     public users: UserManager;
+    public box: BoxService;
+    public ingress: IngressService
 
     public session: Promise<SessionInfo>;
 
