@@ -33,17 +33,17 @@ type OSSnapshotServiceClient interface {
 	DatasetAdd(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 删除数据集（及其所有快照）
 	DatasetDel(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 列举所有数据集路径
+	// 列举所有数据集
 	DatasetList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error)
 	// 删除备份池中指定数据集（及其所有快照）
 	DatasetBackupDel(ctx context.Context, in *SnapshotDatasetBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 列举指定备份池中的所有数据集路径
+	// 列举指定备份池中的所有数据集
 	DatasetBackupList(ctx context.Context, in *SnapshotBackupPoolRequest, opts ...grpc.CallOption) (*SnapshotDatasetListResponse, error)
 	// 为指定数据集创建快照（同一个数据集下的快照名称不能重复）
 	SnapshotAdd(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据名称删除指定数据集中的一个快照
 	SnapshotDel(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 列举指定数据集下所有快照名称
+	// 列举指定数据集下所有快照
 	SnapshotList(ctx context.Context, in *SnapshotDatasetRequest, opts ...grpc.CallOption) (*SnapshotListResponse, error)
 	// 将数据集回滚到指定快照的状态（数据集中较新的快照会被丢弃）
 	SnapshotRestore(ctx context.Context, in *SnapshotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -51,7 +51,7 @@ type OSSnapshotServiceClient interface {
 	SnapshotBackupAdd(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*SnapshotBackupTransferResponse, error)
 	// 将指定数据集快照从备份池中移除
 	SnapshotBackupDel(ctx context.Context, in *SnapshotBackupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 列举指定备份池中某个数据集的快照名称
+	// 列举指定备份池中某个数据集的快照
 	SnapshotBackupList(ctx context.Context, in *SnapshotBackupListRequest, opts ...grpc.CallOption) (*SnapshotListResponse, error)
 	// 将某个快照备份还原
 	SnapshotBackupRestore(ctx context.Context, in *SnapshotBackupTransferRequest, opts ...grpc.CallOption) (*SnapshotBackupTransferResponse, error)
@@ -245,17 +245,17 @@ type OSSnapshotServiceServer interface {
 	DatasetAdd(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error)
 	// 删除数据集（及其所有快照）
 	DatasetDel(context.Context, *SnapshotDatasetRequest) (*emptypb.Empty, error)
-	// 列举所有数据集路径
+	// 列举所有数据集
 	DatasetList(context.Context, *emptypb.Empty) (*SnapshotDatasetListResponse, error)
 	// 删除备份池中指定数据集（及其所有快照）
 	DatasetBackupDel(context.Context, *SnapshotDatasetBackupRequest) (*emptypb.Empty, error)
-	// 列举指定备份池中的所有数据集路径
+	// 列举指定备份池中的所有数据集
 	DatasetBackupList(context.Context, *SnapshotBackupPoolRequest) (*SnapshotDatasetListResponse, error)
 	// 为指定数据集创建快照（同一个数据集下的快照名称不能重复）
 	SnapshotAdd(context.Context, *SnapshotRequest) (*emptypb.Empty, error)
 	// 根据名称删除指定数据集中的一个快照
 	SnapshotDel(context.Context, *SnapshotRequest) (*emptypb.Empty, error)
-	// 列举指定数据集下所有快照名称
+	// 列举指定数据集下所有快照
 	SnapshotList(context.Context, *SnapshotDatasetRequest) (*SnapshotListResponse, error)
 	// 将数据集回滚到指定快照的状态（数据集中较新的快照会被丢弃）
 	SnapshotRestore(context.Context, *SnapshotRequest) (*emptypb.Empty, error)
@@ -263,7 +263,7 @@ type OSSnapshotServiceServer interface {
 	SnapshotBackupAdd(context.Context, *SnapshotBackupTransferRequest) (*SnapshotBackupTransferResponse, error)
 	// 将指定数据集快照从备份池中移除
 	SnapshotBackupDel(context.Context, *SnapshotBackupRequest) (*emptypb.Empty, error)
-	// 列举指定备份池中某个数据集的快照名称
+	// 列举指定备份池中某个数据集的快照
 	SnapshotBackupList(context.Context, *SnapshotBackupListRequest) (*SnapshotListResponse, error)
 	// 将某个快照备份还原
 	SnapshotBackupRestore(context.Context, *SnapshotBackupTransferRequest) (*SnapshotBackupTransferResponse, error)

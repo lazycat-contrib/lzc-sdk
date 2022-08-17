@@ -23,13 +23,13 @@ service OSSnapshotService {
     // 删除数据集（及其所有快照）
     rpc DatasetDel(SnapshotDatasetRequest) returns (google.protobuf.Empty) {}
 
-    // 列举所有数据集路径
+    // 列举所有数据集
     rpc DatasetList(google.protobuf.Empty) returns (SnapshotDatasetListResponse) {}
 
     // 删除备份池中指定数据集（及其所有快照）
     rpc DatasetBackupDel(SnapshotDatasetBackupRequest) returns (google.protobuf.Empty) {}
 
-    // 列举指定备份池中的所有数据集路径
+    // 列举指定备份池中的所有数据集
     rpc DatasetBackupList(SnapshotBackupPoolRequest) returns (SnapshotDatasetListResponse) {}
 
     // 为指定数据集创建快照（同一个数据集下的快照名称不能重复）
@@ -38,7 +38,7 @@ service OSSnapshotService {
     // 根据名称删除指定数据集中的一个快照
     rpc SnapshotDel(SnapshotRequest) returns (google.protobuf.Empty) {}
 
-    // 列举指定数据集下所有快照名称
+    // 列举指定数据集下所有快照
     rpc SnapshotList(SnapshotDatasetRequest) returns (SnapshotListResponse) {}
 
     // 将数据集回滚到指定快照的状态（数据集中较新的快照会被丢弃）
@@ -50,7 +50,7 @@ service OSSnapshotService {
     // 将指定数据集快照从备份池中移除
     rpc SnapshotBackupDel(SnapshotBackupRequest) returns (google.protobuf.Empty) {}
 
-    // 列举指定备份池中某个数据集的快照名称
+    // 列举指定备份池中某个数据集的快照
     rpc SnapshotBackupList(SnapshotBackupListRequest) returns (SnapshotListResponse) {}
 
     // 将某个快照备份还原
@@ -96,8 +96,16 @@ message SnapshotDatasetBackupRequest {
     string DatasetPath = 2;
 }
 
+message SnapshotDatasetDesc {
+    string Path = 1;
+    // 数据集自身占用的存储空间大小
+    uint64 BytesUsed = 2;
+    // 数据集的快照占用的存储空间大小
+    uint64 SnapshotBytesUsed = 3;
+}
+
 message SnapshotDatasetListResponse {
-    repeated string DatasetPathList = 1;
+    repeated SnapshotDatasetDesc DatasetList = 1;
 }
 
 message SnapshotRequest {
@@ -106,8 +114,13 @@ message SnapshotRequest {
     string SnapshotName = 2;
 }
 
+message SnapshotDesc {
+    string Name = 1;
+    string BytesUsed = 2;
+} 
+
 message SnapshotListResponse {
-    repeated string SnapshotNameList = 1;
+    repeated SnapshotDesc SnapshotList = 1;
 }
 
 message SnapshotBackupRequest {
