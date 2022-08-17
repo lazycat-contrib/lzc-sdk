@@ -33,6 +33,8 @@ type PackageManagerClient interface {
 	QueryAppStorageUsage(ctx context.Context, in *QueryAppStorageUsageRequest, opts ...grpc.CallOption) (*AppStorageUsage, error)
 	// 设置某个用户是否可以安装应用
 	SetUserPermissions(ctx context.Context, in *SetUserPermissionsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 暂停下载特定应用
+	PauseAppDownload(ctx context.Context, in *Appid, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type packageManagerClient struct {
@@ -88,6 +90,15 @@ func (c *packageManagerClient) SetUserPermissions(ctx context.Context, in *SetUs
 	return out, nil
 }
 
+func (c *packageManagerClient) PauseAppDownload(ctx context.Context, in *Appid, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.PackageManager/PauseAppDownload", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PackageManagerServer is the server API for PackageManager service.
 // All implementations must embed UnimplementedPackageManagerServer
 // for forward compatibility
@@ -102,6 +113,8 @@ type PackageManagerServer interface {
 	QueryAppStorageUsage(context.Context, *QueryAppStorageUsageRequest) (*AppStorageUsage, error)
 	// 设置某个用户是否可以安装应用
 	SetUserPermissions(context.Context, *SetUserPermissionsRequest) (*emptypb.Empty, error)
+	// 暂停下载特定应用
+	PauseAppDownload(context.Context, *Appid) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPackageManagerServer()
 }
 
@@ -123,6 +136,9 @@ func (UnimplementedPackageManagerServer) QueryAppStorageUsage(context.Context, *
 }
 func (UnimplementedPackageManagerServer) SetUserPermissions(context.Context, *SetUserPermissionsRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserPermissions not implemented")
+}
+func (UnimplementedPackageManagerServer) PauseAppDownload(context.Context, *Appid) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseAppDownload not implemented")
 }
 func (UnimplementedPackageManagerServer) mustEmbedUnimplementedPackageManagerServer() {}
 
@@ -227,6 +243,24 @@ func _PackageManager_SetUserPermissions_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PackageManager_PauseAppDownload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Appid)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).PauseAppDownload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.PackageManager/PauseAppDownload",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).PauseAppDownload(ctx, req.(*Appid))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PackageManager_ServiceDesc is the grpc.ServiceDesc for PackageManager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -253,6 +287,10 @@ var PackageManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetUserPermissions",
 			Handler:    _PackageManager_SetUserPermissions_Handler,
+		},
+		{
+			MethodName: "PauseAppDownload",
+			Handler:    _PackageManager_PauseAppDownload_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

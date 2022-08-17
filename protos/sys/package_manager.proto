@@ -11,7 +11,7 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
   - pkg代表一个静态的lpk文件
   - app代表一个安装后的应用(正在运行或没有运行)，是由某个pkg进行部署后产生的
   - 除了app外，系统插件、系统服务等也会以pkg的形式进行传播、部署
- */
+*/
 
 service PackageManager {
   // 根据 URL 和 校验码（可选），安装应用
@@ -34,6 +34,9 @@ service PackageManager {
   rpc SetUserPermissions(SetUserPermissionsRequest) returns (google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_user_class = ADMIN_USER;
   }
+
+  // 暂停下载特定应用
+  rpc PauseAppDownload(Appid) returns (google.protobuf.Empty) {}
 }
 
 message PkgURL {
@@ -56,6 +59,22 @@ message UninstallRequest {
   bool clear_data = 2;
 }
 
+enum AppStatus {
+  NotInstalled = 0;
+  Downloading = 1;
+  Paused = 2;
+  Installing = 3;
+  Installed = 4;
+  Failed = 5;
+}
+
+message AppDownloadProgress {
+  // 当前下载了的字节
+  uint64 current = 1;
+  // LPK文件大小总字节
+  uint64 total = 2;
+}
+
 message AppInfo {
   string appid = 1;
 
@@ -68,6 +87,12 @@ message AppInfo {
 
   // 应用所在的域名，如 app.box.heiyu.space
   string domain = 5;
+
+  // 应用当前的状态
+  AppStatus status = 6;
+
+  // 应用下载的进度（如果不是正在下载应用，则为空）
+  optional AppDownloadProgress download_progress = 7;
 }
 
 message QueryApplicationRequest {
@@ -116,4 +141,8 @@ message SetUserPermissionsRequest {
 
   // 是否允许 uid 卸载应用
   bool allow_uninstall_app = 3;
+}
+
+message Appid {
+  string appid = 1;
 }
