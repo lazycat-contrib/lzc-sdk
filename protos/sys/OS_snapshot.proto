@@ -102,6 +102,7 @@ message SnapshotDatasetDesc {
     uint64 BytesUsed = 2;
     // 数据集的快照占用的存储空间大小
     uint64 SnapshotBytesUsed = 3;
+    uint64 CreatedAt = 4;
 }
 
 message SnapshotDatasetListResponse {
@@ -117,6 +118,7 @@ message SnapshotRequest {
 message SnapshotDesc {
     string Name = 1;
     uint64 BytesUsed = 2;
+    uint64 CreatedAt = 3;
 } 
 
 message SnapshotListResponse {
