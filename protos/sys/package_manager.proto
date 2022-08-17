@@ -78,18 +78,18 @@ message AppDownloadProgress {
 message AppInfo {
   string appid = 1;
 
-  string version = 2;
+  // 应用当前的状态
+  AppStatus status = 2;
 
-  string title = 3;
+  optional string version = 3;
+
+  optional string title = 4;
 
   // 应用图标所在的 url，如 https://apis.$boxdomain/icon/$appid.png
-  string icon = 4;
+  optional string icon = 5;
 
   // 应用所在的域名，如 app.box.heiyu.space
-  string domain = 5;
-
-  // 应用当前的状态
-  AppStatus status = 6;
+  optional string domain = 6;
 
   // 应用下载的进度（如果不是正在下载应用，则为空）
   optional AppDownloadProgress download_progress = 7;
