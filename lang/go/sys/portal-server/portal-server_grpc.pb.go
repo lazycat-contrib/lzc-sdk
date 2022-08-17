@@ -46,7 +46,22 @@ type HPortalSysClient interface {
 	// 释放虚拟IP
 	FreeVirtualExternalIP(ctx context.Context, in *FreeVEIPRequest, opts ...grpc.CallOption) (*FreeVEIPReply, error)
 	PairDevices(ctx context.Context, in *PairDevicesRequest, opts ...grpc.CallOption) (HPortalSys_PairDevicesClient, error)
+	//  查询所有UID
 	ListUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListUsersReply, error)
+	//  根据用户uid查询用户信息
+	QueryRole(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*QueryRoleReply, error)
+	//  修改指定uid的用户角色
+	ChangeRole(ctx context.Context, in *ChangeRoleReqeust, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  通过验证旧密码修改新的密码
+	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  删除用户信息
+	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  创建用户信息
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  强制重置用户密码
+	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 生成用户注册token,以便上层实现各类用户注册机制
+	GenUserInvitation(ctx context.Context, in *GenUserInvitationRequest, opts ...grpc.CallOption) (*UserInvitation, error)
 }
 
 type hPortalSysClient struct {
@@ -170,6 +185,69 @@ func (c *hPortalSysClient) ListUsers(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
+func (c *hPortalSysClient) QueryRole(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*QueryRoleReply, error) {
+	out := new(QueryRoleReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/QueryRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) ChangeRole(ctx context.Context, in *ChangeRoleReqeust, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ChangeRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ResetPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/DeleteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/CreateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ForceResetPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) GenUserInvitation(ctx context.Context, in *GenUserInvitationRequest, opts ...grpc.CallOption) (*UserInvitation, error) {
+	out := new(UserInvitation)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/GenUserInvitation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HPortalSysServer is the server API for HPortalSys service.
 // All implementations must embed UnimplementedHPortalSysServer
 // for forward compatibility
@@ -197,7 +275,22 @@ type HPortalSysServer interface {
 	// 释放虚拟IP
 	FreeVirtualExternalIP(context.Context, *FreeVEIPRequest) (*FreeVEIPReply, error)
 	PairDevices(*PairDevicesRequest, HPortalSys_PairDevicesServer) error
+	//  查询所有UID
 	ListUsers(context.Context, *emptypb.Empty) (*ListUsersReply, error)
+	//  根据用户uid查询用户信息
+	QueryRole(context.Context, *UserID) (*QueryRoleReply, error)
+	//  修改指定uid的用户角色
+	ChangeRole(context.Context, *ChangeRoleReqeust) (*emptypb.Empty, error)
+	//  通过验证旧密码修改新的密码
+	ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error)
+	//  删除用户信息
+	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
+	//  创建用户信息
+	CreateUser(context.Context, *CreateUserRequest) (*emptypb.Empty, error)
+	//  强制重置用户密码
+	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
+	// 生成用户注册token,以便上层实现各类用户注册机制
+	GenUserInvitation(context.Context, *GenUserInvitationRequest) (*UserInvitation, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -234,6 +327,27 @@ func (UnimplementedHPortalSysServer) PairDevices(*PairDevicesRequest, HPortalSys
 }
 func (UnimplementedHPortalSysServer) ListUsers(context.Context, *emptypb.Empty) (*ListUsersReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUsers not implemented")
+}
+func (UnimplementedHPortalSysServer) QueryRole(context.Context, *UserID) (*QueryRoleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryRole not implemented")
+}
+func (UnimplementedHPortalSysServer) ChangeRole(context.Context, *ChangeRoleReqeust) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeRole not implemented")
+}
+func (UnimplementedHPortalSysServer) ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
+}
+func (UnimplementedHPortalSysServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedHPortalSysServer) CreateUser(context.Context, *CreateUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedHPortalSysServer) ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ForceResetPassword not implemented")
+}
+func (UnimplementedHPortalSysServer) GenUserInvitation(context.Context, *GenUserInvitationRequest) (*UserInvitation, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenUserInvitation not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -431,6 +545,132 @@ func _HPortalSys_ListUsers_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_QueryRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).QueryRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/QueryRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).QueryRole(ctx, req.(*UserID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_ChangeRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeRoleReqeust)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).ChangeRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ChangeRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).ChangeRole(ctx, req.(*ChangeRoleReqeust))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).ResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ResetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).ResetPassword(ctx, req.(*ResetPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/DeleteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/CreateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).CreateUser(ctx, req.(*CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_ForceResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForceResetPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).ForceResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ForceResetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).ForceResetPassword(ctx, req.(*ForceResetPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_GenUserInvitation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenUserInvitationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).GenUserInvitation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/GenUserInvitation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).GenUserInvitation(ctx, req.(*GenUserInvitationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HPortalSys_ServiceDesc is the grpc.ServiceDesc for HPortalSys service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -473,6 +713,34 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUsers",
 			Handler:    _HPortalSys_ListUsers_Handler,
+		},
+		{
+			MethodName: "QueryRole",
+			Handler:    _HPortalSys_QueryRole_Handler,
+		},
+		{
+			MethodName: "ChangeRole",
+			Handler:    _HPortalSys_ChangeRole_Handler,
+		},
+		{
+			MethodName: "ResetPassword",
+			Handler:    _HPortalSys_ResetPassword_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _HPortalSys_DeleteUser_Handler,
+		},
+		{
+			MethodName: "CreateUser",
+			Handler:    _HPortalSys_CreateUser_Handler,
+		},
+		{
+			MethodName: "ForceResetPassword",
+			Handler:    _HPortalSys_ForceResetPassword_Handler,
+		},
+		{
+			MethodName: "GenUserInvitation",
+			Handler:    _HPortalSys_GenUserInvitation_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

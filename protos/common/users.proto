@@ -6,6 +6,8 @@ import "google/protobuf/empty.proto";
 
 import "common/security_context.proto";
 
+import "sys/portal-server/portal-server.proto";
+
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/common";
 
 service UserManager {
@@ -22,30 +24,29 @@ service UserManager {
     option (cloud.lazycat.apis.common.scontext).require_user_class = TARGET_USER;
   }
   //  修改指定uid的用户角色(管理员角色允许调用)
-  rpc ChangeRole(ChangeRoleReqeust) returns(google.protobuf.Empty){
+  rpc ChangeRole(ChangeRoleReqeust) returns(google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_user_class = ADMIN_USER;
   }
   //  通过验证旧密码修改新的密码(允许用户重置自己的密码)
-  rpc ResetPassword(ResetPasswordRequest) returns(google.protobuf.Empty){
+  rpc ResetPassword(ResetPasswordRequest) returns(google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_user_class = TARGET_USER;
   }
   // 删除用户信息(管理员角色允许调用)
-  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty){
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_user_class = ADMIN_USER;
   }
   // 创建用户信息(管理员角色允许调用)
-  rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty){
+  rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_user_class = ADMIN_USER;
   }
   // 强制重置用户密码（管理员角色允许调用)
-  rpc ForceResetPassword(ForceResetPasswordRequest) returns (google.protobuf.Empty){
+  rpc ForceResetPassword(ForceResetPasswordRequest) returns (google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_user_class = ADMIN_USER;
   }
+
+  rpc GenUserInvitation(cloud.lazycat.apis.sys.GenUserInvitationRequest) returns (cloud.lazycat.apis.sys.UserInvitation) {}
 }
-enum Role {
-  NORMAL = 0;
-  ADMIN = 1;
-}
+
 message UserID {
   option (target_uid_field) = 1;
   string uid = 1;
@@ -55,7 +56,7 @@ message UserInfo {
   string uid = 1;
   string nickname = 2;
   string avatar = 3;
-  Role role = 4;
+  cloud.lazycat.apis.sys.Role role = 4;
 }
 
 message ListUIDsRequest {
@@ -67,7 +68,7 @@ message ListUIDsReply {
 
 message ChangeRoleReqeust{
   string uid  = 1;
-  Role role = 2;
+  cloud.lazycat.apis.sys.Role role = 2;
 }
 
 message ResetPasswordRequest{
@@ -85,7 +86,7 @@ message DeleteUserRequest {
 message CreateUserRequest{
   string uid = 1;
   string password = 2;
-  Role role = 3;
+  cloud.lazycat.apis.sys.Role role = 3;
 }
 
 message UpdateUserInfoRequest {

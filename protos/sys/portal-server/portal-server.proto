@@ -4,8 +4,8 @@ package cloud.lazycat.apis.sys;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
-import "common/users.proto";
-option go_package = "/portal-server";
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys/portal-server";
 
 service HPortalSys {
   // 用auth-token反向查询登陆的设备以及UID
@@ -41,13 +41,13 @@ service HPortalSys {
 
   rpc PairDevices(PairDevicesRequest) returns (stream google.protobuf.Empty) {}
 
-  // -------------------------  user rpc  start  ----------------------------------------
   //  查询所有UID
   rpc ListUsers(google.protobuf.Empty) returns (ListUsersReply) {}
+
   //  根据用户uid查询用户信息
   rpc QueryRole(UserID) returns (QueryRoleReply) {}
   //  修改指定uid的用户角色
-  rpc ChangeRole(cloud.lazycat.apis.common.ChangeRoleReqeust) returns(google.protobuf.Empty){}
+  rpc ChangeRole(ChangeRoleReqeust) returns(google.protobuf.Empty){}
   //  通过验证旧密码修改新的密码
   rpc ResetPassword(ResetPasswordRequest) returns(google.protobuf.Empty){}
   //  删除用户信息
@@ -56,7 +56,27 @@ service HPortalSys {
   rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty){}
   //  强制重置用户密码
   rpc ForceResetPassword(ForceResetPasswordRequest) returns (google.protobuf.Empty){}
-  // ------------------------- user rpc end  -----------------------------------------
+
+  // 生成用户注册token,以便上层实现各类用户注册机制
+  rpc GenUserInvitation(GenUserInvitationRequest) returns (UserInvitation) {}
+}
+
+message GenUserInvitationRequest {
+  // 仅限注册此uid
+  optional string limit_uid = 1;
+
+  // 在此时间前有效
+  optional google.protobuf.Timestamp not_after = 2;
+
+  // 此邀请最多使用多少次
+  optional int32 limit_usage_count = 3;
+
+  // 自动设置role为此字段，默认为NORMAL
+  optional Role limit_role = 4;
+}
+
+message UserInvitation {
+  string token = 1;
 }
 
 message ListUsersReply {
@@ -200,11 +220,19 @@ message UserID {
   string uid = 1;
 }
 
+enum Role {
+  NORMAL = 0;
+  ADMIN = 1;
+}
 
+message ChangeRoleReqeust{
+  string uid  = 1;
+  Role role = 2;
+}
 
 message QueryRoleReply {
   string uid = 1;
-  cloud.lazycat.apis.common.Role role = 4;
+  Role role = 2;
 }
 
 
@@ -221,7 +249,7 @@ message DeleteUserRequest {
 message CreateUserRequest{
   string uid = 1;
   string password = 2;
-  cloud.lazycat.apis.common.Role role = 3;
+  Role role = 3;
 }
 
 message ForceResetPasswordRequest{
