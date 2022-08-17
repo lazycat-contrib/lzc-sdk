@@ -116,7 +116,7 @@ message SnapshotRequest {
 
 message SnapshotDesc {
     string Name = 1;
-    string BytesUsed = 2;
+    uint64 BytesUsed = 2;
 } 
 
 message SnapshotListResponse {
