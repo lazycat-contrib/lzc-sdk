@@ -20,6 +20,113 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+public enum Cloud_Lazycat_Apis_Sys_Role: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
+  case normal // = 0
+  case admin // = 1
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .normal
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .normal
+    case 1: self = .admin
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .normal: return 0
+    case .admin: return 1
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension Cloud_Lazycat_Apis_Sys_Role: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [Cloud_Lazycat_Apis_Sys_Role] = [
+    .normal,
+    .admin,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
+public struct Cloud_Lazycat_Apis_Sys_GenUserInvitationRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// 仅限注册此uid
+  public var limitUid: String {
+    get {return _limitUid ?? String()}
+    set {_limitUid = newValue}
+  }
+  /// Returns true if `limitUid` has been explicitly set.
+  public var hasLimitUid: Bool {return self._limitUid != nil}
+  /// Clears the value of `limitUid`. Subsequent reads from it will return its default value.
+  public mutating func clearLimitUid() {self._limitUid = nil}
+
+  /// 在此时间前有效
+  public var notAfter: SwiftProtobuf.Google_Protobuf_Timestamp {
+    get {return _notAfter ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_notAfter = newValue}
+  }
+  /// Returns true if `notAfter` has been explicitly set.
+  public var hasNotAfter: Bool {return self._notAfter != nil}
+  /// Clears the value of `notAfter`. Subsequent reads from it will return its default value.
+  public mutating func clearNotAfter() {self._notAfter = nil}
+
+  /// 此邀请最多使用多少次
+  public var limitUsageCount: Int32 {
+    get {return _limitUsageCount ?? 0}
+    set {_limitUsageCount = newValue}
+  }
+  /// Returns true if `limitUsageCount` has been explicitly set.
+  public var hasLimitUsageCount: Bool {return self._limitUsageCount != nil}
+  /// Clears the value of `limitUsageCount`. Subsequent reads from it will return its default value.
+  public mutating func clearLimitUsageCount() {self._limitUsageCount = nil}
+
+  /// 自动设置role为此字段，默认为NORMAL
+  public var limitRole: Cloud_Lazycat_Apis_Sys_Role {
+    get {return _limitRole ?? .normal}
+    set {_limitRole = newValue}
+  }
+  /// Returns true if `limitRole` has been explicitly set.
+  public var hasLimitRole: Bool {return self._limitRole != nil}
+  /// Clears the value of `limitRole`. Subsequent reads from it will return its default value.
+  public mutating func clearLimitRole() {self._limitRole = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _limitUid: String? = nil
+  fileprivate var _notAfter: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+  fileprivate var _limitUsageCount: Int32? = nil
+  fileprivate var _limitRole: Cloud_Lazycat_Apis_Sys_Role? = nil
+}
+
+public struct Cloud_Lazycat_Apis_Sys_UserInvitation {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var token: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 public struct Cloud_Lazycat_Apis_Sys_ListUsersReply {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -303,7 +410,108 @@ public struct Cloud_Lazycat_Apis_Sys_ListDeviceReply {
   public init() {}
 }
 
+public struct Cloud_Lazycat_Apis_Sys_UserID {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var uid: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_ChangeRoleReqeust {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var uid: String = String()
+
+  public var role: Cloud_Lazycat_Apis_Sys_Role = .normal
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_QueryRoleReply {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var uid: String = String()
+
+  public var role: Cloud_Lazycat_Apis_Sys_Role = .normal
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_ResetPasswordRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var uid: String = String()
+
+  public var oldPassword: String = String()
+
+  public var newPassword: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_DeleteUserRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var uid: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_CreateUserRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var uid: String = String()
+
+  public var password: String = String()
+
+  public var role: Cloud_Lazycat_Apis_Sys_Role = .normal
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_ForceResetPasswordRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var uid: String = String()
+
+  public var newPassword: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 #if swift(>=5.5) && canImport(_Concurrency)
+extension Cloud_Lazycat_Apis_Sys_Role: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_GenUserInvitationRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_UserInvitation: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_ListUsersReply: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_PairDevicesRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_AllocVEIPRequest: @unchecked Sendable {}
@@ -321,11 +529,111 @@ extension Cloud_Lazycat_Apis_Sys_DomainCertReply: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_Device: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_ListDeviceRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_ListDeviceReply: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_UserID: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_ChangeRoleReqeust: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_QueryRoleReply: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_ResetPasswordRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_DeleteUserRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_CreateUserRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_ForceResetPasswordRequest: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "cloud.lazycat.apis.sys"
+
+extension Cloud_Lazycat_Apis_Sys_Role: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "NORMAL"),
+    1: .same(proto: "ADMIN"),
+  ]
+}
+
+extension Cloud_Lazycat_Apis_Sys_GenUserInvitationRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".GenUserInvitationRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "limit_uid"),
+    2: .standard(proto: "not_after"),
+    3: .standard(proto: "limit_usage_count"),
+    4: .standard(proto: "limit_role"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self._limitUid) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._notAfter) }()
+      case 3: try { try decoder.decodeSingularInt32Field(value: &self._limitUsageCount) }()
+      case 4: try { try decoder.decodeSingularEnumField(value: &self._limitRole) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._limitUid {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._notAfter {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._limitUsageCount {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._limitRole {
+      try visitor.visitSingularEnumField(value: v, fieldNumber: 4)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_GenUserInvitationRequest, rhs: Cloud_Lazycat_Apis_Sys_GenUserInvitationRequest) -> Bool {
+    if lhs._limitUid != rhs._limitUid {return false}
+    if lhs._notAfter != rhs._notAfter {return false}
+    if lhs._limitUsageCount != rhs._limitUsageCount {return false}
+    if lhs._limitRole != rhs._limitRole {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_UserInvitation: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".UserInvitation"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "token"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.token) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.token.isEmpty {
+      try visitor.visitSingularStringField(value: self.token, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_UserInvitation, rhs: Cloud_Lazycat_Apis_Sys_UserInvitation) -> Bool {
+    if lhs.token != rhs.token {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
 
 extension Cloud_Lazycat_Apis_Sys_ListUsersReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".ListUsersReply"
@@ -989,6 +1297,272 @@ extension Cloud_Lazycat_Apis_Sys_ListDeviceReply: SwiftProtobuf.Message, SwiftPr
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Sys_ListDeviceReply, rhs: Cloud_Lazycat_Apis_Sys_ListDeviceReply) -> Bool {
     if lhs.devices != rhs.devices {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_UserID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".UserID"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "uid"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.uid) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.uid.isEmpty {
+      try visitor.visitSingularStringField(value: self.uid, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_UserID, rhs: Cloud_Lazycat_Apis_Sys_UserID) -> Bool {
+    if lhs.uid != rhs.uid {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_ChangeRoleReqeust: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ChangeRoleReqeust"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "uid"),
+    2: .same(proto: "role"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.uid) }()
+      case 2: try { try decoder.decodeSingularEnumField(value: &self.role) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.uid.isEmpty {
+      try visitor.visitSingularStringField(value: self.uid, fieldNumber: 1)
+    }
+    if self.role != .normal {
+      try visitor.visitSingularEnumField(value: self.role, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_ChangeRoleReqeust, rhs: Cloud_Lazycat_Apis_Sys_ChangeRoleReqeust) -> Bool {
+    if lhs.uid != rhs.uid {return false}
+    if lhs.role != rhs.role {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_QueryRoleReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".QueryRoleReply"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "uid"),
+    2: .same(proto: "role"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.uid) }()
+      case 2: try { try decoder.decodeSingularEnumField(value: &self.role) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.uid.isEmpty {
+      try visitor.visitSingularStringField(value: self.uid, fieldNumber: 1)
+    }
+    if self.role != .normal {
+      try visitor.visitSingularEnumField(value: self.role, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_QueryRoleReply, rhs: Cloud_Lazycat_Apis_Sys_QueryRoleReply) -> Bool {
+    if lhs.uid != rhs.uid {return false}
+    if lhs.role != rhs.role {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_ResetPasswordRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ResetPasswordRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "uid"),
+    2: .standard(proto: "old_password"),
+    3: .standard(proto: "new_password"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.uid) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.oldPassword) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.newPassword) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.uid.isEmpty {
+      try visitor.visitSingularStringField(value: self.uid, fieldNumber: 1)
+    }
+    if !self.oldPassword.isEmpty {
+      try visitor.visitSingularStringField(value: self.oldPassword, fieldNumber: 2)
+    }
+    if !self.newPassword.isEmpty {
+      try visitor.visitSingularStringField(value: self.newPassword, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_ResetPasswordRequest, rhs: Cloud_Lazycat_Apis_Sys_ResetPasswordRequest) -> Bool {
+    if lhs.uid != rhs.uid {return false}
+    if lhs.oldPassword != rhs.oldPassword {return false}
+    if lhs.newPassword != rhs.newPassword {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_DeleteUserRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".DeleteUserRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "uid"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.uid) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.uid.isEmpty {
+      try visitor.visitSingularStringField(value: self.uid, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_DeleteUserRequest, rhs: Cloud_Lazycat_Apis_Sys_DeleteUserRequest) -> Bool {
+    if lhs.uid != rhs.uid {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_CreateUserRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".CreateUserRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "uid"),
+    2: .same(proto: "password"),
+    3: .same(proto: "role"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.uid) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.password) }()
+      case 3: try { try decoder.decodeSingularEnumField(value: &self.role) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.uid.isEmpty {
+      try visitor.visitSingularStringField(value: self.uid, fieldNumber: 1)
+    }
+    if !self.password.isEmpty {
+      try visitor.visitSingularStringField(value: self.password, fieldNumber: 2)
+    }
+    if self.role != .normal {
+      try visitor.visitSingularEnumField(value: self.role, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_CreateUserRequest, rhs: Cloud_Lazycat_Apis_Sys_CreateUserRequest) -> Bool {
+    if lhs.uid != rhs.uid {return false}
+    if lhs.password != rhs.password {return false}
+    if lhs.role != rhs.role {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_ForceResetPasswordRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ForceResetPasswordRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "uid"),
+    2: .standard(proto: "new_password"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.uid) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.newPassword) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.uid.isEmpty {
+      try visitor.visitSingularStringField(value: self.uid, fieldNumber: 1)
+    }
+    if !self.newPassword.isEmpty {
+      try visitor.visitSingularStringField(value: self.newPassword, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_ForceResetPasswordRequest, rhs: Cloud_Lazycat_Apis_Sys_ForceResetPasswordRequest) -> Bool {
+    if lhs.uid != rhs.uid {return false}
+    if lhs.newPassword != rhs.newPassword {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

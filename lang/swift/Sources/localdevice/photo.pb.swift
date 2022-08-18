@@ -243,6 +243,16 @@ public struct Cloud_Lazycat_Apis_Localdevice_ListPhotoMetasRequest {
   /// Clears the value of `isFilterVideo`. Subsequent reads from it will return its default value.
   public mutating func clearIsFilterVideo() {self._isFilterVideo = nil}
 
+  /// 给定文件的修改时间过滤meta信息返回
+  public var filterByModifiedDate: SwiftProtobuf.Google_Protobuf_Timestamp {
+    get {return _filterByModifiedDate ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_filterByModifiedDate = newValue}
+  }
+  /// Returns true if `filterByModifiedDate` has been explicitly set.
+  public var hasFilterByModifiedDate: Bool {return self._filterByModifiedDate != nil}
+  /// Clears the value of `filterByModifiedDate`. Subsequent reads from it will return its default value.
+  public mutating func clearFilterByModifiedDate() {self._filterByModifiedDate = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -251,6 +261,7 @@ public struct Cloud_Lazycat_Apis_Localdevice_ListPhotoMetasRequest {
   fileprivate var _pageNum: UInt32? = nil
   fileprivate var _pageSize: UInt32? = nil
   fileprivate var _isFilterVideo: Bool? = nil
+  fileprivate var _filterByModifiedDate: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 }
 
 public struct Cloud_Lazycat_Apis_Localdevice_PhotoMeta {
@@ -258,79 +269,111 @@ public struct Cloud_Lazycat_Apis_Localdevice_PhotoMeta {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var id: String = String()
+  public var id: String {
+    get {return _storage._id}
+    set {_uniqueStorage()._id = newValue}
+  }
 
   ///浏览器直接可以使用的url, 可能是device domain下的一个文件或是一个data url
-  public var photoURL: String = String()
+  public var photoURL: String {
+    get {return _storage._photoURL}
+    set {_uniqueStorage()._photoURL = newValue}
+  }
 
-  public var thumbnailURL: String = String()
+  public var thumbnailURL: String {
+    get {return _storage._thumbnailURL}
+    set {_uniqueStorage()._thumbnailURL = newValue}
+  }
 
-  public var width: String = String()
+  public var width: String {
+    get {return _storage._width}
+    set {_uniqueStorage()._width = newValue}
+  }
 
-  public var height: String = String()
+  public var height: String {
+    get {return _storage._height}
+    set {_uniqueStorage()._height = newValue}
+  }
 
-  public var albumIds: [String] = []
+  public var albumIds: [String] {
+    get {return _storage._albumIds}
+    set {_uniqueStorage()._albumIds = newValue}
+  }
 
-  public var size: Int64 = 0
+  public var size: Int64 {
+    get {return _storage._size}
+    set {_uniqueStorage()._size = newValue}
+  }
 
-  public var mime: String = String()
+  public var mime: String {
+    get {return _storage._mime}
+    set {_uniqueStorage()._mime = newValue}
+  }
 
-  public var hash: String = String()
+  public var hash: String {
+    get {return _storage._hash}
+    set {_uniqueStorage()._hash = newValue}
+  }
 
   public var fileName: String {
-    get {return _fileName ?? String()}
-    set {_fileName = newValue}
+    get {return _storage._fileName ?? String()}
+    set {_uniqueStorage()._fileName = newValue}
   }
   /// Returns true if `fileName` has been explicitly set.
-  public var hasFileName: Bool {return self._fileName != nil}
+  public var hasFileName: Bool {return _storage._fileName != nil}
   /// Clears the value of `fileName`. Subsequent reads from it will return its default value.
-  public mutating func clearFileName() {self._fileName = nil}
+  public mutating func clearFileName() {_uniqueStorage()._fileName = nil}
 
   public var creationDate: SwiftProtobuf.Google_Protobuf_Timestamp {
-    get {return _creationDate ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
-    set {_creationDate = newValue}
+    get {return _storage._creationDate ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_uniqueStorage()._creationDate = newValue}
   }
   /// Returns true if `creationDate` has been explicitly set.
-  public var hasCreationDate: Bool {return self._creationDate != nil}
+  public var hasCreationDate: Bool {return _storage._creationDate != nil}
   /// Clears the value of `creationDate`. Subsequent reads from it will return its default value.
-  public mutating func clearCreationDate() {self._creationDate = nil}
+  public mutating func clearCreationDate() {_uniqueStorage()._creationDate = nil}
 
   public var latitude: Float {
-    get {return _latitude ?? 0}
-    set {_latitude = newValue}
+    get {return _storage._latitude ?? 0}
+    set {_uniqueStorage()._latitude = newValue}
   }
   /// Returns true if `latitude` has been explicitly set.
-  public var hasLatitude: Bool {return self._latitude != nil}
+  public var hasLatitude: Bool {return _storage._latitude != nil}
   /// Clears the value of `latitude`. Subsequent reads from it will return its default value.
-  public mutating func clearLatitude() {self._latitude = nil}
+  public mutating func clearLatitude() {_uniqueStorage()._latitude = nil}
 
   public var longitude: Float {
-    get {return _longitude ?? 0}
-    set {_longitude = newValue}
+    get {return _storage._longitude ?? 0}
+    set {_uniqueStorage()._longitude = newValue}
   }
   /// Returns true if `longitude` has been explicitly set.
-  public var hasLongitude: Bool {return self._longitude != nil}
+  public var hasLongitude: Bool {return _storage._longitude != nil}
   /// Clears the value of `longitude`. Subsequent reads from it will return its default value.
-  public mutating func clearLongitude() {self._longitude = nil}
+  public mutating func clearLongitude() {_uniqueStorage()._longitude = nil}
 
   public var takenDate: SwiftProtobuf.Google_Protobuf_Timestamp {
-    get {return _takenDate ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
-    set {_takenDate = newValue}
+    get {return _storage._takenDate ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_uniqueStorage()._takenDate = newValue}
   }
   /// Returns true if `takenDate` has been explicitly set.
-  public var hasTakenDate: Bool {return self._takenDate != nil}
+  public var hasTakenDate: Bool {return _storage._takenDate != nil}
   /// Clears the value of `takenDate`. Subsequent reads from it will return its default value.
-  public mutating func clearTakenDate() {self._takenDate = nil}
+  public mutating func clearTakenDate() {_uniqueStorage()._takenDate = nil}
+
+  public var modifiedDate: SwiftProtobuf.Google_Protobuf_Timestamp {
+    get {return _storage._modifiedDate ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_uniqueStorage()._modifiedDate = newValue}
+  }
+  /// Returns true if `modifiedDate` has been explicitly set.
+  public var hasModifiedDate: Bool {return _storage._modifiedDate != nil}
+  /// Clears the value of `modifiedDate`. Subsequent reads from it will return its default value.
+  public mutating func clearModifiedDate() {_uniqueStorage()._modifiedDate = nil}
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
-  fileprivate var _fileName: String? = nil
-  fileprivate var _creationDate: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
-  fileprivate var _latitude: Float? = nil
-  fileprivate var _longitude: Float? = nil
-  fileprivate var _takenDate: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 public struct Cloud_Lazycat_Apis_Localdevice_Album {
@@ -689,6 +732,7 @@ extension Cloud_Lazycat_Apis_Localdevice_ListPhotoMetasRequest: SwiftProtobuf.Me
     7: .standard(proto: "page_num"),
     8: .standard(proto: "page_size"),
     9: .standard(proto: "is_filter_video"),
+    10: .standard(proto: "filter_by_modified_date"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -706,6 +750,7 @@ extension Cloud_Lazycat_Apis_Localdevice_ListPhotoMetasRequest: SwiftProtobuf.Me
       case 7: try { try decoder.decodeSingularUInt32Field(value: &self._pageNum) }()
       case 8: try { try decoder.decodeSingularUInt32Field(value: &self._pageSize) }()
       case 9: try { try decoder.decodeSingularBoolField(value: &self._isFilterVideo) }()
+      case 10: try { try decoder.decodeSingularMessageField(value: &self._filterByModifiedDate) }()
       default: break
       }
     }
@@ -743,6 +788,9 @@ extension Cloud_Lazycat_Apis_Localdevice_ListPhotoMetasRequest: SwiftProtobuf.Me
     try { if let v = self._isFilterVideo {
       try visitor.visitSingularBoolField(value: v, fieldNumber: 9)
     } }()
+    try { if let v = self._filterByModifiedDate {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -756,6 +804,7 @@ extension Cloud_Lazycat_Apis_Localdevice_ListPhotoMetasRequest: SwiftProtobuf.Me
     if lhs._pageNum != rhs._pageNum {return false}
     if lhs._pageSize != rhs._pageSize {return false}
     if lhs._isFilterVideo != rhs._isFilterVideo {return false}
+    if lhs._filterByModifiedDate != rhs._filterByModifiedDate {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -778,98 +827,164 @@ extension Cloud_Lazycat_Apis_Localdevice_PhotoMeta: SwiftProtobuf.Message, Swift
     12: .same(proto: "latitude"),
     13: .same(proto: "longitude"),
     14: .standard(proto: "taken_date"),
+    15: .standard(proto: "modified_date"),
   ]
 
+  fileprivate class _StorageClass {
+    var _id: String = String()
+    var _photoURL: String = String()
+    var _thumbnailURL: String = String()
+    var _width: String = String()
+    var _height: String = String()
+    var _albumIds: [String] = []
+    var _size: Int64 = 0
+    var _mime: String = String()
+    var _hash: String = String()
+    var _fileName: String? = nil
+    var _creationDate: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+    var _latitude: Float? = nil
+    var _longitude: Float? = nil
+    var _takenDate: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+    var _modifiedDate: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _id = source._id
+      _photoURL = source._photoURL
+      _thumbnailURL = source._thumbnailURL
+      _width = source._width
+      _height = source._height
+      _albumIds = source._albumIds
+      _size = source._size
+      _mime = source._mime
+      _hash = source._hash
+      _fileName = source._fileName
+      _creationDate = source._creationDate
+      _latitude = source._latitude
+      _longitude = source._longitude
+      _takenDate = source._takenDate
+      _modifiedDate = source._modifiedDate
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.photoURL) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self.thumbnailURL) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self.width) }()
-      case 5: try { try decoder.decodeSingularStringField(value: &self.height) }()
-      case 6: try { try decoder.decodeRepeatedStringField(value: &self.albumIds) }()
-      case 7: try { try decoder.decodeSingularInt64Field(value: &self.size) }()
-      case 8: try { try decoder.decodeSingularStringField(value: &self.mime) }()
-      case 9: try { try decoder.decodeSingularStringField(value: &self.hash) }()
-      case 10: try { try decoder.decodeSingularStringField(value: &self._fileName) }()
-      case 11: try { try decoder.decodeSingularMessageField(value: &self._creationDate) }()
-      case 12: try { try decoder.decodeSingularFloatField(value: &self._latitude) }()
-      case 13: try { try decoder.decodeSingularFloatField(value: &self._longitude) }()
-      case 14: try { try decoder.decodeSingularMessageField(value: &self._takenDate) }()
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularStringField(value: &_storage._id) }()
+        case 2: try { try decoder.decodeSingularStringField(value: &_storage._photoURL) }()
+        case 3: try { try decoder.decodeSingularStringField(value: &_storage._thumbnailURL) }()
+        case 4: try { try decoder.decodeSingularStringField(value: &_storage._width) }()
+        case 5: try { try decoder.decodeSingularStringField(value: &_storage._height) }()
+        case 6: try { try decoder.decodeRepeatedStringField(value: &_storage._albumIds) }()
+        case 7: try { try decoder.decodeSingularInt64Field(value: &_storage._size) }()
+        case 8: try { try decoder.decodeSingularStringField(value: &_storage._mime) }()
+        case 9: try { try decoder.decodeSingularStringField(value: &_storage._hash) }()
+        case 10: try { try decoder.decodeSingularStringField(value: &_storage._fileName) }()
+        case 11: try { try decoder.decodeSingularMessageField(value: &_storage._creationDate) }()
+        case 12: try { try decoder.decodeSingularFloatField(value: &_storage._latitude) }()
+        case 13: try { try decoder.decodeSingularFloatField(value: &_storage._longitude) }()
+        case 14: try { try decoder.decodeSingularMessageField(value: &_storage._takenDate) }()
+        case 15: try { try decoder.decodeSingularMessageField(value: &_storage._modifiedDate) }()
+        default: break
+        }
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    if !self.id.isEmpty {
-      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      if !_storage._id.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._id, fieldNumber: 1)
+      }
+      if !_storage._photoURL.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._photoURL, fieldNumber: 2)
+      }
+      if !_storage._thumbnailURL.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._thumbnailURL, fieldNumber: 3)
+      }
+      if !_storage._width.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._width, fieldNumber: 4)
+      }
+      if !_storage._height.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._height, fieldNumber: 5)
+      }
+      if !_storage._albumIds.isEmpty {
+        try visitor.visitRepeatedStringField(value: _storage._albumIds, fieldNumber: 6)
+      }
+      if _storage._size != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._size, fieldNumber: 7)
+      }
+      if !_storage._mime.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._mime, fieldNumber: 8)
+      }
+      if !_storage._hash.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._hash, fieldNumber: 9)
+      }
+      try { if let v = _storage._fileName {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 10)
+      } }()
+      try { if let v = _storage._creationDate {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
+      } }()
+      try { if let v = _storage._latitude {
+        try visitor.visitSingularFloatField(value: v, fieldNumber: 12)
+      } }()
+      try { if let v = _storage._longitude {
+        try visitor.visitSingularFloatField(value: v, fieldNumber: 13)
+      } }()
+      try { if let v = _storage._takenDate {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
+      } }()
+      try { if let v = _storage._modifiedDate {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
+      } }()
     }
-    if !self.photoURL.isEmpty {
-      try visitor.visitSingularStringField(value: self.photoURL, fieldNumber: 2)
-    }
-    if !self.thumbnailURL.isEmpty {
-      try visitor.visitSingularStringField(value: self.thumbnailURL, fieldNumber: 3)
-    }
-    if !self.width.isEmpty {
-      try visitor.visitSingularStringField(value: self.width, fieldNumber: 4)
-    }
-    if !self.height.isEmpty {
-      try visitor.visitSingularStringField(value: self.height, fieldNumber: 5)
-    }
-    if !self.albumIds.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.albumIds, fieldNumber: 6)
-    }
-    if self.size != 0 {
-      try visitor.visitSingularInt64Field(value: self.size, fieldNumber: 7)
-    }
-    if !self.mime.isEmpty {
-      try visitor.visitSingularStringField(value: self.mime, fieldNumber: 8)
-    }
-    if !self.hash.isEmpty {
-      try visitor.visitSingularStringField(value: self.hash, fieldNumber: 9)
-    }
-    try { if let v = self._fileName {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 10)
-    } }()
-    try { if let v = self._creationDate {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
-    } }()
-    try { if let v = self._latitude {
-      try visitor.visitSingularFloatField(value: v, fieldNumber: 12)
-    } }()
-    try { if let v = self._longitude {
-      try visitor.visitSingularFloatField(value: v, fieldNumber: 13)
-    } }()
-    try { if let v = self._takenDate {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
-    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_PhotoMeta, rhs: Cloud_Lazycat_Apis_Localdevice_PhotoMeta) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.photoURL != rhs.photoURL {return false}
-    if lhs.thumbnailURL != rhs.thumbnailURL {return false}
-    if lhs.width != rhs.width {return false}
-    if lhs.height != rhs.height {return false}
-    if lhs.albumIds != rhs.albumIds {return false}
-    if lhs.size != rhs.size {return false}
-    if lhs.mime != rhs.mime {return false}
-    if lhs.hash != rhs.hash {return false}
-    if lhs._fileName != rhs._fileName {return false}
-    if lhs._creationDate != rhs._creationDate {return false}
-    if lhs._latitude != rhs._latitude {return false}
-    if lhs._longitude != rhs._longitude {return false}
-    if lhs._takenDate != rhs._takenDate {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._id != rhs_storage._id {return false}
+        if _storage._photoURL != rhs_storage._photoURL {return false}
+        if _storage._thumbnailURL != rhs_storage._thumbnailURL {return false}
+        if _storage._width != rhs_storage._width {return false}
+        if _storage._height != rhs_storage._height {return false}
+        if _storage._albumIds != rhs_storage._albumIds {return false}
+        if _storage._size != rhs_storage._size {return false}
+        if _storage._mime != rhs_storage._mime {return false}
+        if _storage._hash != rhs_storage._hash {return false}
+        if _storage._fileName != rhs_storage._fileName {return false}
+        if _storage._creationDate != rhs_storage._creationDate {return false}
+        if _storage._latitude != rhs_storage._latitude {return false}
+        if _storage._longitude != rhs_storage._longitude {return false}
+        if _storage._takenDate != rhs_storage._takenDate {return false}
+        if _storage._modifiedDate != rhs_storage._modifiedDate {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

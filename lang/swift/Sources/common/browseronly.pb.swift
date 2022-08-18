@@ -39,8 +39,10 @@ public struct Cloud_Lazycat_Apis_Common_SessionInfo {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  /// 当前登陆用户
   public var uid: String = String()
 
+  /// 当前登陆设备
   public var deviceID: String = String()
 
   public var when: SwiftProtobuf.Google_Protobuf_Timestamp {

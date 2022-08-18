@@ -24,7 +24,6 @@ public enum Cloud_Lazycat_Apis_Sys_SnapshotManagerStatus: SwiftProtobuf.Enum {
   public typealias RawValue = Int
   case stopped // = 0
   case running // = 1
-  case waiting // = 2
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -35,7 +34,6 @@ public enum Cloud_Lazycat_Apis_Sys_SnapshotManagerStatus: SwiftProtobuf.Enum {
     switch rawValue {
     case 0: self = .stopped
     case 1: self = .running
-    case 2: self = .waiting
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -44,7 +42,6 @@ public enum Cloud_Lazycat_Apis_Sys_SnapshotManagerStatus: SwiftProtobuf.Enum {
     switch self {
     case .stopped: return 0
     case .running: return 1
-    case .waiting: return 2
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -58,7 +55,54 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotManagerStatus: CaseIterable {
   public static var allCases: [Cloud_Lazycat_Apis_Sys_SnapshotManagerStatus] = [
     .stopped,
     .running,
-    .waiting,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
+public enum Cloud_Lazycat_Apis_Sys_SnapshotTransferMode: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
+  case normal // = 0
+
+  /// 若存在可恢复的传输任务，是否不尝试恢复，重新传输
+  case noResume // = 1
+
+  /// 不进行传输，只预估传输的数据量
+  case dryRun // = 2
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .normal
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .normal
+    case 1: self = .noResume
+    case 2: self = .dryRun
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .normal: return 0
+    case .noResume: return 1
+    case .dryRun: return 2
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension Cloud_Lazycat_Apis_Sys_SnapshotTransferMode: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [Cloud_Lazycat_Apis_Sys_SnapshotTransferMode] = [
+    .normal,
+    .noResume,
+    .dryRun,
   ]
 }
 
@@ -103,12 +147,46 @@ public struct Cloud_Lazycat_Apis_Sys_SnapshotDatasetRequest {
   public init() {}
 }
 
+public struct Cloud_Lazycat_Apis_Sys_SnapshotDatasetBackupRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var poolName: String = String()
+
+  public var datasetPath: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_SnapshotDatasetDesc {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var path: String = String()
+
+  /// 数据集自身占用的存储空间大小
+  public var bytesUsed: UInt64 = 0
+
+  /// 数据集的快照占用的存储空间大小
+  public var snapshotBytesUsed: UInt64 = 0
+
+  public var createdAt: UInt64 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 public struct Cloud_Lazycat_Apis_Sys_SnapshotDatasetListResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var datasetPathList: [String] = []
+  public var datasetList: [Cloud_Lazycat_Apis_Sys_SnapshotDatasetDesc] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -130,12 +208,28 @@ public struct Cloud_Lazycat_Apis_Sys_SnapshotRequest {
   public init() {}
 }
 
+public struct Cloud_Lazycat_Apis_Sys_SnapshotDesc {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var name: String = String()
+
+  public var bytesUsed: UInt64 = 0
+
+  public var createdAt: UInt64 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 public struct Cloud_Lazycat_Apis_Sys_SnapshotListResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var snapshotNameList: [String] = []
+  public var snapshotList: [Cloud_Lazycat_Apis_Sys_SnapshotDesc] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -169,8 +263,23 @@ public struct Cloud_Lazycat_Apis_Sys_SnapshotBackupTransferRequest {
 
   public var snapshotName: String = String()
 
-  /// 若存在可恢复的传输任务，是否不尝试恢复，重新传输
-  public var noResume: Bool = false
+  public var transferMode: Cloud_Lazycat_Apis_Sys_SnapshotTransferMode = .normal
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_SnapshotBackupTransferResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// 若存在可恢复的传输任务，则为已传输的数据量
+  /// 当 TransferMode 为 NoResume 时，忽略该字段
+  public var bytesSent: UInt64 = 0
+
+  public var bytesTotal: UInt64 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -198,6 +307,13 @@ public struct Cloud_Lazycat_Apis_Sys_SnapshotStatusResponse {
 
   public var status: Cloud_Lazycat_Apis_Sys_SnapshotManagerStatus = .stopped
 
+  /// 最近一次传输任务中，已传输的数据量
+  public var bytesSent: UInt64 = 0
+
+  /// 最近一次传输任务中，预估的总数据量。
+  /// 实际需要传输的数据量一般会略小于该数值。判断传输任务是否完成，以 Status 字段为准
+  public var bytesTotal: UInt64 = 0
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -205,14 +321,19 @@ public struct Cloud_Lazycat_Apis_Sys_SnapshotStatusResponse {
 
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Cloud_Lazycat_Apis_Sys_SnapshotManagerStatus: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_SnapshotTransferMode: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_SnapshotBackupPoolRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_SnapshotBackupPoolListResponse: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_SnapshotDatasetRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_SnapshotDatasetBackupRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_SnapshotDatasetDesc: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_SnapshotDatasetListResponse: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_SnapshotRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_SnapshotDesc: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_SnapshotListResponse: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_SnapshotBackupRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_SnapshotBackupTransferRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_SnapshotBackupTransferResponse: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_SnapshotBackupListRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_SnapshotStatusResponse: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
@@ -225,7 +346,14 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotManagerStatus: SwiftProtobuf._ProtoName
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "Stopped"),
     1: .same(proto: "Running"),
-    2: .same(proto: "Waiting"),
+  ]
+}
+
+extension Cloud_Lazycat_Apis_Sys_SnapshotTransferMode: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "Normal"),
+    1: .same(proto: "NoResume"),
+    2: .same(proto: "DryRun"),
   ]
 }
 
@@ -325,10 +453,11 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotDatasetRequest: SwiftProtobuf.Message, 
   }
 }
 
-extension Cloud_Lazycat_Apis_Sys_SnapshotDatasetListResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".SnapshotDatasetListResponse"
+extension Cloud_Lazycat_Apis_Sys_SnapshotDatasetBackupRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".SnapshotDatasetBackupRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "DatasetPathList"),
+    1: .same(proto: "PoolName"),
+    2: .same(proto: "DatasetPath"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -337,21 +466,108 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotDatasetListResponse: SwiftProtobuf.Mess
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeRepeatedStringField(value: &self.datasetPathList) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self.poolName) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.datasetPath) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.datasetPathList.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.datasetPathList, fieldNumber: 1)
+    if !self.poolName.isEmpty {
+      try visitor.visitSingularStringField(value: self.poolName, fieldNumber: 1)
+    }
+    if !self.datasetPath.isEmpty {
+      try visitor.visitSingularStringField(value: self.datasetPath, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_SnapshotDatasetBackupRequest, rhs: Cloud_Lazycat_Apis_Sys_SnapshotDatasetBackupRequest) -> Bool {
+    if lhs.poolName != rhs.poolName {return false}
+    if lhs.datasetPath != rhs.datasetPath {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_SnapshotDatasetDesc: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".SnapshotDatasetDesc"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "Path"),
+    2: .same(proto: "BytesUsed"),
+    3: .same(proto: "SnapshotBytesUsed"),
+    4: .same(proto: "CreatedAt"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.path) }()
+      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.bytesUsed) }()
+      case 3: try { try decoder.decodeSingularUInt64Field(value: &self.snapshotBytesUsed) }()
+      case 4: try { try decoder.decodeSingularUInt64Field(value: &self.createdAt) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.path.isEmpty {
+      try visitor.visitSingularStringField(value: self.path, fieldNumber: 1)
+    }
+    if self.bytesUsed != 0 {
+      try visitor.visitSingularUInt64Field(value: self.bytesUsed, fieldNumber: 2)
+    }
+    if self.snapshotBytesUsed != 0 {
+      try visitor.visitSingularUInt64Field(value: self.snapshotBytesUsed, fieldNumber: 3)
+    }
+    if self.createdAt != 0 {
+      try visitor.visitSingularUInt64Field(value: self.createdAt, fieldNumber: 4)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_SnapshotDatasetDesc, rhs: Cloud_Lazycat_Apis_Sys_SnapshotDatasetDesc) -> Bool {
+    if lhs.path != rhs.path {return false}
+    if lhs.bytesUsed != rhs.bytesUsed {return false}
+    if lhs.snapshotBytesUsed != rhs.snapshotBytesUsed {return false}
+    if lhs.createdAt != rhs.createdAt {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_SnapshotDatasetListResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".SnapshotDatasetListResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "DatasetList"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.datasetList) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.datasetList.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.datasetList, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Sys_SnapshotDatasetListResponse, rhs: Cloud_Lazycat_Apis_Sys_SnapshotDatasetListResponse) -> Bool {
-    if lhs.datasetPathList != rhs.datasetPathList {return false}
+    if lhs.datasetList != rhs.datasetList {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -395,10 +611,12 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotRequest: SwiftProtobuf.Message, SwiftPr
   }
 }
 
-extension Cloud_Lazycat_Apis_Sys_SnapshotListResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".SnapshotListResponse"
+extension Cloud_Lazycat_Apis_Sys_SnapshotDesc: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".SnapshotDesc"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "SnapshotNameList"),
+    1: .same(proto: "Name"),
+    2: .same(proto: "BytesUsed"),
+    3: .same(proto: "CreatedAt"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -407,21 +625,63 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotListResponse: SwiftProtobuf.Message, Sw
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeRepeatedStringField(value: &self.snapshotNameList) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.bytesUsed) }()
+      case 3: try { try decoder.decodeSingularUInt64Field(value: &self.createdAt) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.snapshotNameList.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.snapshotNameList, fieldNumber: 1)
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 1)
+    }
+    if self.bytesUsed != 0 {
+      try visitor.visitSingularUInt64Field(value: self.bytesUsed, fieldNumber: 2)
+    }
+    if self.createdAt != 0 {
+      try visitor.visitSingularUInt64Field(value: self.createdAt, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_SnapshotDesc, rhs: Cloud_Lazycat_Apis_Sys_SnapshotDesc) -> Bool {
+    if lhs.name != rhs.name {return false}
+    if lhs.bytesUsed != rhs.bytesUsed {return false}
+    if lhs.createdAt != rhs.createdAt {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_SnapshotListResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".SnapshotListResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "SnapshotList"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.snapshotList) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.snapshotList.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.snapshotList, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Sys_SnapshotListResponse, rhs: Cloud_Lazycat_Apis_Sys_SnapshotListResponse) -> Bool {
-    if lhs.snapshotNameList != rhs.snapshotNameList {return false}
+    if lhs.snapshotList != rhs.snapshotList {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -477,7 +737,7 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotBackupTransferRequest: SwiftProtobuf.Me
     1: .same(proto: "PoolName"),
     2: .same(proto: "DatasetPath"),
     3: .same(proto: "SnapshotName"),
-    4: .same(proto: "NoResume"),
+    4: .same(proto: "TransferMode"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -489,7 +749,7 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotBackupTransferRequest: SwiftProtobuf.Me
       case 1: try { try decoder.decodeSingularStringField(value: &self.poolName) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.datasetPath) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.snapshotName) }()
-      case 4: try { try decoder.decodeSingularBoolField(value: &self.noResume) }()
+      case 4: try { try decoder.decodeSingularEnumField(value: &self.transferMode) }()
       default: break
       }
     }
@@ -505,8 +765,8 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotBackupTransferRequest: SwiftProtobuf.Me
     if !self.snapshotName.isEmpty {
       try visitor.visitSingularStringField(value: self.snapshotName, fieldNumber: 3)
     }
-    if self.noResume != false {
-      try visitor.visitSingularBoolField(value: self.noResume, fieldNumber: 4)
+    if self.transferMode != .normal {
+      try visitor.visitSingularEnumField(value: self.transferMode, fieldNumber: 4)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -515,7 +775,45 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotBackupTransferRequest: SwiftProtobuf.Me
     if lhs.poolName != rhs.poolName {return false}
     if lhs.datasetPath != rhs.datasetPath {return false}
     if lhs.snapshotName != rhs.snapshotName {return false}
-    if lhs.noResume != rhs.noResume {return false}
+    if lhs.transferMode != rhs.transferMode {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_SnapshotBackupTransferResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".SnapshotBackupTransferResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "BytesSent"),
+    2: .same(proto: "BytesTotal"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularUInt64Field(value: &self.bytesSent) }()
+      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.bytesTotal) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.bytesSent != 0 {
+      try visitor.visitSingularUInt64Field(value: self.bytesSent, fieldNumber: 1)
+    }
+    if self.bytesTotal != 0 {
+      try visitor.visitSingularUInt64Field(value: self.bytesTotal, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_SnapshotBackupTransferResponse, rhs: Cloud_Lazycat_Apis_Sys_SnapshotBackupTransferResponse) -> Bool {
+    if lhs.bytesSent != rhs.bytesSent {return false}
+    if lhs.bytesTotal != rhs.bytesTotal {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -563,6 +861,8 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotStatusResponse: SwiftProtobuf.Message, 
   public static let protoMessageName: String = _protobuf_package + ".SnapshotStatusResponse"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "Status"),
+    2: .same(proto: "BytesSent"),
+    3: .same(proto: "BytesTotal"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -572,6 +872,8 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotStatusResponse: SwiftProtobuf.Message, 
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularEnumField(value: &self.status) }()
+      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.bytesSent) }()
+      case 3: try { try decoder.decodeSingularUInt64Field(value: &self.bytesTotal) }()
       default: break
       }
     }
@@ -581,11 +883,19 @@ extension Cloud_Lazycat_Apis_Sys_SnapshotStatusResponse: SwiftProtobuf.Message, 
     if self.status != .stopped {
       try visitor.visitSingularEnumField(value: self.status, fieldNumber: 1)
     }
+    if self.bytesSent != 0 {
+      try visitor.visitSingularUInt64Field(value: self.bytesSent, fieldNumber: 2)
+    }
+    if self.bytesTotal != 0 {
+      try visitor.visitSingularUInt64Field(value: self.bytesTotal, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Sys_SnapshotStatusResponse, rhs: Cloud_Lazycat_Apis_Sys_SnapshotStatusResponse) -> Bool {
     if lhs.status != rhs.status {return false}
+    if lhs.bytesSent != rhs.bytesSent {return false}
+    if lhs.bytesTotal != rhs.bytesTotal {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -50,9 +50,27 @@ public struct Cloud_Lazycat_Apis_Common_EndDevice {
   /// 应用程序可以假设此ID是稳定不变的(实际依旧有可能变化)
   public var uniqueDeivceID: String = String()
 
+  /// 设备型号，如果可以获取到
+  public var model: String = String()
+
+  /// 设备名称，如果可以获取到
+  public var name: String = String()
+
+  /// 设备第一次允许登陆的时间戳
+  public var bindingTime: SwiftProtobuf.Google_Protobuf_Timestamp {
+    get {return _bindingTime ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_bindingTime = newValue}
+  }
+  /// Returns true if `bindingTime` has been explicitly set.
+  public var hasBindingTime: Bool {return self._bindingTime != nil}
+  /// Clears the value of `bindingTime`. Subsequent reads from it will return its default value.
+  public mutating func clearBindingTime() {self._bindingTime = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
+
+  fileprivate var _bindingTime: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 }
 
 public struct Cloud_Lazycat_Apis_Common_ListEndDeviceRequest {
@@ -129,6 +147,9 @@ extension Cloud_Lazycat_Apis_Common_EndDevice: SwiftProtobuf.Message, SwiftProto
     2: .standard(proto: "is_online"),
     3: .standard(proto: "device_api_url"),
     4: .standard(proto: "unique_deivce_id"),
+    5: .same(proto: "model"),
+    6: .same(proto: "name"),
+    7: .standard(proto: "binding_time"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -141,12 +162,19 @@ extension Cloud_Lazycat_Apis_Common_EndDevice: SwiftProtobuf.Message, SwiftProto
       case 2: try { try decoder.decodeSingularBoolField(value: &self.isOnline) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.deviceApiURL) }()
       case 4: try { try decoder.decodeSingularStringField(value: &self.uniqueDeivceID) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self.model) }()
+      case 6: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 7: try { try decoder.decodeSingularMessageField(value: &self._bindingTime) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if !self.peerID.isEmpty {
       try visitor.visitSingularStringField(value: self.peerID, fieldNumber: 1)
     }
@@ -159,6 +187,15 @@ extension Cloud_Lazycat_Apis_Common_EndDevice: SwiftProtobuf.Message, SwiftProto
     if !self.uniqueDeivceID.isEmpty {
       try visitor.visitSingularStringField(value: self.uniqueDeivceID, fieldNumber: 4)
     }
+    if !self.model.isEmpty {
+      try visitor.visitSingularStringField(value: self.model, fieldNumber: 5)
+    }
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 6)
+    }
+    try { if let v = self._bindingTime {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -167,6 +204,9 @@ extension Cloud_Lazycat_Apis_Common_EndDevice: SwiftProtobuf.Message, SwiftProto
     if lhs.isOnline != rhs.isOnline {return false}
     if lhs.deviceApiURL != rhs.deviceApiURL {return false}
     if lhs.uniqueDeivceID != rhs.uniqueDeivceID {return false}
+    if lhs.model != rhs.model {return false}
+    if lhs.name != rhs.name {return false}
+    if lhs._bindingTime != rhs._bindingTime {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

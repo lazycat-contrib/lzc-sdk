@@ -20,10 +20,69 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+public enum Cloud_Lazycat_Apis_Sys_AppStatus: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
+  case notInstalled // = 0
+  case downloading // = 1
+  case paused // = 2
+  case installing // = 3
+  case installed // = 4
+  case failed // = 5
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .notInstalled
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .notInstalled
+    case 1: self = .downloading
+    case 2: self = .paused
+    case 3: self = .installing
+    case 4: self = .installed
+    case 5: self = .failed
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .notInstalled: return 0
+    case .downloading: return 1
+    case .paused: return 2
+    case .installing: return 3
+    case .installed: return 4
+    case .failed: return 5
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension Cloud_Lazycat_Apis_Sys_AppStatus: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [Cloud_Lazycat_Apis_Sys_AppStatus] = [
+    .notInstalled,
+    .downloading,
+    .paused,
+    .installing,
+    .installed,
+    .failed,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
 public struct Cloud_Lazycat_Apis_Sys_PkgURL {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
+
+  /// 应用的 appid，如果和 LPK 内的有冲突，以这里指定的为准
+  public var appid: String = String()
 
   /// 内部地址
   ///     http://pkgm.api-server.lzcapp/tmp/xxxx-0.2.1.lpk
@@ -31,7 +90,9 @@ public struct Cloud_Lazycat_Apis_Sys_PkgURL {
   ///     https://repo.lazycat.cloud/a/c/accc-0.2.1.lpk
   public var url: String = String()
 
-  /// pkg对应的sha256值，若不为空pm会对此进行cache
+  /// pkg对应的sha256值，若不为空，
+  /// 1. 本地有对应包的缓存，则会直接使用缓存
+  /// 2. 本地若没有缓存，则会从 url 下载包，并校验包的 sha256 值
   public var sha256: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -39,34 +100,203 @@ public struct Cloud_Lazycat_Apis_Sys_PkgURL {
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Sys_PkgDescription {
+public struct Cloud_Lazycat_Apis_Sys_UninstallRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var id: String = String()
+  public var appid: String = String()
+
+  /// 卸载后是否清空 data 目录 (/lzcapp/var)
+  public var clearData_p: Bool = false
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Sys_AppDescription {
+public struct Cloud_Lazycat_Apis_Sys_AppDownloadProgress {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var id: String = String()
+  /// 当前下载了的字节
+  public var current: UInt64 = 0
 
-  public var version: String = String()
+  /// LPK文件大小总字节
+  public var total: UInt64 = 0
 
-  public var title: String = String()
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public var icon: String = String()
+  public init() {}
+}
 
-  public var appdomain: String = String()
+public struct Cloud_Lazycat_Apis_Sys_AppInfo {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
 
-  public var running: Bool = false
+  public var appid: String = String()
+
+  /// 应用当前的状态
+  public var status: Cloud_Lazycat_Apis_Sys_AppStatus = .notInstalled
+
+  public var version: String {
+    get {return _version ?? String()}
+    set {_version = newValue}
+  }
+  /// Returns true if `version` has been explicitly set.
+  public var hasVersion: Bool {return self._version != nil}
+  /// Clears the value of `version`. Subsequent reads from it will return its default value.
+  public mutating func clearVersion() {self._version = nil}
+
+  public var title: String {
+    get {return _title ?? String()}
+    set {_title = newValue}
+  }
+  /// Returns true if `title` has been explicitly set.
+  public var hasTitle: Bool {return self._title != nil}
+  /// Clears the value of `title`. Subsequent reads from it will return its default value.
+  public mutating func clearTitle() {self._title = nil}
+
+  /// 应用图标所在的 url，如 https://apis.$boxdomain/icon/$appid.png
+  public var icon: String {
+    get {return _icon ?? String()}
+    set {_icon = newValue}
+  }
+  /// Returns true if `icon` has been explicitly set.
+  public var hasIcon: Bool {return self._icon != nil}
+  /// Clears the value of `icon`. Subsequent reads from it will return its default value.
+  public mutating func clearIcon() {self._icon = nil}
+
+  /// 应用所在的域名，如 app.box.heiyu.space
+  public var domain: String {
+    get {return _domain ?? String()}
+    set {_domain = newValue}
+  }
+  /// Returns true if `domain` has been explicitly set.
+  public var hasDomain: Bool {return self._domain != nil}
+  /// Clears the value of `domain`. Subsequent reads from it will return its default value.
+  public mutating func clearDomain() {self._domain = nil}
+
+  /// 应用下载的进度（如果不是正在下载应用，则为空）
+  public var downloadProgress: Cloud_Lazycat_Apis_Sys_AppDownloadProgress {
+    get {return _downloadProgress ?? Cloud_Lazycat_Apis_Sys_AppDownloadProgress()}
+    set {_downloadProgress = newValue}
+  }
+  /// Returns true if `downloadProgress` has been explicitly set.
+  public var hasDownloadProgress: Bool {return self._downloadProgress != nil}
+  /// Clears the value of `downloadProgress`. Subsequent reads from it will return its default value.
+  public mutating func clearDownloadProgress() {self._downloadProgress = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _version: String? = nil
+  fileprivate var _title: String? = nil
+  fileprivate var _icon: String? = nil
+  fileprivate var _domain: String? = nil
+  fileprivate var _downloadProgress: Cloud_Lazycat_Apis_Sys_AppDownloadProgress? = nil
+}
+
+public struct Cloud_Lazycat_Apis_Sys_QueryApplicationRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// 需要查询的 AppId 的列表，如果列表为空，则查询所有的应用
+  public var appidList: [String] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_QueryApplicationResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var infoList: [Cloud_Lazycat_Apis_Sys_AppInfo] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_QueryAppStorageUsageRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var appid: String = String()
+
+  public var needPkg: Bool = false
+
+  public var needData: Bool = false
+
+  public var needCache: Bool = false
+
+  public var needTmp: Bool = false
+
+  public var needUserdata: Bool = false
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_AppStorageUsage {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// 应用本身占用的大小 (/lzcapp/pkg)
+  public var pkg: UInt64 = 0
+
+  /// 应用数据的大小 (所有用户产生的应用数据大小) (/lzcapp/var)
+  public var data: UInt64 = 0
+
+  /// 应用缓存的大小 (/lzcapp/cache)
+  public var cache: UInt64 = 0
+
+  /// 应用临时文件的大小 (/tmp)
+  public var tmp: UInt64 = 0
+
+  /// 各个用户产生的应用数据大小 (/lzcapp/var/userdata/$uid)
+  public var userdata: Dictionary<String,UInt64> = [:]
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_SetUserPermissionsRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// 用户的 uid
+  public var uid: String = String()
+
+  /// 是否允许 uid 安装应用
+  public var allowInstallApp: Bool = false
+
+  /// 是否允许 uid 卸载应用
+  public var allowUninstallApp: Bool = false
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_Appid {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var appid: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -74,20 +304,40 @@ public struct Cloud_Lazycat_Apis_Sys_AppDescription {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
+extension Cloud_Lazycat_Apis_Sys_AppStatus: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_PkgURL: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Sys_PkgDescription: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Sys_AppDescription: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_UninstallRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_AppDownloadProgress: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_AppInfo: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_QueryApplicationRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_QueryApplicationResponse: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_QueryAppStorageUsageRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_AppStorageUsage: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_SetUserPermissionsRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_Appid: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "cloud.lazycat.apis.sys"
 
+extension Cloud_Lazycat_Apis_Sys_AppStatus: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "NotInstalled"),
+    1: .same(proto: "Downloading"),
+    2: .same(proto: "Paused"),
+    3: .same(proto: "Installing"),
+    4: .same(proto: "Installed"),
+    5: .same(proto: "Failed"),
+  ]
+}
+
 extension Cloud_Lazycat_Apis_Sys_PkgURL: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".PkgURL"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "url"),
-    2: .same(proto: "sha256"),
+    1: .same(proto: "appid"),
+    2: .same(proto: "url"),
+    3: .same(proto: "sha256"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -96,24 +346,29 @@ extension Cloud_Lazycat_Apis_Sys_PkgURL: SwiftProtobuf.Message, SwiftProtobuf._M
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.url) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.sha256) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self.appid) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.url) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.sha256) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.appid.isEmpty {
+      try visitor.visitSingularStringField(value: self.appid, fieldNumber: 1)
+    }
     if !self.url.isEmpty {
-      try visitor.visitSingularStringField(value: self.url, fieldNumber: 1)
+      try visitor.visitSingularStringField(value: self.url, fieldNumber: 2)
     }
     if !self.sha256.isEmpty {
-      try visitor.visitSingularStringField(value: self.sha256, fieldNumber: 2)
+      try visitor.visitSingularStringField(value: self.sha256, fieldNumber: 3)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Sys_PkgURL, rhs: Cloud_Lazycat_Apis_Sys_PkgURL) -> Bool {
+    if lhs.appid != rhs.appid {return false}
     if lhs.url != rhs.url {return false}
     if lhs.sha256 != rhs.sha256 {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -121,10 +376,11 @@ extension Cloud_Lazycat_Apis_Sys_PkgURL: SwiftProtobuf.Message, SwiftProtobuf._M
   }
 }
 
-extension Cloud_Lazycat_Apis_Sys_PkgDescription: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".PkgDescription"
+extension Cloud_Lazycat_Apis_Sys_UninstallRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".UninstallRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
+    1: .same(proto: "appid"),
+    2: .standard(proto: "clear_data"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -133,35 +389,36 @@ extension Cloud_Lazycat_Apis_Sys_PkgDescription: SwiftProtobuf.Message, SwiftPro
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self.appid) }()
+      case 2: try { try decoder.decodeSingularBoolField(value: &self.clearData_p) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.id.isEmpty {
-      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
+    if !self.appid.isEmpty {
+      try visitor.visitSingularStringField(value: self.appid, fieldNumber: 1)
+    }
+    if self.clearData_p != false {
+      try visitor.visitSingularBoolField(value: self.clearData_p, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_PkgDescription, rhs: Cloud_Lazycat_Apis_Sys_PkgDescription) -> Bool {
-    if lhs.id != rhs.id {return false}
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_UninstallRequest, rhs: Cloud_Lazycat_Apis_Sys_UninstallRequest) -> Bool {
+    if lhs.appid != rhs.appid {return false}
+    if lhs.clearData_p != rhs.clearData_p {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension Cloud_Lazycat_Apis_Sys_AppDescription: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".AppDescription"
+extension Cloud_Lazycat_Apis_Sys_AppDownloadProgress: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".AppDownloadProgress"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-    2: .same(proto: "version"),
-    3: .same(proto: "title"),
-    4: .same(proto: "icon"),
-    5: .same(proto: "appdomain"),
-    6: .same(proto: "running"),
+    1: .same(proto: "current"),
+    2: .same(proto: "total"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -170,46 +427,356 @@ extension Cloud_Lazycat_Apis_Sys_AppDescription: SwiftProtobuf.Message, SwiftPro
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.version) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self.title) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self.icon) }()
-      case 5: try { try decoder.decodeSingularStringField(value: &self.appdomain) }()
-      case 6: try { try decoder.decodeSingularBoolField(value: &self.running) }()
+      case 1: try { try decoder.decodeSingularUInt64Field(value: &self.current) }()
+      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.total) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.id.isEmpty {
-      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
+    if self.current != 0 {
+      try visitor.visitSingularUInt64Field(value: self.current, fieldNumber: 1)
     }
-    if !self.version.isEmpty {
-      try visitor.visitSingularStringField(value: self.version, fieldNumber: 2)
-    }
-    if !self.title.isEmpty {
-      try visitor.visitSingularStringField(value: self.title, fieldNumber: 3)
-    }
-    if !self.icon.isEmpty {
-      try visitor.visitSingularStringField(value: self.icon, fieldNumber: 4)
-    }
-    if !self.appdomain.isEmpty {
-      try visitor.visitSingularStringField(value: self.appdomain, fieldNumber: 5)
-    }
-    if self.running != false {
-      try visitor.visitSingularBoolField(value: self.running, fieldNumber: 6)
+    if self.total != 0 {
+      try visitor.visitSingularUInt64Field(value: self.total, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_AppDescription, rhs: Cloud_Lazycat_Apis_Sys_AppDescription) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.version != rhs.version {return false}
-    if lhs.title != rhs.title {return false}
-    if lhs.icon != rhs.icon {return false}
-    if lhs.appdomain != rhs.appdomain {return false}
-    if lhs.running != rhs.running {return false}
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_AppDownloadProgress, rhs: Cloud_Lazycat_Apis_Sys_AppDownloadProgress) -> Bool {
+    if lhs.current != rhs.current {return false}
+    if lhs.total != rhs.total {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_AppInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".AppInfo"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "appid"),
+    2: .same(proto: "status"),
+    3: .same(proto: "version"),
+    4: .same(proto: "title"),
+    5: .same(proto: "icon"),
+    6: .same(proto: "domain"),
+    7: .standard(proto: "download_progress"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.appid) }()
+      case 2: try { try decoder.decodeSingularEnumField(value: &self.status) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self._version) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self._title) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self._icon) }()
+      case 6: try { try decoder.decodeSingularStringField(value: &self._domain) }()
+      case 7: try { try decoder.decodeSingularMessageField(value: &self._downloadProgress) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.appid.isEmpty {
+      try visitor.visitSingularStringField(value: self.appid, fieldNumber: 1)
+    }
+    if self.status != .notInstalled {
+      try visitor.visitSingularEnumField(value: self.status, fieldNumber: 2)
+    }
+    try { if let v = self._version {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._title {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 4)
+    } }()
+    try { if let v = self._icon {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 5)
+    } }()
+    try { if let v = self._domain {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
+    } }()
+    try { if let v = self._downloadProgress {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_AppInfo, rhs: Cloud_Lazycat_Apis_Sys_AppInfo) -> Bool {
+    if lhs.appid != rhs.appid {return false}
+    if lhs.status != rhs.status {return false}
+    if lhs._version != rhs._version {return false}
+    if lhs._title != rhs._title {return false}
+    if lhs._icon != rhs._icon {return false}
+    if lhs._domain != rhs._domain {return false}
+    if lhs._downloadProgress != rhs._downloadProgress {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_QueryApplicationRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".QueryApplicationRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "appid_list"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedStringField(value: &self.appidList) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.appidList.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.appidList, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_QueryApplicationRequest, rhs: Cloud_Lazycat_Apis_Sys_QueryApplicationRequest) -> Bool {
+    if lhs.appidList != rhs.appidList {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_QueryApplicationResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".QueryApplicationResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "info_list"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.infoList) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.infoList.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.infoList, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_QueryApplicationResponse, rhs: Cloud_Lazycat_Apis_Sys_QueryApplicationResponse) -> Bool {
+    if lhs.infoList != rhs.infoList {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_QueryAppStorageUsageRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".QueryAppStorageUsageRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "appid"),
+    2: .standard(proto: "need_pkg"),
+    3: .standard(proto: "need_data"),
+    4: .standard(proto: "need_cache"),
+    5: .standard(proto: "need_tmp"),
+    6: .standard(proto: "need_userdata"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.appid) }()
+      case 2: try { try decoder.decodeSingularBoolField(value: &self.needPkg) }()
+      case 3: try { try decoder.decodeSingularBoolField(value: &self.needData) }()
+      case 4: try { try decoder.decodeSingularBoolField(value: &self.needCache) }()
+      case 5: try { try decoder.decodeSingularBoolField(value: &self.needTmp) }()
+      case 6: try { try decoder.decodeSingularBoolField(value: &self.needUserdata) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.appid.isEmpty {
+      try visitor.visitSingularStringField(value: self.appid, fieldNumber: 1)
+    }
+    if self.needPkg != false {
+      try visitor.visitSingularBoolField(value: self.needPkg, fieldNumber: 2)
+    }
+    if self.needData != false {
+      try visitor.visitSingularBoolField(value: self.needData, fieldNumber: 3)
+    }
+    if self.needCache != false {
+      try visitor.visitSingularBoolField(value: self.needCache, fieldNumber: 4)
+    }
+    if self.needTmp != false {
+      try visitor.visitSingularBoolField(value: self.needTmp, fieldNumber: 5)
+    }
+    if self.needUserdata != false {
+      try visitor.visitSingularBoolField(value: self.needUserdata, fieldNumber: 6)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_QueryAppStorageUsageRequest, rhs: Cloud_Lazycat_Apis_Sys_QueryAppStorageUsageRequest) -> Bool {
+    if lhs.appid != rhs.appid {return false}
+    if lhs.needPkg != rhs.needPkg {return false}
+    if lhs.needData != rhs.needData {return false}
+    if lhs.needCache != rhs.needCache {return false}
+    if lhs.needTmp != rhs.needTmp {return false}
+    if lhs.needUserdata != rhs.needUserdata {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_AppStorageUsage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".AppStorageUsage"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "pkg"),
+    2: .same(proto: "data"),
+    3: .same(proto: "cache"),
+    4: .same(proto: "tmp"),
+    5: .same(proto: "userdata"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularUInt64Field(value: &self.pkg) }()
+      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.data) }()
+      case 3: try { try decoder.decodeSingularUInt64Field(value: &self.cache) }()
+      case 4: try { try decoder.decodeSingularUInt64Field(value: &self.tmp) }()
+      case 5: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufUInt64>.self, value: &self.userdata) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.pkg != 0 {
+      try visitor.visitSingularUInt64Field(value: self.pkg, fieldNumber: 1)
+    }
+    if self.data != 0 {
+      try visitor.visitSingularUInt64Field(value: self.data, fieldNumber: 2)
+    }
+    if self.cache != 0 {
+      try visitor.visitSingularUInt64Field(value: self.cache, fieldNumber: 3)
+    }
+    if self.tmp != 0 {
+      try visitor.visitSingularUInt64Field(value: self.tmp, fieldNumber: 4)
+    }
+    if !self.userdata.isEmpty {
+      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufUInt64>.self, value: self.userdata, fieldNumber: 5)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_AppStorageUsage, rhs: Cloud_Lazycat_Apis_Sys_AppStorageUsage) -> Bool {
+    if lhs.pkg != rhs.pkg {return false}
+    if lhs.data != rhs.data {return false}
+    if lhs.cache != rhs.cache {return false}
+    if lhs.tmp != rhs.tmp {return false}
+    if lhs.userdata != rhs.userdata {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_SetUserPermissionsRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".SetUserPermissionsRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "uid"),
+    2: .standard(proto: "allow_install_app"),
+    3: .standard(proto: "allow_uninstall_app"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.uid) }()
+      case 2: try { try decoder.decodeSingularBoolField(value: &self.allowInstallApp) }()
+      case 3: try { try decoder.decodeSingularBoolField(value: &self.allowUninstallApp) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.uid.isEmpty {
+      try visitor.visitSingularStringField(value: self.uid, fieldNumber: 1)
+    }
+    if self.allowInstallApp != false {
+      try visitor.visitSingularBoolField(value: self.allowInstallApp, fieldNumber: 2)
+    }
+    if self.allowUninstallApp != false {
+      try visitor.visitSingularBoolField(value: self.allowUninstallApp, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_SetUserPermissionsRequest, rhs: Cloud_Lazycat_Apis_Sys_SetUserPermissionsRequest) -> Bool {
+    if lhs.uid != rhs.uid {return false}
+    if lhs.allowInstallApp != rhs.allowInstallApp {return false}
+    if lhs.allowUninstallApp != rhs.allowUninstallApp {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_Appid: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Appid"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "appid"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.appid) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.appid.isEmpty {
+      try visitor.visitSingularStringField(value: self.appid, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_Appid, rhs: Cloud_Lazycat_Apis_Sys_Appid) -> Bool {
+    if lhs.appid != rhs.appid {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
