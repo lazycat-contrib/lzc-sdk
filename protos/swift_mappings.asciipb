@@ -1,0 +1,4 @@
+mapping {
+  module_name: "sys"
+  proto_file_path: "sys/portal-server/portal-server.proto"
+}
