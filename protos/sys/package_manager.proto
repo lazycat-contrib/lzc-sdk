@@ -15,7 +15,7 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 
 service PackageManager {
   // 根据 URL 和 校验码（可选），安装应用
-  rpc Install(PkgURL) returns (google.protobuf.Empty) {
+  rpc Install(InstallRequest) returns (google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_permissions = INSTALL_PACKAGE;
   }
 
@@ -40,7 +40,20 @@ service PackageManager {
 }
 
 message PkgURL {
-  // 应用的 appid，如果和 LPK 内的有冲突，以这里指定的为准
+  // 内部地址
+  //     http://pkgm.api-server.lzcapp/tmp/xxxx-0.2.1.lpk
+  // 或外网地址
+  //     https://repo.lazycat.cloud/a/c/accc-0.2.1.lpk
+  string url = 1;
+
+  // pkg对应的sha256值，若不为空，
+  // 1. 本地有对应包的缓存，则会直接使用缓存
+  // 2. 本地若没有缓存，则会从 url 下载包，并校验包的 sha256 值
+  string sha256 = 2;
+}
+
+message InstallRequest {
+  // 应用的 appid
   string appid = 1;
 
   // 内部地址
