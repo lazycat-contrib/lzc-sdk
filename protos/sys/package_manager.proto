@@ -101,14 +101,16 @@ message AppInfo {
 
   optional string title = 4;
 
+  optional string description = 5;
+
   // 应用图标所在的 url，如 https://apis.$boxdomain/icon/$appid.png
-  optional string icon = 5;
+  optional string icon = 6;
 
   // 应用所在的域名，如 app.box.heiyu.space
-  optional string domain = 6;
+  optional string domain = 7;
 
   // 应用下载的进度（如果不是正在下载应用，则为空）
-  optional AppDownloadProgress download_progress = 7;
+  optional AppDownloadProgress download_progress = 8;
 }
 
 message QueryApplicationRequest {
