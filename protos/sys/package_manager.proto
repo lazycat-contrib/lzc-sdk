@@ -111,6 +111,9 @@ message AppInfo {
 
   // 应用下载的进度（如果不是正在下载应用，则为空）
   optional AppDownloadProgress download_progress = 8;
+
+  // 应用是否可以被卸载
+  optional bool uninstallable = 9;
 }
 
 message QueryApplicationRequest {
