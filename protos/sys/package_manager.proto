@@ -66,6 +66,8 @@ message InstallRequest {
   // 1. 本地有对应包的缓存，则会直接使用缓存
   // 2. 本地若没有缓存，则会从 url 下载包，并校验包的 sha256 值
   string sha256 = 3;
+
+  optional string subdomain = 4;
 }
 
 message UninstallRequest {
