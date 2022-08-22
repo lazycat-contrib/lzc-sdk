@@ -20,12 +20,6 @@ service PhotoLibrary {
 
   rpc QueryPhoto(QueryPhotoRequest) returns (PhotoMeta) {}
 
-  // PhotoHashSet的大小是不固定的，可能超出protobuf但message的限制(4MB)，因此以stream
-  // 的形式返回。
-  // 目前有两个使用场景
-  // 1. 浏览器访问此接口获取某个图片是否在本地存在
-  // 2. 服务端获取此集合并与服务器中存在的图片进行对比，获取未同步到服务器中的图片ID集合
-  rpc QueryPhotoHash(QueryPhotoHashRequest) returns (stream PhotoHashSet) {}
 }
 // 查询照片信息的排序方式
 enum PhotoMetasSortType{
@@ -107,7 +101,6 @@ message PhotoMeta {
   repeated string album_ids = 6;
   int64    size = 7;
   string mime = 8;
-  string hash = 9;
 
   optional string file_name = 10;
   optional google.protobuf.Timestamp creation_date = 11;
