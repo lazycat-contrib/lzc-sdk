@@ -1,0 +1,4 @@
+buildscript: npm run build
+manifest: ./manifest.yml
+contentdir: ./dist
+pkgout: ./

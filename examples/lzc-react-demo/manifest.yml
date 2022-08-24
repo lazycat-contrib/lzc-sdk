@@ -1,0 +1,8 @@
+lzc-sdk-version: 0.1
+package: lzc-react-demo
+version: 0.0.1
+name: react-demo
+application:
+  subdomain: lzc-react-demo
+  routes:
+    - /=file:///lzcapp/pkg/content/
