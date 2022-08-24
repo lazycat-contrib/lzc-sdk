@@ -210,7 +210,7 @@ message Device {
   string name = 4;
   // 设备型号
   string model = 5;
-  // 设备绑定时间j
+  // 设备绑定时间
   google.protobuf.Timestamp binding_time = 6;
 }
 

@@ -7,11 +7,13 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
 import "google/protobuf/timestamp.proto";
 
 service PhotoLibrary {
+  rpc MakeAlbum(MakeAlbumRequest) returns (Album) {}
+
   // 列举所有的系统相册
   rpc ListAlbums(ListAlbumsRequest) returns (ListAlbumsReply) {}
 
   // 存储一张图片到某个相册中
-  rpc PutPhoto(PutPhotoRequest) returns (PutPhotoReply) {}
+  rpc PutPhoto(PutPhotoRequest) returns (stream PutPhotoReply) {}
 
   rpc DeletePhoto(DeletePhotoRequest) returns (DeletePhotoReply) {}
 
@@ -19,8 +21,8 @@ service PhotoLibrary {
   rpc ListPhotoMetas(ListPhotoMetasRequest) returns (stream PhotoMeta) {}
 
   rpc QueryPhoto(QueryPhotoRequest) returns (PhotoMeta) {}
-
 }
+
 // 查询照片信息的排序方式
 enum PhotoMetasSortType{
 
@@ -47,19 +49,32 @@ message QueryPhotoHashRequest {
   google.protobuf.Timestamp changed_after = 1;
 }
 
-message PhotoHashSet {
-  // hash --> id
-  map<string, string> entry = 1;
-}
-
-
 message QueryPhotoRequest {
   string id = 1;
 }
 
+message MakeAlbumRequest {
+  string title = 1;
+}
+message PutPhotoRequest {
+  string album_id = 1;
+
+  // 图片路径, 支持dataurl
+  string url = 2;
+
+  optional string file_name = 3;
+}
+
 message PutPhotoReply {
-  // 新添加图片的id
-  string id = 1;
+  // 是否完成. 若已完成则photo_id字段生效
+  bool done = 1;
+
+  // 若无total_size表示无法获取文件大小，此时无法计算出准确进度
+  optional int64 total_size = 2;
+  optional int64 fetched_size = 3;
+
+  // 新添加图片的id, 仅在completed=true后才有意义
+  optional string photo_id = 4;
 }
 
 message DeletePhotoReply {
@@ -108,7 +123,6 @@ message PhotoMeta {
   optional float longitude = 13;
   optional google.protobuf.Timestamp taken_date = 14;
   optional google.protobuf.Timestamp modified_date = 15;
-
 }
 
 message Album {
@@ -129,13 +143,3 @@ message ListAlbumsRequest {
 message ListAlbumsReply {
   repeated Album albums = 1;
 }
-
-message PutPhotoRequest {
-  string album_id = 1;
-
-  // 图片路径, 支持dataurl
-  string url = 2;
-
-  optional string file_name = 3;
-}
-

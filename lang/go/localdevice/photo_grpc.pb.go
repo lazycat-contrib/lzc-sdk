@@ -22,10 +22,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PhotoLibraryClient interface {
+	MakeAlbum(ctx context.Context, in *MakeAlbumRequest, opts ...grpc.CallOption) (*Album, error)
 	// 列举所有的系统相册
 	ListAlbums(ctx context.Context, in *ListAlbumsRequest, opts ...grpc.CallOption) (*ListAlbumsReply, error)
 	// 存储一张图片到某个相册中
-	PutPhoto(ctx context.Context, in *PutPhotoRequest, opts ...grpc.CallOption) (*PutPhotoReply, error)
+	PutPhoto(ctx context.Context, in *PutPhotoRequest, opts ...grpc.CallOption) (PhotoLibrary_PutPhotoClient, error)
 	DeletePhoto(ctx context.Context, in *DeletePhotoRequest, opts ...grpc.CallOption) (*DeletePhotoReply, error)
 	// 枚举具体相册中的图片元信息
 	ListPhotoMetas(ctx context.Context, in *ListPhotoMetasRequest, opts ...grpc.CallOption) (PhotoLibrary_ListPhotoMetasClient, error)
@@ -40,6 +41,15 @@ func NewPhotoLibraryClient(cc grpc.ClientConnInterface) PhotoLibraryClient {
 	return &photoLibraryClient{cc}
 }
 
+func (c *photoLibraryClient) MakeAlbum(ctx context.Context, in *MakeAlbumRequest, opts ...grpc.CallOption) (*Album, error) {
+	out := new(Album)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.PhotoLibrary/MakeAlbum", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *photoLibraryClient) ListAlbums(ctx context.Context, in *ListAlbumsRequest, opts ...grpc.CallOption) (*ListAlbumsReply, error) {
 	out := new(ListAlbumsReply)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListAlbums", in, out, opts...)
@@ -49,13 +59,36 @@ func (c *photoLibraryClient) ListAlbums(ctx context.Context, in *ListAlbumsReque
 	return out, nil
 }
 
-func (c *photoLibraryClient) PutPhoto(ctx context.Context, in *PutPhotoRequest, opts ...grpc.CallOption) (*PutPhotoReply, error) {
-	out := new(PutPhotoReply)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.PhotoLibrary/PutPhoto", in, out, opts...)
+func (c *photoLibraryClient) PutPhoto(ctx context.Context, in *PutPhotoRequest, opts ...grpc.CallOption) (PhotoLibrary_PutPhotoClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PhotoLibrary_ServiceDesc.Streams[0], "/cloud.lazycat.apis.localdevice.PhotoLibrary/PutPhoto", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &photoLibraryPutPhotoClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PhotoLibrary_PutPhotoClient interface {
+	Recv() (*PutPhotoReply, error)
+	grpc.ClientStream
+}
+
+type photoLibraryPutPhotoClient struct {
+	grpc.ClientStream
+}
+
+func (x *photoLibraryPutPhotoClient) Recv() (*PutPhotoReply, error) {
+	m := new(PutPhotoReply)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *photoLibraryClient) DeletePhoto(ctx context.Context, in *DeletePhotoRequest, opts ...grpc.CallOption) (*DeletePhotoReply, error) {
@@ -68,7 +101,7 @@ func (c *photoLibraryClient) DeletePhoto(ctx context.Context, in *DeletePhotoReq
 }
 
 func (c *photoLibraryClient) ListPhotoMetas(ctx context.Context, in *ListPhotoMetasRequest, opts ...grpc.CallOption) (PhotoLibrary_ListPhotoMetasClient, error) {
-	stream, err := c.cc.NewStream(ctx, &PhotoLibrary_ServiceDesc.Streams[0], "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListPhotoMetas", opts...)
+	stream, err := c.cc.NewStream(ctx, &PhotoLibrary_ServiceDesc.Streams[1], "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListPhotoMetas", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -112,10 +145,11 @@ func (c *photoLibraryClient) QueryPhoto(ctx context.Context, in *QueryPhotoReque
 // All implementations must embed UnimplementedPhotoLibraryServer
 // for forward compatibility
 type PhotoLibraryServer interface {
+	MakeAlbum(context.Context, *MakeAlbumRequest) (*Album, error)
 	// 列举所有的系统相册
 	ListAlbums(context.Context, *ListAlbumsRequest) (*ListAlbumsReply, error)
 	// 存储一张图片到某个相册中
-	PutPhoto(context.Context, *PutPhotoRequest) (*PutPhotoReply, error)
+	PutPhoto(*PutPhotoRequest, PhotoLibrary_PutPhotoServer) error
 	DeletePhoto(context.Context, *DeletePhotoRequest) (*DeletePhotoReply, error)
 	// 枚举具体相册中的图片元信息
 	ListPhotoMetas(*ListPhotoMetasRequest, PhotoLibrary_ListPhotoMetasServer) error
@@ -127,11 +161,14 @@ type PhotoLibraryServer interface {
 type UnimplementedPhotoLibraryServer struct {
 }
 
+func (UnimplementedPhotoLibraryServer) MakeAlbum(context.Context, *MakeAlbumRequest) (*Album, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MakeAlbum not implemented")
+}
 func (UnimplementedPhotoLibraryServer) ListAlbums(context.Context, *ListAlbumsRequest) (*ListAlbumsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListAlbums not implemented")
 }
-func (UnimplementedPhotoLibraryServer) PutPhoto(context.Context, *PutPhotoRequest) (*PutPhotoReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PutPhoto not implemented")
+func (UnimplementedPhotoLibraryServer) PutPhoto(*PutPhotoRequest, PhotoLibrary_PutPhotoServer) error {
+	return status.Errorf(codes.Unimplemented, "method PutPhoto not implemented")
 }
 func (UnimplementedPhotoLibraryServer) DeletePhoto(context.Context, *DeletePhotoRequest) (*DeletePhotoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePhoto not implemented")
@@ -155,6 +192,24 @@ func RegisterPhotoLibraryServer(s grpc.ServiceRegistrar, srv PhotoLibraryServer)
 	s.RegisterService(&PhotoLibrary_ServiceDesc, srv)
 }
 
+func _PhotoLibrary_MakeAlbum_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MakeAlbumRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PhotoLibraryServer).MakeAlbum(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.localdevice.PhotoLibrary/MakeAlbum",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PhotoLibraryServer).MakeAlbum(ctx, req.(*MakeAlbumRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PhotoLibrary_ListAlbums_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListAlbumsRequest)
 	if err := dec(in); err != nil {
@@ -173,22 +228,25 @@ func _PhotoLibrary_ListAlbums_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PhotoLibrary_PutPhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PutPhotoRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+func _PhotoLibrary_PutPhoto_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(PutPhotoRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(PhotoLibraryServer).PutPhoto(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.localdevice.PhotoLibrary/PutPhoto",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PhotoLibraryServer).PutPhoto(ctx, req.(*PutPhotoRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(PhotoLibraryServer).PutPhoto(m, &photoLibraryPutPhotoServer{stream})
+}
+
+type PhotoLibrary_PutPhotoServer interface {
+	Send(*PutPhotoReply) error
+	grpc.ServerStream
+}
+
+type photoLibraryPutPhotoServer struct {
+	grpc.ServerStream
+}
+
+func (x *photoLibraryPutPhotoServer) Send(m *PutPhotoReply) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _PhotoLibrary_DeletePhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -256,12 +314,12 @@ var PhotoLibrary_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PhotoLibraryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ListAlbums",
-			Handler:    _PhotoLibrary_ListAlbums_Handler,
+			MethodName: "MakeAlbum",
+			Handler:    _PhotoLibrary_MakeAlbum_Handler,
 		},
 		{
-			MethodName: "PutPhoto",
-			Handler:    _PhotoLibrary_PutPhoto_Handler,
+			MethodName: "ListAlbums",
+			Handler:    _PhotoLibrary_ListAlbums_Handler,
 		},
 		{
 			MethodName: "DeletePhoto",
@@ -273,6 +331,11 @@ var PhotoLibrary_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "PutPhoto",
+			Handler:       _PhotoLibrary_PutPhoto_Handler,
+			ServerStreams: true,
+		},
 		{
 			StreamName:    "ListPhotoMetas",
 			Handler:       _PhotoLibrary_ListPhotoMetas_Handler,
