@@ -62,5 +62,6 @@ services: #传统docker镜像启动方式，如果需要数据库等配套容器
     binds: #仅支持以/lzcapp开头的挂载点，且遵循仅var,tmp,cache等目录可写的原则
       - /lzcapp/var/db/:/data
       - /lzcapp/cache/db:/cache/
+    entrypoint: /bin/sh -c
     command: "/usr/bin/nextcloud"
     #depends_on:
