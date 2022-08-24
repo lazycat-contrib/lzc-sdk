@@ -16,6 +16,17 @@
 <script>
 import { lzcAPIGateway } from "@lazycatcloud/sdk"
 
+
+async function getLocalWebdavRoot(cc) {
+  let s = await cc.session
+  for (let d of (await cc.devices.ListEndDevices({"uid": s.uid})).devices) {
+    if (s.deviceId == d.peerId) {
+      return d.deviceApiUrl.replace(".d.", ".local.") +"/s/files/"
+    }
+  }
+  return ""
+}
+
 export default {
   async mounted() {
     let cc = new lzcAPIGateway()
@@ -23,6 +34,8 @@ export default {
     window.cc = cc;
     let s = await cc.session
     console.log("当前信息:", s)
+
+    console.log("WEBDAV ROOT", await getLocalWebdavRoot(cc))
 
     this.devices = (await cc.devices.ListEndDevices({"uid": s.uid})).devices
 
