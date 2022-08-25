@@ -59,7 +59,9 @@ services: #传统docker镜像启动方式，如果需要数据库等配套容器
     image: bitnami/wordpress:5.8.2
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-    binds: #仅支持以/lzcapp开头的挂载点，且遵循仅var,tmp,cache等目录可写的原则
+    # 仅支持以/lzcapp开头的挂载点，且遵循仅var,tmp,cache等目录可写的原则。
+    # 其中 /lzcapp/var 和 /lzcapp/cache 目录，每个 service 之间互相不可见
+    binds:
       - /lzcapp/var/db/:/data
       - /lzcapp/cache/db:/cache/
     entrypoint: /bin/sh -c
