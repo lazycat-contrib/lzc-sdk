@@ -39,6 +39,8 @@ type SnapdServiceClient interface {
 	SnapdTakeSnap(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 手动删除快照。目标快照可以是通过自动策略创建的，也可以是手动创建的
 	SnapdDelSnap(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 将数据回滚到指定快照
+	SnapdRestoreSnap(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type snapdServiceClient struct {
@@ -121,6 +123,15 @@ func (c *snapdServiceClient) SnapdDelSnap(ctx context.Context, in *SnapdSnapRequ
 	return out, nil
 }
 
+func (c *snapdServiceClient) SnapdRestoreSnap(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdRestoreSnap", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SnapdServiceServer is the server API for SnapdService service.
 // All implementations must embed UnimplementedSnapdServiceServer
 // for forward compatibility
@@ -141,6 +152,8 @@ type SnapdServiceServer interface {
 	SnapdTakeSnap(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error)
 	// 手动删除快照。目标快照可以是通过自动策略创建的，也可以是手动创建的
 	SnapdDelSnap(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error)
+	// 将数据回滚到指定快照
+	SnapdRestoreSnap(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedSnapdServiceServer()
 }
 
@@ -171,6 +184,9 @@ func (UnimplementedSnapdServiceServer) SnapdTakeSnap(context.Context, *SnapdSnap
 }
 func (UnimplementedSnapdServiceServer) SnapdDelSnap(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapdDelSnap not implemented")
+}
+func (UnimplementedSnapdServiceServer) SnapdRestoreSnap(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapdRestoreSnap not implemented")
 }
 func (UnimplementedSnapdServiceServer) mustEmbedUnimplementedSnapdServiceServer() {}
 
@@ -329,6 +345,24 @@ func _SnapdService_SnapdDelSnap_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SnapdService_SnapdRestoreSnap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapdSnapRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SnapdServiceServer).SnapdRestoreSnap(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdRestoreSnap",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SnapdServiceServer).SnapdRestoreSnap(ctx, req.(*SnapdSnapRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SnapdService_ServiceDesc is the grpc.ServiceDesc for SnapdService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -367,6 +401,10 @@ var SnapdService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SnapdDelSnap",
 			Handler:    _SnapdService_SnapdDelSnap_Handler,
+		},
+		{
+			MethodName: "SnapdRestoreSnap",
+			Handler:    _SnapdService_SnapdRestoreSnap_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
