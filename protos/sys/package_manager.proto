@@ -116,6 +116,9 @@ message AppInfo {
 
   // 应用是否是预装应用（预装应用不可卸载）
   optional bool builtin = 9;
+
+  // 如果应用状态为安装失败，失败的原因（如果状态不是失败则为空）
+  optional string error_reason = 10;
 }
 
 message QueryApplicationRequest {

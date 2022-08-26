@@ -306,7 +306,7 @@ type PutPhotoReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// 是否完成，若已完成则，id字段生效
+	// 是否完成. 若已完成则photo_id字段生效
 	Done bool `protobuf:"varint,1,opt,name=done,proto3" json:"done,omitempty"`
 	// 若无total_size表示无法获取文件大小，此时无法计算出准确进度
 	TotalSize   *int64 `protobuf:"varint,2,opt,name=total_size,json=totalSize,proto3,oneof" json:"total_size,omitempty"`

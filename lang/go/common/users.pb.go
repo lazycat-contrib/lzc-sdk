@@ -137,7 +137,7 @@ func (x *UserInfo) GetRole() portal_server.Role {
 	if x != nil {
 		return x.Role
 	}
-	return portal_server.Role_NORMAL
+	return portal_server.Role(0)
 }
 
 type ListUIDsRequest struct {
@@ -277,7 +277,7 @@ func (x *ChangeRoleReqeust) GetRole() portal_server.Role {
 	if x != nil {
 		return x.Role
 	}
-	return portal_server.Role_NORMAL
+	return portal_server.Role(0)
 }
 
 type ResetPasswordRequest struct {
@@ -459,7 +459,7 @@ func (x *CreateUserRequest) GetRole() portal_server.Role {
 	if x != nil {
 		return x.Role
 	}
-	return portal_server.Role_NORMAL
+	return portal_server.Role(0)
 }
 
 type UpdateUserInfoRequest struct {
