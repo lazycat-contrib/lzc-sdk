@@ -209,6 +209,12 @@ message Device {
 
   // 因为device api的监听端口可能会变化，所以此url有效性不会太长
   string device_api_url = 3;
+  // 设备名称
+  string name = 4;
+  // 设备型号
+  string model = 5;
+  // 设备绑定时间
+  google.protobuf.Timestamp binding_time = 6;
 }
 
 message ListDeviceRequest {
