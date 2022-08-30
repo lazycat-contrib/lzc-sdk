@@ -13,10 +13,11 @@ service HPortalSys {
 
   // 根据UID返回所有的设备列表
   rpc ListDevices(ListDeviceRequest) returns (ListDeviceReply) {}
+
+
   rpc QueryDeviceByID(PeerID) returns (Device) {}
 
   rpc QueryBoxInfo(google.protobuf.Empty) returns (BoxInfo) {}
-
 
   // 获取盒子所属域名下或下一级域名的https证书。
   // 注意不是所有ACME服务器都支持泛域名。
@@ -32,7 +33,6 @@ service HPortalSys {
   // 盒子内部组件可以直接通过QueryBoxInfo来验证信任链是否合法，盒子外部系统需要通过其他机制比如libp2p.identify去验证box.crt的合法性。
   //
   rpc GetAppCert(AppCertRequest) returns (AppCertReply) {}
-
 
   // 申请额外的外部可访问的IP,并配置对应访问域名
   rpc AllocVirtualExternalIP(AllocVEIPRequest) returns (AllocVEIPReply) {}
@@ -59,6 +59,9 @@ service HPortalSys {
 
   // 生成用户注册token,以便上层实现各类用户注册机制
   rpc GenUserInvitation(GenUserInvitationRequest) returns (UserInvitation) {}
+
+  // 注销当前用户指定设备，同时将连接断开
+  rpc Logout(LogoutRequest)returns(google.protobuf.Empty){}
 }
 
 message GenUserInvitationRequest {
@@ -206,12 +209,6 @@ message Device {
 
   // 因为device api的监听端口可能会变化，所以此url有效性不会太长
   string device_api_url = 3;
-  // 设备名称
-  string name = 4;
-  // 设备型号
-  string model = 5;
-  // 设备绑定时间
-  google.protobuf.Timestamp binding_time = 6;
 }
 
 message ListDeviceRequest {
@@ -232,7 +229,7 @@ enum Role {
 }
 
 message ChangeRoleReqeust{
-  string uid  = 1;
+  string uid = 1;
   Role role = 2;
 }
 
@@ -261,4 +258,18 @@ message CreateUserRequest{
 message ForceResetPasswordRequest{
   string uid = 1;
   string new_password = 2;
+}
+
+
+message LogoutRequest{
+  string uid = 1;
+  // 设备唯一id
+  string unique_deivce_id = 2;
+  // 注销原因
+  Reason reason = 3;
+
+  enum Reason {
+    Logout = 0;
+    ResetPassword = 1;
+  }
 }

@@ -62,6 +62,8 @@ type HPortalSysClient interface {
 	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 生成用户注册token,以便上层实现各类用户注册机制
 	GenUserInvitation(ctx context.Context, in *GenUserInvitationRequest, opts ...grpc.CallOption) (*UserInvitation, error)
+	// 注销当前用户指定设备，同时将连接断开
+	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type hPortalSysClient struct {
@@ -248,6 +250,15 @@ func (c *hPortalSysClient) GenUserInvitation(ctx context.Context, in *GenUserInv
 	return out, nil
 }
 
+func (c *hPortalSysClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/Logout", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HPortalSysServer is the server API for HPortalSys service.
 // All implementations must embed UnimplementedHPortalSysServer
 // for forward compatibility
@@ -291,6 +302,8 @@ type HPortalSysServer interface {
 	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
 	// 生成用户注册token,以便上层实现各类用户注册机制
 	GenUserInvitation(context.Context, *GenUserInvitationRequest) (*UserInvitation, error)
+	// 注销当前用户指定设备，同时将连接断开
+	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -348,6 +361,9 @@ func (UnimplementedHPortalSysServer) ForceResetPassword(context.Context, *ForceR
 }
 func (UnimplementedHPortalSysServer) GenUserInvitation(context.Context, *GenUserInvitationRequest) (*UserInvitation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenUserInvitation not implemented")
+}
+func (UnimplementedHPortalSysServer) Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -671,6 +687,24 @@ func _HPortalSys_GenUserInvitation_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/Logout",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).Logout(ctx, req.(*LogoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HPortalSys_ServiceDesc is the grpc.ServiceDesc for HPortalSys service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -741,6 +775,10 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenUserInvitation",
 			Handler:    _HPortalSys_GenUserInvitation_Handler,
+		},
+		{
+			MethodName: "Logout",
+			Handler:    _HPortalSys_Logout_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
