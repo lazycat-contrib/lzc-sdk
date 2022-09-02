@@ -66,10 +66,8 @@ message SnapdConf {
     uint32 AutoSnapInterval = 2;
     // 自动快照保留的时长，单位为分钟。超出的快照会被自动删除
     uint32 AutoSnapLifetime = 3;
-    // 自动备份快照的时间间隔，单位为分钟。该值必须为 AutoSnapshotInterval 的正整数倍
-    uint32 AutoBackupInterval = 4;
     // 自动备份快照保留的时长，单位为分钟。当单个备份池中的备份超过该数量时，旧备份将自动被删除
-    uint32 AutoBackupLifetime = 5;
+    uint32 AutoBackupLifetime = 4;
 }
 
 message SnapdConfSetRequest {
