@@ -12,8 +12,6 @@ service SnapdService {
     rpc SnapdEnable(SnapdEnableRequest) returns (google.protobuf.Empty) {}
     // 禁用备份
     rpc SnapdDisable(SnapdTargetRequest) returns (google.protobuf.Empty) {}
-    // 列举已注册备份的路径信息
-    rpc SnapdListPath(SnapdListPathRequest) returns (SnapdListPathResponse) {}
     // 获取快照备份配置
     rpc SnapdConfGet(SnapdTargetRequest) returns (SnapdConf) {}
     // 修改快照备份配置
@@ -36,16 +34,6 @@ message SnapdEnableRequest {
 
 message SnapdTargetRequest {
     string TargetId = 1;
-}
-
-message SnapdListPathRequest {
-    string TargetId = 1;
-    // 为空则查看盒子上注册快照的路径信息，否则查看这些路径在指定备份池上的信息
-    string BackupPool = 2;
-}
-
-message SnapdListPathResponse {
-    repeated SnapshotDatasetDesc PathList = 1;
 }
 
 enum SnapdAutoStrategy {
@@ -77,9 +65,8 @@ message SnapdConfSetRequest {
 
 message SnapdListSnapRequest {
     string TargetId = 1;
-    string Path = 2;
     // 为空则查看盒子数据盘上快照，否则查看指定备份池中快照
-    string BackupPool = 3;
+    string BackupPool = 2;
 }
 
 message SnapdListSnapResponse {
@@ -88,10 +75,9 @@ message SnapdListSnapResponse {
 
 message SnapdSnapRequest {
     string TargetId = 1;
-    string Path = 2;
     // SnapdTakeSnap: 不为空，则同时将快照备份到指定备份池
     // SnapdDelSnap: 为空则删除盒子内快照，否则删除备份池中快照
     // SnapdRestoreSnap：为空则回滚盒子内快照，否则从备份池中读取快照并还原
-    string BackupPool = 3;
-    string SnapName = 4;
+    string BackupPool = 2;
+    string SnapName = 3;
 }

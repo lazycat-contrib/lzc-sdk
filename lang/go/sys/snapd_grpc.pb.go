@@ -27,8 +27,6 @@ type SnapdServiceClient interface {
 	SnapdEnable(ctx context.Context, in *SnapdEnableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 禁用备份
 	SnapdDisable(ctx context.Context, in *SnapdTargetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 列举已注册备份的路径信息
-	SnapdListPath(ctx context.Context, in *SnapdListPathRequest, opts ...grpc.CallOption) (*SnapdListPathResponse, error)
 	// 获取快照备份配置
 	SnapdConfGet(ctx context.Context, in *SnapdTargetRequest, opts ...grpc.CallOption) (*SnapdConf, error)
 	// 修改快照备份配置
@@ -63,15 +61,6 @@ func (c *snapdServiceClient) SnapdEnable(ctx context.Context, in *SnapdEnableReq
 func (c *snapdServiceClient) SnapdDisable(ctx context.Context, in *SnapdTargetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdDisable", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *snapdServiceClient) SnapdListPath(ctx context.Context, in *SnapdListPathRequest, opts ...grpc.CallOption) (*SnapdListPathResponse, error) {
-	out := new(SnapdListPathResponse)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdListPath", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -140,8 +129,6 @@ type SnapdServiceServer interface {
 	SnapdEnable(context.Context, *SnapdEnableRequest) (*emptypb.Empty, error)
 	// 禁用备份
 	SnapdDisable(context.Context, *SnapdTargetRequest) (*emptypb.Empty, error)
-	// 列举已注册备份的路径信息
-	SnapdListPath(context.Context, *SnapdListPathRequest) (*SnapdListPathResponse, error)
 	// 获取快照备份配置
 	SnapdConfGet(context.Context, *SnapdTargetRequest) (*SnapdConf, error)
 	// 修改快照备份配置
@@ -166,9 +153,6 @@ func (UnimplementedSnapdServiceServer) SnapdEnable(context.Context, *SnapdEnable
 }
 func (UnimplementedSnapdServiceServer) SnapdDisable(context.Context, *SnapdTargetRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapdDisable not implemented")
-}
-func (UnimplementedSnapdServiceServer) SnapdListPath(context.Context, *SnapdListPathRequest) (*SnapdListPathResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SnapdListPath not implemented")
 }
 func (UnimplementedSnapdServiceServer) SnapdConfGet(context.Context, *SnapdTargetRequest) (*SnapdConf, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapdConfGet not implemented")
@@ -233,24 +217,6 @@ func _SnapdService_SnapdDisable_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SnapdServiceServer).SnapdDisable(ctx, req.(*SnapdTargetRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SnapdService_SnapdListPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SnapdListPathRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SnapdServiceServer).SnapdListPath(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdListPath",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SnapdServiceServer).SnapdListPath(ctx, req.(*SnapdListPathRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -377,10 +343,6 @@ var SnapdService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SnapdDisable",
 			Handler:    _SnapdService_SnapdDisable_Handler,
-		},
-		{
-			MethodName: "SnapdListPath",
-			Handler:    _SnapdService_SnapdListPath_Handler,
 		},
 		{
 			MethodName: "SnapdConfGet",
