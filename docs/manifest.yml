@@ -22,6 +22,16 @@ application:
 
   public_path: /api/public  #默认情况下所有路径都需要登陆后才能访问，public_path之下的路径允许非登陆情况下访问
 
+  file_handler: # 声明本app支持操作的文件类型，mime至少存在一条记录，actions至少要支持open
+    mime:  #按照mime类型注册到系统
+      - x-scheme-handler/http
+      - x-scheme-handler/https
+      - text/html
+      - application/xhtml+xml
+    actions:  #打开对应文件的url路径,由文件管理器等app调用
+      open: /open?file=%u   #%u是某个webdav上的具体文件路径，一定存在
+      new:  /open?file=%u   #%u是某个webdav上的具体文件路径，不一定存在
+
   routes:
     - /api/=exec://8000,/lzcapp/pkg/content/bin/backend     #格式与/usr/bin/lzcinit -up参数一致
     - /=file:///lzcapp/pkg/content/dist/
