@@ -16,14 +16,20 @@ service SnapdService {
     rpc SnapdConfGet(SnapdTargetRequest) returns (SnapdConf) {}
     // 修改快照备份配置
     rpc SnapdConfSet(SnapdConfSetRequest) returns (google.protobuf.Empty) {}
+    // 注册备份池
+    rpc SnapdPoolAdd(SnapdPoolRequest) returns (google.protobuf.Empty) {}
+    // 取消注册备份池
+    rpc SnapdPoolDel(SnapdPoolRequest) returns (google.protobuf.Empty) {}
+    // 列举已注册的备份池
+    rpc SnapdPoolList(google.protobuf.Empty) returns (SnapdPoolListResponse) {}
     // 列举快照信息
-    rpc SnapdListSnap(SnapdListSnapRequest) returns (SnapdListSnapResponse) {}
+    rpc SnapdSnapList(SnapdListSnapRequest) returns (SnapdListSnapResponse) {}
     // 手动创建快照/备份。以该方式创建的快照/备份会被自动策略忽略
-    rpc SnapdTakeSnap(SnapdSnapRequest) returns (google.protobuf.Empty) {}
+    rpc SnapdSnapAdd(SnapdSnapRequest) returns (google.protobuf.Empty) {}
     // 手动删除快照。目标快照可以是通过自动策略创建的，也可以是手动创建的
-    rpc SnapdDelSnap(SnapdSnapRequest) returns (google.protobuf.Empty) {}
+    rpc SnapdSnapDel(SnapdSnapRequest) returns (google.protobuf.Empty) {}
     // 将数据回滚到指定快照
-    rpc SnapdRestoreSnap(SnapdSnapRequest) returns (google.protobuf.Empty) {}
+    rpc SnapdSnapRestore(SnapdSnapRequest) returns (google.protobuf.Empty) {}
 }
 
 message SnapdEnableRequest {
@@ -34,6 +40,14 @@ message SnapdEnableRequest {
 
 message SnapdTargetRequest {
     string TargetId = 1;
+}
+
+message SnapdPoolRequest {
+    string PoolName = 1;
+}
+
+message SnapdPoolListResponse {
+    repeated string PoolNameList = 1;
 }
 
 enum SnapdAutoStrategy {

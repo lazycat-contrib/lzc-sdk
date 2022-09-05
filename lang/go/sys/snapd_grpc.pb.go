@@ -31,14 +31,20 @@ type SnapdServiceClient interface {
 	SnapdConfGet(ctx context.Context, in *SnapdTargetRequest, opts ...grpc.CallOption) (*SnapdConf, error)
 	// 修改快照备份配置
 	SnapdConfSet(ctx context.Context, in *SnapdConfSetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 注册备份池
+	SnapdPoolAdd(ctx context.Context, in *SnapdPoolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 取消注册备份池
+	SnapdPoolDel(ctx context.Context, in *SnapdPoolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 列举已注册的备份池
+	SnapdPoolList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapdPoolListResponse, error)
 	// 列举快照信息
-	SnapdListSnap(ctx context.Context, in *SnapdListSnapRequest, opts ...grpc.CallOption) (*SnapdListSnapResponse, error)
+	SnapdSnapList(ctx context.Context, in *SnapdListSnapRequest, opts ...grpc.CallOption) (*SnapdListSnapResponse, error)
 	// 手动创建快照/备份。以该方式创建的快照/备份会被自动策略忽略
-	SnapdTakeSnap(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SnapdSnapAdd(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 手动删除快照。目标快照可以是通过自动策略创建的，也可以是手动创建的
-	SnapdDelSnap(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SnapdSnapDel(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 将数据回滚到指定快照
-	SnapdRestoreSnap(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SnapdSnapRestore(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type snapdServiceClient struct {
@@ -85,36 +91,63 @@ func (c *snapdServiceClient) SnapdConfSet(ctx context.Context, in *SnapdConfSetR
 	return out, nil
 }
 
-func (c *snapdServiceClient) SnapdListSnap(ctx context.Context, in *SnapdListSnapRequest, opts ...grpc.CallOption) (*SnapdListSnapResponse, error) {
+func (c *snapdServiceClient) SnapdPoolAdd(ctx context.Context, in *SnapdPoolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdPoolAdd", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *snapdServiceClient) SnapdPoolDel(ctx context.Context, in *SnapdPoolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdPoolDel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *snapdServiceClient) SnapdPoolList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*SnapdPoolListResponse, error) {
+	out := new(SnapdPoolListResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdPoolList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *snapdServiceClient) SnapdSnapList(ctx context.Context, in *SnapdListSnapRequest, opts ...grpc.CallOption) (*SnapdListSnapResponse, error) {
 	out := new(SnapdListSnapResponse)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdListSnap", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdSnapList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *snapdServiceClient) SnapdTakeSnap(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *snapdServiceClient) SnapdSnapAdd(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdTakeSnap", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdSnapAdd", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *snapdServiceClient) SnapdDelSnap(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *snapdServiceClient) SnapdSnapDel(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdDelSnap", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdSnapDel", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *snapdServiceClient) SnapdRestoreSnap(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *snapdServiceClient) SnapdSnapRestore(ctx context.Context, in *SnapdSnapRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdRestoreSnap", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.SnapdService/SnapdSnapRestore", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -133,14 +166,20 @@ type SnapdServiceServer interface {
 	SnapdConfGet(context.Context, *SnapdTargetRequest) (*SnapdConf, error)
 	// 修改快照备份配置
 	SnapdConfSet(context.Context, *SnapdConfSetRequest) (*emptypb.Empty, error)
+	// 注册备份池
+	SnapdPoolAdd(context.Context, *SnapdPoolRequest) (*emptypb.Empty, error)
+	// 取消注册备份池
+	SnapdPoolDel(context.Context, *SnapdPoolRequest) (*emptypb.Empty, error)
+	// 列举已注册的备份池
+	SnapdPoolList(context.Context, *emptypb.Empty) (*SnapdPoolListResponse, error)
 	// 列举快照信息
-	SnapdListSnap(context.Context, *SnapdListSnapRequest) (*SnapdListSnapResponse, error)
+	SnapdSnapList(context.Context, *SnapdListSnapRequest) (*SnapdListSnapResponse, error)
 	// 手动创建快照/备份。以该方式创建的快照/备份会被自动策略忽略
-	SnapdTakeSnap(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error)
+	SnapdSnapAdd(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error)
 	// 手动删除快照。目标快照可以是通过自动策略创建的，也可以是手动创建的
-	SnapdDelSnap(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error)
+	SnapdSnapDel(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error)
 	// 将数据回滚到指定快照
-	SnapdRestoreSnap(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error)
+	SnapdSnapRestore(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedSnapdServiceServer()
 }
 
@@ -160,17 +199,26 @@ func (UnimplementedSnapdServiceServer) SnapdConfGet(context.Context, *SnapdTarge
 func (UnimplementedSnapdServiceServer) SnapdConfSet(context.Context, *SnapdConfSetRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SnapdConfSet not implemented")
 }
-func (UnimplementedSnapdServiceServer) SnapdListSnap(context.Context, *SnapdListSnapRequest) (*SnapdListSnapResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SnapdListSnap not implemented")
+func (UnimplementedSnapdServiceServer) SnapdPoolAdd(context.Context, *SnapdPoolRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapdPoolAdd not implemented")
 }
-func (UnimplementedSnapdServiceServer) SnapdTakeSnap(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SnapdTakeSnap not implemented")
+func (UnimplementedSnapdServiceServer) SnapdPoolDel(context.Context, *SnapdPoolRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapdPoolDel not implemented")
 }
-func (UnimplementedSnapdServiceServer) SnapdDelSnap(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SnapdDelSnap not implemented")
+func (UnimplementedSnapdServiceServer) SnapdPoolList(context.Context, *emptypb.Empty) (*SnapdPoolListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapdPoolList not implemented")
 }
-func (UnimplementedSnapdServiceServer) SnapdRestoreSnap(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SnapdRestoreSnap not implemented")
+func (UnimplementedSnapdServiceServer) SnapdSnapList(context.Context, *SnapdListSnapRequest) (*SnapdListSnapResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapdSnapList not implemented")
+}
+func (UnimplementedSnapdServiceServer) SnapdSnapAdd(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapdSnapAdd not implemented")
+}
+func (UnimplementedSnapdServiceServer) SnapdSnapDel(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapdSnapDel not implemented")
+}
+func (UnimplementedSnapdServiceServer) SnapdSnapRestore(context.Context, *SnapdSnapRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapdSnapRestore not implemented")
 }
 func (UnimplementedSnapdServiceServer) mustEmbedUnimplementedSnapdServiceServer() {}
 
@@ -257,74 +305,128 @@ func _SnapdService_SnapdConfSet_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SnapdService_SnapdListSnap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SnapdService_SnapdPoolAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapdPoolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SnapdServiceServer).SnapdPoolAdd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdPoolAdd",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SnapdServiceServer).SnapdPoolAdd(ctx, req.(*SnapdPoolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SnapdService_SnapdPoolDel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapdPoolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SnapdServiceServer).SnapdPoolDel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdPoolDel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SnapdServiceServer).SnapdPoolDel(ctx, req.(*SnapdPoolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SnapdService_SnapdPoolList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SnapdServiceServer).SnapdPoolList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdPoolList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SnapdServiceServer).SnapdPoolList(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SnapdService_SnapdSnapList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SnapdListSnapRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SnapdServiceServer).SnapdListSnap(ctx, in)
+		return srv.(SnapdServiceServer).SnapdSnapList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdListSnap",
+		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdSnapList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SnapdServiceServer).SnapdListSnap(ctx, req.(*SnapdListSnapRequest))
+		return srv.(SnapdServiceServer).SnapdSnapList(ctx, req.(*SnapdListSnapRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SnapdService_SnapdTakeSnap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SnapdService_SnapdSnapAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SnapdSnapRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SnapdServiceServer).SnapdTakeSnap(ctx, in)
+		return srv.(SnapdServiceServer).SnapdSnapAdd(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdTakeSnap",
+		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdSnapAdd",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SnapdServiceServer).SnapdTakeSnap(ctx, req.(*SnapdSnapRequest))
+		return srv.(SnapdServiceServer).SnapdSnapAdd(ctx, req.(*SnapdSnapRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SnapdService_SnapdDelSnap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SnapdService_SnapdSnapDel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SnapdSnapRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SnapdServiceServer).SnapdDelSnap(ctx, in)
+		return srv.(SnapdServiceServer).SnapdSnapDel(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdDelSnap",
+		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdSnapDel",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SnapdServiceServer).SnapdDelSnap(ctx, req.(*SnapdSnapRequest))
+		return srv.(SnapdServiceServer).SnapdSnapDel(ctx, req.(*SnapdSnapRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SnapdService_SnapdRestoreSnap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SnapdService_SnapdSnapRestore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SnapdSnapRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SnapdServiceServer).SnapdRestoreSnap(ctx, in)
+		return srv.(SnapdServiceServer).SnapdSnapRestore(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdRestoreSnap",
+		FullMethod: "/cloud.lazycat.apis.sys.SnapdService/SnapdSnapRestore",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SnapdServiceServer).SnapdRestoreSnap(ctx, req.(*SnapdSnapRequest))
+		return srv.(SnapdServiceServer).SnapdSnapRestore(ctx, req.(*SnapdSnapRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -353,20 +455,32 @@ var SnapdService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SnapdService_SnapdConfSet_Handler,
 		},
 		{
-			MethodName: "SnapdListSnap",
-			Handler:    _SnapdService_SnapdListSnap_Handler,
+			MethodName: "SnapdPoolAdd",
+			Handler:    _SnapdService_SnapdPoolAdd_Handler,
 		},
 		{
-			MethodName: "SnapdTakeSnap",
-			Handler:    _SnapdService_SnapdTakeSnap_Handler,
+			MethodName: "SnapdPoolDel",
+			Handler:    _SnapdService_SnapdPoolDel_Handler,
 		},
 		{
-			MethodName: "SnapdDelSnap",
-			Handler:    _SnapdService_SnapdDelSnap_Handler,
+			MethodName: "SnapdPoolList",
+			Handler:    _SnapdService_SnapdPoolList_Handler,
 		},
 		{
-			MethodName: "SnapdRestoreSnap",
-			Handler:    _SnapdService_SnapdRestoreSnap_Handler,
+			MethodName: "SnapdSnapList",
+			Handler:    _SnapdService_SnapdSnapList_Handler,
+		},
+		{
+			MethodName: "SnapdSnapAdd",
+			Handler:    _SnapdService_SnapdSnapAdd_Handler,
+		},
+		{
+			MethodName: "SnapdSnapDel",
+			Handler:    _SnapdService_SnapdSnapDel_Handler,
+		},
+		{
+			MethodName: "SnapdSnapRestore",
+			Handler:    _SnapdService_SnapdSnapRestore_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
