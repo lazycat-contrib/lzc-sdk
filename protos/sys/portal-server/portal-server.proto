@@ -272,12 +272,12 @@ message ForceResetPasswordRequest{
 message LogoutRequest{
   string uid = 1;
   // 设备唯一id
-  string unique_deivce_id = 2;
+  string udid = 2;
   // 注销原因
   Reason reason = 3;
 
   enum Reason {
-    Logout = 0;
-    ResetPassword = 1;
+    LogoutByDeleting = 0;
+    LogoutByUser = 1;
   }
 }
