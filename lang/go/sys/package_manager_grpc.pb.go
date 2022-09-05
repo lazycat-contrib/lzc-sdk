@@ -35,6 +35,10 @@ type PackageManagerClient interface {
 	SetUserPermissions(ctx context.Context, in *SetUserPermissionsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 暂停下载特定应用
 	PauseAppDownload(ctx context.Context, in *Appid, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取用某个应用打开某个文件的链接
+	GetActionURL(ctx context.Context, in *GetActionURLRequest, opts ...grpc.CallOption) (*GetActionURLResponse, error)
+	// 列出可以打开指定 MIME 类型的应用
+	ListFileHandler(ctx context.Context, in *ListFileHandlerRequest, opts ...grpc.CallOption) (*ListFileHandlerResponse, error)
 }
 
 type packageManagerClient struct {
@@ -99,6 +103,24 @@ func (c *packageManagerClient) PauseAppDownload(ctx context.Context, in *Appid, 
 	return out, nil
 }
 
+func (c *packageManagerClient) GetActionURL(ctx context.Context, in *GetActionURLRequest, opts ...grpc.CallOption) (*GetActionURLResponse, error) {
+	out := new(GetActionURLResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.PackageManager/GetActionURL", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *packageManagerClient) ListFileHandler(ctx context.Context, in *ListFileHandlerRequest, opts ...grpc.CallOption) (*ListFileHandlerResponse, error) {
+	out := new(ListFileHandlerResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.PackageManager/ListFileHandler", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PackageManagerServer is the server API for PackageManager service.
 // All implementations must embed UnimplementedPackageManagerServer
 // for forward compatibility
@@ -115,6 +137,10 @@ type PackageManagerServer interface {
 	SetUserPermissions(context.Context, *SetUserPermissionsRequest) (*emptypb.Empty, error)
 	// 暂停下载特定应用
 	PauseAppDownload(context.Context, *Appid) (*emptypb.Empty, error)
+	// 获取用某个应用打开某个文件的链接
+	GetActionURL(context.Context, *GetActionURLRequest) (*GetActionURLResponse, error)
+	// 列出可以打开指定 MIME 类型的应用
+	ListFileHandler(context.Context, *ListFileHandlerRequest) (*ListFileHandlerResponse, error)
 	mustEmbedUnimplementedPackageManagerServer()
 }
 
@@ -139,6 +165,12 @@ func (UnimplementedPackageManagerServer) SetUserPermissions(context.Context, *Se
 }
 func (UnimplementedPackageManagerServer) PauseAppDownload(context.Context, *Appid) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PauseAppDownload not implemented")
+}
+func (UnimplementedPackageManagerServer) GetActionURL(context.Context, *GetActionURLRequest) (*GetActionURLResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetActionURL not implemented")
+}
+func (UnimplementedPackageManagerServer) ListFileHandler(context.Context, *ListFileHandlerRequest) (*ListFileHandlerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListFileHandler not implemented")
 }
 func (UnimplementedPackageManagerServer) mustEmbedUnimplementedPackageManagerServer() {}
 
@@ -261,6 +293,42 @@ func _PackageManager_PauseAppDownload_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PackageManager_GetActionURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetActionURLRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).GetActionURL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.PackageManager/GetActionURL",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).GetActionURL(ctx, req.(*GetActionURLRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PackageManager_ListFileHandler_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListFileHandlerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).ListFileHandler(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.PackageManager/ListFileHandler",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).ListFileHandler(ctx, req.(*ListFileHandlerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PackageManager_ServiceDesc is the grpc.ServiceDesc for PackageManager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -291,6 +359,14 @@ var PackageManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PauseAppDownload",
 			Handler:    _PackageManager_PauseAppDownload_Handler,
+		},
+		{
+			MethodName: "GetActionURL",
+			Handler:    _PackageManager_GetActionURL_Handler,
+		},
+		{
+			MethodName: "ListFileHandler",
+			Handler:    _PackageManager_ListFileHandler_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -37,6 +37,12 @@ service PackageManager {
 
   // 暂停下载特定应用
   rpc PauseAppDownload(Appid) returns (google.protobuf.Empty) {}
+
+  // 获取用某个应用打开某个文件的链接
+  rpc GetActionURL(GetActionURLRequest) returns (GetActionURLResponse) {}
+
+  // 列出可以打开指定 MIME 类型的应用
+  rpc ListFileHandler(ListFileHandlerRequest) returns (ListFileHandlerResponse) {}
 }
 
 message PkgURL {
@@ -171,4 +177,28 @@ message SetUserPermissionsRequest {
 
 message Appid {
   string appid = 1;
+}
+
+message GetActionURLRequest {
+  string path = 1;
+  string appid = 2;
+  optional bool is_new = 3;
+}
+
+message GetActionURLResponse {
+  string url = 1;
+}
+
+message ListFileHandlerRequest {
+  string mimetype = 1;
+}
+
+message FileHandlerInfo {
+  string appid = 1;
+  string title = 2;
+  string icon = 3;
+}
+
+message ListFileHandlerResponse {
+  repeated FileHandlerInfo info_list = 1;
 }
