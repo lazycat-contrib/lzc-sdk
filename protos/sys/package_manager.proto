@@ -179,10 +179,15 @@ message Appid {
   string appid = 1;
 }
 
+enum Action {
+  Open = 0;
+  New = 1;
+}
+
 message GetActionURLRequest {
   string path = 1;
   string appid = 2;
-  optional bool is_new = 3;
+  Action action = 3;
 }
 
 message GetActionURLResponse {
