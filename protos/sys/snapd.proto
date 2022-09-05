@@ -16,12 +16,6 @@ service SnapdService {
     rpc SnapdConfGet(SnapdTargetRequest) returns (SnapdConf) {}
     // 修改快照备份配置
     rpc SnapdConfSet(SnapdConfSetRequest) returns (google.protobuf.Empty) {}
-    // 注册备份池
-    rpc SnapdPoolAdd(SnapdPoolRequest) returns (google.protobuf.Empty) {}
-    // 取消注册备份池
-    rpc SnapdPoolDel(SnapdPoolRequest) returns (google.protobuf.Empty) {}
-    // 列举已注册的备份池
-    rpc SnapdPoolList(google.protobuf.Empty) returns (SnapdPoolListResponse) {}
     // 列举快照信息
     rpc SnapdSnapList(SnapdListSnapRequest) returns (SnapdListSnapResponse) {}
     // 手动创建快照/备份。以该方式创建的快照/备份会被自动策略忽略
@@ -40,14 +34,6 @@ message SnapdEnableRequest {
 
 message SnapdTargetRequest {
     string TargetId = 1;
-}
-
-message SnapdPoolRequest {
-    string PoolName = 1;
-}
-
-message SnapdPoolListResponse {
-    repeated string PoolNameList = 1;
 }
 
 enum SnapdAutoStrategy {
