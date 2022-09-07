@@ -53,14 +53,27 @@ message AccessPointInfoList {
   repeated AccessPointInfo list = 1;
 }
 
+enum NetworkDeviceStatus {
+  NetworkDeviceStatusUnavailable = 0;  // 不可用
+  NetworkDeviceStatusDisconnected = 1;  // 未连接
+  NetworkDeviceStatusConnecting = 2;  // 正在连接
+  NetworkDeviceStatusConnected = 3;  // 已连接
+  NetworkDeviceStatusDisconnecting = 4;  // 正在断开
+  NetworkDeviceStatusDisabled = 5;  // 已禁用
+}
+
 message NetworkDeviceStatusInfo {
-  // 已假设只有一块 wifi 网卡
+  // 是否已连接到互联网
+  bool hasInternet = 1;
 
-  // 是否已连接
-  bool connected = 1;
+  // 有线连接状态（已假设只有一块有线网卡）
+  NetworkDeviceStatus WiredDevice = 2;
 
-  // 若已连接，则该字段表示已连接的 wifi 的信息
-  AccessPointInfo info = 2;
+  // 无线设备状态（已假设只有一块无线网卡）
+  NetworkDeviceStatus WirelessDevice = 3;
+
+  // 若无线设备已连接，则该字段表示已连接的 wifi 的信息
+  optional AccessPointInfo info = 4;
 }
 
 message WifiConnectInfo {
@@ -72,10 +85,10 @@ message WifiConnectInfo {
 }
 
 enum KeyMgmt {
-  None = 0;
-  WEP = 1;  // WEP  （最老的协议了，目前几乎没人用）
-  WPA_PSK = 2;  // WPA/WPA2-Personal  （一般大概率都是这个，应当作为默认值）
-  SAE = 3;  // WPA3-Personal  （新一代协议，用的人比较少）
+  KeyMgmtNone = 0;
+  KeyMgmtWEP = 1;  // WEP  （最老的协议了，目前几乎没人用）
+  KeyMgmtWPA_PSK = 2;  // WPA/WPA2-Personal  （一般大概率都是这个，应当作为默认值）
+  KeyMgmtSAE = 3;  // WPA3-Personal  （新一代协议，用的人比较少）
 }
 
 message WifiConfigInfo {
@@ -85,10 +98,10 @@ message WifiConfigInfo {
 }
 
 enum WifiConnectResult {
-  Success = 0;
-  NoSuchBssid = 1;
-  WrongPassword = 2;
-  UnknownError = 3;
+  WifiConnectResultSuccess = 0;
+  WifiConnectResultNoSuchBssid = 1;
+  WifiConnectResultWrongPassword = 2;
+  WifiConnectResultUnknownError = 3;
 }
 
 message WifiConnectReply {
