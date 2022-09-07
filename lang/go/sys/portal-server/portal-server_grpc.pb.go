@@ -27,7 +27,7 @@ type HPortalSysClient interface {
 	QueryLogin(ctx context.Context, in *AuthToken, opts ...grpc.CallOption) (*LoginInfo, error)
 	// 根据UID返回所有的设备列表
 	ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error)
-	QueryDeviceByID(ctx context.Context, in *PeerID, opts ...grpc.CallOption) (*Device, error)
+	QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error)
 	QueryBoxInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxInfo, error)
 	// 获取盒子所属域名下或下一级域名的https证书。
 	// 注意不是所有ACME服务器都支持泛域名。
@@ -92,7 +92,7 @@ func (c *hPortalSysClient) ListDevices(ctx context.Context, in *ListDeviceReques
 	return out, nil
 }
 
-func (c *hPortalSysClient) QueryDeviceByID(ctx context.Context, in *PeerID, opts ...grpc.CallOption) (*Device, error) {
+func (c *hPortalSysClient) QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error) {
 	out := new(Device)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/QueryDeviceByID", in, out, opts...)
 	if err != nil {
@@ -267,7 +267,7 @@ type HPortalSysServer interface {
 	QueryLogin(context.Context, *AuthToken) (*LoginInfo, error)
 	// 根据UID返回所有的设备列表
 	ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error)
-	QueryDeviceByID(context.Context, *PeerID) (*Device, error)
+	QueryDeviceByID(context.Context, *DeviceID) (*Device, error)
 	QueryBoxInfo(context.Context, *emptypb.Empty) (*BoxInfo, error)
 	// 获取盒子所属域名下或下一级域名的https证书。
 	// 注意不是所有ACME服务器都支持泛域名。
@@ -317,7 +317,7 @@ func (UnimplementedHPortalSysServer) QueryLogin(context.Context, *AuthToken) (*L
 func (UnimplementedHPortalSysServer) ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDevices not implemented")
 }
-func (UnimplementedHPortalSysServer) QueryDeviceByID(context.Context, *PeerID) (*Device, error) {
+func (UnimplementedHPortalSysServer) QueryDeviceByID(context.Context, *DeviceID) (*Device, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryDeviceByID not implemented")
 }
 func (UnimplementedHPortalSysServer) QueryBoxInfo(context.Context, *emptypb.Empty) (*BoxInfo, error) {
@@ -415,7 +415,7 @@ func _HPortalSys_ListDevices_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _HPortalSys_QueryDeviceByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PeerID)
+	in := new(DeviceID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -427,7 +427,7 @@ func _HPortalSys_QueryDeviceByID_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/QueryDeviceByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).QueryDeviceByID(ctx, req.(*PeerID))
+		return srv.(HPortalSysServer).QueryDeviceByID(ctx, req.(*DeviceID))
 	}
 	return interceptor(ctx, in, info, handler)
 }

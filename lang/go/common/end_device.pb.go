@@ -74,6 +74,7 @@ type EndDevice struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// TODO 待删除
 	PeerId   string `protobuf:"bytes,1,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`
 	IsOnline bool   `protobuf:"varint,2,opt,name=is_online,json=isOnline,proto3" json:"is_online,omitempty"`
 	// 因为device api的监听端口可能会变化，所以此url有效性不会太长

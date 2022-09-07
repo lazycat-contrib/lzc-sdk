@@ -15,7 +15,7 @@ service HPortalSys {
   rpc ListDevices(ListDeviceRequest) returns (ListDeviceReply) {}
 
 
-  rpc QueryDeviceByID(PeerID) returns (Device) {}
+  rpc QueryDeviceByID(DeviceID) returns (Device) {}
 
   rpc QueryBoxInfo(google.protobuf.Empty) returns (BoxInfo) {}
 
@@ -166,7 +166,7 @@ message LoginInfo {
 }
 
 
-message PeerID {
+message DeviceID {
   string id = 1;
 }
 
@@ -206,7 +206,10 @@ message DomainCertReply {
 
 
 message Device {
+  string udid = 7;
+  // TODO 待删除
   string peer_id = 1;
+
   bool is_online = 2;
 
   // 因为device api的监听端口可能会变化，所以此url有效性不会太长

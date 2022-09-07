@@ -29,6 +29,7 @@ message PairEndDeviceRequest {
 }
 
 message EndDevice {
+  // TODO 待删除
   string peer_id = 1;
   bool is_online = 2;
   // 因为device api的监听端口可能会变化，所以此url有效性不会太长
