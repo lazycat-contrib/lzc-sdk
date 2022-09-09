@@ -12,6 +12,7 @@ import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, Permiss
 import { APIGateway, APIGatewayClientImpl } from "./common/gateway"
 import { PeripheralDeviceService, PeripheralDeviceServiceClientImpl } from "./common/peripheral_device"
 import { PackageManager, PackageManagerClientImpl } from "./sys/package_manager"
+import { NetworkManager as NM, NetworkManagerClientImpl as NMClientImpl } from "./sys/network_manager"
 
 import { OSSnapshotService, OSSnapshotServiceClientImpl } from "./sys/OS_snapshot"
 import { OSUpgradeService, OSUpgradeServiceClientImpl } from "./sys/OS_upgrader"
@@ -57,6 +58,7 @@ export class lzcAPIGateway {
         this.appinfo = this.bo.QueryAppInfo({})
         this.gw = new APIGatewayClientImpl(rpc);
 
+        this.nm = new NMClientImpl(rpc);
         this.pm = new PermissionManagerClientImpl(rpc);
         this.pkgm = new PackageManagerClientImpl(rpc);
 
@@ -86,6 +88,7 @@ export class lzcAPIGateway {
         })
     }
 
+    public nm: NM; // 盒子内部的NetworkManager 
     public pkgm: PackageManager;
     public users: UserManager;
     public box: BoxService;
