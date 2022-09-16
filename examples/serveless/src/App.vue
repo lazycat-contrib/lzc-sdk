@@ -22,7 +22,7 @@ import { lzcAPIGateway } from "@lazycatcloud/sdk";
 async function getLocalWebdavRoot(cc) {
   let s = await cc.session;
   for (let d of (await cc.devices.ListEndDevices({ uid: s.uid })).devices) {
-    if (s.deviceId == d.peerId) {
+    if (s.deviceId == d.uniqueDeivceId) {
       return d.deviceApiUrl.replace(".d.", ".local.") + "/s/files/";
     }
   }
