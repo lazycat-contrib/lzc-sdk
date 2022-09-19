@@ -30,6 +30,7 @@ application:
       - x-scheme-handler/https
       - text/html
       - application/xhtml+xml
+      - x-lzc-extension/km      # app支持.km文件名后缀
     actions:  #打开对应文件的url路径,由文件管理器等app调用
       open: /open?file=%u   #%u是某个webdav上的具体文件路径，一定存在
       new:  /open?file=%u   #%u是某个webdav上的具体文件路径，不一定存在
