@@ -112,6 +112,7 @@ message AppInfo {
   optional string description = 5;
 
   // 应用图标所在的 url，如 https://apis.$boxdomain/icons/$appid.png
+  // 若应用无图标，则为空
   optional string icon = 6;
 
   // 应用所在的域名，如 app.box.heiyu.space
