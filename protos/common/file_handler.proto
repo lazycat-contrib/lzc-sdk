@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.common;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/common";
+
+
+service FileHandler {
+  rpc query(QueryRequest) returns (QueryReply) {}
+  rpc open(OpenRequest) returns (OpenReply) {}
+
+}
+
+message OpenRequest {
+  // 应用id
+  string app_id = 1;
+  // 文件路径
+  string path = 2;
+}
+
+message OpenReply {
+  // 打开应用的地址
+  optional string url = 1;
+}
+
+message QueryRequest {
+  // 文件mime类型
+  string mime = 1;
+  // 文件路径(可选 android下面使用path查询，体验更好 ）
+  optional string path = 2;
+}
+message QueryReply {
+  repeated AppInfo app_list = 1;
+}
+
+message AppInfo{
+  string app_id = 1;
+  string title = 2;
+  string icon = 3;
+}
