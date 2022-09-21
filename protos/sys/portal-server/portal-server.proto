@@ -151,6 +151,12 @@ message AuthToken {
   string access_ip = 3;
 
   string autologin_redirect_url = 4;
+
+  enum TokenType {
+    Raw = 0;       // token return by hportal-server login method
+    HTTPBasicAuth = 1; // QWxhZGRpbjpvcGVuIHNlc2FtZQ==
+  }
+  TokenType token_type = 5;
 }
 
 message LoginInfo {
