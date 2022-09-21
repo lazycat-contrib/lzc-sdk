@@ -146,6 +146,8 @@ message QueryAppStorageUsageRequest {
   bool need_tmp = 5;
 
   bool need_userdata = 6;
+
+  bool need_image = 7;
 }
 
 message AppStorageUsage {
@@ -163,6 +165,8 @@ message AppStorageUsage {
 
   // 各个用户产生的应用数据大小 (/lzcapp/var/userdata/$uid)
   map<string, uint64> userdata = 5;
+
+  uint64 image = 6;
 }
 
 message SetUserPermissionsRequest {
