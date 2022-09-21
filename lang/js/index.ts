@@ -23,7 +23,7 @@ import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clip
 import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo"
 import { NetworkManagerClientImpl, NetworkManager } from "./localdevice/network"
 import { DeviceServiceClientImpl, DeviceService } from "./localdevice/device"
-
+import {FileHandlerClientImpl,FileHandler} from "./common/file_handler"
 import { grpc } from "@improbable-eng/grpc-web";
 
 
@@ -70,7 +70,6 @@ export class lzcAPIGateway {
         this.osSnapshot = new OSSnapshotServiceClientImpl(rpc);
 
         this.currentDevice = buildCurrentDevice(this)
-
         dumpInfo(this.bo)
     }
     private bo : BrowserOnlyProxy;
@@ -118,6 +117,7 @@ export class EndDeviceProxy {
         this.photolibrary = new PhotoLibraryClientImpl(rpc)
         this.network = new NetworkManagerClientImpl(rpc)
         this.device = new DeviceServiceClientImpl(rpc)
+        this.fileHandler = new FileHandlerClientImpl(rpc)
     }
 
     public device : DeviceService;
@@ -125,6 +125,7 @@ export class EndDeviceProxy {
     public clipboard: ClipboardManager;
     public photolibrary: PhotoLibrary;
     public network: NetworkManager;
+    public fileHandler: FileHandler;
 }
 
 
