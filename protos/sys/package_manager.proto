@@ -182,9 +182,6 @@ message UserPermission {
 
   // 是否允许 uid 安装应用
   bool allow_install_app = 2;
-
-  // 是否允许 uid 卸载应用
-  bool allow_uninstall_app = 3;
 }
 
 message GetUserPermissionsRequest {
