@@ -32,7 +32,9 @@ type PackageManagerClient interface {
 	// 获取应用占用的存储空间详情
 	QueryAppStorageUsage(ctx context.Context, in *QueryAppStorageUsageRequest, opts ...grpc.CallOption) (*AppStorageUsage, error)
 	// 设置某个用户是否可以安装应用
-	SetUserPermissions(ctx context.Context, in *SetUserPermissionsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SetUserPermissions(ctx context.Context, in *UserPermission, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取某个用户安装应用的权限
+	GetUserPermissions(ctx context.Context, in *GetUserPermissionsRequest, opts ...grpc.CallOption) (*UserPermission, error)
 	// 暂停下载特定应用
 	PauseAppDownload(ctx context.Context, in *Appid, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 获取用某个应用打开某个文件的链接
@@ -85,9 +87,18 @@ func (c *packageManagerClient) QueryAppStorageUsage(ctx context.Context, in *Que
 	return out, nil
 }
 
-func (c *packageManagerClient) SetUserPermissions(ctx context.Context, in *SetUserPermissionsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *packageManagerClient) SetUserPermissions(ctx context.Context, in *UserPermission, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.PackageManager/SetUserPermissions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *packageManagerClient) GetUserPermissions(ctx context.Context, in *GetUserPermissionsRequest, opts ...grpc.CallOption) (*UserPermission, error) {
+	out := new(UserPermission)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.PackageManager/GetUserPermissions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +145,9 @@ type PackageManagerServer interface {
 	// 获取应用占用的存储空间详情
 	QueryAppStorageUsage(context.Context, *QueryAppStorageUsageRequest) (*AppStorageUsage, error)
 	// 设置某个用户是否可以安装应用
-	SetUserPermissions(context.Context, *SetUserPermissionsRequest) (*emptypb.Empty, error)
+	SetUserPermissions(context.Context, *UserPermission) (*emptypb.Empty, error)
+	// 获取某个用户安装应用的权限
+	GetUserPermissions(context.Context, *GetUserPermissionsRequest) (*UserPermission, error)
 	// 暂停下载特定应用
 	PauseAppDownload(context.Context, *Appid) (*emptypb.Empty, error)
 	// 获取用某个应用打开某个文件的链接
@@ -160,8 +173,11 @@ func (UnimplementedPackageManagerServer) QueryApplication(context.Context, *Quer
 func (UnimplementedPackageManagerServer) QueryAppStorageUsage(context.Context, *QueryAppStorageUsageRequest) (*AppStorageUsage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryAppStorageUsage not implemented")
 }
-func (UnimplementedPackageManagerServer) SetUserPermissions(context.Context, *SetUserPermissionsRequest) (*emptypb.Empty, error) {
+func (UnimplementedPackageManagerServer) SetUserPermissions(context.Context, *UserPermission) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserPermissions not implemented")
+}
+func (UnimplementedPackageManagerServer) GetUserPermissions(context.Context, *GetUserPermissionsRequest) (*UserPermission, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserPermissions not implemented")
 }
 func (UnimplementedPackageManagerServer) PauseAppDownload(context.Context, *Appid) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PauseAppDownload not implemented")
@@ -258,7 +274,7 @@ func _PackageManager_QueryAppStorageUsage_Handler(srv interface{}, ctx context.C
 }
 
 func _PackageManager_SetUserPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetUserPermissionsRequest)
+	in := new(UserPermission)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -270,7 +286,25 @@ func _PackageManager_SetUserPermissions_Handler(srv interface{}, ctx context.Con
 		FullMethod: "/cloud.lazycat.apis.sys.PackageManager/SetUserPermissions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PackageManagerServer).SetUserPermissions(ctx, req.(*SetUserPermissionsRequest))
+		return srv.(PackageManagerServer).SetUserPermissions(ctx, req.(*UserPermission))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PackageManager_GetUserPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserPermissionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).GetUserPermissions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.PackageManager/GetUserPermissions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).GetUserPermissions(ctx, req.(*GetUserPermissionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -355,6 +389,10 @@ var PackageManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetUserPermissions",
 			Handler:    _PackageManager_SetUserPermissions_Handler,
+		},
+		{
+			MethodName: "GetUserPermissions",
+			Handler:    _PackageManager_GetUserPermissions_Handler,
 		},
 		{
 			MethodName: "PauseAppDownload",

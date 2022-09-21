@@ -31,12 +31,19 @@ service PackageManager {
   rpc QueryAppStorageUsage(QueryAppStorageUsageRequest) returns (AppStorageUsage) {}
 
   // 设置某个用户是否可以安装应用
-  rpc SetUserPermissions(SetUserPermissionsRequest) returns (google.protobuf.Empty) {
+  rpc SetUserPermissions(UserPermission) returns (google.protobuf.Empty) {
+    option (cloud.lazycat.apis.common.scontext).require_user_class = ADMIN_USER;
+  }
+
+  // 获取某个用户安装应用的权限
+  rpc GetUserPermissions(GetUserPermissionsRequest) returns (UserPermission) {
     option (cloud.lazycat.apis.common.scontext).require_user_class = ADMIN_USER;
   }
 
   // 暂停下载特定应用
-  rpc PauseAppDownload(Appid) returns (google.protobuf.Empty) {}
+  rpc PauseAppDownload(Appid) returns (google.protobuf.Empty) {
+    option (cloud.lazycat.apis.common.scontext).require_permissions = INSTALL_PACKAGE;
+  }
 
   // 获取用某个应用打开某个文件的链接
   rpc GetActionURL(GetActionURLRequest) returns (GetActionURLResponse) {}
@@ -169,7 +176,7 @@ message AppStorageUsage {
   uint64 image = 6;
 }
 
-message SetUserPermissionsRequest {
+message UserPermission {
   // 用户的 uid
   string uid = 1;
 
@@ -178,6 +185,11 @@ message SetUserPermissionsRequest {
 
   // 是否允许 uid 卸载应用
   bool allow_uninstall_app = 3;
+}
+
+message GetUserPermissionsRequest {
+  // 用户的 uid
+  string uid = 1;
 }
 
 message Appid {
