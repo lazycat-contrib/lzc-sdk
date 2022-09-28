@@ -24,6 +24,7 @@ import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo"
 import { NetworkManagerClientImpl, NetworkManager } from "./localdevice/network"
 import { DeviceServiceClientImpl, DeviceService } from "./localdevice/device"
 import {FileHandlerClientImpl,FileHandler} from "./common/file_handler"
+import { FileTransferServiceClientImpl, FileTransferService} from "./common/filetrans"
 import { grpc } from "@improbable-eng/grpc-web";
 
 
@@ -118,6 +119,7 @@ export class EndDeviceProxy {
         this.network = new NetworkManagerClientImpl(rpc)
         this.device = new DeviceServiceClientImpl(rpc)
         this.fileHandler = new FileHandlerClientImpl(rpc)
+        this.fileTransfer = new FileTransferServiceClientImpl(rpc)
     }
 
     public device : DeviceService;
@@ -126,6 +128,7 @@ export class EndDeviceProxy {
     public photolibrary: PhotoLibrary;
     public network: NetworkManager;
     public fileHandler: FileHandler;
+    public fileTransfer: FileTransferService;
 }
 
 

@@ -19,16 +19,16 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// FileSyncServiceClient is the client API for FileSyncService service.
+// FileTransferServiceClient is the client API for FileTransferService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type FileSyncServiceClient interface {
+type FileTransferServiceClient interface {
 	// 创建队列
 	CreateQueue(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (*FileTaskQueueResp, error)
 	// 列出所有 QueueID
 	ListQueue(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TaskQueueListResp, error)
 	// 通过队列的 ID 和 Status 获取任务列表
-	QueryQueue(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (FileSyncService_QueryQueueClient, error)
+	QueryQueue(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (FileTransferService_QueryQueueClient, error)
 	// 通过队列的 ID 和 Status 清除任务
 	ClearQueue(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据队列 ID 设置队列的速率并发等设置
@@ -38,11 +38,11 @@ type FileSyncServiceClient interface {
 	// 根据队列 ID 开始队列
 	StartQuque(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据队列 ID 获取队列动态信息（比如 pending 状态的增加了 task1）
-	QueryQueueMessage(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (FileSyncService_QueryQueueMessageClient, error)
+	QueryQueueMessage(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (FileTransferService_QueryQueueMessageClient, error)
 	// 暂时不支持创建Task时创建任务，需要提前创建好任务。queue_id不存在则报错
 	CreateTask(ctx context.Context, in *TaskCreateRequest, opts ...grpc.CallOption) (*Task, error)
 	// 根据 ID 获取单个任务状态
-	QueryTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (FileSyncService_QueryTaskClient, error)
+	QueryTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (FileTransferService_QueryTaskClient, error)
 	// 根据 ID 开始单个任务
 	ResumeTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据 ID 暂停单个任务
@@ -51,38 +51,38 @@ type FileSyncServiceClient interface {
 	DeleteTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
-type fileSyncServiceClient struct {
+type fileTransferServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewFileSyncServiceClient(cc grpc.ClientConnInterface) FileSyncServiceClient {
-	return &fileSyncServiceClient{cc}
+func NewFileTransferServiceClient(cc grpc.ClientConnInterface) FileTransferServiceClient {
+	return &fileTransferServiceClient{cc}
 }
 
-func (c *fileSyncServiceClient) CreateQueue(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (*FileTaskQueueResp, error) {
+func (c *fileTransferServiceClient) CreateQueue(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (*FileTaskQueueResp, error) {
 	out := new(FileTaskQueueResp)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileSyncService/CreateQueue", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileTransferService/CreateQueue", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileSyncServiceClient) ListQueue(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TaskQueueListResp, error) {
+func (c *fileTransferServiceClient) ListQueue(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TaskQueueListResp, error) {
 	out := new(TaskQueueListResp)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileSyncService/ListQueue", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileTransferService/ListQueue", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileSyncServiceClient) QueryQueue(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (FileSyncService_QueryQueueClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FileSyncService_ServiceDesc.Streams[0], "/cloud.lazycat.apis.common.FileSyncService/QueryQueue", opts...)
+func (c *fileTransferServiceClient) QueryQueue(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (FileTransferService_QueryQueueClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[0], "/cloud.lazycat.apis.common.FileTransferService/QueryQueue", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &fileSyncServiceQueryQueueClient{stream}
+	x := &fileTransferServiceQueryQueueClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -92,16 +92,16 @@ func (c *fileSyncServiceClient) QueryQueue(ctx context.Context, in *TaskQueueQue
 	return x, nil
 }
 
-type FileSyncService_QueryQueueClient interface {
+type FileTransferService_QueryQueueClient interface {
 	Recv() (*Task, error)
 	grpc.ClientStream
 }
 
-type fileSyncServiceQueryQueueClient struct {
+type fileTransferServiceQueryQueueClient struct {
 	grpc.ClientStream
 }
 
-func (x *fileSyncServiceQueryQueueClient) Recv() (*Task, error) {
+func (x *fileTransferServiceQueryQueueClient) Recv() (*Task, error) {
 	m := new(Task)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -109,48 +109,48 @@ func (x *fileSyncServiceQueryQueueClient) Recv() (*Task, error) {
 	return m, nil
 }
 
-func (c *fileSyncServiceClient) ClearQueue(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *fileTransferServiceClient) ClearQueue(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileSyncService/ClearQueue", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileTransferService/ClearQueue", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileSyncServiceClient) ConfigQueue(ctx context.Context, in *TaskQueueConfigReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *fileTransferServiceClient) ConfigQueue(ctx context.Context, in *TaskQueueConfigReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileSyncService/ConfigQueue", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileTransferService/ConfigQueue", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileSyncServiceClient) PauseQueue(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *fileTransferServiceClient) PauseQueue(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileSyncService/PauseQueue", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileTransferService/PauseQueue", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileSyncServiceClient) StartQuque(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *fileTransferServiceClient) StartQuque(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileSyncService/StartQuque", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileTransferService/StartQuque", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileSyncServiceClient) QueryQueueMessage(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (FileSyncService_QueryQueueMessageClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FileSyncService_ServiceDesc.Streams[1], "/cloud.lazycat.apis.common.FileSyncService/QueryQueueMessage", opts...)
+func (c *fileTransferServiceClient) QueryQueueMessage(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (FileTransferService_QueryQueueMessageClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[1], "/cloud.lazycat.apis.common.FileTransferService/QueryQueueMessage", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &fileSyncServiceQueryQueueMessageClient{stream}
+	x := &fileTransferServiceQueryQueueMessageClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -160,16 +160,16 @@ func (c *fileSyncServiceClient) QueryQueueMessage(ctx context.Context, in *TaskQ
 	return x, nil
 }
 
-type FileSyncService_QueryQueueMessageClient interface {
+type FileTransferService_QueryQueueMessageClient interface {
 	Recv() (*QueueMessageResp, error)
 	grpc.ClientStream
 }
 
-type fileSyncServiceQueryQueueMessageClient struct {
+type fileTransferServiceQueryQueueMessageClient struct {
 	grpc.ClientStream
 }
 
-func (x *fileSyncServiceQueryQueueMessageClient) Recv() (*QueueMessageResp, error) {
+func (x *fileTransferServiceQueryQueueMessageClient) Recv() (*QueueMessageResp, error) {
 	m := new(QueueMessageResp)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -177,21 +177,21 @@ func (x *fileSyncServiceQueryQueueMessageClient) Recv() (*QueueMessageResp, erro
 	return m, nil
 }
 
-func (c *fileSyncServiceClient) CreateTask(ctx context.Context, in *TaskCreateRequest, opts ...grpc.CallOption) (*Task, error) {
+func (c *fileTransferServiceClient) CreateTask(ctx context.Context, in *TaskCreateRequest, opts ...grpc.CallOption) (*Task, error) {
 	out := new(Task)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileSyncService/CreateTask", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileTransferService/CreateTask", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileSyncServiceClient) QueryTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (FileSyncService_QueryTaskClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FileSyncService_ServiceDesc.Streams[2], "/cloud.lazycat.apis.common.FileSyncService/QueryTask", opts...)
+func (c *fileTransferServiceClient) QueryTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (FileTransferService_QueryTaskClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[2], "/cloud.lazycat.apis.common.FileTransferService/QueryTask", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &fileSyncServiceQueryTaskClient{stream}
+	x := &fileTransferServiceQueryTaskClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -201,16 +201,16 @@ func (c *fileSyncServiceClient) QueryTask(ctx context.Context, in *TaskID, opts 
 	return x, nil
 }
 
-type FileSyncService_QueryTaskClient interface {
+type FileTransferService_QueryTaskClient interface {
 	Recv() (*Task, error)
 	grpc.ClientStream
 }
 
-type fileSyncServiceQueryTaskClient struct {
+type fileTransferServiceQueryTaskClient struct {
 	grpc.ClientStream
 }
 
-func (x *fileSyncServiceQueryTaskClient) Recv() (*Task, error) {
+func (x *fileTransferServiceQueryTaskClient) Recv() (*Task, error) {
 	m := new(Task)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -218,43 +218,43 @@ func (x *fileSyncServiceQueryTaskClient) Recv() (*Task, error) {
 	return m, nil
 }
 
-func (c *fileSyncServiceClient) ResumeTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *fileTransferServiceClient) ResumeTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileSyncService/ResumeTask", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileTransferService/ResumeTask", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileSyncServiceClient) PauseTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *fileTransferServiceClient) PauseTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileSyncService/PauseTask", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileTransferService/PauseTask", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileSyncServiceClient) DeleteTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *fileTransferServiceClient) DeleteTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileSyncService/DeleteTask", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.FileTransferService/DeleteTask", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// FileSyncServiceServer is the server API for FileSyncService service.
-// All implementations must embed UnimplementedFileSyncServiceServer
+// FileTransferServiceServer is the server API for FileTransferService service.
+// All implementations must embed UnimplementedFileTransferServiceServer
 // for forward compatibility
-type FileSyncServiceServer interface {
+type FileTransferServiceServer interface {
 	// 创建队列
 	CreateQueue(context.Context, *TaskQueueID) (*FileTaskQueueResp, error)
 	// 列出所有 QueueID
 	ListQueue(context.Context, *emptypb.Empty) (*TaskQueueListResp, error)
 	// 通过队列的 ID 和 Status 获取任务列表
-	QueryQueue(*TaskQueueQueryReq, FileSyncService_QueryQueueServer) error
+	QueryQueue(*TaskQueueQueryReq, FileTransferService_QueryQueueServer) error
 	// 通过队列的 ID 和 Status 清除任务
 	ClearQueue(context.Context, *TaskQueueQueryReq) (*emptypb.Empty, error)
 	// 根据队列 ID 设置队列的速率并发等设置
@@ -264,381 +264,381 @@ type FileSyncServiceServer interface {
 	// 根据队列 ID 开始队列
 	StartQuque(context.Context, *TaskQueueID) (*emptypb.Empty, error)
 	// 根据队列 ID 获取队列动态信息（比如 pending 状态的增加了 task1）
-	QueryQueueMessage(*TaskQueueQueryReq, FileSyncService_QueryQueueMessageServer) error
+	QueryQueueMessage(*TaskQueueQueryReq, FileTransferService_QueryQueueMessageServer) error
 	// 暂时不支持创建Task时创建任务，需要提前创建好任务。queue_id不存在则报错
 	CreateTask(context.Context, *TaskCreateRequest) (*Task, error)
 	// 根据 ID 获取单个任务状态
-	QueryTask(*TaskID, FileSyncService_QueryTaskServer) error
+	QueryTask(*TaskID, FileTransferService_QueryTaskServer) error
 	// 根据 ID 开始单个任务
 	ResumeTask(context.Context, *TaskID) (*emptypb.Empty, error)
 	// 根据 ID 暂停单个任务
 	PauseTask(context.Context, *TaskID) (*emptypb.Empty, error)
 	// 根据 ID 删除单个任务
 	DeleteTask(context.Context, *TaskID) (*emptypb.Empty, error)
-	mustEmbedUnimplementedFileSyncServiceServer()
+	mustEmbedUnimplementedFileTransferServiceServer()
 }
 
-// UnimplementedFileSyncServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedFileSyncServiceServer struct {
+// UnimplementedFileTransferServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedFileTransferServiceServer struct {
 }
 
-func (UnimplementedFileSyncServiceServer) CreateQueue(context.Context, *TaskQueueID) (*FileTaskQueueResp, error) {
+func (UnimplementedFileTransferServiceServer) CreateQueue(context.Context, *TaskQueueID) (*FileTaskQueueResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateQueue not implemented")
 }
-func (UnimplementedFileSyncServiceServer) ListQueue(context.Context, *emptypb.Empty) (*TaskQueueListResp, error) {
+func (UnimplementedFileTransferServiceServer) ListQueue(context.Context, *emptypb.Empty) (*TaskQueueListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListQueue not implemented")
 }
-func (UnimplementedFileSyncServiceServer) QueryQueue(*TaskQueueQueryReq, FileSyncService_QueryQueueServer) error {
+func (UnimplementedFileTransferServiceServer) QueryQueue(*TaskQueueQueryReq, FileTransferService_QueryQueueServer) error {
 	return status.Errorf(codes.Unimplemented, "method QueryQueue not implemented")
 }
-func (UnimplementedFileSyncServiceServer) ClearQueue(context.Context, *TaskQueueQueryReq) (*emptypb.Empty, error) {
+func (UnimplementedFileTransferServiceServer) ClearQueue(context.Context, *TaskQueueQueryReq) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ClearQueue not implemented")
 }
-func (UnimplementedFileSyncServiceServer) ConfigQueue(context.Context, *TaskQueueConfigReq) (*emptypb.Empty, error) {
+func (UnimplementedFileTransferServiceServer) ConfigQueue(context.Context, *TaskQueueConfigReq) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigQueue not implemented")
 }
-func (UnimplementedFileSyncServiceServer) PauseQueue(context.Context, *TaskQueueID) (*emptypb.Empty, error) {
+func (UnimplementedFileTransferServiceServer) PauseQueue(context.Context, *TaskQueueID) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PauseQueue not implemented")
 }
-func (UnimplementedFileSyncServiceServer) StartQuque(context.Context, *TaskQueueID) (*emptypb.Empty, error) {
+func (UnimplementedFileTransferServiceServer) StartQuque(context.Context, *TaskQueueID) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartQuque not implemented")
 }
-func (UnimplementedFileSyncServiceServer) QueryQueueMessage(*TaskQueueQueryReq, FileSyncService_QueryQueueMessageServer) error {
+func (UnimplementedFileTransferServiceServer) QueryQueueMessage(*TaskQueueQueryReq, FileTransferService_QueryQueueMessageServer) error {
 	return status.Errorf(codes.Unimplemented, "method QueryQueueMessage not implemented")
 }
-func (UnimplementedFileSyncServiceServer) CreateTask(context.Context, *TaskCreateRequest) (*Task, error) {
+func (UnimplementedFileTransferServiceServer) CreateTask(context.Context, *TaskCreateRequest) (*Task, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTask not implemented")
 }
-func (UnimplementedFileSyncServiceServer) QueryTask(*TaskID, FileSyncService_QueryTaskServer) error {
+func (UnimplementedFileTransferServiceServer) QueryTask(*TaskID, FileTransferService_QueryTaskServer) error {
 	return status.Errorf(codes.Unimplemented, "method QueryTask not implemented")
 }
-func (UnimplementedFileSyncServiceServer) ResumeTask(context.Context, *TaskID) (*emptypb.Empty, error) {
+func (UnimplementedFileTransferServiceServer) ResumeTask(context.Context, *TaskID) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResumeTask not implemented")
 }
-func (UnimplementedFileSyncServiceServer) PauseTask(context.Context, *TaskID) (*emptypb.Empty, error) {
+func (UnimplementedFileTransferServiceServer) PauseTask(context.Context, *TaskID) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PauseTask not implemented")
 }
-func (UnimplementedFileSyncServiceServer) DeleteTask(context.Context, *TaskID) (*emptypb.Empty, error) {
+func (UnimplementedFileTransferServiceServer) DeleteTask(context.Context, *TaskID) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTask not implemented")
 }
-func (UnimplementedFileSyncServiceServer) mustEmbedUnimplementedFileSyncServiceServer() {}
+func (UnimplementedFileTransferServiceServer) mustEmbedUnimplementedFileTransferServiceServer() {}
 
-// UnsafeFileSyncServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to FileSyncServiceServer will
+// UnsafeFileTransferServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to FileTransferServiceServer will
 // result in compilation errors.
-type UnsafeFileSyncServiceServer interface {
-	mustEmbedUnimplementedFileSyncServiceServer()
+type UnsafeFileTransferServiceServer interface {
+	mustEmbedUnimplementedFileTransferServiceServer()
 }
 
-func RegisterFileSyncServiceServer(s grpc.ServiceRegistrar, srv FileSyncServiceServer) {
-	s.RegisterService(&FileSyncService_ServiceDesc, srv)
+func RegisterFileTransferServiceServer(s grpc.ServiceRegistrar, srv FileTransferServiceServer) {
+	s.RegisterService(&FileTransferService_ServiceDesc, srv)
 }
 
-func _FileSyncService_CreateQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FileTransferService_CreateQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TaskQueueID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileSyncServiceServer).CreateQueue(ctx, in)
+		return srv.(FileTransferServiceServer).CreateQueue(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.FileSyncService/CreateQueue",
+		FullMethod: "/cloud.lazycat.apis.common.FileTransferService/CreateQueue",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileSyncServiceServer).CreateQueue(ctx, req.(*TaskQueueID))
+		return srv.(FileTransferServiceServer).CreateQueue(ctx, req.(*TaskQueueID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FileSyncService_ListQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FileTransferService_ListQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileSyncServiceServer).ListQueue(ctx, in)
+		return srv.(FileTransferServiceServer).ListQueue(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.FileSyncService/ListQueue",
+		FullMethod: "/cloud.lazycat.apis.common.FileTransferService/ListQueue",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileSyncServiceServer).ListQueue(ctx, req.(*emptypb.Empty))
+		return srv.(FileTransferServiceServer).ListQueue(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FileSyncService_QueryQueue_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _FileTransferService_QueryQueue_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(TaskQueueQueryReq)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(FileSyncServiceServer).QueryQueue(m, &fileSyncServiceQueryQueueServer{stream})
+	return srv.(FileTransferServiceServer).QueryQueue(m, &fileTransferServiceQueryQueueServer{stream})
 }
 
-type FileSyncService_QueryQueueServer interface {
+type FileTransferService_QueryQueueServer interface {
 	Send(*Task) error
 	grpc.ServerStream
 }
 
-type fileSyncServiceQueryQueueServer struct {
+type fileTransferServiceQueryQueueServer struct {
 	grpc.ServerStream
 }
 
-func (x *fileSyncServiceQueryQueueServer) Send(m *Task) error {
+func (x *fileTransferServiceQueryQueueServer) Send(m *Task) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _FileSyncService_ClearQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FileTransferService_ClearQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TaskQueueQueryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileSyncServiceServer).ClearQueue(ctx, in)
+		return srv.(FileTransferServiceServer).ClearQueue(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.FileSyncService/ClearQueue",
+		FullMethod: "/cloud.lazycat.apis.common.FileTransferService/ClearQueue",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileSyncServiceServer).ClearQueue(ctx, req.(*TaskQueueQueryReq))
+		return srv.(FileTransferServiceServer).ClearQueue(ctx, req.(*TaskQueueQueryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FileSyncService_ConfigQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FileTransferService_ConfigQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TaskQueueConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileSyncServiceServer).ConfigQueue(ctx, in)
+		return srv.(FileTransferServiceServer).ConfigQueue(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.FileSyncService/ConfigQueue",
+		FullMethod: "/cloud.lazycat.apis.common.FileTransferService/ConfigQueue",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileSyncServiceServer).ConfigQueue(ctx, req.(*TaskQueueConfigReq))
+		return srv.(FileTransferServiceServer).ConfigQueue(ctx, req.(*TaskQueueConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FileSyncService_PauseQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FileTransferService_PauseQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TaskQueueID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileSyncServiceServer).PauseQueue(ctx, in)
+		return srv.(FileTransferServiceServer).PauseQueue(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.FileSyncService/PauseQueue",
+		FullMethod: "/cloud.lazycat.apis.common.FileTransferService/PauseQueue",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileSyncServiceServer).PauseQueue(ctx, req.(*TaskQueueID))
+		return srv.(FileTransferServiceServer).PauseQueue(ctx, req.(*TaskQueueID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FileSyncService_StartQuque_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FileTransferService_StartQuque_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TaskQueueID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileSyncServiceServer).StartQuque(ctx, in)
+		return srv.(FileTransferServiceServer).StartQuque(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.FileSyncService/StartQuque",
+		FullMethod: "/cloud.lazycat.apis.common.FileTransferService/StartQuque",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileSyncServiceServer).StartQuque(ctx, req.(*TaskQueueID))
+		return srv.(FileTransferServiceServer).StartQuque(ctx, req.(*TaskQueueID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FileSyncService_QueryQueueMessage_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _FileTransferService_QueryQueueMessage_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(TaskQueueQueryReq)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(FileSyncServiceServer).QueryQueueMessage(m, &fileSyncServiceQueryQueueMessageServer{stream})
+	return srv.(FileTransferServiceServer).QueryQueueMessage(m, &fileTransferServiceQueryQueueMessageServer{stream})
 }
 
-type FileSyncService_QueryQueueMessageServer interface {
+type FileTransferService_QueryQueueMessageServer interface {
 	Send(*QueueMessageResp) error
 	grpc.ServerStream
 }
 
-type fileSyncServiceQueryQueueMessageServer struct {
+type fileTransferServiceQueryQueueMessageServer struct {
 	grpc.ServerStream
 }
 
-func (x *fileSyncServiceQueryQueueMessageServer) Send(m *QueueMessageResp) error {
+func (x *fileTransferServiceQueryQueueMessageServer) Send(m *QueueMessageResp) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _FileSyncService_CreateTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FileTransferService_CreateTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TaskCreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileSyncServiceServer).CreateTask(ctx, in)
+		return srv.(FileTransferServiceServer).CreateTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.FileSyncService/CreateTask",
+		FullMethod: "/cloud.lazycat.apis.common.FileTransferService/CreateTask",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileSyncServiceServer).CreateTask(ctx, req.(*TaskCreateRequest))
+		return srv.(FileTransferServiceServer).CreateTask(ctx, req.(*TaskCreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FileSyncService_QueryTask_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _FileTransferService_QueryTask_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(TaskID)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(FileSyncServiceServer).QueryTask(m, &fileSyncServiceQueryTaskServer{stream})
+	return srv.(FileTransferServiceServer).QueryTask(m, &fileTransferServiceQueryTaskServer{stream})
 }
 
-type FileSyncService_QueryTaskServer interface {
+type FileTransferService_QueryTaskServer interface {
 	Send(*Task) error
 	grpc.ServerStream
 }
 
-type fileSyncServiceQueryTaskServer struct {
+type fileTransferServiceQueryTaskServer struct {
 	grpc.ServerStream
 }
 
-func (x *fileSyncServiceQueryTaskServer) Send(m *Task) error {
+func (x *fileTransferServiceQueryTaskServer) Send(m *Task) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _FileSyncService_ResumeTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FileTransferService_ResumeTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TaskID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileSyncServiceServer).ResumeTask(ctx, in)
+		return srv.(FileTransferServiceServer).ResumeTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.FileSyncService/ResumeTask",
+		FullMethod: "/cloud.lazycat.apis.common.FileTransferService/ResumeTask",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileSyncServiceServer).ResumeTask(ctx, req.(*TaskID))
+		return srv.(FileTransferServiceServer).ResumeTask(ctx, req.(*TaskID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FileSyncService_PauseTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FileTransferService_PauseTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TaskID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileSyncServiceServer).PauseTask(ctx, in)
+		return srv.(FileTransferServiceServer).PauseTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.FileSyncService/PauseTask",
+		FullMethod: "/cloud.lazycat.apis.common.FileTransferService/PauseTask",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileSyncServiceServer).PauseTask(ctx, req.(*TaskID))
+		return srv.(FileTransferServiceServer).PauseTask(ctx, req.(*TaskID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FileSyncService_DeleteTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FileTransferService_DeleteTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TaskID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileSyncServiceServer).DeleteTask(ctx, in)
+		return srv.(FileTransferServiceServer).DeleteTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.FileSyncService/DeleteTask",
+		FullMethod: "/cloud.lazycat.apis.common.FileTransferService/DeleteTask",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileSyncServiceServer).DeleteTask(ctx, req.(*TaskID))
+		return srv.(FileTransferServiceServer).DeleteTask(ctx, req.(*TaskID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// FileSyncService_ServiceDesc is the grpc.ServiceDesc for FileSyncService service.
+// FileTransferService_ServiceDesc is the grpc.ServiceDesc for FileTransferService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var FileSyncService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cloud.lazycat.apis.common.FileSyncService",
-	HandlerType: (*FileSyncServiceServer)(nil),
+var FileTransferService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "cloud.lazycat.apis.common.FileTransferService",
+	HandlerType: (*FileTransferServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateQueue",
-			Handler:    _FileSyncService_CreateQueue_Handler,
+			Handler:    _FileTransferService_CreateQueue_Handler,
 		},
 		{
 			MethodName: "ListQueue",
-			Handler:    _FileSyncService_ListQueue_Handler,
+			Handler:    _FileTransferService_ListQueue_Handler,
 		},
 		{
 			MethodName: "ClearQueue",
-			Handler:    _FileSyncService_ClearQueue_Handler,
+			Handler:    _FileTransferService_ClearQueue_Handler,
 		},
 		{
 			MethodName: "ConfigQueue",
-			Handler:    _FileSyncService_ConfigQueue_Handler,
+			Handler:    _FileTransferService_ConfigQueue_Handler,
 		},
 		{
 			MethodName: "PauseQueue",
-			Handler:    _FileSyncService_PauseQueue_Handler,
+			Handler:    _FileTransferService_PauseQueue_Handler,
 		},
 		{
 			MethodName: "StartQuque",
-			Handler:    _FileSyncService_StartQuque_Handler,
+			Handler:    _FileTransferService_StartQuque_Handler,
 		},
 		{
 			MethodName: "CreateTask",
-			Handler:    _FileSyncService_CreateTask_Handler,
+			Handler:    _FileTransferService_CreateTask_Handler,
 		},
 		{
 			MethodName: "ResumeTask",
-			Handler:    _FileSyncService_ResumeTask_Handler,
+			Handler:    _FileTransferService_ResumeTask_Handler,
 		},
 		{
 			MethodName: "PauseTask",
-			Handler:    _FileSyncService_PauseTask_Handler,
+			Handler:    _FileTransferService_PauseTask_Handler,
 		},
 		{
 			MethodName: "DeleteTask",
-			Handler:    _FileSyncService_DeleteTask_Handler,
+			Handler:    _FileTransferService_DeleteTask_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "QueryQueue",
-			Handler:       _FileSyncService_QueryQueue_Handler,
+			Handler:       _FileTransferService_QueryQueue_Handler,
 			ServerStreams: true,
 		},
 		{
 			StreamName:    "QueryQueueMessage",
-			Handler:       _FileSyncService_QueryQueueMessage_Handler,
+			Handler:       _FileTransferService_QueryQueueMessage_Handler,
 			ServerStreams: true,
 		},
 		{
 			StreamName:    "QueryTask",
-			Handler:       _FileSyncService_QueryTask_Handler,
+			Handler:       _FileTransferService_QueryTask_Handler,
 			ServerStreams: true,
 		},
 	},
