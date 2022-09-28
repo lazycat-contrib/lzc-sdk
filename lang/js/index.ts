@@ -87,7 +87,7 @@ export class lzcAPIGateway {
         })
     }
 
-    public nm: NM; // 盒子内部的NetworkManager 
+    public nm: NM; // 盒子内部的NetworkManager
     public pkgm: PackageManager;
     public users: UserManager;
     public box: BoxService;
@@ -110,7 +110,7 @@ async function test() {
 }
 
 export class EndDeviceProxy {
-    constructor(apiurl :string) {
+    constructor(apiurl: string = window.origin) {
         const rpc = new GrpcWebImpl(apiurl, opt)
 
         this.dialog = new DialogManagerClientImpl(rpc)
