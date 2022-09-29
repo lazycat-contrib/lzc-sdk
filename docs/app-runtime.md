@@ -38,6 +38,15 @@ app container的文件系统视角里，除了正常的linux rootfs外，还存�
 4. /tmp目录不放置到/lzcapp是考虑到大部分软件组件会假设/tmp的存在且由权限写入。
 
 
+环境变量
+=======
+lzcapp内的任何容器都会设置以下环境变量
+
+- `LAZYCAT_BOX_NAME` 盒子的名字.
+- `LAZYCAT_BOX_DOMAIN` 盒子的域名.
+- `LAZYCAT_APP_ID` 当前app的ID
+- `LAZYCAT_APP_DOMAIN` 当前app分配到的域名
+
 LPK格式0.1
 =======
 LPK为一个后缀为`.lpk`，以zip压缩方式，压缩了一个目录。其目录结构为
