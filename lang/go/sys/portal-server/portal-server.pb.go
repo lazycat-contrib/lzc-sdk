@@ -729,10 +729,12 @@ type AuthToken struct {
 	// 会通过html post form形式调用，附带token和redirect两个字段
 	// token为自动搜索到的token，redirect为AuthToken.autologin_redirect_url的值。
 	// 若token为空表示自动搜索token失败。
-	AutologinTokenPostUrl string              `protobuf:"bytes,2,opt,name=autologin_token_post_url,json=autologinTokenPostUrl,proto3" json:"autologin_token_post_url,omitempty"`
-	AccessIp              string              `protobuf:"bytes,3,opt,name=access_ip,json=accessIp,proto3" json:"access_ip,omitempty"`
-	AutologinRedirectUrl  string              `protobuf:"bytes,4,opt,name=autologin_redirect_url,json=autologinRedirectUrl,proto3" json:"autologin_redirect_url,omitempty"`
-	TokenType             AuthToken_TokenType `protobuf:"varint,5,opt,name=token_type,json=tokenType,proto3,enum=cloud.lazycat.apis.sys.AuthToken_TokenType" json:"token_type,omitempty"`
+	AutologinTokenPostUrl string `protobuf:"bytes,2,opt,name=autologin_token_post_url,json=autologinTokenPostUrl,proto3" json:"autologin_token_post_url,omitempty"`
+	// 若token_type = HTTPBasicAuth或使用autologin机制，
+	// 则必须包含此字段，以便hportal可以分析出正确的登陆设备
+	AccessIp             string              `protobuf:"bytes,3,opt,name=access_ip,json=accessIp,proto3" json:"access_ip,omitempty"`
+	AutologinRedirectUrl string              `protobuf:"bytes,4,opt,name=autologin_redirect_url,json=autologinRedirectUrl,proto3" json:"autologin_redirect_url,omitempty"`
+	TokenType            AuthToken_TokenType `protobuf:"varint,5,opt,name=token_type,json=tokenType,proto3,enum=cloud.lazycat.apis.sys.AuthToken_TokenType" json:"token_type,omitempty"`
 }
 
 func (x *AuthToken) Reset() {
