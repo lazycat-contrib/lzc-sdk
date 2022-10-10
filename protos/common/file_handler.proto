@@ -29,6 +29,10 @@ message QueryRequest {
   string mime = 1;
   // 文件路径(可选 android下面使用path查询，体验更好 ）
   optional string path = 2;
+
+  // 期望的 app icon 尺寸
+  optional int32 icon_width = 3;
+  optional int32 icon_height = 4;
 }
 message QueryReply {
   repeated AppShortcut app_list = 1;
