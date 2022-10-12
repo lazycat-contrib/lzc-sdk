@@ -85,7 +85,7 @@ message TransmitInfo {
   // 当前速度， 单位为 Byte/s
   int64 speed = 3;
 }
-message Time { google.protobuf.Timestamp Time = 1; }
+
 message Task {
   TaskID id = 1;
   FileLocation src = 2;
@@ -93,8 +93,8 @@ message Task {
   string file_name = 4;
   TaskStatus status = 5;
   optional TransmitInfo info = 6;
-  optional Time CreatedAt = 7;
-  optional Time UpdatedAt = 8;
+  optional google.protobuf.Timestamp created_at = 7;
+  optional google.protobuf.Timestamp updated_at = 8;
 }
 
 /*
@@ -137,9 +137,10 @@ enum MsgAction {
   Del = 1;
 }
 message QueueMessageResp {
-  TaskStatus status = 1;
+  TaskID id = 1;
   MsgAction action = 2;
-  TaskID id = 3;
+  TaskStatus status = 3;
+  optional string error_message = 4;
 }
 
 message TaskQueueListResp { repeated TaskQueueID ids = 1; }
