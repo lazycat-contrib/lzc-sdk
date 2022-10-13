@@ -138,9 +138,10 @@ enum MsgAction {
 }
 message QueueMessageResp {
   TaskID id = 1;
-  MsgAction action = 2;
-  TaskStatus status = 3;
-  optional string error_message = 4;
+  Task task = 2;
+  MsgAction action = 3;
+  TaskStatus status = 4;
+  optional string error_message = 5;
 }
 
 message TaskQueueListResp { repeated TaskQueueID ids = 1; }
