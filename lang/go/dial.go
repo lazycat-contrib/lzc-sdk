@@ -4,17 +4,25 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"io/ioutil"
+	"os"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
 
 var (
-	CAPath        = "/lzcapp/run/certs/box.crt"
-	APPCertPath   = "/lzcapp/run/certs/app.crt"
-	APPKeyPath    = "/lzcapp/run/certs/app.key"
-	APISocketPath = "/lzcapp/run/sys/lzc-apis.socket"
+	CAPath      = "/lzcapp/run/certs/box.crt"
+	APPCertPath = "/lzcapp/run/certs/app.crt"
+	APPKeyPath  = "/lzcapp/run/certs/app.key"
 )
+
+func apiSocketPath() string {
+	x := os.Getenv("LZCAPP_API_GATEWAY_ADDRESS")
+	if x == "" {
+		return "unix:/lzcapp/run/sys/lzc-apis.socket"
+	}
+	return x
+}
 
 func buildClientCredOption(caCrt string, appKey string, appCrt string) (grpc.DialOption, error) {
 	cert, err := tls.LoadX509KeyPair(appCrt, appKey)

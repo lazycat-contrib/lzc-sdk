@@ -63,7 +63,7 @@ func NewAPIConn(ctx context.Context) (*grpc.ClientConn, error) {
 	if err != nil {
 		return nil, err
 	}
-	return grpc.DialContext(ctx, "unix:"+APISocketPath, grpc.WithBlock(), cred)
+	return grpc.DialContext(ctx, apiSocketPath(), grpc.WithBlock(), cred)
 }
 
 func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
@@ -71,7 +71,7 @@ func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
 	if err != nil {
 		return nil, err
 	}
-	conn, err := grpc.DialContext(ctx, "unix:"+APISocketPath, grpc.WithBlock(), cred)
+	conn, err := grpc.DialContext(ctx, apiSocketPath(), grpc.WithBlock(), cred)
 	if err != nil {
 		return nil, err
 	}
