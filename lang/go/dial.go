@@ -1,6 +1,7 @@
 package gohelper
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"io/ioutil"
@@ -46,6 +47,11 @@ func buildClientCredOption(caCrt string, appKey string, appCrt string) (grpc.Dia
 	return grpc.WithTransportCredentials(cred), nil
 }
 
-func DialCred() (grpc.DialOption, error) {
-	return buildClientCredOption(CAPath, APPKeyPath, APPCertPath)
+func dialConn(ctx context.Context, cred grpc.DialOption) (*grpc.ClientConn, error) {
+	x := os.Getenv("LZCAPP_API_GATEWAY_ADDRESS")
+	if x == "" {
+		return grpc.DialContext(ctx, "unix:/lzcapp/run/sys/lzc-apis.socket", grpc.WithBlock(), cred)
+	} else {
+		return grpc.DialContext(ctx, x, grpc.WithBlock(), grpc.WithInsecure())
+	}
 }

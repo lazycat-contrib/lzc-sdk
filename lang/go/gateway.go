@@ -59,23 +59,22 @@ func (gw *APIGateway) NewDeviceProxy(deviceapiurl string) (*DeviceProxy, error) 
 }
 
 func NewAPIConn(ctx context.Context) (*grpc.ClientConn, error) {
-	cred, err := DialCred()
+	cred, err := buildClientCredOption(CAPath, APPKeyPath, APPCertPath)
 	if err != nil {
 		return nil, err
 	}
-	return grpc.DialContext(ctx, apiSocketPath(), grpc.WithBlock(), cred)
+	return dialConn(ctx, cred)
 }
 
 func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
-	cred, err := DialCred()
+	cred, err := buildClientCredOption(CAPath, APPKeyPath, APPCertPath)
 	if err != nil {
 		return nil, err
 	}
-	conn, err := grpc.DialContext(ctx, apiSocketPath(), grpc.WithBlock(), cred)
+	conn, err := dialConn(ctx, cred)
 	if err != nil {
 		return nil, err
 	}
-
 	return &APIGateway{
 		cred: cred,
 		conn: conn,
