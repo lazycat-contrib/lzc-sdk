@@ -19,6 +19,7 @@ type APIGateway struct {
 	Devices          common.EndDeviceServiceClient
 	Permisions       common.PermissionManagerClient
 	PeripheralDevice common.PeripheralDeviceServiceClient
+	FileTransfer     common.FileTransferServiceClient
 	PkgManager       sys.PackageManagerClient
 
 	OSUpgrader sys.OSUpgradeServiceClient
@@ -33,7 +34,6 @@ type DeviceProxy struct {
 	Dialog       localdevice.DialogManagerClient
 	PhotoLibrary localdevice.PhotoLibraryClient
 	Network      localdevice.NetworkManagerClient
-	FileTransfer common.FileTransferServiceClient
 }
 
 func (d *DeviceProxy) Close() error { return d.conn.Close() }
@@ -54,7 +54,6 @@ func (gw *APIGateway) NewDeviceProxy(deviceapiurl string) (*DeviceProxy, error) 
 		Dialog:       localdevice.NewDialogManagerClient(conn),
 		PhotoLibrary: localdevice.NewPhotoLibraryClient(conn),
 		Network:      localdevice.NewNetworkManagerClient(conn),
-		FileTransfer: common.NewFileTransferServiceClient(conn),
 	}, nil
 }
 
@@ -87,5 +86,6 @@ func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
 		Devices:          common.NewEndDeviceServiceClient(conn),
 		Permisions:       common.NewPermissionManagerClient(conn),
 		PeripheralDevice: common.NewPeripheralDeviceServiceClient(conn),
+		FileTransfer:     common.NewFileTransferServiceClient(conn),
 	}, nil
 }
