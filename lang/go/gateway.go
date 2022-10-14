@@ -33,6 +33,7 @@ type DeviceProxy struct {
 	Dialog       localdevice.DialogManagerClient
 	PhotoLibrary localdevice.PhotoLibraryClient
 	Network      localdevice.NetworkManagerClient
+	FileTransfer common.FileTransferServiceClient
 }
 
 func (d *DeviceProxy) Close() error { return d.conn.Close() }
@@ -53,6 +54,7 @@ func (gw *APIGateway) NewDeviceProxy(deviceapiurl string) (*DeviceProxy, error) 
 		Dialog:       localdevice.NewDialogManagerClient(conn),
 		PhotoLibrary: localdevice.NewPhotoLibraryClient(conn),
 		Network:      localdevice.NewNetworkManagerClient(conn),
+		FileTransfer: common.NewFileTransferServiceClient(conn),
 	}, nil
 }
 
