@@ -92,9 +92,10 @@ message Task {
   FileLocation dst = 3;
   string file_name = 4;
   TaskStatus status = 5;
-  optional TransmitInfo info = 6;
-  optional google.protobuf.Timestamp created_at = 7;
-  optional google.protobuf.Timestamp updated_at = 8;
+  optional int64 size = 6; // 前端请求可以没有大小，返回需要有
+  optional TransmitInfo info = 7;
+  optional google.protobuf.Timestamp created_at = 8;
+  optional google.protobuf.Timestamp updated_at = 9;
 }
 
 /*
