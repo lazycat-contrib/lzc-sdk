@@ -15,11 +15,55 @@ import (
 	"google.golang.org/grpc"
 )
 
-func InitTracer(ctx context.Context) error {
-	endpoint := "host.lzcapp:4317"
-	_, err := net.LookupIP("host.lzcapp")
+type _Config struct {
+	sname    string
+	endpoint string
+}
+
+type Option func(*_Config) error
+
+func WithServiceName(name string) Option {
+	return func(opts *_Config) error {
+		opts.sname = name
+		return nil
+	}
+}
+func WithEndpoint(addr string) Option {
+	return func(opts *_Config) error {
+		opts.endpoint = addr
+		return nil
+	}
+}
+
+func apply(opts ...Option) (*_Config, error) {
+	cfg := &_Config{}
+	for _, opt := range opts {
+		err := opt(cfg)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if cfg.sname == "" {
+		cfg.sname = os.Getenv("LAZYCAT_APP_ID")
+		if cfg.sname == "" {
+			cfg.sname = os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
+		}
+	}
+	if cfg.endpoint == "" {
+		endpoint := "host.lzcapp:4317"
+		_, err := net.LookupIP("host.lzcapp")
+		if err != nil {
+			endpoint = "127.0.0.1:4317"
+		}
+		cfg.endpoint = endpoint
+	}
+	return cfg, nil
+}
+
+func InitTracer(ctx context.Context, opts ...Option) error {
+	cfg, err := apply(opts...)
 	if err != nil {
-		endpoint = "127.0.0.1:4317"
+		return err
 	}
 
 	exporter, err := otlptrace.New(
@@ -29,7 +73,7 @@ func InitTracer(ctx context.Context) error {
 			otlptracegrpc.WithDialOption(
 				grpc.WithBlock(),
 			),
-			otlptracegrpc.WithEndpoint(endpoint),
+			otlptracegrpc.WithEndpoint(cfg.endpoint),
 		),
 	)
 	if err != nil {
@@ -38,7 +82,7 @@ func InitTracer(ctx context.Context) error {
 
 	res, err := sdkresource.New(ctx,
 		sdkresource.WithAttributes(
-			semconv.ServiceNameKey.String(os.Getenv("LAZYCAT_APP_ID")),
+			semconv.ServiceNameKey.String(cfg.sname),
 		),
 	)
 	if err != nil {
