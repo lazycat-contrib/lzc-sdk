@@ -2,6 +2,7 @@ package telemetry
 
 import (
 	"context"
+	"net"
 	"os"
 
 	"go.opentelemetry.io/otel"
@@ -15,6 +16,12 @@ import (
 )
 
 func InitTracer(ctx context.Context) error {
+	endpoint := "host.lzcapp:4317"
+	_, err := net.LookupIP("host.lzcapp")
+	if err != nil {
+		endpoint = "127.0.0.1:4317"
+	}
+
 	exporter, err := otlptrace.New(
 		ctx,
 		otlptracegrpc.NewClient(
@@ -22,7 +29,7 @@ func InitTracer(ctx context.Context) error {
 			otlptracegrpc.WithDialOption(
 				grpc.WithBlock(),
 			),
-			otlptracegrpc.WithEndpoint("host.lzcapp:4317"),
+			otlptracegrpc.WithEndpoint(endpoint),
 		),
 	)
 	if err != nil {
