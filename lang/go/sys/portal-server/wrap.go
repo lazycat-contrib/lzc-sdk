@@ -4,6 +4,7 @@ import (
 	"net"
 	"os"
 
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	grpc "google.golang.org/grpc"
 )
 
@@ -12,7 +13,10 @@ import (
 var SocketPath = "/run/lzc-sys/portal-server.socket"
 
 func Serve(srv HPortalSysServer) error {
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
+		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
+	)
 
 	RegisterHPortalSysServer(s, srv)
 
