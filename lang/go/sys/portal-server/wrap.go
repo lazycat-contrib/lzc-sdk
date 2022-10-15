@@ -41,6 +41,8 @@ func (c Client) Close() error { return c.conn.Close() }
 func NewClient() (*Client, error) {
 	opts := []grpc.DialOption{
 		grpc.WithInsecure(),
+		grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor()),
+		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
 	}
 	conn, err := grpc.Dial("unix://"+SocketPath, opts...)
 	if err != nil {

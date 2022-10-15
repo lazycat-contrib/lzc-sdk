@@ -46,7 +46,11 @@ type Client struct {
 func (c *Client) Close() error { return c.conn.Close() }
 
 func NewClient() (*Client, error) {
-	conn, err := grpc.Dial("unix://"+SocketPath, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("unix://"+SocketPath,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor()),
+		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+	)
 	if err != nil {
 		return nil, err
 	}
