@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.localdevice;
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
+
+// 权限管理
+service  PermissionManager{
+  // 检测权限
+  rpc checkPermission(CheckPermissionRequest) returns (CheckPermissionReply){}
+}
+
+enum  Permission {
+  // 打开相册需要的权限（读取相册和删除照片）
+  PHOTO_LIBRAY_PERMISSION = 0;
+  // 打开文件管理器的权限(读取文件，删除文件)
+  FILE_HANLDER_PERMISSION = 1;
+  // 打开第三方文件的权限(是否允许打开第三方应用(唤醒））
+  OPEN_FILE_PERMISSION = 2;
+}
+
+enum PermissionResult {
+  // 已经授予
+  GRANTED = 0;
+  // 未授予
+  NO_GRANTED =1;
+  // 未知
+  UN_KNOWN = 3;
+}
+
+
+message CheckPermissionRequest{
+  Permission permission = 1;
+}
+
+message CheckPermissionReply{
+  PermissionResult reulst = 1;
+}
