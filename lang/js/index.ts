@@ -120,6 +120,7 @@ export class EndDeviceProxy {
         this.device = new DeviceServiceClientImpl(rpc)
         this.fileHandler = new FileHandlerClientImpl(rpc)
         this.fileTransfer = new FileTransferServiceClientImpl(rpc)
+        this.permission = new PermissionManagerClientImpl(rpc)
     }
 
     public device : DeviceService;
@@ -129,6 +130,7 @@ export class EndDeviceProxy {
     public network: NetworkManager;
     public fileHandler: FileHandler;
     public fileTransfer: FileTransferService;
+    public permission: PermissionManager;
 }
 
 
