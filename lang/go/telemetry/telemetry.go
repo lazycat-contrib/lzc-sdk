@@ -15,7 +15,6 @@ import (
 	"go.opentelemetry.io/otel/trace"
 
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
-	"google.golang.org/grpc"
 )
 
 type _Config struct {
@@ -108,9 +107,6 @@ func InitTracerProvider(ctx context.Context, opts ...Option) error {
 		ctx,
 		otlptracegrpc.NewClient(
 			otlptracegrpc.WithInsecure(),
-			otlptracegrpc.WithDialOption(
-				grpc.WithBlock(),
-			),
 			otlptracegrpc.WithEndpoint(cfg.endpoint),
 		),
 	)
@@ -129,8 +125,7 @@ func InitTracerProvider(ctx context.Context, opts ...Option) error {
 
 	tp = sdktrace.NewTracerProvider(
 		sdktrace.WithSampler(sdktrace.AlwaysSample()),
-		sdktrace.WithSyncer(exporter),
-		//		sdktrace.WithBatcher(exporter),
+		sdktrace.WithBatcher(exporter),
 		sdktrace.WithResource(res),
 	)
 
