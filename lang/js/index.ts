@@ -23,6 +23,7 @@ import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clip
 import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo"
 import { NetworkManagerClientImpl, NetworkManager } from "./localdevice/network"
 import { DeviceServiceClientImpl, DeviceService } from "./localdevice/device"
+import { PermissionManager as DevicePermissionManager,  PermissionManagerClientImpl as DevicePermissionManagerClientImpl} from "./localdevice/permission"
 import {FileHandlerClientImpl,FileHandler} from "./common/file_handler"
 import { FileTransferServiceClientImpl, FileTransferService} from "./common/filetrans"
 import { grpc } from "@improbable-eng/grpc-web";
@@ -112,7 +113,6 @@ async function test() {
 export class EndDeviceProxy {
     constructor(apiurl: string = window.origin) {
         const rpc = new GrpcWebImpl(apiurl, opt)
-
         this.dialog = new DialogManagerClientImpl(rpc)
         this.clipboard = new ClipboardManagerClientImpl(rpc)
         this.photolibrary = new PhotoLibraryClientImpl(rpc)
@@ -120,7 +120,7 @@ export class EndDeviceProxy {
         this.device = new DeviceServiceClientImpl(rpc)
         this.fileHandler = new FileHandlerClientImpl(rpc)
         this.fileTransfer = new FileTransferServiceClientImpl(rpc)
-        this.permission = new PermissionManagerClientImpl(rpc)
+        this.permission = new DevicePermissionManagerClientImpl(rpc)
     }
 
     public device : DeviceService;
@@ -130,7 +130,7 @@ export class EndDeviceProxy {
     public network: NetworkManager;
     public fileHandler: FileHandler;
     public fileTransfer: FileTransferService;
-    public permission: PermissionManager;
+    public permission: DevicePermissionManager;
 }
 
 
