@@ -36,7 +36,7 @@ func NewPermissionManagerClient(cc grpc.ClientConnInterface) PermissionManagerCl
 
 func (c *permissionManagerClient) CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*CheckPermissionReply, error) {
 	out := new(CheckPermissionReply)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.PermissionManager/checkPermission", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.PermissionManager/CheckPermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func _PermissionManager_CheckPermission_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.localdevice.PermissionManager/checkPermission",
+		FullMethod: "/cloud.lazycat.apis.localdevice.PermissionManager/CheckPermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PermissionManagerServer).CheckPermission(ctx, req.(*CheckPermissionRequest))
@@ -98,7 +98,7 @@ var PermissionManager_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PermissionManagerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "checkPermission",
+			MethodName: "CheckPermission",
 			Handler:    _PermissionManager_CheckPermission_Handler,
 		},
 	},
