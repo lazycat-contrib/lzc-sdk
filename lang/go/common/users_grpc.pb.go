@@ -42,7 +42,7 @@ type UserManagerClient interface {
 	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GenUserInvitation(ctx context.Context, in *portal_server.GenUserInvitationRequest, opts ...grpc.CallOption) (*portal_server.UserInvitation, error)
 	// 检测用户密码有效性（是否能够登录）
-	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*CheckPasswordReply, error)
+	CheckPassword(ctx context.Context, in *portal_server.CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type userManagerClient struct {
@@ -134,8 +134,8 @@ func (c *userManagerClient) GenUserInvitation(ctx context.Context, in *portal_se
 	return out, nil
 }
 
-func (c *userManagerClient) CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*CheckPasswordReply, error) {
-	out := new(CheckPasswordReply)
+func (c *userManagerClient) CheckPassword(ctx context.Context, in *portal_server.CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.UserManager/CheckPassword", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -165,7 +165,7 @@ type UserManagerServer interface {
 	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
 	GenUserInvitation(context.Context, *portal_server.GenUserInvitationRequest) (*portal_server.UserInvitation, error)
 	// 检测用户密码有效性（是否能够登录）
-	CheckPassword(context.Context, *CheckPasswordRequest) (*CheckPasswordReply, error)
+	CheckPassword(context.Context, *portal_server.CheckPasswordRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUserManagerServer()
 }
 
@@ -200,7 +200,7 @@ func (UnimplementedUserManagerServer) ForceResetPassword(context.Context, *Force
 func (UnimplementedUserManagerServer) GenUserInvitation(context.Context, *portal_server.GenUserInvitationRequest) (*portal_server.UserInvitation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenUserInvitation not implemented")
 }
-func (UnimplementedUserManagerServer) CheckPassword(context.Context, *CheckPasswordRequest) (*CheckPasswordReply, error) {
+func (UnimplementedUserManagerServer) CheckPassword(context.Context, *portal_server.CheckPasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
 }
 func (UnimplementedUserManagerServer) mustEmbedUnimplementedUserManagerServer() {}
@@ -379,7 +379,7 @@ func _UserManager_GenUserInvitation_Handler(srv interface{}, ctx context.Context
 }
 
 func _UserManager_CheckPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckPasswordRequest)
+	in := new(portal_server.CheckPasswordRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -391,7 +391,7 @@ func _UserManager_CheckPassword_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/cloud.lazycat.apis.common.UserManager/CheckPassword",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserManagerServer).CheckPassword(ctx, req.(*CheckPasswordRequest))
+		return srv.(UserManagerServer).CheckPassword(ctx, req.(*portal_server.CheckPasswordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

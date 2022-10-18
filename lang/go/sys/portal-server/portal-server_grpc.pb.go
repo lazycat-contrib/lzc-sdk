@@ -66,7 +66,7 @@ type HPortalSysClient interface {
 	// 注销当前用户指定设备，同时将连接断开
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	//校验用户密码是否正确
-	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*CheckPasswordReply, error)
+	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type hPortalSysClient struct {
@@ -271,8 +271,8 @@ func (c *hPortalSysClient) Logout(ctx context.Context, in *LogoutRequest, opts .
 	return out, nil
 }
 
-func (c *hPortalSysClient) CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*CheckPasswordReply, error) {
-	out := new(CheckPasswordReply)
+func (c *hPortalSysClient) CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/CheckPassword", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -327,7 +327,7 @@ type HPortalSysServer interface {
 	// 注销当前用户指定设备，同时将连接断开
 	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
 	//校验用户密码是否正确
-	CheckPassword(context.Context, *CheckPasswordRequest) (*CheckPasswordReply, error)
+	CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -392,7 +392,7 @@ func (UnimplementedHPortalSysServer) GenUserInvitation(context.Context, *GenUser
 func (UnimplementedHPortalSysServer) Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
-func (UnimplementedHPortalSysServer) CheckPassword(context.Context, *CheckPasswordRequest) (*CheckPasswordReply, error) {
+func (UnimplementedHPortalSysServer) CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}

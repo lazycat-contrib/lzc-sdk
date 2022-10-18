@@ -66,7 +66,7 @@ service HPortalSys {
   rpc Logout(LogoutRequest)returns(google.protobuf.Empty){}
 
   //校验用户密码是否正确
-  rpc CheckPassword(CheckPasswordRequest) returns (CheckPasswordReply){}
+  rpc CheckPassword(CheckPasswordRequest) returns (google.protobuf.Empty){}
 }
 
 message GenUserInvitationRequest {
@@ -310,7 +310,4 @@ message LogoutRequest{
 message CheckPasswordRequest{
   string uid = 1;
   string password = 2;
-}
-
-message CheckPasswordReply{
 }

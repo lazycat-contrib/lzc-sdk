@@ -47,7 +47,7 @@ service UserManager {
   rpc GenUserInvitation(cloud.lazycat.apis.sys.GenUserInvitationRequest) returns (cloud.lazycat.apis.sys.UserInvitation) {}
 
   // 检测用户密码有效性（是否能够登录）
-  rpc CheckPassword(CheckPasswordRequest) returns(CheckPasswordReply){
+  rpc CheckPassword(cloud.lazycat.apis.sys.CheckPasswordRequest) returns(google.protobuf.Empty){
     option(cloud.lazycat.apis.common.scontext).require_user_class = TARGET_USER;
   }
 }
@@ -103,12 +103,4 @@ message UpdateUserInfoRequest {
 message ForceResetPasswordRequest{
   string uid = 1;
   string new_password = 2;
-}
-
-message CheckPasswordRequest{
-  string uid = 1;
-  string password = 2;
-}
-
-message CheckPasswordReply{
 }
