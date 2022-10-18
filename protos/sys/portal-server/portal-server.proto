@@ -19,6 +19,8 @@ service HPortalSys {
 
   rpc QueryBoxInfo(google.protobuf.Empty) returns (BoxInfo) {}
 
+  rpc SetBoxStatus(BoxStatus) returns (google.protobuf.Empty) {}
+
   // 获取盒子所属域名下或下一级域名的https证书。
   // 注意不是所有ACME服务器都支持泛域名。
   rpc GetDomainCert(DomainCertRequest) returns (DomainCertReply) {}
@@ -200,6 +202,15 @@ message BoxInfo {
 
   // PEM格式的盒子证书, 作为盒子系统其他app cert的CA证书。
   string box_cert = 7;
+}
+
+message BoxStatus {
+  enum Status {
+    OK = 0;
+    Error = 1;
+  }
+  Status status = 1;
+  string url = 2;
 }
 
 message DomainCertRequest {

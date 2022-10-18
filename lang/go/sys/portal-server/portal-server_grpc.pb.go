@@ -29,6 +29,7 @@ type HPortalSysClient interface {
 	ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error)
 	QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error)
 	QueryBoxInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxInfo, error)
+	SetBoxStatus(ctx context.Context, in *BoxStatus, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 获取盒子所属域名下或下一级域名的https证书。
 	// 注意不是所有ACME服务器都支持泛域名。
 	GetDomainCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
@@ -104,6 +105,15 @@ func (c *hPortalSysClient) QueryDeviceByID(ctx context.Context, in *DeviceID, op
 func (c *hPortalSysClient) QueryBoxInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxInfo, error) {
 	out := new(BoxInfo)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/QueryBoxInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) SetBoxStatus(ctx context.Context, in *BoxStatus, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/SetBoxStatus", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -269,6 +279,7 @@ type HPortalSysServer interface {
 	ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error)
 	QueryDeviceByID(context.Context, *DeviceID) (*Device, error)
 	QueryBoxInfo(context.Context, *emptypb.Empty) (*BoxInfo, error)
+	SetBoxStatus(context.Context, *BoxStatus) (*emptypb.Empty, error)
 	// 获取盒子所属域名下或下一级域名的https证书。
 	// 注意不是所有ACME服务器都支持泛域名。
 	GetDomainCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
@@ -322,6 +333,9 @@ func (UnimplementedHPortalSysServer) QueryDeviceByID(context.Context, *DeviceID)
 }
 func (UnimplementedHPortalSysServer) QueryBoxInfo(context.Context, *emptypb.Empty) (*BoxInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryBoxInfo not implemented")
+}
+func (UnimplementedHPortalSysServer) SetBoxStatus(context.Context, *BoxStatus) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetBoxStatus not implemented")
 }
 func (UnimplementedHPortalSysServer) GetDomainCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDomainCert not implemented")
@@ -446,6 +460,24 @@ func _HPortalSys_QueryBoxInfo_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HPortalSysServer).QueryBoxInfo(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_SetBoxStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BoxStatus)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).SetBoxStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/SetBoxStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).SetBoxStatus(ctx, req.(*BoxStatus))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -727,6 +759,10 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QueryBoxInfo",
 			Handler:    _HPortalSys_QueryBoxInfo_Handler,
+		},
+		{
+			MethodName: "SetBoxStatus",
+			Handler:    _HPortalSys_SetBoxStatus_Handler,
 		},
 		{
 			MethodName: "GetDomainCert",
