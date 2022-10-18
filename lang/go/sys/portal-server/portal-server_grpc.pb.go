@@ -65,6 +65,8 @@ type HPortalSysClient interface {
 	GenUserInvitation(ctx context.Context, in *GenUserInvitationRequest, opts ...grpc.CallOption) (*UserInvitation, error)
 	// 注销当前用户指定设备，同时将连接断开
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//校验用户密码是否正确
+	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*CheckPasswordReply, error)
 }
 
 type hPortalSysClient struct {
@@ -269,6 +271,15 @@ func (c *hPortalSysClient) Logout(ctx context.Context, in *LogoutRequest, opts .
 	return out, nil
 }
 
+func (c *hPortalSysClient) CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*CheckPasswordReply, error) {
+	out := new(CheckPasswordReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/CheckPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HPortalSysServer is the server API for HPortalSys service.
 // All implementations must embed UnimplementedHPortalSysServer
 // for forward compatibility
@@ -315,6 +326,8 @@ type HPortalSysServer interface {
 	GenUserInvitation(context.Context, *GenUserInvitationRequest) (*UserInvitation, error)
 	// 注销当前用户指定设备，同时将连接断开
 	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
+	//校验用户密码是否正确
+	CheckPassword(context.Context, *CheckPasswordRequest) (*CheckPasswordReply, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -378,6 +391,9 @@ func (UnimplementedHPortalSysServer) GenUserInvitation(context.Context, *GenUser
 }
 func (UnimplementedHPortalSysServer) Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedHPortalSysServer) CheckPassword(context.Context, *CheckPasswordRequest) (*CheckPasswordReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -737,6 +753,24 @@ func _HPortalSys_Logout_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_CheckPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).CheckPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/CheckPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).CheckPassword(ctx, req.(*CheckPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HPortalSys_ServiceDesc is the grpc.ServiceDesc for HPortalSys service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -815,6 +849,10 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _HPortalSys_Logout_Handler,
+		},
+		{
+			MethodName: "CheckPassword",
+			Handler:    _HPortalSys_CheckPassword_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

@@ -64,6 +64,9 @@ service HPortalSys {
 
   // 注销当前用户指定设备，同时将连接断开
   rpc Logout(LogoutRequest)returns(google.protobuf.Empty){}
+
+  //校验用户密码是否正确
+  rpc CheckPassword(CheckPasswordRequest) returns (CheckPasswordReply){}
 }
 
 message GenUserInvitationRequest {
@@ -302,4 +305,12 @@ message LogoutRequest{
     LogoutByDeleting = 0;
     LogoutByUser = 1;
   }
+}
+
+message CheckPasswordRequest{
+  string uid = 1;
+  string password = 2;
+}
+
+message CheckPasswordReply{
 }

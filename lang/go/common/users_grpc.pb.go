@@ -41,6 +41,8 @@ type UserManagerClient interface {
 	// 强制重置用户密码（管理员角色允许调用)
 	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GenUserInvitation(ctx context.Context, in *portal_server.GenUserInvitationRequest, opts ...grpc.CallOption) (*portal_server.UserInvitation, error)
+	// 检测用户密码有效性（是否能够登录）
+	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*CheckPasswordReply, error)
 }
 
 type userManagerClient struct {
@@ -132,6 +134,15 @@ func (c *userManagerClient) GenUserInvitation(ctx context.Context, in *portal_se
 	return out, nil
 }
 
+func (c *userManagerClient) CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*CheckPasswordReply, error) {
+	out := new(CheckPasswordReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.UserManager/CheckPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserManagerServer is the server API for UserManager service.
 // All implementations must embed UnimplementedUserManagerServer
 // for forward compatibility
@@ -153,6 +164,8 @@ type UserManagerServer interface {
 	// 强制重置用户密码（管理员角色允许调用)
 	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
 	GenUserInvitation(context.Context, *portal_server.GenUserInvitationRequest) (*portal_server.UserInvitation, error)
+	// 检测用户密码有效性（是否能够登录）
+	CheckPassword(context.Context, *CheckPasswordRequest) (*CheckPasswordReply, error)
 	mustEmbedUnimplementedUserManagerServer()
 }
 
@@ -186,6 +199,9 @@ func (UnimplementedUserManagerServer) ForceResetPassword(context.Context, *Force
 }
 func (UnimplementedUserManagerServer) GenUserInvitation(context.Context, *portal_server.GenUserInvitationRequest) (*portal_server.UserInvitation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenUserInvitation not implemented")
+}
+func (UnimplementedUserManagerServer) CheckPassword(context.Context, *CheckPasswordRequest) (*CheckPasswordReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
 }
 func (UnimplementedUserManagerServer) mustEmbedUnimplementedUserManagerServer() {}
 
@@ -362,6 +378,24 @@ func _UserManager_GenUserInvitation_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserManager_CheckPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserManagerServer).CheckPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.common.UserManager/CheckPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserManagerServer).CheckPassword(ctx, req.(*CheckPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserManager_ServiceDesc is the grpc.ServiceDesc for UserManager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -404,6 +438,10 @@ var UserManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenUserInvitation",
 			Handler:    _UserManager_GenUserInvitation_Handler,
+		},
+		{
+			MethodName: "CheckPassword",
+			Handler:    _UserManager_CheckPassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
