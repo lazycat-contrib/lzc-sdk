@@ -28,7 +28,7 @@ const (
 	// 打开文件管理器需要的权限(读取文件，删除文件)
 	Permission_DOCUMENET_PERMISSION Permission = 1
 	// 打开第三方应用的权限(需要使用第三方app来打开文件）
-	Permission_OPEN_THIRD_PARTY_APP Permission = 2
+	Permission_OPEN_THIRD_PARTY_APP Permission = 2 // 是否有创建懒猫云应用快捷方式的权限
 )
 
 // Enum value maps for Permission.

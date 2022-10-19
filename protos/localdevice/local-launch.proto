@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.localdevice;
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
+
+import "google/protobuf/timestamp.proto";
+
+service LocalLaunchService{
+  // 创建快捷方式
+  rpc PinApp(PinAppRequest) returns (PinAppReply){}
+  // 删除快捷方式
+  rpc UnPinApp(UnPinAppRequest) returns (UnPinAppReply){}
+  // 打开指定的懒猫云应用
+  rpc OpenApp(OpenAppRequest) returns(OpenAppReply){}
+}
+
+message PinAppRequest{
+  string url = 1;
+  string appName = 2;
+}
+
+message PinAppReply{
+
+}
+
+message UnPinAppRequest{
+  string url = 1;
+}
+
+message UnPinAppReply{
+
+}
+
+message OpenAppRequest{
+  string url = 1;
+}
+
+message OpenAppReply{
+
+}
