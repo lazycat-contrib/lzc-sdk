@@ -23,9 +23,10 @@ import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clip
 import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo"
 import { NetworkManagerClientImpl, NetworkManager } from "./localdevice/network"
 import { DeviceServiceClientImpl, DeviceService } from "./localdevice/device"
-import { PermissionManager as DevicePermissionManager,  PermissionManagerClientImpl as DevicePermissionManagerClientImpl} from "./localdevice/permission"
-import {FileHandlerClientImpl,FileHandler} from "./common/file_handler"
-import { FileTransferServiceClientImpl, FileTransferService} from "./common/filetrans"
+import { PermissionManager as DevicePermissionManager,  PermissionManagerClientImpl as DevicePermissionManagerClientImpl } from "./localdevice/permission"
+import { FileHandlerClientImpl,FileHandler } from "./common/file_handler"
+import { FileTransferServiceClientImpl, FileTransferService } from "./common/filetrans"
+import { LocalLaunchService,LocalLaunchServiceClientImpl } from "./localdevice/local-launch"
 import { grpc } from "@improbable-eng/grpc-web";
 
 
@@ -121,6 +122,7 @@ export class EndDeviceProxy {
         this.fileHandler = new FileHandlerClientImpl(rpc)
         this.fileTransfer = new FileTransferServiceClientImpl(rpc)
         this.permission = new DevicePermissionManagerClientImpl(rpc)
+        this.localLaunch = new LocalLaunchServiceClientImpl(rpc);
     }
 
     public device : DeviceService;
@@ -131,6 +133,7 @@ export class EndDeviceProxy {
     public fileHandler: FileHandler;
     public fileTransfer: FileTransferService;
     public permission: DevicePermissionManager;
+    public localLaunch : LocalLaunchService;
 }
 
 
