@@ -4,7 +4,6 @@ package cloud.lazycat.apis.localdevice;
 
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
 
-import "google/protobuf/timestamp.proto";
 
 service LocalLaunchService{
   // 创建快捷方式
@@ -18,6 +17,8 @@ service LocalLaunchService{
 message PinAppRequest{
   string url = 1;
   string appName = 2;
+  // icon地址允许是http类型或者base64类型,如果为空将尝试获取网站的favicon.ico
+  string iconUrl = 3;
 }
 
 message PinAppReply{
