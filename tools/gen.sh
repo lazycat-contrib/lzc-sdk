@@ -38,6 +38,7 @@ protoc -I . \
        ./sys/*/*.proto \
        ./sys/*.proto \
        ./localdevice/*.proto \
+       ./ssdp/*.proto \
        ./common/*.proto
 popd
 

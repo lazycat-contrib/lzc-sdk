@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package lzc.ssdp;
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/ssdp";
+
+service SSDPService {
+  rpc Search(SearchRequest) returns (stream Service);
+
+  // rpc Advertise(xml)
+}
+
+message SearchRequest {
+  string type = 1;     // "urn:schemas-upnp-org:service:AVTransport:1", "ssdp:all" 之类的
+  int32 wait_seconds = 2; //0-120之间
+}
+
+message Service {
+  // Type is a property of "ST"
+  string type = 1;
+
+  // USN is a property of "USN"
+  string USN = 2;
+
+  // Location is a property of "LOCATION"
+  string location = 3;
+
+  // Server is a property of "SERVER"
+  string server = 4;
+}
