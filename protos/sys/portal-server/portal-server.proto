@@ -213,7 +213,6 @@ message BoxStatus {
     Error = 1;
   }
   Status status = 1;
-  string url = 2;
 }
 
 message DomainCertRequest {
