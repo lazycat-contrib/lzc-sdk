@@ -17,6 +17,8 @@ enum  Permission {
   DOCUMENET_PERMISSION = 1;
   // 打开第三方应用的权限(需要使用第三方app来打开文件）
   OPEN_THIRD_PARTY_APP = 2;
+  // 将快捷方式放在桌面的权限
+  PIN_APP_PERMISSIN = 3;
 }
 
 

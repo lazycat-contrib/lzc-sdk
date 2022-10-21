@@ -153,3 +153,10 @@ async function dumpInfo(bo :BrowserOnlyProxy) {
     let info = await bo.QueryAPIServerInfo({})
     capsule(`LZC SDK Version is`, `${info.frontendVersion}`)
 }
+
+/**
+ * 是否是webshell环境
+ */
+export function isWebShell(){
+   return navigator.userAgent.indexOf("Lazycat") != -1;
+}
