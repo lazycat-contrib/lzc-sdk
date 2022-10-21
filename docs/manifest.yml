@@ -25,6 +25,8 @@ application:
 
   background_task: false #是否存在后台任务，若存在则系统不会对此app进行主动休眠等操作
 
+  gpu_accel: false # 是否允许使用硬件加速
+
   file_handler: # 声明本app支持操作的文件类型，mime至少存在一条记录，actions至少要支持open
     mime:  #按照mime类型注册到系统
       - x-scheme-handler/http
