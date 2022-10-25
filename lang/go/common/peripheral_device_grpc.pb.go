@@ -26,10 +26,8 @@ type PeripheralDeviceServiceClient interface {
 	// 列举当前盒子所连接的移动磁盘。以及对应磁盘在当前APP中的挂载情况。
 	// 挂载情况应该反应当下的实际情况。
 	ListRemovableDisk(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListRemovableDiskReply, error)
-	// 挂载特定移动磁盘的某个分区
-	// 默认挂载到 $APPID/lzcapp/run/mnt/media/$partion_uuid目录下，亦可手动指定 target 目录。
+	// 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partion_uuid目录下
 	MountFilesystem(ctx context.Context, in *MountFilesystemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 卸载特定分区
 	UmountFilesystem(ctx context.Context, in *UmountFilesystemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -75,10 +73,8 @@ type PeripheralDeviceServiceServer interface {
 	// 列举当前盒子所连接的移动磁盘。以及对应磁盘在当前APP中的挂载情况。
 	// 挂载情况应该反应当下的实际情况。
 	ListRemovableDisk(context.Context, *emptypb.Empty) (*ListRemovableDiskReply, error)
-	// 挂载特定移动磁盘的某个分区
-	// 默认挂载到 $APPID/lzcapp/run/mnt/media/$partion_uuid目录下，亦可手动指定 target 目录。
+	// 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partion_uuid目录下
 	MountFilesystem(context.Context, *MountFilesystemRequest) (*emptypb.Empty, error)
-	// 卸载特定分区
 	UmountFilesystem(context.Context, *UmountFilesystemRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPeripheralDeviceServiceServer()
 }
