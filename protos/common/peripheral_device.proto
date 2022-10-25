@@ -56,8 +56,12 @@ message UmountFilesystemRequest {
   }
 }
 
+message WebDavAuth {
+  string username = 1;
+  string password = 2;
+}
+
 message MountWebDavRequest {
   string url = 1;
-  optional string user = 2;
-  optional string password = 3;
+  optional WebDavAuth auth = 2;
 }
