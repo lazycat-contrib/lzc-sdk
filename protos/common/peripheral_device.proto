@@ -63,5 +63,7 @@ message WebDavAuth {
 
 message MountWebDavRequest {
   string url = 1;
-  optional WebDavAuth auth = 2;
+  // relative to webdav home root
+  string mountpoint = 2;
+  optional WebDavAuth auth = 3;
 }
