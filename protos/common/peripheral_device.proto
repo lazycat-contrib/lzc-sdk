@@ -13,11 +13,13 @@ service PeripheralDeviceService {
   // 挂载情况应该反应当下的实际情况。
   rpc ListRemovableDisk(google.protobuf.Empty) returns (ListRemovableDiskReply) {}
 
-  // 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partion_uuid目录下
+  // 挂载特定移动磁盘的某个分区
+  // 默认挂载到 $APPID/lzcapp/run/mnt/media/$partion_uuid目录下，亦可手动指定 target 目录。
   rpc MountFilesystem(MountFilesystemRequest) returns (google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_permissions = USER_DOCUMENT;
   }
 
+  // 卸载特定分区
   rpc UmountFilesystem(UmountFilesystemRequest) returns (google.protobuf.Empty) {}
 }
 
@@ -31,6 +33,7 @@ message ListRemovableDiskReply {
 
 message MountFilesystemRequest {
   string uuid = 1;
+  optional string target = 2;
 }
 message UmountFilesystemRequest {
   oneof target {
