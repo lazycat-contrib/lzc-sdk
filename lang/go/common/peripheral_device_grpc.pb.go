@@ -29,6 +29,7 @@ type PeripheralDeviceServiceClient interface {
 	// 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partion_uuid目录下
 	MountFilesystem(ctx context.Context, in *MountFilesystemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	UmountFilesystem(ctx context.Context, in *UmountFilesystemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MountWebDav(ctx context.Context, in *MountWebDavRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type peripheralDeviceServiceClient struct {
@@ -66,6 +67,15 @@ func (c *peripheralDeviceServiceClient) UmountFilesystem(ctx context.Context, in
 	return out, nil
 }
 
+func (c *peripheralDeviceServiceClient) MountWebDav(ctx context.Context, in *MountWebDavRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.PeripheralDeviceService/MountWebDav", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PeripheralDeviceServiceServer is the server API for PeripheralDeviceService service.
 // All implementations must embed UnimplementedPeripheralDeviceServiceServer
 // for forward compatibility
@@ -76,6 +86,7 @@ type PeripheralDeviceServiceServer interface {
 	// 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partion_uuid目录下
 	MountFilesystem(context.Context, *MountFilesystemRequest) (*emptypb.Empty, error)
 	UmountFilesystem(context.Context, *UmountFilesystemRequest) (*emptypb.Empty, error)
+	MountWebDav(context.Context, *MountWebDavRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPeripheralDeviceServiceServer()
 }
 
@@ -91,6 +102,9 @@ func (UnimplementedPeripheralDeviceServiceServer) MountFilesystem(context.Contex
 }
 func (UnimplementedPeripheralDeviceServiceServer) UmountFilesystem(context.Context, *UmountFilesystemRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UmountFilesystem not implemented")
+}
+func (UnimplementedPeripheralDeviceServiceServer) MountWebDav(context.Context, *MountWebDavRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MountWebDav not implemented")
 }
 func (UnimplementedPeripheralDeviceServiceServer) mustEmbedUnimplementedPeripheralDeviceServiceServer() {
 }
@@ -160,6 +174,24 @@ func _PeripheralDeviceService_UmountFilesystem_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PeripheralDeviceService_MountWebDav_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MountWebDavRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PeripheralDeviceServiceServer).MountWebDav(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.common.PeripheralDeviceService/MountWebDav",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PeripheralDeviceServiceServer).MountWebDav(ctx, req.(*MountWebDavRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PeripheralDeviceService_ServiceDesc is the grpc.ServiceDesc for PeripheralDeviceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -178,6 +210,10 @@ var PeripheralDeviceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UmountFilesystem",
 			Handler:    _PeripheralDeviceService_UmountFilesystem_Handler,
+		},
+		{
+			MethodName: "MountWebDav",
+			Handler:    _PeripheralDeviceService_MountWebDav_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

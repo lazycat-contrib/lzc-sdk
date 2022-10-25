@@ -19,6 +19,8 @@ service PeripheralDeviceService {
   }
 
   rpc UmountFilesystem(UmountFilesystemRequest) returns (google.protobuf.Empty) {}
+
+  rpc MountWebDav(MountWebDavRequest) returns (google.protobuf.Empty) {}
 }
 
 message ListRemovableDiskReply {
@@ -27,16 +29,6 @@ message ListRemovableDiskReply {
 
   //当前APP已挂载的磁盘列表。
   repeated RemovableFilesystemPartion mounted = 2;
-}
-
-message MountFilesystemRequest {
-  string uuid = 1;
-}
-message UmountFilesystemRequest {
-  oneof target {
-    string uuid = 1;
-    string mount_point = 2;
-  }
 }
 
 message RemovableFilesystemPartion {
@@ -51,4 +43,21 @@ message RemovableFilesystemPartion {
 
   // partion label name or other meaningful name for user
   optional string name = 4;
+}
+
+message MountFilesystemRequest {
+  string uuid = 1;
+}
+
+message UmountFilesystemRequest {
+  oneof target {
+    string uuid = 1;
+    string mount_point = 2;
+  }
+}
+
+message MountWebDavRequest {
+  string url = 1;
+  optional string user = 2;
+  optional string password = 3;
 }
