@@ -196,6 +196,7 @@ message Appid {
 enum Action {
   Open = 0;
   New = 1;
+  Download = 2;
 }
 
 message GetActionURLRequest {
