@@ -30,7 +30,7 @@ const (
 	// 打开第三方应用的权限(需要使用第三方app来打开文件）
 	Permission_OPEN_THIRD_PARTY_APP Permission = 2
 	// 将快捷方式放在桌面的权限
-	PERMISSION_PIN_APP_PERMISSIN Permission = 3
+	Permission_PIN_APP_PERMISSIN Permission = 3
 )
 
 // Enum value maps for Permission.

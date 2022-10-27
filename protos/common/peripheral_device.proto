@@ -9,29 +9,30 @@ import "google/protobuf/empty.proto";
 
 // 外围设备管理服务
 service PeripheralDeviceService {
-  // 列举当前盒子所连接的移动磁盘。以及对应磁盘在当前APP中的挂载情况。
-  // 挂载情况应该反应当下的实际情况。
-  rpc ListRemovableDisk(google.protobuf.Empty) returns (ListRemovableDiskReply) {}
+  // 列出当前盒子已挂载和可以挂载但未挂载的文件系统
+  rpc ListFilesystems(google.protobuf.Empty) returns (ListFilesystemsReply) {}
 
-  // 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partion_uuid目录下
-  rpc MountFilesystem(MountFilesystemRequest) returns (google.protobuf.Empty) {
+  // 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
+  rpc MountDisk(MountDiskRequest) returns (google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_permissions = USER_DOCUMENT;
   }
 
-  rpc UmountFilesystem(UmountFilesystemRequest) returns (google.protobuf.Empty) {}
-
+  // 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home 目录下，具体路径可以指定
   rpc MountWebDav(MountWebDavRequest) returns (google.protobuf.Empty) {}
+
+  // 通过 uuid 或 mountpoint 卸载文件系统
+  rpc UmountFilesystem(UmountFilesystemRequest) returns (google.protobuf.Empty) {}
 }
 
-message ListRemovableDiskReply {
+message ListFilesystemsReply {
   //当前APP未挂载的磁盘列表
-  repeated RemovableFilesystemPartition umounted = 1;
+  repeated Filesystem umounted = 1;
 
   //当前APP已挂载的磁盘列表。
-  repeated RemovableFilesystemPartition mounted = 2;
+  repeated Filesystem mounted = 2;
 }
 
-message RemovableFilesystemPartition {
+message Filesystem {
   string source = 1;
 
   // ntfs/fat32/ext4 ...
@@ -50,15 +51,8 @@ message RemovableFilesystemPartition {
   optional string mountpoint = 6;
 }
 
-message MountFilesystemRequest {
+message MountDiskRequest {
   string uuid = 1;
-}
-
-message UmountFilesystemRequest {
-  oneof target {
-    string uuid = 1;
-    string mountpoint = 2;
-  }
 }
 
 message MountWebDavRequest {
@@ -67,4 +61,11 @@ message MountWebDavRequest {
   string mountpoint = 2;
   string username = 3;
   string password = 4;
+}
+
+message UmountFilesystemRequest {
+  oneof target {
+    string uuid = 1;
+    string mountpoint = 2;
+  }
 }

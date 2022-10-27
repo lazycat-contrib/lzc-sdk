@@ -28,6 +28,10 @@ type LocalLaunchServiceClient interface {
 	UnPinApp(ctx context.Context, in *UnPinAppRequest, opts ...grpc.CallOption) (*UnPinAppReply, error)
 	// 打开指定的懒猫云应用
 	OpenApp(ctx context.Context, in *OpenAppRequest, opts ...grpc.CallOption) (*OpenAppReply, error)
+	// 使用不安全模式打开指定APP
+	// App页面由两个webview组成：一个control-view,一个content-view
+	// 其中app渲染在control-view中，content-view的内容由App代码控制
+	OpenUnsafeApp(ctx context.Context, in *OpenUnsafeAppRequest, opts ...grpc.CallOption) (*OpenAppReply, error)
 }
 
 type localLaunchServiceClient struct {
@@ -65,6 +69,15 @@ func (c *localLaunchServiceClient) OpenApp(ctx context.Context, in *OpenAppReque
 	return out, nil
 }
 
+func (c *localLaunchServiceClient) OpenUnsafeApp(ctx context.Context, in *OpenUnsafeAppRequest, opts ...grpc.CallOption) (*OpenAppReply, error) {
+	out := new(OpenAppReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.LocalLaunchService/OpenUnsafeApp", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LocalLaunchServiceServer is the server API for LocalLaunchService service.
 // All implementations must embed UnimplementedLocalLaunchServiceServer
 // for forward compatibility
@@ -75,6 +88,10 @@ type LocalLaunchServiceServer interface {
 	UnPinApp(context.Context, *UnPinAppRequest) (*UnPinAppReply, error)
 	// 打开指定的懒猫云应用
 	OpenApp(context.Context, *OpenAppRequest) (*OpenAppReply, error)
+	// 使用不安全模式打开指定APP
+	// App页面由两个webview组成：一个control-view,一个content-view
+	// 其中app渲染在control-view中，content-view的内容由App代码控制
+	OpenUnsafeApp(context.Context, *OpenUnsafeAppRequest) (*OpenAppReply, error)
 	mustEmbedUnimplementedLocalLaunchServiceServer()
 }
 
@@ -90,6 +107,9 @@ func (UnimplementedLocalLaunchServiceServer) UnPinApp(context.Context, *UnPinApp
 }
 func (UnimplementedLocalLaunchServiceServer) OpenApp(context.Context, *OpenAppRequest) (*OpenAppReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OpenApp not implemented")
+}
+func (UnimplementedLocalLaunchServiceServer) OpenUnsafeApp(context.Context, *OpenUnsafeAppRequest) (*OpenAppReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OpenUnsafeApp not implemented")
 }
 func (UnimplementedLocalLaunchServiceServer) mustEmbedUnimplementedLocalLaunchServiceServer() {}
 
@@ -158,6 +178,24 @@ func _LocalLaunchService_OpenApp_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LocalLaunchService_OpenUnsafeApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OpenUnsafeAppRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LocalLaunchServiceServer).OpenUnsafeApp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.localdevice.LocalLaunchService/OpenUnsafeApp",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LocalLaunchServiceServer).OpenUnsafeApp(ctx, req.(*OpenUnsafeAppRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LocalLaunchService_ServiceDesc is the grpc.ServiceDesc for LocalLaunchService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +214,10 @@ var LocalLaunchService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OpenApp",
 			Handler:    _LocalLaunchService_OpenApp_Handler,
+		},
+		{
+			MethodName: "OpenUnsafeApp",
+			Handler:    _LocalLaunchService_OpenUnsafeApp_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
