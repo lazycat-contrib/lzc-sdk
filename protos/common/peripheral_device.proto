@@ -25,24 +25,29 @@ service PeripheralDeviceService {
 
 message ListRemovableDiskReply {
   //当前APP未挂载的磁盘列表
-  repeated RemovableFilesystemPartion umounted = 1;
+  repeated RemovableFilesystemPartition umounted = 1;
 
   //当前APP已挂载的磁盘列表。
-  repeated RemovableFilesystemPartion mounted = 2;
+  repeated RemovableFilesystemPartition mounted = 2;
 }
 
-message RemovableFilesystemPartion {
-  // partion's uuid.
-  string uuid = 1;
-
-  // size unit in bytes
-  int64 size = 2;
+message RemovableFilesystemPartition {
+  string source = 1;
 
   // ntfs/fat32/ext4 ...
-  string fstype = 3;
+  string fstype = 2;
 
-  // partion label name or other meaningful name for user
-  optional string name = 4;
+  // partion label name or other meaningful name for user(eg. sda)
+  string name = 3;
+
+  // size unit in bytes
+  uint64 size = 4;
+
+  // uuid of filesystem, maybe nil(eg. for fuse)
+  optional string uuid = 5;
+
+  // mountpoint of filesystem, nil if it's not mounted
+  optional string mountpoint = 6;
 }
 
 message MountFilesystemRequest {
@@ -52,7 +57,7 @@ message MountFilesystemRequest {
 message UmountFilesystemRequest {
   oneof target {
     string uuid = 1;
-    string mount_point = 2;
+    string mountpoint = 2;
   }
 }
 
