@@ -400,7 +400,7 @@ type OpenUnsafeAppRequest struct {
 	Url string `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
 	// control-view的位置
 	Position OpenUnsafeAppRequest_Position `protobuf:"varint,2,opt,name=position,proto3,enum=cloud.lazycat.apis.localdevice.OpenUnsafeAppRequest_Position" json:"position,omitempty"`
-	// control-view的高度
+	// control-view的高度(当control-view 在左右的时候表示宽度， 上下表示高度）
 	Height string `protobuf:"bytes,3,opt,name=height,proto3" json:"height,omitempty"` // 10%; 50px;
 	//
 	//此外control-view会接收以下特殊事件, 所有事件均统一以post-message形式发送， msg格式为`{ type: string, msg: string }`

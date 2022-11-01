@@ -8,7 +8,6 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
 service LocalLaunchService{
   // 创建快捷方式
   rpc PinApp(PinAppRequest) returns (PinAppReply){}
-
   // 删除快捷方式
   rpc UnPinApp(UnPinAppRequest) returns (UnPinAppReply){}
 
@@ -60,7 +59,7 @@ message OpenUnsafeAppRequest {
   // control-view的位置
   Position position = 2;
 
-  // control-view的高度
+  // control-view的高度(当control-view 在左右的时候表示宽度， 上下表示高度）
   string height = 3; // 10%; 50px;
 
 
