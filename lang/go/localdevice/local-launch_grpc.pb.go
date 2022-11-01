@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type LocalLaunchServiceClient interface {
 	// 创建快捷方式
 	PinApp(ctx context.Context, in *PinAppRequest, opts ...grpc.CallOption) (*PinAppReply, error)
+	// 删除快捷方式
 	UnPinApp(ctx context.Context, in *UnPinAppRequest, opts ...grpc.CallOption) (*UnPinAppReply, error)
 	// 打开指定的懒猫云应用
 	OpenApp(ctx context.Context, in *OpenAppRequest, opts ...grpc.CallOption) (*OpenAppReply, error)
@@ -83,6 +84,7 @@ func (c *localLaunchServiceClient) OpenUnsafeApp(ctx context.Context, in *OpenUn
 type LocalLaunchServiceServer interface {
 	// 创建快捷方式
 	PinApp(context.Context, *PinAppRequest) (*PinAppReply, error)
+	// 删除快捷方式
 	UnPinApp(context.Context, *UnPinAppRequest) (*UnPinAppReply, error)
 	// 打开指定的懒猫云应用
 	OpenApp(context.Context, *OpenAppRequest) (*OpenAppReply, error)
