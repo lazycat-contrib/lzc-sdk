@@ -40,6 +40,7 @@ protoc -I . \
        ./localdevice/*.proto \
        ./ssdp/*.proto \
        ./lanforward/*.proto \
+       ./dlna/*.proto \
        ./common/*.proto
 popd
 

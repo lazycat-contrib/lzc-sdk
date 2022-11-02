@@ -27,6 +27,7 @@ import { PermissionManager as DevicePermissionManager,  PermissionManagerClientI
 import { FileHandlerClientImpl,FileHandler } from "./common/file_handler"
 import { FileTransferServiceClientImpl, FileTransferService } from "./common/filetrans"
 import { LocalLaunchService,LocalLaunchServiceClientImpl } from "./localdevice/local-launch"
+import { RemoteMediaPlayerService, RemoteMediaPlayerServiceClientImpl } from "./dlna/dlna"
 import { grpc } from "@improbable-eng/grpc-web";
 
 
@@ -72,6 +73,8 @@ export class lzcAPIGateway {
         this.osUpgrader = new OSUpgradeServiceClientImpl(rpc);
         this.osSnapshot = new OSSnapshotServiceClientImpl(rpc);
 
+        this.rmp = new RemoteMediaPlayerServiceClientImpl(rpc);
+
         this.currentDevice = buildCurrentDevice(this)
         dumpInfo(this.bo)
     }
@@ -79,6 +82,7 @@ export class lzcAPIGateway {
     private gw : APIGateway;
     private pm : PermissionManager;
     private pd : PeripheralDeviceService;
+    private rmp : RemoteMediaPlayerService;
 
     public async openDevices() {
         return new Promise<void>((resolve, reject) => {

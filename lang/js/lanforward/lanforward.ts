@@ -1,9 +1,9 @@
 /* eslint-disable */
 import { grpc } from "@improbable-eng/grpc-web";
 import { BrowserHeaders } from "browser-headers";
-import _m0 from "protobufjs/minimal";
-import { Observable } from "rxjs";
 import { share } from "rxjs/operators";
+import { Observable } from "rxjs";
+import _m0 from "protobufjs/minimal";
 
 export interface ForwardRequest {
   /** lzc-manifest.yml中声明的service名称，默认为"app" */
@@ -20,7 +20,10 @@ function createBaseForwardRequest(): ForwardRequest {
 }
 
 export const ForwardRequest = {
-  encode(message: ForwardRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: ForwardRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
     if (message.serviceName !== "") {
       writer.uint32(10).string(message.serviceName);
     }
@@ -60,12 +63,15 @@ export const ForwardRequest = {
 
   toJSON(message: ForwardRequest): unknown {
     const obj: any = {};
-    message.serviceName !== undefined && (obj.serviceName = message.serviceName);
+    message.serviceName !== undefined &&
+      (obj.serviceName = message.serviceName);
     message.port !== undefined && (obj.port = Math.round(message.port));
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<ForwardRequest>, I>>(object: I): ForwardRequest {
+  fromPartial<I extends Exact<DeepPartial<ForwardRequest>, I>>(
+    object: I
+  ): ForwardRequest {
     const message = createBaseForwardRequest();
     message.serviceName = object.serviceName ?? "";
     message.port = object.port ?? 0;
@@ -78,7 +84,10 @@ function createBaseForwardResponse(): ForwardResponse {
 }
 
 export const ForwardResponse = {
-  encode(message: ForwardResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: ForwardResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
     if (message.proxyUrl !== "") {
       writer.uint32(18).string(message.proxyUrl);
     }
@@ -104,7 +113,9 @@ export const ForwardResponse = {
   },
 
   fromJSON(object: any): ForwardResponse {
-    return { proxyUrl: isSet(object.proxyUrl) ? String(object.proxyUrl) : "" };
+    return {
+      proxyUrl: isSet(object.proxyUrl) ? String(object.proxyUrl) : "",
+    };
   },
 
   toJSON(message: ForwardResponse): unknown {
@@ -113,7 +124,9 @@ export const ForwardResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<ForwardResponse>, I>>(object: I): ForwardResponse {
+  fromPartial<I extends Exact<DeepPartial<ForwardResponse>, I>>(
+    object: I
+  ): ForwardResponse {
     const message = createBaseForwardResponse();
     message.proxyUrl = object.proxyUrl ?? "";
     return message;
@@ -127,7 +140,10 @@ export interface LanForwardService {
    *
    * 请求者需要主动关闭此请求以便停止相关服务
    */
-  Forward(request: DeepPartial<ForwardRequest>, metadata?: grpc.Metadata): Observable<ForwardResponse>;
+  Forward(
+    request: DeepPartial<ForwardRequest>,
+    metadata?: grpc.Metadata
+  ): Observable<ForwardResponse>;
 }
 
 export class LanForwardServiceClientImpl implements LanForwardService {
@@ -138,12 +154,21 @@ export class LanForwardServiceClientImpl implements LanForwardService {
     this.Forward = this.Forward.bind(this);
   }
 
-  Forward(request: DeepPartial<ForwardRequest>, metadata?: grpc.Metadata): Observable<ForwardResponse> {
-    return this.rpc.invoke(LanForwardServiceForwardDesc, ForwardRequest.fromPartial(request), metadata);
+  Forward(
+    request: DeepPartial<ForwardRequest>,
+    metadata?: grpc.Metadata
+  ): Observable<ForwardResponse> {
+    return this.rpc.invoke(
+      LanForwardServiceForwardDesc,
+      ForwardRequest.fromPartial(request),
+      metadata
+    );
   }
 }
 
-export const LanForwardServiceDesc = { serviceName: "lzc.lanforward.LanForwardService" };
+export const LanForwardServiceDesc = {
+  serviceName: "lzc.lanforward.LanForwardService",
+};
 
 export const LanForwardServiceForwardDesc: UnaryMethodDefinitionish = {
   methodName: "Forward",
@@ -167,7 +192,8 @@ export const LanForwardServiceForwardDesc: UnaryMethodDefinitionish = {
   } as any,
 };
 
-interface UnaryMethodDefinitionishR extends grpc.UnaryMethodDefinition<any, any> {
+interface UnaryMethodDefinitionishR
+  extends grpc.UnaryMethodDefinition<any, any> {
   requestStream: any;
   responseStream: any;
 }
@@ -178,12 +204,12 @@ interface Rpc {
   unary<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     request: any,
-    metadata: grpc.Metadata | undefined,
+    metadata: grpc.Metadata | undefined
   ): Promise<any>;
   invoke<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     request: any,
-    metadata: grpc.Metadata | undefined,
+    metadata: grpc.Metadata | undefined
   ): Observable<any>;
 }
 
@@ -205,7 +231,7 @@ export class GrpcWebImpl {
       debug?: boolean;
       metadata?: grpc.Metadata;
       upStreamRetryCodes?: number[];
-    },
+    }
   ) {
     this.host = host;
     this.options = options;
@@ -214,12 +240,16 @@ export class GrpcWebImpl {
   unary<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     _request: any,
-    metadata: grpc.Metadata | undefined,
+    metadata: grpc.Metadata | undefined
   ): Promise<any> {
     const request = { ..._request, ...methodDesc.requestType };
-    const maybeCombinedMetadata = metadata && this.options.metadata
-      ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
-      : metadata || this.options.metadata;
+    const maybeCombinedMetadata =
+      metadata && this.options.metadata
+        ? new BrowserHeaders({
+            ...this.options?.metadata.headersMap,
+            ...metadata?.headersMap,
+          })
+        : metadata || this.options.metadata;
     return new Promise((resolve, reject) => {
       grpc.unary(methodDesc, {
         request,
@@ -231,7 +261,9 @@ export class GrpcWebImpl {
           if (response.status === grpc.Code.OK) {
             resolve(response.message);
           } else {
-            const err = new GrpcWebError(response.statusMessage, response.status, response.trailers);
+            const err = new Error(response.statusMessage) as any;
+            err.code = response.status;
+            err.metadata = response.trailers;
             reject(err);
           }
         },
@@ -242,16 +274,20 @@ export class GrpcWebImpl {
   invoke<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     _request: any,
-    metadata: grpc.Metadata | undefined,
+    metadata: grpc.Metadata | undefined
   ): Observable<any> {
     const upStreamCodes = this.options.upStreamRetryCodes || [];
     const DEFAULT_TIMEOUT_TIME: number = 3_000;
     const request = { ..._request, ...methodDesc.requestType };
-    const maybeCombinedMetadata = metadata && this.options.metadata
-      ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
-      : metadata || this.options.metadata;
+    const maybeCombinedMetadata =
+      metadata && this.options.metadata
+        ? new BrowserHeaders({
+            ...this.options?.metadata.headersMap,
+            ...metadata?.headersMap,
+          })
+        : metadata || this.options.metadata;
     return new Observable((observer) => {
-      const upStream = (() => {
+      const upStream = () => {
         const client = grpc.invoke(methodDesc, {
           host: this.host,
           request,
@@ -259,7 +295,11 @@ export class GrpcWebImpl {
           metadata: maybeCombinedMetadata,
           debug: this.options.debug,
           onMessage: (next) => observer.next(next),
-          onEnd: (code: grpc.Code, message: string, trailers: grpc.Metadata) => {
+          onEnd: (
+            code: grpc.Code,
+            message: string,
+            trailers: grpc.Metadata
+          ) => {
             if (code === 0) {
               observer.complete();
             } else if (upStreamCodes.includes(code)) {
@@ -273,29 +313,39 @@ export class GrpcWebImpl {
           },
         });
         observer.add(() => client.close());
-      });
+      };
       upStream();
     }).pipe(share());
   }
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
-type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+type DeepPartial<T> = T extends Builtin
+  ? T
+  : T extends Array<infer U>
+  ? Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U>
+  ? ReadonlyArray<DeepPartial<U>>
+  : T extends {}
+  ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<
+        Exclude<keyof I, KeysOfUnion<P>>,
+        never
+      >;
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
-}
-
-export class GrpcWebError extends Error {
-  constructor(message: string, public code: grpc.Code, public metadata: grpc.Metadata) {
-    super(message);
-  }
 }
