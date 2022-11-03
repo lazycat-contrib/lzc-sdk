@@ -65,15 +65,16 @@ message OpenUnsafeAppRequest {
 
   // 所有的功能都通过 window.lzc_control_api对象注入. (后面以$API代指)
   enum Feature {
-    InjectJS = 0;  //$API.InjectContentJS(jscontent)
-    ReadCookie = 1; //$API.ReadCookie(domain) -> string
+    InjectJS = 0;  //$API.InjectContentJS(jscontent,callback)  content-view 执行的jscontent, 如果有结果，会将结果通过callback(result:Boolean): 通知给control-view
+    ReadCookie = 1; //$API.ReadCookie(domain) -> string  读取content-view cookie
   }
   /*
     除了以上特性外，control-view具备以下默认的接口
-    1. $API.SetContentURL(url) 设置content-view的url地址
-    2. $API.GetContentURL() -> url 返回content-view当前的url地址
-    3. $API.BackContentView() -> bool : content-view的历史记录回退： 返回false表示无法进行
-    4. $API.ForwardContentView() ->bool: content-view的历史记录前进, 返回false表示无法进行
+    1. $API.SetContentURL(url,callback) content-view 打开指定url地址，调用callback(result: Boolean) 的方法通知control-view
+    2. $API.GetContentURL(callback) ->  callback： 获取content-view当前的地址,调用 callback(url:String)通知control-view
+    3. $API.BackContentView(callback) ->  callback: content-view的历史记录回退, 返回false表示无法进行,将调用callback(result:Boolean) 回调通知
+    4. $API.ForwardContentView(callback) ->callback: content-view的历史记录前进, 返回false表示无法进行,(result:Boolean)回调通知control-view
+    5. $API.NotifyControView(jscontent) -> void : control-view将执行jscontent内容，用来通知control-view, 该接口用于content-view 通知control-view
   */
   /*
     此外control-view会接收以下特殊事件, 所有事件均统一以post-message形式发送， msg格式为`{ type: string, msg: string }`
