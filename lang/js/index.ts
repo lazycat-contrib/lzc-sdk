@@ -82,7 +82,6 @@ export class lzcAPIGateway {
     private gw : APIGateway;
     private pm : PermissionManager;
     private pd : PeripheralDeviceService;
-    private rmp : RemoteMediaPlayerService;
 
     public async openDevices() {
         return new Promise<void>((resolve, reject) => {
@@ -108,6 +107,8 @@ export class lzcAPIGateway {
 
     public appinfo: Promise<AppInfo>;
     public devices: EndDeviceService;
+    public rmp : RemoteMediaPlayerService;
+
 }
 
 async function test() {
