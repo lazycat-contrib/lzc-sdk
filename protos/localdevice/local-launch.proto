@@ -83,7 +83,8 @@ message OpenUnsafeAppRequest {
     1. OnURLChange(new_url)
     2. OnNewLinkClick(url)
     3. OnDownloadLinkRequest(url)
-    4. OnContentMessage(msg string) //在content-view中调用post-message发送的任何消息
+    4. OnNewResourceLink(url) 将所有的content-view请求的url通知给control-view
+    5. OnContentMessage(msg string) //在content-view中调用post-message发送的任何消息
    */
   repeated Feature features = 4;
 }
