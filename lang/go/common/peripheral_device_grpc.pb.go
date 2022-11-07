@@ -27,7 +27,7 @@ type PeripheralDeviceServiceClient interface {
 	ListFilesystems(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListFilesystemsReply, error)
 	// 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
 	MountDisk(ctx context.Context, in *MountDiskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home 目录下，具体路径可以指定
+	// 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home/$uid 目录下，具体路径可以指定
 	MountWebDav(ctx context.Context, in *MountWebDavRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 通过 uuid 或 mountpoint 卸载文件系统
 	UmountFilesystem(ctx context.Context, in *UmountFilesystemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -85,7 +85,7 @@ type PeripheralDeviceServiceServer interface {
 	ListFilesystems(context.Context, *emptypb.Empty) (*ListFilesystemsReply, error)
 	// 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
 	MountDisk(context.Context, *MountDiskRequest) (*emptypb.Empty, error)
-	// 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home 目录下，具体路径可以指定
+	// 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home/$uid 目录下，具体路径可以指定
 	MountWebDav(context.Context, *MountWebDavRequest) (*emptypb.Empty, error)
 	// 通过 uuid 或 mountpoint 卸载文件系统
 	UmountFilesystem(context.Context, *UmountFilesystemRequest) (*emptypb.Empty, error)

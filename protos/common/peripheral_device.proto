@@ -17,7 +17,7 @@ service PeripheralDeviceService {
     option (cloud.lazycat.apis.common.scontext).require_permissions = USER_DOCUMENT;
   }
 
-  // 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home 目录下，具体路径可以指定
+  // 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home/$uid 目录下，具体路径可以指定
   rpc MountWebDav(MountWebDavRequest) returns (google.protobuf.Empty) {}
 
   // 通过 uuid 或 mountpoint 卸载文件系统
