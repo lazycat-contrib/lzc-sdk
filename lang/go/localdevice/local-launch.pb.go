@@ -76,8 +76,8 @@ func (OpenUnsafeAppRequest_Position) EnumDescriptor() ([]byte, []int) {
 type OpenUnsafeAppRequest_Feature int32
 
 const (
-	OpenUnsafeAppRequest_InjectJS   OpenUnsafeAppRequest_Feature = 0 //$API.InjectContentJS(jscontent)
-	OpenUnsafeAppRequest_ReadCookie OpenUnsafeAppRequest_Feature = 1 //$API.ReadCookie(domain) -> string
+	OpenUnsafeAppRequest_InjectJS   OpenUnsafeAppRequest_Feature = 0 //$API.InjectContentJS(jscontent,callback)  content-view 执行的jscontent, 如果有结果，会将结果通过callback(result:Boolean): 通知给control-view
+	OpenUnsafeAppRequest_ReadCookie OpenUnsafeAppRequest_Feature = 1 //$API.ReadCookie(domain) -> string  读取content-view cookie
 )
 
 // Enum value maps for OpenUnsafeAppRequest_Feature.

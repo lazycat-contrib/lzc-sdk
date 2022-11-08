@@ -7,6 +7,9 @@ import "google/protobuf/empty.proto";
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 
 service IngressService {
+    rpc GetDevSetting(google.protobuf.Empty) returns (DevSetting) {}
+
+    rpc SetDevSetting(DevSetting) returns (DevSetting) {}
 
     // 阻止一个用户对指定 app 的访问
     rpc BlockAdd(IngressBlockRequest)  returns (google.protobuf.Empty) {}
@@ -28,6 +31,11 @@ service IngressService {
 
     // 获取指定 app 最后一次被访问的时刻
     rpc GetAppLastAccessTime(IngressAppLastAccessTimeRequest) returns (IngressAppLastAccessTimeResponse) {}
+}
+
+message DevSetting {
+    bool HttpOnly = 1;
+    bool DisableHibernation = 2;
 }
 
 message IngressBlockRequest {

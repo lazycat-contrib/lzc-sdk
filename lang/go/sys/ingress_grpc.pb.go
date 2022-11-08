@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IngressServiceClient interface {
+	GetDevSetting(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DevSetting, error)
+	SetDevSetting(ctx context.Context, in *DevSetting, opts ...grpc.CallOption) (*DevSetting, error)
 	// 阻止一个用户对指定 app 的访问
 	BlockAdd(ctx context.Context, in *IngressBlockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 恢复一个用户对指定 app 的访问权限
@@ -45,6 +47,24 @@ type ingressServiceClient struct {
 
 func NewIngressServiceClient(cc grpc.ClientConnInterface) IngressServiceClient {
 	return &ingressServiceClient{cc}
+}
+
+func (c *ingressServiceClient) GetDevSetting(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DevSetting, error) {
+	out := new(DevSetting)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.IngressService/GetDevSetting", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ingressServiceClient) SetDevSetting(ctx context.Context, in *DevSetting, opts ...grpc.CallOption) (*DevSetting, error) {
+	out := new(DevSetting)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.IngressService/SetDevSetting", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *ingressServiceClient) BlockAdd(ctx context.Context, in *IngressBlockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
@@ -114,6 +134,8 @@ func (c *ingressServiceClient) GetAppLastAccessTime(ctx context.Context, in *Ing
 // All implementations must embed UnimplementedIngressServiceServer
 // for forward compatibility
 type IngressServiceServer interface {
+	GetDevSetting(context.Context, *emptypb.Empty) (*DevSetting, error)
+	SetDevSetting(context.Context, *DevSetting) (*DevSetting, error)
 	// 阻止一个用户对指定 app 的访问
 	BlockAdd(context.Context, *IngressBlockRequest) (*emptypb.Empty, error)
 	// 恢复一个用户对指定 app 的访问权限
@@ -135,6 +157,12 @@ type IngressServiceServer interface {
 type UnimplementedIngressServiceServer struct {
 }
 
+func (UnimplementedIngressServiceServer) GetDevSetting(context.Context, *emptypb.Empty) (*DevSetting, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDevSetting not implemented")
+}
+func (UnimplementedIngressServiceServer) SetDevSetting(context.Context, *DevSetting) (*DevSetting, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetDevSetting not implemented")
+}
 func (UnimplementedIngressServiceServer) BlockAdd(context.Context, *IngressBlockRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BlockAdd not implemented")
 }
@@ -167,6 +195,42 @@ type UnsafeIngressServiceServer interface {
 
 func RegisterIngressServiceServer(s grpc.ServiceRegistrar, srv IngressServiceServer) {
 	s.RegisterService(&IngressService_ServiceDesc, srv)
+}
+
+func _IngressService_GetDevSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IngressServiceServer).GetDevSetting(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.IngressService/GetDevSetting",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IngressServiceServer).GetDevSetting(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IngressService_SetDevSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DevSetting)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IngressServiceServer).SetDevSetting(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.IngressService/SetDevSetting",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IngressServiceServer).SetDevSetting(ctx, req.(*DevSetting))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _IngressService_BlockAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -302,6 +366,14 @@ var IngressService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "cloud.lazycat.apis.sys.IngressService",
 	HandlerType: (*IngressServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetDevSetting",
+			Handler:    _IngressService_GetDevSetting_Handler,
+		},
+		{
+			MethodName: "SetDevSetting",
+			Handler:    _IngressService_SetDevSetting_Handler,
+		},
 		{
 			MethodName: "BlockAdd",
 			Handler:    _IngressService_BlockAdd_Handler,
