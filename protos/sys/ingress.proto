@@ -34,8 +34,12 @@ service IngressService {
 }
 
 message DevSetting {
-    bool HttpOnly = 1;
-    bool DisableHibernation = 2;
+    // 默认使用 http，而不是 https（禁用TLS）
+    bool HttpOnlyMode = 1;
+    // 默认使用 http，而不是 https（不禁用TLS）
+    bool HttpMode = 2;
+    // 禁用自动休眠长时间未使用的应用
+    bool DisableHibernation = 3;
 }
 
 message IngressBlockRequest {
