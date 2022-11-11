@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.sys;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
+
+service EventService {
+  //正常的事件订阅发送接口
+  rpc Subscribe(SubscribeRequest) returns (stream Event);
+  rpc Send(SendRequest) returns (google.protobuf.Empty);
+
+  // 特殊的代理发送机制，少量特殊应用(box-settings在“找回密码"，"邀请用户")场景需要在未登陆盒子之前就行交互
+  // 之前是出现一个操作就从lzcapp->lzc-runtime->hportal->hclient全部增加一层代理接口，维护性和灵活性都非常
+  // 差。因此改成由特定lzcapp生产一个悬而未决的特殊PendingEvent. 此PendingEvent的内容主体由lzcapp创建，但
+  // 少量内容由hclient根据用户交互等方式获取并提供给EventService进行合并。(比如uid/password字段)
+  // 最后把一个PendingEvent转换为一个合法的Event后发送出去。
+  rpc GenPendingSending(GenPendingSendingRequest) returns (Uuid);
+  // 这里再返回一个奇怪的Event是为了处理调用者无法感知事件产生的结果。
+  // 比如用来由hclient代理创建用户时，会导致如果出现UID已经占用的情况无法传播给hclient
+  rpc SolvePending(SolvePendingRequest) returns (Event);
+}
+
+message SendRequest {
+  string target = 1; // 接受者的appid为空则表示广播
+
+  string type = 2;
+  string payload = 3;
+}
+
+message GenPendingSendingRequest {
+  SendRequest template = 1; //SendRequest.payload本身会作为一个go template来解析，
+
+  google.protobuf.Timestamp deadline = 2;
+}
+
+message Uuid {
+  string uuid = 1;
+}
+
+message SolvePendingRequest {
+  string uuid = 1;
+
+  // 此内容会作为数据填充到GenPendingSendingRequest.template.payload中
+  map<string,string> payload = 2;
+}
+
+message SubscribeRequest {
+  string sender = 1;
+  string type = 2;
+}
+
+message Event {
+  string sender = 1; // 发送者的appid, 由EventService填充
+
+  string type = 2;
+  string payload = 3;
+}
