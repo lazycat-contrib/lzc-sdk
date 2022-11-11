@@ -25,7 +25,7 @@ const _ = grpc.SupportPackageIsVersion7
 type EventServiceClient interface {
 	//正常的事件订阅发送接口
 	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (EventService_SubscribeClient, error)
-	Send(ctx context.Context, in *SendRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Send(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 特殊的代理发送机制，少量特殊应用(box-settings在“找回密码"，"邀请用户")场景需要在未登陆盒子之前就行交互
 	// 之前是出现一个操作就从lzcapp->lzc-runtime->hportal->hclient全部增加一层代理接口，维护性和灵活性都非常
 	// 差。因此改成由特定lzcapp生产一个悬而未决的特殊PendingEvent. 此PendingEvent的内容主体由lzcapp创建，但
@@ -77,7 +77,7 @@ func (x *eventServiceSubscribeClient) Recv() (*Event, error) {
 	return m, nil
 }
 
-func (c *eventServiceClient) Send(ctx context.Context, in *SendRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *eventServiceClient) Send(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.EventService/Send", in, out, opts...)
 	if err != nil {
@@ -110,7 +110,7 @@ func (c *eventServiceClient) SolvePending(ctx context.Context, in *SolvePendingR
 type EventServiceServer interface {
 	//正常的事件订阅发送接口
 	Subscribe(*SubscribeRequest, EventService_SubscribeServer) error
-	Send(context.Context, *SendRequest) (*emptypb.Empty, error)
+	Send(context.Context, *Event) (*emptypb.Empty, error)
 	// 特殊的代理发送机制，少量特殊应用(box-settings在“找回密码"，"邀请用户")场景需要在未登陆盒子之前就行交互
 	// 之前是出现一个操作就从lzcapp->lzc-runtime->hportal->hclient全部增加一层代理接口，维护性和灵活性都非常
 	// 差。因此改成由特定lzcapp生产一个悬而未决的特殊PendingEvent. 此PendingEvent的内容主体由lzcapp创建，但
@@ -130,7 +130,7 @@ type UnimplementedEventServiceServer struct {
 func (UnimplementedEventServiceServer) Subscribe(*SubscribeRequest, EventService_SubscribeServer) error {
 	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
 }
-func (UnimplementedEventServiceServer) Send(context.Context, *SendRequest) (*emptypb.Empty, error) {
+func (UnimplementedEventServiceServer) Send(context.Context, *Event) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Send not implemented")
 }
 func (UnimplementedEventServiceServer) GenPendingSending(context.Context, *GenPendingSendingRequest) (*Uuid, error) {
@@ -174,7 +174,7 @@ func (x *eventServiceSubscribeServer) Send(m *Event) error {
 }
 
 func _EventService_Send_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SendRequest)
+	in := new(Event)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -186,7 +186,7 @@ func _EventService_Send_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/cloud.lazycat.apis.sys.EventService/Send",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventServiceServer).Send(ctx, req.(*SendRequest))
+		return srv.(EventServiceServer).Send(ctx, req.(*Event))
 	}
 	return interceptor(ctx, in, info, handler)
 }
