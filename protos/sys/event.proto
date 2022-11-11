@@ -30,14 +30,14 @@ message SubscribeRequest {
 
 message Event {
   string sender = 1; // 发送者的appid, 由EventService填充
-  string target = 2; // 为空则为广播
+  string target = 2; // 接受者的appid
 
   string type = 3;
   string payload = 4;
 }
 
 message GenPendingSendingRequest {
-  Event template = 1; //SendRequest.payload本身会作为一个go template来解析，
+  Event template = 1; // Event.payload本身会作为一个go template来解析，
 
   google.protobuf.Timestamp deadline = 2;
 }

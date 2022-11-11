@@ -83,7 +83,7 @@ type Event struct {
 	unknownFields protoimpl.UnknownFields
 
 	Sender  string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"` // 发送者的appid, 由EventService填充
-	Target  string `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"` // 为空则为广播
+	Target  string `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"` // 接受者的appid
 	Type    string `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
 	Payload string `protobuf:"bytes,4,opt,name=payload,proto3" json:"payload,omitempty"`
 }
@@ -153,7 +153,7 @@ type GenPendingSendingRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Template *Event                 `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"` //SendRequest.payload本身会作为一个go template来解析，
+	Template *Event                 `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"` // Event.payload本身会作为一个go template来解析，
 	Deadline *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=deadline,proto3" json:"deadline,omitempty"`
 }
 
