@@ -1,10 +1,10 @@
 /* eslint-disable */
 import { grpc } from "@improbable-eng/grpc-web";
-import { Empty } from "../google/protobuf/empty";
 import { BrowserHeaders } from "browser-headers";
-import { share } from "rxjs/operators";
-import { Observable } from "rxjs";
 import _m0 from "protobufjs/minimal";
+import { Observable } from "rxjs";
+import { share } from "rxjs/operators";
+import { Empty } from "../google/protobuf/empty";
 
 export interface DoActionRequest {
   playerUuid: string;
@@ -28,9 +28,7 @@ export enum DoActionRequest_Action {
   UNRECOGNIZED = -1,
 }
 
-export function doActionRequest_ActionFromJSON(
-  object: any
-): DoActionRequest_Action {
+export function doActionRequest_ActionFromJSON(object: any): DoActionRequest_Action {
   switch (object) {
     case 0:
     case "Unknown":
@@ -54,9 +52,7 @@ export function doActionRequest_ActionFromJSON(
   }
 }
 
-export function doActionRequest_ActionToJSON(
-  object: DoActionRequest_Action
-): string {
+export function doActionRequest_ActionToJSON(object: DoActionRequest_Action): string {
   switch (object) {
     case DoActionRequest_Action.Unknown:
       return "Unknown";
@@ -138,19 +134,11 @@ export interface RemoteMediaPlayer {
 }
 
 function createBaseDoActionRequest(): DoActionRequest {
-  return {
-    playerUuid: "",
-    action: 0,
-    mediaFile: undefined,
-    mediaSubtitle: undefined,
-  };
+  return { playerUuid: "", action: 0, mediaFile: undefined, mediaSubtitle: undefined };
 }
 
 export const DoActionRequest = {
-  encode(
-    message: DoActionRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: DoActionRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.playerUuid !== "") {
       writer.uint32(10).string(message.playerUuid);
     }
@@ -196,30 +184,22 @@ export const DoActionRequest = {
   fromJSON(object: any): DoActionRequest {
     return {
       playerUuid: isSet(object.playerUuid) ? String(object.playerUuid) : "",
-      action: isSet(object.action)
-        ? doActionRequest_ActionFromJSON(object.action)
-        : 0,
+      action: isSet(object.action) ? doActionRequest_ActionFromJSON(object.action) : 0,
       mediaFile: isSet(object.mediaFile) ? String(object.mediaFile) : undefined,
-      mediaSubtitle: isSet(object.mediaSubtitle)
-        ? String(object.mediaSubtitle)
-        : undefined,
+      mediaSubtitle: isSet(object.mediaSubtitle) ? String(object.mediaSubtitle) : undefined,
     };
   },
 
   toJSON(message: DoActionRequest): unknown {
     const obj: any = {};
     message.playerUuid !== undefined && (obj.playerUuid = message.playerUuid);
-    message.action !== undefined &&
-      (obj.action = doActionRequest_ActionToJSON(message.action));
+    message.action !== undefined && (obj.action = doActionRequest_ActionToJSON(message.action));
     message.mediaFile !== undefined && (obj.mediaFile = message.mediaFile);
-    message.mediaSubtitle !== undefined &&
-      (obj.mediaSubtitle = message.mediaSubtitle);
+    message.mediaSubtitle !== undefined && (obj.mediaSubtitle = message.mediaSubtitle);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<DoActionRequest>, I>>(
-    object: I
-  ): DoActionRequest {
+  fromPartial<I extends Exact<DeepPartial<DoActionRequest>, I>>(object: I): DoActionRequest {
     const message = createBaseDoActionRequest();
     message.playerUuid = object.playerUuid ?? "";
     message.action = object.action ?? 0;
@@ -234,10 +214,7 @@ function createBaseRMPStatus(): RMPStatus {
 }
 
 export const RMPStatus = {
-  encode(
-    message: RMPStatus,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: RMPStatus, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.status !== 0) {
       writer.uint32(8).int32(message.status);
     }
@@ -263,23 +240,16 @@ export const RMPStatus = {
   },
 
   fromJSON(object: any): RMPStatus {
-    return {
-      status: isSet(object.status)
-        ? rMPStatus_StatusFromJSON(object.status)
-        : 0,
-    };
+    return { status: isSet(object.status) ? rMPStatus_StatusFromJSON(object.status) : 0 };
   },
 
   toJSON(message: RMPStatus): unknown {
     const obj: any = {};
-    message.status !== undefined &&
-      (obj.status = rMPStatus_StatusToJSON(message.status));
+    message.status !== undefined && (obj.status = rMPStatus_StatusToJSON(message.status));
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<RMPStatus>, I>>(
-    object: I
-  ): RMPStatus {
+  fromPartial<I extends Exact<DeepPartial<RMPStatus>, I>>(object: I): RMPStatus {
     const message = createBaseRMPStatus();
     message.status = object.status ?? 0;
     return message;
@@ -291,10 +261,7 @@ function createBaseScanRMPResponse(): ScanRMPResponse {
 }
 
 export const ScanRMPResponse = {
-  encode(
-    message: ScanRMPResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: ScanRMPResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.remoteMediaPlayers) {
       RemoteMediaPlayer.encode(v!, writer.uint32(10).fork()).ldelim();
     }
@@ -309,9 +276,7 @@ export const ScanRMPResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.remoteMediaPlayers.push(
-            RemoteMediaPlayer.decode(reader, reader.uint32())
-          );
+          message.remoteMediaPlayers.push(RemoteMediaPlayer.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -324,9 +289,7 @@ export const ScanRMPResponse = {
   fromJSON(object: any): ScanRMPResponse {
     return {
       remoteMediaPlayers: Array.isArray(object?.remoteMediaPlayers)
-        ? object.remoteMediaPlayers.map((e: any) =>
-            RemoteMediaPlayer.fromJSON(e)
-          )
+        ? object.remoteMediaPlayers.map((e: any) => RemoteMediaPlayer.fromJSON(e))
         : [],
     };
   },
@@ -334,22 +297,16 @@ export const ScanRMPResponse = {
   toJSON(message: ScanRMPResponse): unknown {
     const obj: any = {};
     if (message.remoteMediaPlayers) {
-      obj.remoteMediaPlayers = message.remoteMediaPlayers.map((e) =>
-        e ? RemoteMediaPlayer.toJSON(e) : undefined
-      );
+      obj.remoteMediaPlayers = message.remoteMediaPlayers.map((e) => e ? RemoteMediaPlayer.toJSON(e) : undefined);
     } else {
       obj.remoteMediaPlayers = [];
     }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<ScanRMPResponse>, I>>(
-    object: I
-  ): ScanRMPResponse {
+  fromPartial<I extends Exact<DeepPartial<ScanRMPResponse>, I>>(object: I): ScanRMPResponse {
     const message = createBaseScanRMPResponse();
-    message.remoteMediaPlayers =
-      object.remoteMediaPlayers?.map((e) => RemoteMediaPlayer.fromPartial(e)) ||
-      [];
+    message.remoteMediaPlayers = object.remoteMediaPlayers?.map((e) => RemoteMediaPlayer.fromPartial(e)) || [];
     return message;
   },
 };
@@ -359,10 +316,7 @@ function createBaseSubscribeRequest(): SubscribeRequest {
 }
 
 export const SubscribeRequest = {
-  encode(
-    message: SubscribeRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: SubscribeRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.playerUuid !== "") {
       writer.uint32(10).string(message.playerUuid);
     }
@@ -388,9 +342,7 @@ export const SubscribeRequest = {
   },
 
   fromJSON(object: any): SubscribeRequest {
-    return {
-      playerUuid: isSet(object.playerUuid) ? String(object.playerUuid) : "",
-    };
+    return { playerUuid: isSet(object.playerUuid) ? String(object.playerUuid) : "" };
   },
 
   toJSON(message: SubscribeRequest): unknown {
@@ -399,9 +351,7 @@ export const SubscribeRequest = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<SubscribeRequest>, I>>(
-    object: I
-  ): SubscribeRequest {
+  fromPartial<I extends Exact<DeepPartial<SubscribeRequest>, I>>(object: I): SubscribeRequest {
     const message = createBaseSubscribeRequest();
     message.playerUuid = object.playerUuid ?? "";
     return message;
@@ -413,10 +363,7 @@ function createBaseRemoteMediaPlayer(): RemoteMediaPlayer {
 }
 
 export const RemoteMediaPlayer = {
-  encode(
-    message: RemoteMediaPlayer,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: RemoteMediaPlayer, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.uuid !== "") {
       writer.uint32(10).string(message.uuid);
     }
@@ -469,9 +416,7 @@ export const RemoteMediaPlayer = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<RemoteMediaPlayer>, I>>(
-    object: I
-  ): RemoteMediaPlayer {
+  fromPartial<I extends Exact<DeepPartial<RemoteMediaPlayer>, I>>(object: I): RemoteMediaPlayer {
     const message = createBaseRemoteMediaPlayer();
     message.uuid = object.uuid ?? "";
     message.name = object.name ?? "";
@@ -482,24 +427,13 @@ export const RemoteMediaPlayer = {
 
 /** 目前支持搜索DLNA的Render设备，并投送媒体文件 */
 export interface RemoteMediaPlayerService {
-  ScanRMP(
-    request: DeepPartial<Empty>,
-    metadata?: grpc.Metadata
-  ): Promise<ScanRMPResponse>;
+  ScanRMP(request: DeepPartial<Empty>, metadata?: grpc.Metadata): Promise<ScanRMPResponse>;
   /** 立刻返回选择的当前RMP状态，并在状态变动时重新发送 */
-  Subscribe(
-    request: DeepPartial<SubscribeRequest>,
-    metadata?: grpc.Metadata
-  ): Observable<RMPStatus>;
-  DoAction(
-    request: DeepPartial<DoActionRequest>,
-    metadata?: grpc.Metadata
-  ): Promise<Empty>;
+  Subscribe(request: DeepPartial<SubscribeRequest>, metadata?: grpc.Metadata): Observable<RMPStatus>;
+  DoAction(request: DeepPartial<DoActionRequest>, metadata?: grpc.Metadata): Promise<Empty>;
 }
 
-export class RemoteMediaPlayerServiceClientImpl
-  implements RemoteMediaPlayerService
-{
+export class RemoteMediaPlayerServiceClientImpl implements RemoteMediaPlayerService {
   private readonly rpc: Rpc;
 
   constructor(rpc: Rpc) {
@@ -509,43 +443,20 @@ export class RemoteMediaPlayerServiceClientImpl
     this.DoAction = this.DoAction.bind(this);
   }
 
-  ScanRMP(
-    request: DeepPartial<Empty>,
-    metadata?: grpc.Metadata
-  ): Promise<ScanRMPResponse> {
-    return this.rpc.unary(
-      RemoteMediaPlayerServiceScanRMPDesc,
-      Empty.fromPartial(request),
-      metadata
-    );
+  ScanRMP(request: DeepPartial<Empty>, metadata?: grpc.Metadata): Promise<ScanRMPResponse> {
+    return this.rpc.unary(RemoteMediaPlayerServiceScanRMPDesc, Empty.fromPartial(request), metadata);
   }
 
-  Subscribe(
-    request: DeepPartial<SubscribeRequest>,
-    metadata?: grpc.Metadata
-  ): Observable<RMPStatus> {
-    return this.rpc.invoke(
-      RemoteMediaPlayerServiceSubscribeDesc,
-      SubscribeRequest.fromPartial(request),
-      metadata
-    );
+  Subscribe(request: DeepPartial<SubscribeRequest>, metadata?: grpc.Metadata): Observable<RMPStatus> {
+    return this.rpc.invoke(RemoteMediaPlayerServiceSubscribeDesc, SubscribeRequest.fromPartial(request), metadata);
   }
 
-  DoAction(
-    request: DeepPartial<DoActionRequest>,
-    metadata?: grpc.Metadata
-  ): Promise<Empty> {
-    return this.rpc.unary(
-      RemoteMediaPlayerServiceDoActionDesc,
-      DoActionRequest.fromPartial(request),
-      metadata
-    );
+  DoAction(request: DeepPartial<DoActionRequest>, metadata?: grpc.Metadata): Promise<Empty> {
+    return this.rpc.unary(RemoteMediaPlayerServiceDoActionDesc, DoActionRequest.fromPartial(request), metadata);
   }
 }
 
-export const RemoteMediaPlayerServiceDesc = {
-  serviceName: "lzc.dlna.RemoteMediaPlayerService",
-};
+export const RemoteMediaPlayerServiceDesc = { serviceName: "lzc.dlna.RemoteMediaPlayerService" };
 
 export const RemoteMediaPlayerServiceScanRMPDesc: UnaryMethodDefinitionish = {
   methodName: "ScanRMP",
@@ -613,8 +524,7 @@ export const RemoteMediaPlayerServiceDoActionDesc: UnaryMethodDefinitionish = {
   } as any,
 };
 
-interface UnaryMethodDefinitionishR
-  extends grpc.UnaryMethodDefinition<any, any> {
+interface UnaryMethodDefinitionishR extends grpc.UnaryMethodDefinition<any, any> {
   requestStream: any;
   responseStream: any;
 }
@@ -625,12 +535,12 @@ interface Rpc {
   unary<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     request: any,
-    metadata: grpc.Metadata | undefined
+    metadata: grpc.Metadata | undefined,
   ): Promise<any>;
   invoke<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     request: any,
-    metadata: grpc.Metadata | undefined
+    metadata: grpc.Metadata | undefined,
   ): Observable<any>;
 }
 
@@ -652,7 +562,7 @@ export class GrpcWebImpl {
       debug?: boolean;
       metadata?: grpc.Metadata;
       upStreamRetryCodes?: number[];
-    }
+    },
   ) {
     this.host = host;
     this.options = options;
@@ -661,16 +571,12 @@ export class GrpcWebImpl {
   unary<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     _request: any,
-    metadata: grpc.Metadata | undefined
+    metadata: grpc.Metadata | undefined,
   ): Promise<any> {
     const request = { ..._request, ...methodDesc.requestType };
-    const maybeCombinedMetadata =
-      metadata && this.options.metadata
-        ? new BrowserHeaders({
-            ...this.options?.metadata.headersMap,
-            ...metadata?.headersMap,
-          })
-        : metadata || this.options.metadata;
+    const maybeCombinedMetadata = metadata && this.options.metadata
+      ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
+      : metadata || this.options.metadata;
     return new Promise((resolve, reject) => {
       grpc.unary(methodDesc, {
         request,
@@ -682,9 +588,7 @@ export class GrpcWebImpl {
           if (response.status === grpc.Code.OK) {
             resolve(response.message);
           } else {
-            const err = new Error(response.statusMessage) as any;
-            err.code = response.status;
-            err.metadata = response.trailers;
+            const err = new GrpcWebError(response.statusMessage, response.status, response.trailers);
             reject(err);
           }
         },
@@ -695,20 +599,16 @@ export class GrpcWebImpl {
   invoke<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     _request: any,
-    metadata: grpc.Metadata | undefined
+    metadata: grpc.Metadata | undefined,
   ): Observable<any> {
     const upStreamCodes = this.options.upStreamRetryCodes || [];
     const DEFAULT_TIMEOUT_TIME: number = 3_000;
     const request = { ..._request, ...methodDesc.requestType };
-    const maybeCombinedMetadata =
-      metadata && this.options.metadata
-        ? new BrowserHeaders({
-            ...this.options?.metadata.headersMap,
-            ...metadata?.headersMap,
-          })
-        : metadata || this.options.metadata;
+    const maybeCombinedMetadata = metadata && this.options.metadata
+      ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
+      : metadata || this.options.metadata;
     return new Observable((observer) => {
-      const upStream = () => {
+      const upStream = (() => {
         const client = grpc.invoke(methodDesc, {
           host: this.host,
           request,
@@ -716,11 +616,7 @@ export class GrpcWebImpl {
           metadata: maybeCombinedMetadata,
           debug: this.options.debug,
           onMessage: (next) => observer.next(next),
-          onEnd: (
-            code: grpc.Code,
-            message: string,
-            trailers: grpc.Metadata
-          ) => {
+          onEnd: (code: grpc.Code, message: string, trailers: grpc.Metadata) => {
             if (code === 0) {
               observer.complete();
             } else if (upStreamCodes.includes(code)) {
@@ -734,39 +630,29 @@ export class GrpcWebImpl {
           },
         });
         observer.add(() => client.close());
-      };
+      });
       upStream();
     }).pipe(share());
   }
 }
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-type Exact<P, I extends P> = P extends Builtin
-  ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<
-        Exclude<keyof I, KeysOfUnion<P>>,
-        never
-      >;
+type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
+}
+
+export class GrpcWebError extends Error {
+  constructor(message: string, public code: grpc.Code, public metadata: grpc.Metadata) {
+    super(message);
+  }
 }
