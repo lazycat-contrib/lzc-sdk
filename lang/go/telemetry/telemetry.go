@@ -2,11 +2,13 @@ package telemetry
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"os"
 	"sync"
 
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
@@ -114,9 +116,18 @@ func InitTracerProvider(ctx context.Context, opts ...Option) error {
 		return err
 	}
 
+	b, err := os.ReadFile("/etc/machine-id")
+	if err != nil {
+		fmt.Println(err)
+		b = []byte{}
+	}
+
 	res, err := sdkresource.New(ctx,
 		sdkresource.WithAttributes(
 			semconv.ServiceNameKey.String(cfg.sname),
+		),
+		sdkresource.WithAttributes(
+			attribute.Key("resource_machine_id").String(string(b)),
 		),
 	)
 	if err != nil {
