@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
@@ -118,12 +117,7 @@ func InitTracerProvider(ctx context.Context, opts ...Option) error {
 	res, err := sdkresource.New(ctx,
 		sdkresource.WithAttributes(
 			semconv.ServiceNameKey.String(cfg.sname),
-		),
-		// signoz requires attributes to start with "resource_"
-		sdkresource.WithAttributes(
-			attribute.Key("resource_box_domain").String(
-				os.Getenv("LAZYCAT_BOX_DOMAIN"),
-			),
+			semconv.DeviceIDKey.String(os.Getenv("LAZYCAT_BOX_DOMAIN")),
 		),
 	)
 	if err != nil {
