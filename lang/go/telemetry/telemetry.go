@@ -20,6 +20,7 @@ import (
 type _Config struct {
 	sname    string
 	endpoint string
+	batcher  bool
 }
 
 type Option func(*_Config) error
@@ -33,6 +34,12 @@ func WithServiceName(name string) Option {
 func WithEndpoint(addr string) Option {
 	return func(opts *_Config) error {
 		opts.endpoint = addr
+		return nil
+	}
+}
+func WithBatcher(batcher bool) Option {
+	return func(opts *_Config) error {
+		opts.batcher = batcher
 		return nil
 	}
 }
@@ -124,11 +131,18 @@ func InitTracerProvider(ctx context.Context, opts ...Option) error {
 		return err
 	}
 
-	tp = sdktrace.NewTracerProvider(
+	tracerOpts := []sdktrace.TracerProviderOption{
 		sdktrace.WithSampler(sdktrace.AlwaysSample()),
-		sdktrace.WithBatcher(exporter),
 		sdktrace.WithResource(res),
-	)
+	}
+
+	if cfg.batcher {
+		tracerOpts = append(tracerOpts, sdktrace.WithBatcher(exporter))
+	} else {
+		tracerOpts = append(tracerOpts, sdktrace.WithSyncer(exporter))
+	}
+
+	tp = sdktrace.NewTracerProvider(tracerOpts)
 
 	otel.SetTextMapPropagator(propagation.TraceContext{})
 	otel.SetTracerProvider(tp)
