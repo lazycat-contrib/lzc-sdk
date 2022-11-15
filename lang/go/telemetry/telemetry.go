@@ -2,7 +2,6 @@ package telemetry
 
 import (
 	"context"
-	"fmt"
 	"net"
 	"os"
 	"sync"
@@ -116,18 +115,15 @@ func InitTracerProvider(ctx context.Context, opts ...Option) error {
 		return err
 	}
 
-	b, err := os.ReadFile("/etc/machine-id")
-	if err != nil {
-		fmt.Println(err)
-		b = []byte{}
-	}
-
 	res, err := sdkresource.New(ctx,
 		sdkresource.WithAttributes(
 			semconv.ServiceNameKey.String(cfg.sname),
 		),
+		// signoz requires attributes to start with "resource_"
 		sdkresource.WithAttributes(
-			attribute.Key("resource_machine_id").String(string(b)),
+			attribute.Key("resource_box_domain").String(
+				os.Getenv("LAZYCAT_BOX_DOMAIN"),
+			),
 		),
 	)
 	if err != nil {
