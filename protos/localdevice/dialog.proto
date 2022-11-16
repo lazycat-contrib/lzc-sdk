@@ -47,6 +47,10 @@ message OpenFileSeletorRequest{
     Dir  = 0;
     File = 1;
   }
+  // 文件后缀过滤器
+  //  PC 只能支持单个过滤器语法 jpg ， 使用多个后缀默认使用第一个后缀
+  // android 支持多个过滤器， 使用英文逗号，分割 ex: jpb,png,gif
+  string filter = 3;
 }
 
 message OpenFileSeletorResult{
