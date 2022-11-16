@@ -10,7 +10,7 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 service EventService {
   //正常的事件订阅发送接口
   rpc Subscribe(SubscribeRequest) returns (stream Event);
-  rpc Send(Event) returns (google.protobuf.Empty);
+  rpc Send(SendRequest) returns (google.protobuf.Empty);
 
   // 特殊的代理发送机制，少量特殊应用(box-settings在“找回密码"，"邀请用户")场景需要在未登陆盒子之前就行交互
   // 之前是出现一个操作就从lzcapp->lzc-runtime->hportal->hclient全部增加一层代理接口，维护性和灵活性都非常
@@ -34,6 +34,12 @@ message Event {
 
   string type = 3;
   string payload = 4;
+}
+
+message SendRequest {
+  string target = 1;
+  string type = 2;
+  string payload = 3;
 }
 
 message GenPendingSendingRequest {
