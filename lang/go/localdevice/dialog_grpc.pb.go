@@ -26,6 +26,7 @@ type DialogManagerClient interface {
 	Question(ctx context.Context, in *QuestionRequest, opts ...grpc.CallOption) (*QuestionResult, error)
 	MessageBox(ctx context.Context, in *MessageBoxRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Password(ctx context.Context, in *PasswordRequest, opts ...grpc.CallOption) (*PasswordResult, error)
+	OpenFileSeletor(ctx context.Context, in *OpenFileSeletorRequest, opts ...grpc.CallOption) (*OpenFileSeletorResult, error)
 }
 
 type dialogManagerClient struct {
@@ -63,6 +64,15 @@ func (c *dialogManagerClient) Password(ctx context.Context, in *PasswordRequest,
 	return out, nil
 }
 
+func (c *dialogManagerClient) OpenFileSeletor(ctx context.Context, in *OpenFileSeletorRequest, opts ...grpc.CallOption) (*OpenFileSeletorResult, error) {
+	out := new(OpenFileSeletorResult)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.DialogManager/OpenFileSeletor", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DialogManagerServer is the server API for DialogManager service.
 // All implementations must embed UnimplementedDialogManagerServer
 // for forward compatibility
@@ -70,6 +80,7 @@ type DialogManagerServer interface {
 	Question(context.Context, *QuestionRequest) (*QuestionResult, error)
 	MessageBox(context.Context, *MessageBoxRequest) (*emptypb.Empty, error)
 	Password(context.Context, *PasswordRequest) (*PasswordResult, error)
+	OpenFileSeletor(context.Context, *OpenFileSeletorRequest) (*OpenFileSeletorResult, error)
 	mustEmbedUnimplementedDialogManagerServer()
 }
 
@@ -85,6 +96,9 @@ func (UnimplementedDialogManagerServer) MessageBox(context.Context, *MessageBoxR
 }
 func (UnimplementedDialogManagerServer) Password(context.Context, *PasswordRequest) (*PasswordResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Password not implemented")
+}
+func (UnimplementedDialogManagerServer) OpenFileSeletor(context.Context, *OpenFileSeletorRequest) (*OpenFileSeletorResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OpenFileSeletor not implemented")
 }
 func (UnimplementedDialogManagerServer) mustEmbedUnimplementedDialogManagerServer() {}
 
@@ -153,6 +167,24 @@ func _DialogManager_Password_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DialogManager_OpenFileSeletor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OpenFileSeletorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DialogManagerServer).OpenFileSeletor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.localdevice.DialogManager/OpenFileSeletor",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DialogManagerServer).OpenFileSeletor(ctx, req.(*OpenFileSeletorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DialogManager_ServiceDesc is the grpc.ServiceDesc for DialogManager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -171,6 +203,10 @@ var DialogManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Password",
 			Handler:    _DialogManager_Password_Handler,
+		},
+		{
+			MethodName: "OpenFileSeletor",
+			Handler:    _DialogManager_OpenFileSeletor_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

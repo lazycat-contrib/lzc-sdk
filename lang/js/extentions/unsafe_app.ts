@@ -4,19 +4,21 @@ function isWebShell() {
 }
 
 
-// 是否是pc webshell 环境
-function isPCWebShell() {
-    return navigator.userAgent.indexOf("Lazycat_PC") != -1;
-}
+
 
 // 是否是android webshell 环境
 function isAndroidWebShell() {
-    return navigator.userAgent.indexOf("Lazycat_Android") != -1;
+    return navigator.userAgent.indexOf("Lazycat_101") != -1;
+}
+
+// 是否是pc webshell 环境
+function isPCWebShell() {
+    return navigator.userAgent.indexOf("Lazycat_102") != -1;
 }
 
 // 是否是ios webshell 环境
 function isIosWebShell() {
-    return navigator.userAgent.indexOf("Lazycat_Ios") != -1;
+    return navigator.userAgent.indexOf("Lazycat_103") != -1;
 }
 
 
@@ -59,7 +61,7 @@ const UNSAFE = {
             if (!isControlView()) {
                 return
             }
-            view.GetContentURL(callback)
+            return view.GetContentURL(callback)
         },
     // contentView 回退
     BackContentView:
@@ -88,7 +90,7 @@ const UNSAFE = {
         if(!isControlView()){
             return
         }
-        view.ReadCookie(domain)
+        return  view.ReadCookie(domain)
     },
     // 在controlView 中执行jsContent(用于contentView通知 controlView)
     NotifyControView: function (jsContent) {
@@ -96,6 +98,14 @@ const UNSAFE = {
             return
         }
         view.NotifyControView(jsContent);
+    },
+    // 修改contentView 的useragent
+    UpdateContentViewUserAgent: function (ua) {
+        view.UpdateContentViewUserAgent(ua)
+    },
+    // contentView 执行
+    XmlHttpRequest4ContentView: function (reqJsonStr){
+        return view.XmlHttpRequest4ContentView(reqJsonStr)
     }
 };
 

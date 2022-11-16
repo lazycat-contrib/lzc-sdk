@@ -12,6 +12,7 @@ service DialogManager {
   rpc Question(QuestionRequest) returns (QuestionResult) {}
   rpc MessageBox(MessageBoxRequest) returns (google.protobuf.Empty) {}
   rpc Password(PasswordRequest) returns (PasswordResult) {}
+  rpc OpenFileSeletor(OpenFileSeletorRequest) returns (OpenFileSeletorResult){}
 }
 
 message QuestionRequest {
@@ -35,4 +36,20 @@ message PasswordRequest {
 message PasswordResult {
   string password = 1;
   bool ok = 2;
+}
+
+message OpenFileSeletorRequest{
+  // 选择类型
+  SelectType type = 1;
+  // 是否多选（多选在SelectType 为Dir时无效）
+  bool isSingle= 2;
+  enum  SelectType{
+    Dir  = 0;
+    File = 1;
+  }
+}
+
+message OpenFileSeletorResult{
+  // 文件或者目录的路径
+  repeated string path = 1;
 }
