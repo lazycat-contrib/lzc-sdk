@@ -142,7 +142,7 @@ func InitTracerProvider(ctx context.Context, opts ...Option) error {
 		tracerOpts = append(tracerOpts, sdktrace.WithSyncer(exporter))
 	}
 
-	tp = sdktrace.NewTracerProvider(tracerOpts)
+	tp = sdktrace.NewTracerProvider(tracerOpts...)
 
 	otel.SetTextMapPropagator(propagation.TraceContext{})
 	otel.SetTracerProvider(tp)
