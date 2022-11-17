@@ -2,10 +2,6 @@ var view;
 function isWebShell() {
     return navigator.userAgent.indexOf("Lazycat") != -1 && !isControlView() && !isContentView();
 }
-
-
-
-
 // 是否是android webshell 环境
 function isAndroidWebShell() {
     return navigator.userAgent.indexOf("Lazycat_101") != -1;
@@ -106,6 +102,10 @@ const UNSAFE = {
     // contentView 执行
     XmlHttpRequest4ContentView: function (reqJsonStr){
         return view.XmlHttpRequest4ContentView(reqJsonStr)
+    },
+    //切换controlView 显示状态
+    ToggleControlView: function (){
+        return view.ToggleControlView();
     }
 };
 
