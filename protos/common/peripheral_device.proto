@@ -12,16 +12,27 @@ service PeripheralDeviceService {
   // 列出当前盒子已挂载和可以挂载但未挂载的文件系统
   rpc ListFilesystems(google.protobuf.Empty) returns (ListFilesystemsReply) {}
 
-  // 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
+  // 挂载/卸载特定移动磁盘的某个分区到
+  // $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
   rpc MountDisk(MountDiskRequest) returns (google.protobuf.Empty) {
-    option (cloud.lazycat.apis.common.scontext).require_permissions = USER_DOCUMENT;
+    option (cloud.lazycat.apis.common.scontext).require_permissions =
+        USER_DOCUMENT;
   }
 
   // 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home/$uid 目录下，具体路径可以指定
   rpc MountWebDav(MountWebDavRequest) returns (google.protobuf.Empty) {}
 
   // 通过 uuid 或 mountpoint 卸载文件系统
-  rpc UmountFilesystem(UmountFilesystemRequest) returns (google.protobuf.Empty) {}
+  rpc UmountFilesystem(UmountFilesystemRequest)
+      returns (google.protobuf.Empty) {}
+
+  rpc MountArchive(MountArchiveRequest) returns (stream google.protobuf.Empty) {
+  }
+}
+
+message MountArchiveRequest {
+  string src_path = 1;   // 要挂载的压缩文件的相对路径
+  string mountpoint = 2; // 压缩文件要挂载到的目标路径
 }
 
 message ListFilesystemsReply {
@@ -51,9 +62,7 @@ message Filesystem {
   optional string mountpoint = 6;
 }
 
-message MountDiskRequest {
-  string uuid = 1;
-}
+message MountDiskRequest { string uuid = 1; }
 
 message MountWebDavRequest {
   string url = 1;

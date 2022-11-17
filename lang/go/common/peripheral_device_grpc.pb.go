@@ -25,12 +25,14 @@ const _ = grpc.SupportPackageIsVersion7
 type PeripheralDeviceServiceClient interface {
 	// 列出当前盒子已挂载和可以挂载但未挂载的文件系统
 	ListFilesystems(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListFilesystemsReply, error)
-	// 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
+	// 挂载/卸载特定移动磁盘的某个分区到
+	// $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
 	MountDisk(ctx context.Context, in *MountDiskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home/$uid 目录下，具体路径可以指定
 	MountWebDav(ctx context.Context, in *MountWebDavRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 通过 uuid 或 mountpoint 卸载文件系统
 	UmountFilesystem(ctx context.Context, in *UmountFilesystemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MountArchive(ctx context.Context, in *MountArchiveRequest, opts ...grpc.CallOption) (PeripheralDeviceService_MountArchiveClient, error)
 }
 
 type peripheralDeviceServiceClient struct {
@@ -77,18 +79,52 @@ func (c *peripheralDeviceServiceClient) UmountFilesystem(ctx context.Context, in
 	return out, nil
 }
 
+func (c *peripheralDeviceServiceClient) MountArchive(ctx context.Context, in *MountArchiveRequest, opts ...grpc.CallOption) (PeripheralDeviceService_MountArchiveClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PeripheralDeviceService_ServiceDesc.Streams[0], "/cloud.lazycat.apis.common.PeripheralDeviceService/MountArchive", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &peripheralDeviceServiceMountArchiveClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PeripheralDeviceService_MountArchiveClient interface {
+	Recv() (*emptypb.Empty, error)
+	grpc.ClientStream
+}
+
+type peripheralDeviceServiceMountArchiveClient struct {
+	grpc.ClientStream
+}
+
+func (x *peripheralDeviceServiceMountArchiveClient) Recv() (*emptypb.Empty, error) {
+	m := new(emptypb.Empty)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // PeripheralDeviceServiceServer is the server API for PeripheralDeviceService service.
 // All implementations must embed UnimplementedPeripheralDeviceServiceServer
 // for forward compatibility
 type PeripheralDeviceServiceServer interface {
 	// 列出当前盒子已挂载和可以挂载但未挂载的文件系统
 	ListFilesystems(context.Context, *emptypb.Empty) (*ListFilesystemsReply, error)
-	// 挂载/卸载特定移动磁盘的某个分区到 $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
+	// 挂载/卸载特定移动磁盘的某个分区到
+	// $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
 	MountDisk(context.Context, *MountDiskRequest) (*emptypb.Empty, error)
 	// 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home/$uid 目录下，具体路径可以指定
 	MountWebDav(context.Context, *MountWebDavRequest) (*emptypb.Empty, error)
 	// 通过 uuid 或 mountpoint 卸载文件系统
 	UmountFilesystem(context.Context, *UmountFilesystemRequest) (*emptypb.Empty, error)
+	MountArchive(*MountArchiveRequest, PeripheralDeviceService_MountArchiveServer) error
 	mustEmbedUnimplementedPeripheralDeviceServiceServer()
 }
 
@@ -107,6 +143,9 @@ func (UnimplementedPeripheralDeviceServiceServer) MountWebDav(context.Context, *
 }
 func (UnimplementedPeripheralDeviceServiceServer) UmountFilesystem(context.Context, *UmountFilesystemRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UmountFilesystem not implemented")
+}
+func (UnimplementedPeripheralDeviceServiceServer) MountArchive(*MountArchiveRequest, PeripheralDeviceService_MountArchiveServer) error {
+	return status.Errorf(codes.Unimplemented, "method MountArchive not implemented")
 }
 func (UnimplementedPeripheralDeviceServiceServer) mustEmbedUnimplementedPeripheralDeviceServiceServer() {
 }
@@ -194,6 +233,27 @@ func _PeripheralDeviceService_UmountFilesystem_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PeripheralDeviceService_MountArchive_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(MountArchiveRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PeripheralDeviceServiceServer).MountArchive(m, &peripheralDeviceServiceMountArchiveServer{stream})
+}
+
+type PeripheralDeviceService_MountArchiveServer interface {
+	Send(*emptypb.Empty) error
+	grpc.ServerStream
+}
+
+type peripheralDeviceServiceMountArchiveServer struct {
+	grpc.ServerStream
+}
+
+func (x *peripheralDeviceServiceMountArchiveServer) Send(m *emptypb.Empty) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // PeripheralDeviceService_ServiceDesc is the grpc.ServiceDesc for PeripheralDeviceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -218,6 +278,12 @@ var PeripheralDeviceService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PeripheralDeviceService_UmountFilesystem_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "MountArchive",
+			Handler:       _PeripheralDeviceService_MountArchive_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "common/peripheral_device.proto",
 }
