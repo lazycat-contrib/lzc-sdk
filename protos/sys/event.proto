@@ -43,7 +43,7 @@ message SendRequest {
 }
 
 message GenPendingSendingRequest {
-  Event template = 1; // Event.payload本身会作为一个go template来解析，
+  SendRequest template = 1; // Event.payload本身会作为一个go template来解析，
 
   google.protobuf.Timestamp deadline = 2;
 }
