@@ -81,7 +81,7 @@ export class lzcAPIGateway {
     private bo : BrowserOnlyProxy;
     private gw : APIGateway;
     private pm : PermissionManager;
-    private pd : PeripheralDeviceService;
+    public pd : PeripheralDeviceService;
 
     public async openDevices() {
         return new Promise<void>((resolve, reject) => {
