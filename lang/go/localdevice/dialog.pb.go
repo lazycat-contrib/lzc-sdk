@@ -352,7 +352,7 @@ type OpenFileSeletorRequest struct {
 	// 是否多选（多选在SelectType 为Dir时无效）
 	IsSingle bool `protobuf:"varint,2,opt,name=isSingle,proto3" json:"isSingle,omitempty"`
 	// 文件后缀过滤器
-	//  PC 只能支持单个过滤器语法 jpg
+	//  PC 只能支持单个过滤器语法 jpg ， 使用多个后缀默认使用第一个后缀
 	// android 支持多个过滤器， 使用英文逗号，分割 ex: jpb,png,gif
 	Filter string `protobuf:"bytes,3,opt,name=filter,proto3" json:"filter,omitempty"`
 }

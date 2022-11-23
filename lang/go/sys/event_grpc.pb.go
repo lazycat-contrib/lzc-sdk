@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EventServiceClient interface {
-	// 正常的事件订阅发送接口
+	//正常的事件订阅发送接口
 	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (EventService_SubscribeClient, error)
 	Send(ctx context.Context, in *SendRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 特殊的代理发送机制，少量特殊应用(box-settings在“找回密码"，"邀请用户")场景需要在未登陆盒子之前就行交互
@@ -108,7 +108,7 @@ func (c *eventServiceClient) SolvePending(ctx context.Context, in *SolvePendingR
 // All implementations must embed UnimplementedEventServiceServer
 // for forward compatibility
 type EventServiceServer interface {
-	// 正常的事件订阅发送接口
+	//正常的事件订阅发送接口
 	Subscribe(*SubscribeRequest, EventService_SubscribeServer) error
 	Send(context.Context, *SendRequest) (*emptypb.Empty, error)
 	// 特殊的代理发送机制，少量特殊应用(box-settings在“找回密码"，"邀请用户")场景需要在未登陆盒子之前就行交互

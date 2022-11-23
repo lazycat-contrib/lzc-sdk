@@ -41,6 +41,7 @@ message UnPinAppReply{
 
 message OpenAppRequest{
   string url = 1;
+  bool isFullScreen = 2;
 }
 
 message OpenAppReply{
