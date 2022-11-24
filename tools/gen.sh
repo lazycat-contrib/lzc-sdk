@@ -53,7 +53,7 @@ if [[ "$ENABLE_JAR" == "" ]]; then
 else
     pushd java_api_workspace
     echo "java package start... "
-    mvn -Dmaven.test.skip=true clean package
+    mvn -Dmaven.test.skip=true -Dmaven.repo.local=/tmp/maven clean package
     echo "java package complete... "
     popd
 fi

@@ -1,48 +1,10 @@
-var view;
-function isWebShell() {
-    return navigator.userAgent.indexOf("Lazycat") != -1 && !isControlView() && !isContentView();
-}
-// 是否是android webshell 环境
-function isAndroidWebShell() {
-    return navigator.userAgent.indexOf("Lazycat_101") != -1;
-}
-
-// 是否是pc webshell 环境
-function isPCWebShell() {
-    return navigator.userAgent.indexOf("Lazycat_102") != -1;
-}
-
-// 是否是ios webshell 环境
-function isIosWebShell() {
-    return navigator.userAgent.indexOf("Lazycat_103") != -1;
-}
-
-
-function isControlView(){
-    return navigator.userAgent.indexOf("Lazycat_ControlView") != -1;
-}
-
-function isContentView(){
-    return navigator.userAgent.indexOf("Lazycat_ContentView") != -1;
-}
-
-
-if (isAndroidWebShell()) {
-    // @ts-ignore
-    view = android;
-} else if (isPCWebShell()) {
-    // @ts-ignore
-    view = window.electronAPI
-}
-
-
 const UNSAFE = {
 // h5调用webview 打开App
-    OpenApp: function (url) {
+    OpenApp: function (url,isFullScreen) {
         if (!isWebShell()) {
             return
         }
-        view.OpenApp(url)
+        view.OpenApp(url,isFullScreen)
     },
     // contentView 打开指定url
     SetContentURL: function (url) {
@@ -96,16 +58,29 @@ const UNSAFE = {
         view.NotifyControView(jsContent);
     },
     // 修改contentView 的useragent
+    // 目前只支持android
     UpdateContentViewUserAgent: function (ua) {
         view.UpdateContentViewUserAgent(ua)
     },
     // contentView 执行
+    // 目前只支持android
     XmlHttpRequest4ContentView: function (reqJsonStr){
         return view.XmlHttpRequest4ContentView(reqJsonStr)
     },
     //切换controlView 显示状态
+    // 目前只支持android
     ToggleControlView: function (){
         return view.ToggleControlView();
+    },
+    // 目前只支持android
+    // 设置指定key 对应的value
+    SetValue: function(key,value){
+	    view.SetValue(key,value)
+    },
+    // 获取指定key的value
+    // 目前只支持android
+    GetValue: function(key){
+	    return view.GetValue(key)
     }
 };
 
