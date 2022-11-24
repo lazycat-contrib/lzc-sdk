@@ -49,6 +49,8 @@ message RMPStatus {
     Stopped = 3;
   }
   Status status = 1;
+  string pos = 2;
+  string len = 3;
 }
 
 
