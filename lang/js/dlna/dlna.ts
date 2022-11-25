@@ -11,6 +11,7 @@ export interface DoActionRequest {
   action: DoActionRequest_Action;
   mediaFile?: string | undefined;
   mediaSubtitle?: string | undefined;
+  seekTarget?: string | undefined;
 }
 
 export enum DoActionRequest_Action {
@@ -25,6 +26,7 @@ export enum DoActionRequest_Action {
   Continue = 3,
   /** Stop - 停止对此instance上的任何操作，后续操作需要重新调用play开始 */
   Stop = 4,
+  Seek = 5,
   UNRECOGNIZED = -1,
 }
 
@@ -45,6 +47,9 @@ export function doActionRequest_ActionFromJSON(object: any): DoActionRequest_Act
     case 4:
     case "Stop":
       return DoActionRequest_Action.Stop;
+    case 5:
+    case "Seek":
+      return DoActionRequest_Action.Seek;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -64,6 +69,8 @@ export function doActionRequest_ActionToJSON(object: DoActionRequest_Action): st
       return "Continue";
     case DoActionRequest_Action.Stop:
       return "Stop";
+    case DoActionRequest_Action.Seek:
+      return "Seek";
     case DoActionRequest_Action.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -136,7 +143,7 @@ export interface RemoteMediaPlayer {
 }
 
 function createBaseDoActionRequest(): DoActionRequest {
-  return { playerUuid: "", action: 0, mediaFile: undefined, mediaSubtitle: undefined };
+  return { playerUuid: "", action: 0, mediaFile: undefined, mediaSubtitle: undefined, seekTarget: undefined };
 }
 
 export const DoActionRequest = {
@@ -152,6 +159,9 @@ export const DoActionRequest = {
     }
     if (message.mediaSubtitle !== undefined) {
       writer.uint32(34).string(message.mediaSubtitle);
+    }
+    if (message.seekTarget !== undefined) {
+      writer.uint32(42).string(message.seekTarget);
     }
     return writer;
   },
@@ -175,6 +185,9 @@ export const DoActionRequest = {
         case 4:
           message.mediaSubtitle = reader.string();
           break;
+        case 5:
+          message.seekTarget = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -189,6 +202,7 @@ export const DoActionRequest = {
       action: isSet(object.action) ? doActionRequest_ActionFromJSON(object.action) : 0,
       mediaFile: isSet(object.mediaFile) ? String(object.mediaFile) : undefined,
       mediaSubtitle: isSet(object.mediaSubtitle) ? String(object.mediaSubtitle) : undefined,
+      seekTarget: isSet(object.seekTarget) ? String(object.seekTarget) : undefined,
     };
   },
 
@@ -198,6 +212,7 @@ export const DoActionRequest = {
     message.action !== undefined && (obj.action = doActionRequest_ActionToJSON(message.action));
     message.mediaFile !== undefined && (obj.mediaFile = message.mediaFile);
     message.mediaSubtitle !== undefined && (obj.mediaSubtitle = message.mediaSubtitle);
+    message.seekTarget !== undefined && (obj.seekTarget = message.seekTarget);
     return obj;
   },
 
@@ -207,6 +222,7 @@ export const DoActionRequest = {
     message.action = object.action ?? 0;
     message.mediaFile = object.mediaFile ?? undefined;
     message.mediaSubtitle = object.mediaSubtitle ?? undefined;
+    message.seekTarget = object.seekTarget ?? undefined;
     return message;
   },
 };

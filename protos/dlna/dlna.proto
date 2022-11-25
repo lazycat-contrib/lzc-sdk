@@ -31,6 +31,8 @@ message DoActionRequest {
 
     // 停止对此instance上的任何操作，后续操作需要重新调用play开始
     Stop = 4;
+
+    Seek = 5;
   };
 
   string player_uuid = 1;
@@ -39,6 +41,7 @@ message DoActionRequest {
 
   optional string media_file = 3;
   optional string media_subtitle = 4;
+  optional string seek_target = 5;
 }
 
 message RMPStatus {
