@@ -40,6 +40,10 @@ message DevSetting {
     bool HttpMode = 2;
     // 禁用自动休眠长时间未使用的应用
     bool DisableHibernation = 3;
+    // 开启 debug bridge
+    bool DebugBridge = 4;
+    // 开启 sshd 服务
+    bool DebugSshd = 5;
 }
 
 message IngressBlockRequest {
