@@ -4,12 +4,26 @@ package cloud.lazycat.apis.localdevice;
 
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
 
+import "google/protobuf/empty.proto";
+
 // 当前只支持mime为text类型的剪贴板
 
 service ClipboardManager {
+  rpc GetConfig(google.protobuf.Empty) returns (ClipConfig) {}
   rpc Read(ReadClipRequest) returns (ReadClipReply) {}
   rpc Write(WriteClipRequest) returns (WriteClipReply) {}
   rpc Watch(ReadClipRequest) returns (stream ReadClipReply) {}
+}
+
+message ClipConfig {
+  // 是否允许读取该设备的剪贴板
+  bool canRead = 1;
+  // 是否允许写入该设备的剪贴板
+  bool canWrite = 2;
+  // 若禁用，服务端不会监听当前设备的剪贴板内容变化
+  bool wantRead = 3;
+  // 若禁用，服务端不会同步其他设备的剪贴板内容到当前设备
+  bool wantWrite = 4;
 }
 
 message ReadClipRequest {

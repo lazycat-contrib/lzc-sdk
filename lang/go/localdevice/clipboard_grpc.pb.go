@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ClipboardManagerClient interface {
+	GetConfig(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ClipConfig, error)
 	Read(ctx context.Context, in *ReadClipRequest, opts ...grpc.CallOption) (*ReadClipReply, error)
 	Write(ctx context.Context, in *WriteClipRequest, opts ...grpc.CallOption) (*WriteClipReply, error)
 	Watch(ctx context.Context, in *ReadClipRequest, opts ...grpc.CallOption) (ClipboardManager_WatchClient, error)
@@ -33,6 +35,15 @@ type clipboardManagerClient struct {
 
 func NewClipboardManagerClient(cc grpc.ClientConnInterface) ClipboardManagerClient {
 	return &clipboardManagerClient{cc}
+}
+
+func (c *clipboardManagerClient) GetConfig(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ClipConfig, error) {
+	out := new(ClipConfig)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.ClipboardManager/GetConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *clipboardManagerClient) Read(ctx context.Context, in *ReadClipRequest, opts ...grpc.CallOption) (*ReadClipReply, error) {
@@ -89,6 +100,7 @@ func (x *clipboardManagerWatchClient) Recv() (*ReadClipReply, error) {
 // All implementations must embed UnimplementedClipboardManagerServer
 // for forward compatibility
 type ClipboardManagerServer interface {
+	GetConfig(context.Context, *emptypb.Empty) (*ClipConfig, error)
 	Read(context.Context, *ReadClipRequest) (*ReadClipReply, error)
 	Write(context.Context, *WriteClipRequest) (*WriteClipReply, error)
 	Watch(*ReadClipRequest, ClipboardManager_WatchServer) error
@@ -99,6 +111,9 @@ type ClipboardManagerServer interface {
 type UnimplementedClipboardManagerServer struct {
 }
 
+func (UnimplementedClipboardManagerServer) GetConfig(context.Context, *emptypb.Empty) (*ClipConfig, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetConfig not implemented")
+}
 func (UnimplementedClipboardManagerServer) Read(context.Context, *ReadClipRequest) (*ReadClipReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Read not implemented")
 }
@@ -119,6 +134,24 @@ type UnsafeClipboardManagerServer interface {
 
 func RegisterClipboardManagerServer(s grpc.ServiceRegistrar, srv ClipboardManagerServer) {
 	s.RegisterService(&ClipboardManager_ServiceDesc, srv)
+}
+
+func _ClipboardManager_GetConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ClipboardManagerServer).GetConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.localdevice.ClipboardManager/GetConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ClipboardManagerServer).GetConfig(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ClipboardManager_Read_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -185,6 +218,10 @@ var ClipboardManager_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "cloud.lazycat.apis.localdevice.ClipboardManager",
 	HandlerType: (*ClipboardManagerServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetConfig",
+			Handler:    _ClipboardManager_GetConfig_Handler,
+		},
 		{
 			MethodName: "Read",
 			Handler:    _ClipboardManager_Read_Handler,
