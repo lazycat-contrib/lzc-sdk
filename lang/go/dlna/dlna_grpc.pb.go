@@ -27,6 +27,7 @@ type RemoteMediaPlayerServiceClient interface {
 	// 立刻返回选择的当前RMP状态，并在状态变动时重新发送
 	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (RemoteMediaPlayerService_SubscribeClient, error)
 	DoAction(ctx context.Context, in *DoActionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetPositionInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PositionInfo, error)
 }
 
 type remoteMediaPlayerServiceClient struct {
@@ -87,6 +88,15 @@ func (c *remoteMediaPlayerServiceClient) DoAction(ctx context.Context, in *DoAct
 	return out, nil
 }
 
+func (c *remoteMediaPlayerServiceClient) GetPositionInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PositionInfo, error) {
+	out := new(PositionInfo)
+	err := c.cc.Invoke(ctx, "/lzc.dlna.RemoteMediaPlayerService/GetPositionInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteMediaPlayerServiceServer is the server API for RemoteMediaPlayerService service.
 // All implementations must embed UnimplementedRemoteMediaPlayerServiceServer
 // for forward compatibility
@@ -95,6 +105,7 @@ type RemoteMediaPlayerServiceServer interface {
 	// 立刻返回选择的当前RMP状态，并在状态变动时重新发送
 	Subscribe(*SubscribeRequest, RemoteMediaPlayerService_SubscribeServer) error
 	DoAction(context.Context, *DoActionRequest) (*emptypb.Empty, error)
+	GetPositionInfo(context.Context, *emptypb.Empty) (*PositionInfo, error)
 	mustEmbedUnimplementedRemoteMediaPlayerServiceServer()
 }
 
@@ -110,6 +121,9 @@ func (UnimplementedRemoteMediaPlayerServiceServer) Subscribe(*SubscribeRequest, 
 }
 func (UnimplementedRemoteMediaPlayerServiceServer) DoAction(context.Context, *DoActionRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DoAction not implemented")
+}
+func (UnimplementedRemoteMediaPlayerServiceServer) GetPositionInfo(context.Context, *emptypb.Empty) (*PositionInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPositionInfo not implemented")
 }
 func (UnimplementedRemoteMediaPlayerServiceServer) mustEmbedUnimplementedRemoteMediaPlayerServiceServer() {
 }
@@ -182,6 +196,24 @@ func _RemoteMediaPlayerService_DoAction_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteMediaPlayerService_GetPositionInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteMediaPlayerServiceServer).GetPositionInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/lzc.dlna.RemoteMediaPlayerService/GetPositionInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteMediaPlayerServiceServer).GetPositionInfo(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteMediaPlayerService_ServiceDesc is the grpc.ServiceDesc for RemoteMediaPlayerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -196,6 +228,10 @@ var RemoteMediaPlayerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DoAction",
 			Handler:    _RemoteMediaPlayerService_DoAction_Handler,
+		},
+		{
+			MethodName: "GetPositionInfo",
+			Handler:    _RemoteMediaPlayerService_GetPositionInfo_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
