@@ -79,6 +79,12 @@ message GenUserInvitationRequest {
 
   // 自动设置role为此字段，默认为NORMAL
   optional Role limit_role = 4;
+
+  // 是否允许新用户安装应用
+  optional bool allow_install_app = 5;
+
+  // 对新用户可见的应用列表
+  repeated string app_allowlist = 6;
 }
 
 message UserInvitation {
