@@ -6,15 +6,19 @@ import { Observable } from "rxjs";
 import { share } from "rxjs/operators";
 import { Empty } from "../google/protobuf/empty";
 
-export interface PositionInfo {
-  Track: string;
-  TrackDuration: string;
-  TrackMetaData: string;
-  TrackURI: string;
-  RelTime: string;
-  AbsTime: string;
-  RelCount: number;
-  AbsCount: number;
+export interface GetPositionInfoRequest {
+  playerUuid: string;
+}
+
+export interface GetPositionInfoResponse {
+  track: string;
+  trackDuration: string;
+  trackMetadata: string;
+  trackUri: string;
+  relTime: string;
+  absTime: string;
+  relCount: number;
+  absCount: number;
 }
 
 export interface DoActionRequest {
@@ -153,78 +157,27 @@ export interface RemoteMediaPlayer {
   iconData: string;
 }
 
-function createBasePositionInfo(): PositionInfo {
-  return {
-    Track: "",
-    TrackDuration: "",
-    TrackMetaData: "",
-    TrackURI: "",
-    RelTime: "",
-    AbsTime: "",
-    RelCount: 0,
-    AbsCount: 0,
-  };
+function createBaseGetPositionInfoRequest(): GetPositionInfoRequest {
+  return { playerUuid: "" };
 }
 
-export const PositionInfo = {
-  encode(message: PositionInfo, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.Track !== "") {
-      writer.uint32(10).string(message.Track);
-    }
-    if (message.TrackDuration !== "") {
-      writer.uint32(18).string(message.TrackDuration);
-    }
-    if (message.TrackMetaData !== "") {
-      writer.uint32(26).string(message.TrackMetaData);
-    }
-    if (message.TrackURI !== "") {
-      writer.uint32(34).string(message.TrackURI);
-    }
-    if (message.RelTime !== "") {
-      writer.uint32(42).string(message.RelTime);
-    }
-    if (message.AbsTime !== "") {
-      writer.uint32(50).string(message.AbsTime);
-    }
-    if (message.RelCount !== 0) {
-      writer.uint32(56).int32(message.RelCount);
-    }
-    if (message.AbsCount !== 0) {
-      writer.uint32(64).int32(message.AbsCount);
+export const GetPositionInfoRequest = {
+  encode(message: GetPositionInfoRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.playerUuid !== "") {
+      writer.uint32(10).string(message.playerUuid);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): PositionInfo {
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetPositionInfoRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBasePositionInfo();
+    const message = createBaseGetPositionInfoRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.Track = reader.string();
-          break;
-        case 2:
-          message.TrackDuration = reader.string();
-          break;
-        case 3:
-          message.TrackMetaData = reader.string();
-          break;
-        case 4:
-          message.TrackURI = reader.string();
-          break;
-        case 5:
-          message.RelTime = reader.string();
-          break;
-        case 6:
-          message.AbsTime = reader.string();
-          break;
-        case 7:
-          message.RelCount = reader.int32();
-          break;
-        case 8:
-          message.AbsCount = reader.int32();
+          message.playerUuid = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -234,42 +187,140 @@ export const PositionInfo = {
     return message;
   },
 
-  fromJSON(object: any): PositionInfo {
-    return {
-      Track: isSet(object.Track) ? String(object.Track) : "",
-      TrackDuration: isSet(object.TrackDuration) ? String(object.TrackDuration) : "",
-      TrackMetaData: isSet(object.TrackMetaData) ? String(object.TrackMetaData) : "",
-      TrackURI: isSet(object.TrackURI) ? String(object.TrackURI) : "",
-      RelTime: isSet(object.RelTime) ? String(object.RelTime) : "",
-      AbsTime: isSet(object.AbsTime) ? String(object.AbsTime) : "",
-      RelCount: isSet(object.RelCount) ? Number(object.RelCount) : 0,
-      AbsCount: isSet(object.AbsCount) ? Number(object.AbsCount) : 0,
-    };
+  fromJSON(object: any): GetPositionInfoRequest {
+    return { playerUuid: isSet(object.playerUuid) ? String(object.playerUuid) : "" };
   },
 
-  toJSON(message: PositionInfo): unknown {
+  toJSON(message: GetPositionInfoRequest): unknown {
     const obj: any = {};
-    message.Track !== undefined && (obj.Track = message.Track);
-    message.TrackDuration !== undefined && (obj.TrackDuration = message.TrackDuration);
-    message.TrackMetaData !== undefined && (obj.TrackMetaData = message.TrackMetaData);
-    message.TrackURI !== undefined && (obj.TrackURI = message.TrackURI);
-    message.RelTime !== undefined && (obj.RelTime = message.RelTime);
-    message.AbsTime !== undefined && (obj.AbsTime = message.AbsTime);
-    message.RelCount !== undefined && (obj.RelCount = Math.round(message.RelCount));
-    message.AbsCount !== undefined && (obj.AbsCount = Math.round(message.AbsCount));
+    message.playerUuid !== undefined && (obj.playerUuid = message.playerUuid);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<PositionInfo>, I>>(object: I): PositionInfo {
-    const message = createBasePositionInfo();
-    message.Track = object.Track ?? "";
-    message.TrackDuration = object.TrackDuration ?? "";
-    message.TrackMetaData = object.TrackMetaData ?? "";
-    message.TrackURI = object.TrackURI ?? "";
-    message.RelTime = object.RelTime ?? "";
-    message.AbsTime = object.AbsTime ?? "";
-    message.RelCount = object.RelCount ?? 0;
-    message.AbsCount = object.AbsCount ?? 0;
+  fromPartial<I extends Exact<DeepPartial<GetPositionInfoRequest>, I>>(object: I): GetPositionInfoRequest {
+    const message = createBaseGetPositionInfoRequest();
+    message.playerUuid = object.playerUuid ?? "";
+    return message;
+  },
+};
+
+function createBaseGetPositionInfoResponse(): GetPositionInfoResponse {
+  return {
+    track: "",
+    trackDuration: "",
+    trackMetadata: "",
+    trackUri: "",
+    relTime: "",
+    absTime: "",
+    relCount: 0,
+    absCount: 0,
+  };
+}
+
+export const GetPositionInfoResponse = {
+  encode(message: GetPositionInfoResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.track !== "") {
+      writer.uint32(10).string(message.track);
+    }
+    if (message.trackDuration !== "") {
+      writer.uint32(18).string(message.trackDuration);
+    }
+    if (message.trackMetadata !== "") {
+      writer.uint32(26).string(message.trackMetadata);
+    }
+    if (message.trackUri !== "") {
+      writer.uint32(34).string(message.trackUri);
+    }
+    if (message.relTime !== "") {
+      writer.uint32(42).string(message.relTime);
+    }
+    if (message.absTime !== "") {
+      writer.uint32(50).string(message.absTime);
+    }
+    if (message.relCount !== 0) {
+      writer.uint32(56).int32(message.relCount);
+    }
+    if (message.absCount !== 0) {
+      writer.uint32(64).int32(message.absCount);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetPositionInfoResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetPositionInfoResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.track = reader.string();
+          break;
+        case 2:
+          message.trackDuration = reader.string();
+          break;
+        case 3:
+          message.trackMetadata = reader.string();
+          break;
+        case 4:
+          message.trackUri = reader.string();
+          break;
+        case 5:
+          message.relTime = reader.string();
+          break;
+        case 6:
+          message.absTime = reader.string();
+          break;
+        case 7:
+          message.relCount = reader.int32();
+          break;
+        case 8:
+          message.absCount = reader.int32();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetPositionInfoResponse {
+    return {
+      track: isSet(object.track) ? String(object.track) : "",
+      trackDuration: isSet(object.trackDuration) ? String(object.trackDuration) : "",
+      trackMetadata: isSet(object.trackMetadata) ? String(object.trackMetadata) : "",
+      trackUri: isSet(object.trackUri) ? String(object.trackUri) : "",
+      relTime: isSet(object.relTime) ? String(object.relTime) : "",
+      absTime: isSet(object.absTime) ? String(object.absTime) : "",
+      relCount: isSet(object.relCount) ? Number(object.relCount) : 0,
+      absCount: isSet(object.absCount) ? Number(object.absCount) : 0,
+    };
+  },
+
+  toJSON(message: GetPositionInfoResponse): unknown {
+    const obj: any = {};
+    message.track !== undefined && (obj.track = message.track);
+    message.trackDuration !== undefined && (obj.trackDuration = message.trackDuration);
+    message.trackMetadata !== undefined && (obj.trackMetadata = message.trackMetadata);
+    message.trackUri !== undefined && (obj.trackUri = message.trackUri);
+    message.relTime !== undefined && (obj.relTime = message.relTime);
+    message.absTime !== undefined && (obj.absTime = message.absTime);
+    message.relCount !== undefined && (obj.relCount = Math.round(message.relCount));
+    message.absCount !== undefined && (obj.absCount = Math.round(message.absCount));
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GetPositionInfoResponse>, I>>(object: I): GetPositionInfoResponse {
+    const message = createBaseGetPositionInfoResponse();
+    message.track = object.track ?? "";
+    message.trackDuration = object.trackDuration ?? "";
+    message.trackMetadata = object.trackMetadata ?? "";
+    message.trackUri = object.trackUri ?? "";
+    message.relTime = object.relTime ?? "";
+    message.absTime = object.absTime ?? "";
+    message.relCount = object.relCount ?? 0;
+    message.absCount = object.absCount ?? 0;
     return message;
   },
 };
@@ -601,7 +652,10 @@ export interface RemoteMediaPlayerService {
   /** 立刻返回选择的当前RMP状态，并在状态变动时重新发送 */
   Subscribe(request: DeepPartial<SubscribeRequest>, metadata?: grpc.Metadata): Observable<RMPStatus>;
   DoAction(request: DeepPartial<DoActionRequest>, metadata?: grpc.Metadata): Promise<Empty>;
-  GetPositionInfo(request: DeepPartial<Empty>, metadata?: grpc.Metadata): Promise<PositionInfo>;
+  GetPositionInfo(
+    request: DeepPartial<GetPositionInfoRequest>,
+    metadata?: grpc.Metadata,
+  ): Promise<GetPositionInfoResponse>;
 }
 
 export class RemoteMediaPlayerServiceClientImpl implements RemoteMediaPlayerService {
@@ -627,8 +681,15 @@ export class RemoteMediaPlayerServiceClientImpl implements RemoteMediaPlayerServ
     return this.rpc.unary(RemoteMediaPlayerServiceDoActionDesc, DoActionRequest.fromPartial(request), metadata);
   }
 
-  GetPositionInfo(request: DeepPartial<Empty>, metadata?: grpc.Metadata): Promise<PositionInfo> {
-    return this.rpc.unary(RemoteMediaPlayerServiceGetPositionInfoDesc, Empty.fromPartial(request), metadata);
+  GetPositionInfo(
+    request: DeepPartial<GetPositionInfoRequest>,
+    metadata?: grpc.Metadata,
+  ): Promise<GetPositionInfoResponse> {
+    return this.rpc.unary(
+      RemoteMediaPlayerServiceGetPositionInfoDesc,
+      GetPositionInfoRequest.fromPartial(request),
+      metadata,
+    );
   }
 }
 
@@ -707,13 +768,13 @@ export const RemoteMediaPlayerServiceGetPositionInfoDesc: UnaryMethodDefinitioni
   responseStream: false,
   requestType: {
     serializeBinary() {
-      return Empty.encode(this).finish();
+      return GetPositionInfoRequest.encode(this).finish();
     },
   } as any,
   responseType: {
     deserializeBinary(data: Uint8Array) {
       return {
-        ...PositionInfo.decode(data),
+        ...GetPositionInfoResponse.decode(data),
         toObject() {
           return this;
         },

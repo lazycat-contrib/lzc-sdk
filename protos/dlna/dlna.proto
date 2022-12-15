@@ -15,18 +15,22 @@ service RemoteMediaPlayerService {
 
   rpc DoAction(DoActionRequest) returns (google.protobuf.Empty);
 
-  rpc GetPositionInfo(google.protobuf.Empty) returns (PositionInfo);
+  rpc GetPositionInfo(GetPositionInfoRequest) returns (GetPositionInfoResponse);
 }
 
-message PositionInfo {
-  string Track = 1;
-  string TrackDuration = 2;
-  string TrackMetaData = 3;
-  string TrackURI = 4;
-  string RelTime = 5;
-  string AbsTime = 6;
-  int32 RelCount = 7;
-  int32 AbsCount = 8;
+message GetPositionInfoRequest {
+  string player_uuid = 1;
+}
+
+message GetPositionInfoResponse {
+  string track = 1;
+  string track_duration = 2;
+  string track_metadata = 3;
+  string track_uri = 4;
+  string rel_time = 5;
+  string abs_time = 6;
+  int32 rel_count = 7;
+  int32 abs_count = 8;
 }
 
 message DoActionRequest {
