@@ -19,8 +19,6 @@ enum  Permission {
   OPEN_THIRD_PARTY_APP = 2;
   // 将快捷方式放在桌面的权限
   PIN_APP_PERMISSIN = 3;
-  // 剪贴板同步（读取、写入剪贴板）
-  SYNC_CLIPBOARD = 4;
 }
 
 
