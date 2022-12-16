@@ -84,7 +84,7 @@ message GenUserInvitationRequest {
   optional bool allow_install_app = 5;
 
   // 对新用户可见的应用列表
-  repeated string app_allowlist = 6;
+  repeated string app_allow_list = 6;
 }
 
 message UserInvitation {
