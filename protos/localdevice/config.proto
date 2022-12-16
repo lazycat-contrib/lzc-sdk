@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.localdevice;
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
+
+import "google/protobuf/empty.proto";
+
+service UserConfig {
+    rpc GetUserConfig(GetUserConfigRequest) returns (GetUserConfigResponse) {}
+    rpc SetUserConfig(SetUserConfigRequest) returns (google.protobuf.Empty) {}
+}
+
+message GetUserConfigRequest {
+    string userId = 1;
+    string configKey = 3;
+}
+
+message GetUserConfigResponse {
+    string configValue = 1;
+}
+
+message SetUserConfigRequest {
+    string userId = 1;
+    string configKey = 3;
+    string configValue = 4;
+}
