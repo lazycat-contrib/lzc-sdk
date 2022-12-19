@@ -19,6 +19,7 @@ import { OSUpgradeService, OSUpgradeServiceClientImpl } from "./sys/OS_upgrader"
 import { IngressService, IngressServiceClientImpl } from "./sys/ingress"
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog"
+import { UserConfig, UserConfigClientImpl } from "./localdevice/config";
 import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clipboard"
 import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo"
 import { NetworkManagerClientImpl, NetworkManager } from "./localdevice/network"
@@ -120,6 +121,7 @@ export class EndDeviceProxy {
     constructor(apiurl: string = window.origin) {
         const rpc = new GrpcWebImpl(apiurl, opt)
         this.dialog = new DialogManagerClientImpl(rpc)
+        this.config = new UserConfigClientImpl(rpc);
         this.clipboard = new ClipboardManagerClientImpl(rpc)
         this.photolibrary = new PhotoLibraryClientImpl(rpc)
         this.network = new NetworkManagerClientImpl(rpc)
@@ -132,6 +134,7 @@ export class EndDeviceProxy {
 
     public device : DeviceService;
     public dialog : DialogManager;
+    public config : UserConfig;
     public clipboard: ClipboardManager;
     public photolibrary: PhotoLibrary;
     public network: NetworkManager;
