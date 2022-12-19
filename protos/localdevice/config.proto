@@ -9,7 +9,8 @@ service UserConfig {
 }
 
 message GetUserConfigRequest {
-    string userId = 1;
+    string boxId = 1;
+    string userId = 2;
     string configKey = 3;
 }
 
