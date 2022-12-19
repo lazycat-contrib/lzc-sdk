@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -24,7 +23,6 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserConfigClient interface {
 	GetUserConfig(ctx context.Context, in *GetUserConfigRequest, opts ...grpc.CallOption) (*GetUserConfigResponse, error)
-	SetUserConfig(ctx context.Context, in *SetUserConfigRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type userConfigClient struct {
@@ -44,21 +42,11 @@ func (c *userConfigClient) GetUserConfig(ctx context.Context, in *GetUserConfigR
 	return out, nil
 }
 
-func (c *userConfigClient) SetUserConfig(ctx context.Context, in *SetUserConfigRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.UserConfig/SetUserConfig", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // UserConfigServer is the server API for UserConfig service.
 // All implementations must embed UnimplementedUserConfigServer
 // for forward compatibility
 type UserConfigServer interface {
 	GetUserConfig(context.Context, *GetUserConfigRequest) (*GetUserConfigResponse, error)
-	SetUserConfig(context.Context, *SetUserConfigRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUserConfigServer()
 }
 
@@ -68,9 +56,6 @@ type UnimplementedUserConfigServer struct {
 
 func (UnimplementedUserConfigServer) GetUserConfig(context.Context, *GetUserConfigRequest) (*GetUserConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserConfig not implemented")
-}
-func (UnimplementedUserConfigServer) SetUserConfig(context.Context, *SetUserConfigRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetUserConfig not implemented")
 }
 func (UnimplementedUserConfigServer) mustEmbedUnimplementedUserConfigServer() {}
 
@@ -103,24 +88,6 @@ func _UserConfig_GetUserConfig_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserConfig_SetUserConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetUserConfigRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserConfigServer).SetUserConfig(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.localdevice.UserConfig/SetUserConfig",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserConfigServer).SetUserConfig(ctx, req.(*SetUserConfigRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // UserConfig_ServiceDesc is the grpc.ServiceDesc for UserConfig service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -131,10 +98,6 @@ var UserConfig_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserConfig",
 			Handler:    _UserConfig_GetUserConfig_Handler,
-		},
-		{
-			MethodName: "SetUserConfig",
-			Handler:    _UserConfig_SetUserConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
