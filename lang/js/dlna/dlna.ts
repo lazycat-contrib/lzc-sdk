@@ -94,8 +94,6 @@ export function doActionRequest_ActionToJSON(object: DoActionRequest_Action): st
 
 export interface RMPStatus {
   status: RMPStatus_Status;
-  pos: string;
-  len: string;
 }
 
 export enum RMPStatus_Status {
@@ -411,19 +409,13 @@ export const DoActionRequest = {
 };
 
 function createBaseRMPStatus(): RMPStatus {
-  return { status: 0, pos: "", len: "" };
+  return { status: 0 };
 }
 
 export const RMPStatus = {
   encode(message: RMPStatus, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.status !== 0) {
       writer.uint32(8).int32(message.status);
-    }
-    if (message.pos !== "") {
-      writer.uint32(18).string(message.pos);
-    }
-    if (message.len !== "") {
-      writer.uint32(26).string(message.len);
     }
     return writer;
   },
@@ -438,12 +430,6 @@ export const RMPStatus = {
         case 1:
           message.status = reader.int32() as any;
           break;
-        case 2:
-          message.pos = reader.string();
-          break;
-        case 3:
-          message.len = reader.string();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -453,26 +439,18 @@ export const RMPStatus = {
   },
 
   fromJSON(object: any): RMPStatus {
-    return {
-      status: isSet(object.status) ? rMPStatus_StatusFromJSON(object.status) : 0,
-      pos: isSet(object.pos) ? String(object.pos) : "",
-      len: isSet(object.len) ? String(object.len) : "",
-    };
+    return { status: isSet(object.status) ? rMPStatus_StatusFromJSON(object.status) : 0 };
   },
 
   toJSON(message: RMPStatus): unknown {
     const obj: any = {};
     message.status !== undefined && (obj.status = rMPStatus_StatusToJSON(message.status));
-    message.pos !== undefined && (obj.pos = message.pos);
-    message.len !== undefined && (obj.len = message.len);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<RMPStatus>, I>>(object: I): RMPStatus {
     const message = createBaseRMPStatus();
     message.status = object.status ?? 0;
-    message.pos = object.pos ?? "";
-    message.len = object.len ?? "";
     return message;
   },
 };
