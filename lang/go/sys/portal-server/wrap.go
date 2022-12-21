@@ -10,7 +10,7 @@ import (
 
 //go:generate protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative portal-server.proto
 
-var SocketPath = "/lzcapp/run/sys/portal-server.socket"
+var SocketPath = "/run/lzc-sys/portal-server.socket"
 
 func Serve(srv HPortalSysServer) error {
 	s := grpc.NewServer(
