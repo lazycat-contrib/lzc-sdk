@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,8 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ClipboardManagerClient interface {
-	Read(ctx context.Context, in *ReadClipRequest, opts ...grpc.CallOption) (*ReadClipReply, error)
-	Write(ctx context.Context, in *WriteClipRequest, opts ...grpc.CallOption) (*WriteClipReply, error)
+	Read(ctx context.Context, in *ReadClipRequest, opts ...grpc.CallOption) (*ReadClipResponse, error)
+	Write(ctx context.Context, in *WriteClipRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Watch(ctx context.Context, in *ReadClipRequest, opts ...grpc.CallOption) (ClipboardManager_WatchClient, error)
 }
 
@@ -35,8 +36,8 @@ func NewClipboardManagerClient(cc grpc.ClientConnInterface) ClipboardManagerClie
 	return &clipboardManagerClient{cc}
 }
 
-func (c *clipboardManagerClient) Read(ctx context.Context, in *ReadClipRequest, opts ...grpc.CallOption) (*ReadClipReply, error) {
-	out := new(ReadClipReply)
+func (c *clipboardManagerClient) Read(ctx context.Context, in *ReadClipRequest, opts ...grpc.CallOption) (*ReadClipResponse, error) {
+	out := new(ReadClipResponse)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.ClipboardManager/Read", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -44,8 +45,8 @@ func (c *clipboardManagerClient) Read(ctx context.Context, in *ReadClipRequest, 
 	return out, nil
 }
 
-func (c *clipboardManagerClient) Write(ctx context.Context, in *WriteClipRequest, opts ...grpc.CallOption) (*WriteClipReply, error) {
-	out := new(WriteClipReply)
+func (c *clipboardManagerClient) Write(ctx context.Context, in *WriteClipRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.ClipboardManager/Write", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -69,7 +70,7 @@ func (c *clipboardManagerClient) Watch(ctx context.Context, in *ReadClipRequest,
 }
 
 type ClipboardManager_WatchClient interface {
-	Recv() (*ReadClipReply, error)
+	Recv() (*ReadClipResponse, error)
 	grpc.ClientStream
 }
 
@@ -77,8 +78,8 @@ type clipboardManagerWatchClient struct {
 	grpc.ClientStream
 }
 
-func (x *clipboardManagerWatchClient) Recv() (*ReadClipReply, error) {
-	m := new(ReadClipReply)
+func (x *clipboardManagerWatchClient) Recv() (*ReadClipResponse, error) {
+	m := new(ReadClipResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -89,8 +90,8 @@ func (x *clipboardManagerWatchClient) Recv() (*ReadClipReply, error) {
 // All implementations must embed UnimplementedClipboardManagerServer
 // for forward compatibility
 type ClipboardManagerServer interface {
-	Read(context.Context, *ReadClipRequest) (*ReadClipReply, error)
-	Write(context.Context, *WriteClipRequest) (*WriteClipReply, error)
+	Read(context.Context, *ReadClipRequest) (*ReadClipResponse, error)
+	Write(context.Context, *WriteClipRequest) (*emptypb.Empty, error)
 	Watch(*ReadClipRequest, ClipboardManager_WatchServer) error
 	mustEmbedUnimplementedClipboardManagerServer()
 }
@@ -99,10 +100,10 @@ type ClipboardManagerServer interface {
 type UnimplementedClipboardManagerServer struct {
 }
 
-func (UnimplementedClipboardManagerServer) Read(context.Context, *ReadClipRequest) (*ReadClipReply, error) {
+func (UnimplementedClipboardManagerServer) Read(context.Context, *ReadClipRequest) (*ReadClipResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Read not implemented")
 }
-func (UnimplementedClipboardManagerServer) Write(context.Context, *WriteClipRequest) (*WriteClipReply, error) {
+func (UnimplementedClipboardManagerServer) Write(context.Context, *WriteClipRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Write not implemented")
 }
 func (UnimplementedClipboardManagerServer) Watch(*ReadClipRequest, ClipboardManager_WatchServer) error {
@@ -166,7 +167,7 @@ func _ClipboardManager_Watch_Handler(srv interface{}, stream grpc.ServerStream) 
 }
 
 type ClipboardManager_WatchServer interface {
-	Send(*ReadClipReply) error
+	Send(*ReadClipResponse) error
 	grpc.ServerStream
 }
 
@@ -174,7 +175,7 @@ type clipboardManagerWatchServer struct {
 	grpc.ServerStream
 }
 
-func (x *clipboardManagerWatchServer) Send(m *ReadClipReply) error {
+func (x *clipboardManagerWatchServer) Send(m *ReadClipResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 

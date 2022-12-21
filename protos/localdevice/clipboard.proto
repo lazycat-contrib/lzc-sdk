@@ -4,24 +4,23 @@ package cloud.lazycat.apis.localdevice;
 
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
 
-// 当前只支持mime为text类型的剪贴板
+import "google/protobuf/empty.proto";
 
 service ClipboardManager {
-  rpc Read(ReadClipRequest) returns (ReadClipReply) {}
-  rpc Write(WriteClipRequest) returns (WriteClipReply) {}
-  rpc Watch(ReadClipRequest) returns (stream ReadClipReply) {}
+  rpc Read(ReadClipRequest) returns (ReadClipResponse) {}
+  rpc Write(WriteClipRequest) returns (google.protobuf.Empty) {}
+  rpc Watch(ReadClipRequest) returns (stream ReadClipResponse) {}
 }
 
 message ReadClipRequest {
   string mime = 1; //目前只支持text/plain和image/png
 }
-message ReadClipReply {
+
+message ReadClipResponse {
   bytes content = 1;
 }
 
 message WriteClipRequest {
   string mime = 1;
   bytes content = 2;
-}
-message WriteClipReply {
 }
