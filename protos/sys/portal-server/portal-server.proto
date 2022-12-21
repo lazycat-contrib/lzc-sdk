@@ -85,8 +85,6 @@ message GenUserInvitationRequest {
 
   // 对新用户可见的应用列表
   repeated string app_allow_list = 6;
-
-  optional string uuid = 7;
 }
 
 message UserInvitation {
