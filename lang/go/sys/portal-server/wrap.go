@@ -10,7 +10,10 @@ import (
 
 //go:generate protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative portal-server.proto
 
-var SocketPath = "/run/lzc-sys/portal-server.socket"
+var (
+	SocketPath = "/run/lzc-sys/portal-server.socket"
+	LzcAppSocketPath = "/lzcapp/run/sys/portal-server.socket"
+)
 
 func Serve(srv HPortalSysServer) error {
 	s := grpc.NewServer(
@@ -44,7 +47,7 @@ func NewClient() (*Client, error) {
 		grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor()),
 		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
 	}
-	conn, err := grpc.Dial("unix://"+SocketPath, opts...)
+	conn, err := grpc.Dial("unix://"+LzcAppSocketPath, opts...)
 	if err != nil {
 		return nil, err
 	}
