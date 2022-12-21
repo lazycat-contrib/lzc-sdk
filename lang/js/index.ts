@@ -17,6 +17,7 @@ import { NetworkManager as NM, NetworkManagerClientImpl as NMClientImpl } from "
 import { OSSnapshotService, OSSnapshotServiceClientImpl } from "./sys/OS_snapshot"
 import { OSUpgradeService, OSUpgradeServiceClientImpl } from "./sys/OS_upgrader"
 import { IngressService, IngressServiceClientImpl } from "./sys/ingress"
+import { OsDaemonService, OsDaemonServiceClientImpl} from "./sys/OS_daemon"
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog"
 import { UserConfig, UserConfigClientImpl } from "./localdevice/config";
@@ -73,6 +74,7 @@ export class lzcAPIGateway {
 
         this.osUpgrader = new OSUpgradeServiceClientImpl(rpc);
         this.osSnapshot = new OSSnapshotServiceClientImpl(rpc);
+        this.osDaemon = new OsDaemonServiceClientImpl(rpc);
 
         this.rmp = new RemoteMediaPlayerServiceClientImpl(rpc);
 
@@ -105,6 +107,7 @@ export class lzcAPIGateway {
 
     public osUpgrader: OSUpgradeService
     public osSnapshot: OSSnapshotService
+    public osDaemon :  OsDaemonService
 
     public appinfo: Promise<AppInfo>;
     public devices: EndDeviceService;

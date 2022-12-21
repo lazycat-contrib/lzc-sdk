@@ -1,9 +1,9 @@
 /* eslint-disable */
 import { grpc } from "@improbable-eng/grpc-web";
 import { BrowserHeaders } from "browser-headers";
-import { share } from "rxjs/operators";
-import { Observable } from "rxjs";
 import _m0 from "protobufjs/minimal";
+import { Observable } from "rxjs";
+import { share } from "rxjs/operators";
 
 export interface SearchRequest {
   /** "urn:schemas-upnp-org:service:AVTransport:1", "ssdp:all" 之类的 */
@@ -28,10 +28,7 @@ function createBaseSearchRequest(): SearchRequest {
 }
 
 export const SearchRequest = {
-  encode(
-    message: SearchRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: SearchRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.type !== "") {
       writer.uint32(10).string(message.type);
     }
@@ -72,14 +69,11 @@ export const SearchRequest = {
   toJSON(message: SearchRequest): unknown {
     const obj: any = {};
     message.type !== undefined && (obj.type = message.type);
-    message.waitSeconds !== undefined &&
-      (obj.waitSeconds = Math.round(message.waitSeconds));
+    message.waitSeconds !== undefined && (obj.waitSeconds = Math.round(message.waitSeconds));
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<SearchRequest>, I>>(
-    object: I
-  ): SearchRequest {
+  fromPartial<I extends Exact<DeepPartial<SearchRequest>, I>>(object: I): SearchRequest {
     const message = createBaseSearchRequest();
     message.type = object.type ?? "";
     message.waitSeconds = object.waitSeconds ?? 0;
@@ -92,10 +86,7 @@ function createBaseService(): Service {
 }
 
 export const Service = {
-  encode(
-    message: Service,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: Service, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.type !== "") {
       writer.uint32(10).string(message.type);
     }
@@ -167,10 +158,7 @@ export const Service = {
 };
 
 export interface SSDPService {
-  Search(
-    request: DeepPartial<SearchRequest>,
-    metadata?: grpc.Metadata
-  ): Observable<Service>;
+  Search(request: DeepPartial<SearchRequest>, metadata?: grpc.Metadata): Observable<Service>;
 }
 
 export class SSDPServiceClientImpl implements SSDPService {
@@ -181,21 +169,12 @@ export class SSDPServiceClientImpl implements SSDPService {
     this.Search = this.Search.bind(this);
   }
 
-  Search(
-    request: DeepPartial<SearchRequest>,
-    metadata?: grpc.Metadata
-  ): Observable<Service> {
-    return this.rpc.invoke(
-      SSDPServiceSearchDesc,
-      SearchRequest.fromPartial(request),
-      metadata
-    );
+  Search(request: DeepPartial<SearchRequest>, metadata?: grpc.Metadata): Observable<Service> {
+    return this.rpc.invoke(SSDPServiceSearchDesc, SearchRequest.fromPartial(request), metadata);
   }
 }
 
-export const SSDPServiceDesc = {
-  serviceName: "lzc.ssdp.SSDPService",
-};
+export const SSDPServiceDesc = { serviceName: "lzc.ssdp.SSDPService" };
 
 export const SSDPServiceSearchDesc: UnaryMethodDefinitionish = {
   methodName: "Search",
@@ -219,8 +198,7 @@ export const SSDPServiceSearchDesc: UnaryMethodDefinitionish = {
   } as any,
 };
 
-interface UnaryMethodDefinitionishR
-  extends grpc.UnaryMethodDefinition<any, any> {
+interface UnaryMethodDefinitionishR extends grpc.UnaryMethodDefinition<any, any> {
   requestStream: any;
   responseStream: any;
 }
@@ -231,12 +209,12 @@ interface Rpc {
   unary<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     request: any,
-    metadata: grpc.Metadata | undefined
+    metadata: grpc.Metadata | undefined,
   ): Promise<any>;
   invoke<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     request: any,
-    metadata: grpc.Metadata | undefined
+    metadata: grpc.Metadata | undefined,
   ): Observable<any>;
 }
 
@@ -258,7 +236,7 @@ export class GrpcWebImpl {
       debug?: boolean;
       metadata?: grpc.Metadata;
       upStreamRetryCodes?: number[];
-    }
+    },
   ) {
     this.host = host;
     this.options = options;
@@ -267,16 +245,12 @@ export class GrpcWebImpl {
   unary<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     _request: any,
-    metadata: grpc.Metadata | undefined
+    metadata: grpc.Metadata | undefined,
   ): Promise<any> {
     const request = { ..._request, ...methodDesc.requestType };
-    const maybeCombinedMetadata =
-      metadata && this.options.metadata
-        ? new BrowserHeaders({
-            ...this.options?.metadata.headersMap,
-            ...metadata?.headersMap,
-          })
-        : metadata || this.options.metadata;
+    const maybeCombinedMetadata = metadata && this.options.metadata
+      ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
+      : metadata || this.options.metadata;
     return new Promise((resolve, reject) => {
       grpc.unary(methodDesc, {
         request,
@@ -288,9 +262,7 @@ export class GrpcWebImpl {
           if (response.status === grpc.Code.OK) {
             resolve(response.message);
           } else {
-            const err = new Error(response.statusMessage) as any;
-            err.code = response.status;
-            err.metadata = response.trailers;
+            const err = new GrpcWebError(response.statusMessage, response.status, response.trailers);
             reject(err);
           }
         },
@@ -301,20 +273,16 @@ export class GrpcWebImpl {
   invoke<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     _request: any,
-    metadata: grpc.Metadata | undefined
+    metadata: grpc.Metadata | undefined,
   ): Observable<any> {
     const upStreamCodes = this.options.upStreamRetryCodes || [];
     const DEFAULT_TIMEOUT_TIME: number = 3_000;
     const request = { ..._request, ...methodDesc.requestType };
-    const maybeCombinedMetadata =
-      metadata && this.options.metadata
-        ? new BrowserHeaders({
-            ...this.options?.metadata.headersMap,
-            ...metadata?.headersMap,
-          })
-        : metadata || this.options.metadata;
+    const maybeCombinedMetadata = metadata && this.options.metadata
+      ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
+      : metadata || this.options.metadata;
     return new Observable((observer) => {
-      const upStream = () => {
+      const upStream = (() => {
         const client = grpc.invoke(methodDesc, {
           host: this.host,
           request,
@@ -322,11 +290,7 @@ export class GrpcWebImpl {
           metadata: maybeCombinedMetadata,
           debug: this.options.debug,
           onMessage: (next) => observer.next(next),
-          onEnd: (
-            code: grpc.Code,
-            message: string,
-            trailers: grpc.Metadata
-          ) => {
+          onEnd: (code: grpc.Code, message: string, trailers: grpc.Metadata) => {
             if (code === 0) {
               observer.complete();
             } else if (upStreamCodes.includes(code)) {
@@ -340,39 +304,29 @@ export class GrpcWebImpl {
           },
         });
         observer.add(() => client.close());
-      };
+      });
       upStream();
     }).pipe(share());
   }
 }
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-type Exact<P, I extends P> = P extends Builtin
-  ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<
-        Exclude<keyof I, KeysOfUnion<P>>,
-        never
-      >;
+type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
+}
+
+export class GrpcWebError extends Error {
+  constructor(message: string, public code: grpc.Code, public metadata: grpc.Metadata) {
+    super(message);
+  }
 }

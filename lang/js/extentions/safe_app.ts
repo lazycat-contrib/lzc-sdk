@@ -31,12 +31,12 @@ const SAFE = {
         view.SetScreentBrightness(number);
     },
     // 获取当前屏幕亮度百分比(0~1)
-    GetScreenBrightNess(callBackMethod: String) {
-        view.GetScreenBrightNess(callBackMethod)
+    GetScreenBrightNess() {
+        return  view.GetScreenBrightNess()
     },
     // 获取当前音量
-    GetCurrentVolume(callBackMethod: String) {
-        view.GetCurrentVolume(callBackMethod);
+    GetCurrentVolume() {
+        return view.GetCurrentVolume();
     },
     // 设置指定音量
     SetVoice(num) {
