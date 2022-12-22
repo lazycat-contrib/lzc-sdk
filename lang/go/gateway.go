@@ -40,8 +40,9 @@ type DeviceProxy struct {
 
 func (d *DeviceProxy) Close() error { return d.conn.Close() }
 
-func (gw *APIGateway) NewDeviceProxy(deviceapiurl string) (*DeviceProxy, error) {
-	apiurl := strings.TrimPrefix(deviceapiurl, "https://")
+func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
+	apiurl = strings.TrimPrefix(apiurl, "https://")
+	apiurl = strings.TrimPrefix(apiurl, "http://")
 
 	conn, err := grpc.Dial(apiurl, gw.cred)
 	if err != nil {
