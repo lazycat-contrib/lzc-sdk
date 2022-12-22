@@ -46,12 +46,12 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 		return nil, err
 	}
 
-	var conn *grpc.ClientConn
-	if parsedUrl.Scheme == "http" {
-		conn, err = grpc.Dial(parsedUrl.Host)
-	} else {
-		conn, err = grpc.Dial(parsedUrl.Host, gw.cred)
+	var opts []grpc.DialOption
+	if parsedUrl.Scheme == "https" {
+		opts = append(opts, gw.cred)
 	}
+
+	conn, err := grpc.Dial(parsedUrl.Host, opts...)
 	if err != nil {
 		return nil, err
 	}
