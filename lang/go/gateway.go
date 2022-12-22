@@ -2,6 +2,7 @@ package gohelper
 
 import (
 	"context"
+	"net/url"
 	"strings"
 
 	"gitee.com/linakesi/lzc-sdk/lang/go/common"
@@ -41,9 +42,16 @@ type DeviceProxy struct {
 func (d *DeviceProxy) Close() error { return d.conn.Close() }
 
 func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
+	parsedUrl, err := url.Parse(apiurl)
+	if err != nil {
+		return nil, err
+	}
 	apiurl = strings.TrimPrefix(apiurl, "https://")
 	apiurl = strings.TrimPrefix(apiurl, "http://")
 
+	if parsedUrl.Scheme == "http" {
+		gw.cred = nil
+	}
 	conn, err := grpc.Dial(apiurl, gw.cred)
 	if err != nil {
 		return nil, err
