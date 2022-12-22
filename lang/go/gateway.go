@@ -9,6 +9,7 @@ import (
 	"gitee.com/linakesi/lzc-sdk/lang/go/sys"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type APIGateway struct {
@@ -46,12 +47,12 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 		return nil, err
 	}
 
-	var opts []grpc.DialOption
-	if parsedUrl.Scheme == "https" {
-		opts = append(opts, gw.cred)
+	cred := gw.cred
+	if parsedUrl.Scheme == "http" {
+		cred = grpc.WithTransportCredentials(insecure.NewCredentials())
 	}
 
-	conn, err := grpc.Dial(parsedUrl.Host, opts...)
+	conn, err := grpc.Dial(parsedUrl.Host, cred)
 	if err != nil {
 		return nil, err
 	}
