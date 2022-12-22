@@ -3,7 +3,6 @@ package gohelper
 import (
 	"context"
 	"net/url"
-	"strings"
 
 	"gitee.com/linakesi/lzc-sdk/lang/go/common"
 	"gitee.com/linakesi/lzc-sdk/lang/go/localdevice"
@@ -46,13 +45,11 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 	if err != nil {
 		return nil, err
 	}
-	apiurl = strings.TrimPrefix(apiurl, "https://")
-	apiurl = strings.TrimPrefix(apiurl, "http://")
 
 	if parsedUrl.Scheme == "http" {
 		gw.cred = nil
 	}
-	conn, err := grpc.Dial(apiurl, gw.cred)
+	conn, err := grpc.Dial(parsedUrl.Host, gw.cred)
 	if err != nil {
 		return nil, err
 	}
