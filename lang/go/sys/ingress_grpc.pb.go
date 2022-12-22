@@ -37,6 +37,8 @@ type IngressServiceClient interface {
 	AllowList(ctx context.Context, in *IngressAllowListRequest, opts ...grpc.CallOption) (*IngressAllowListResponse, error)
 	// 清空白名单
 	AllowClear(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 启用/禁用白名单
+	AllowManage(ctx context.Context, in *IngressAllowManageRequest, opts ...grpc.CallOption) (*IngressAllowManageResponse, error)
 	// 获取指定 app 最后一次被访问的时刻
 	GetAppLastAccessTime(ctx context.Context, in *IngressAppLastAccessTimeRequest, opts ...grpc.CallOption) (*IngressAppLastAccessTimeResponse, error)
 }
@@ -121,6 +123,15 @@ func (c *ingressServiceClient) AllowClear(ctx context.Context, in *emptypb.Empty
 	return out, nil
 }
 
+func (c *ingressServiceClient) AllowManage(ctx context.Context, in *IngressAllowManageRequest, opts ...grpc.CallOption) (*IngressAllowManageResponse, error) {
+	out := new(IngressAllowManageResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.IngressService/AllowManage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *ingressServiceClient) GetAppLastAccessTime(ctx context.Context, in *IngressAppLastAccessTimeRequest, opts ...grpc.CallOption) (*IngressAppLastAccessTimeResponse, error) {
 	out := new(IngressAppLastAccessTimeResponse)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.IngressService/GetAppLastAccessTime", in, out, opts...)
@@ -148,6 +159,8 @@ type IngressServiceServer interface {
 	AllowList(context.Context, *IngressAllowListRequest) (*IngressAllowListResponse, error)
 	// 清空白名单
 	AllowClear(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 启用/禁用白名单
+	AllowManage(context.Context, *IngressAllowManageRequest) (*IngressAllowManageResponse, error)
 	// 获取指定 app 最后一次被访问的时刻
 	GetAppLastAccessTime(context.Context, *IngressAppLastAccessTimeRequest) (*IngressAppLastAccessTimeResponse, error)
 	mustEmbedUnimplementedIngressServiceServer()
@@ -180,6 +193,9 @@ func (UnimplementedIngressServiceServer) AllowList(context.Context, *IngressAllo
 }
 func (UnimplementedIngressServiceServer) AllowClear(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllowClear not implemented")
+}
+func (UnimplementedIngressServiceServer) AllowManage(context.Context, *IngressAllowManageRequest) (*IngressAllowManageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AllowManage not implemented")
 }
 func (UnimplementedIngressServiceServer) GetAppLastAccessTime(context.Context, *IngressAppLastAccessTimeRequest) (*IngressAppLastAccessTimeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAppLastAccessTime not implemented")
@@ -341,6 +357,24 @@ func _IngressService_AllowClear_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IngressService_AllowManage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IngressAllowManageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IngressServiceServer).AllowManage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.IngressService/AllowManage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IngressServiceServer).AllowManage(ctx, req.(*IngressAllowManageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _IngressService_GetAppLastAccessTime_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IngressAppLastAccessTimeRequest)
 	if err := dec(in); err != nil {
@@ -397,6 +431,10 @@ var IngressService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AllowClear",
 			Handler:    _IngressService_AllowClear_Handler,
+		},
+		{
+			MethodName: "AllowManage",
+			Handler:    _IngressService_AllowManage_Handler,
 		},
 		{
 			MethodName: "GetAppLastAccessTime",

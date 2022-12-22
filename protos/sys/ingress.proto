@@ -32,6 +32,9 @@ service IngressService {
     // 清空白名单
     rpc AllowClear(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 
+    // 启用/禁用白名单
+    rpc AllowManage(IngressAllowManageRequest) returns (IngressAllowManageResponse) {}
+
     // 获取指定 app 最后一次被访问的时刻
     rpc GetAppLastAccessTime(IngressAppLastAccessTimeRequest) returns (IngressAppLastAccessTimeResponse) {}
 }
@@ -81,4 +84,12 @@ message IngressAppLastAccessTimeRequest {
 
 message IngressAppLastAccessTimeResponse {
     int64 UnixTime = 1;
+}
+
+message IngressAllowManageRequest {
+    optional bool Enabled = 1;
+}
+
+message IngressAllowManageResponse {
+    bool Enabled = 1;
 }
