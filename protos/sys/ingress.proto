@@ -87,7 +87,8 @@ message IngressAppLastAccessTimeResponse {
 }
 
 message IngressAllowManageRequest {
-    optional bool Enabled = 1;
+    string UserId = 1;
+    optional bool Enabled = 2;
 }
 
 message IngressAllowManageResponse {
