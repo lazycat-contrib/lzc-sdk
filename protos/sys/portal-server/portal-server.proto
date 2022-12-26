@@ -83,7 +83,10 @@ message GenUserInvitationRequest {
   // 是否允许新用户安装应用
   optional bool allow_install_app = 5;
 
-  // 对新用户可见的应用列表
+  // 是否启用应用白名单
+  optional bool enable_allow_list = 7;
+
+  // 对新用户可见的应用列表(appid)
   repeated string app_allow_list = 6;
 }
 
