@@ -16,6 +16,7 @@ type APIGateway struct {
 	conn *grpc.ClientConn
 	cred grpc.DialOption
 
+	Box              common.BoxServiceClient
 	Users            common.UserManagerClient
 	Devices          common.EndDeviceServiceClient
 	Permisions       common.PermissionManagerClient
@@ -95,6 +96,7 @@ func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
 		PkgManager: sys.NewPackageManagerClient(conn),
 		Ingress:    sys.NewIngressServiceClient(conn),
 
+		Box:              common.NewBoxServiceClient(conn),
 		Users:            common.NewUserManagerClient(conn),
 		Devices:          common.NewEndDeviceServiceClient(conn),
 		Permisions:       common.NewPermissionManagerClient(conn),
