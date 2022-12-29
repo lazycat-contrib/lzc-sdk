@@ -23,6 +23,8 @@ service HPortalSys {
   // 注意不是所有ACME服务器都支持泛域名。
   rpc GetDomainCert(DomainCertRequest) returns (DomainCertReply) {}
 
+  rpc GetDomainSelfCert(DomainSelfCertRequest) returns (DomainSelfCertResponse) {}
+
 
   // 在部署具体app前，调用此接口获取app证书
   // APP证书格式为:
@@ -225,6 +227,15 @@ message DomainCertReply {
   string key = 2;
 
   bytes ocsp = 3;
+}
+
+message DomainSelfCertRequest {
+  string vpip = 1;
+  string domain = 2;
+}
+message DomainSelfCertResponse {
+  bytes cert = 1;
+  bytes key = 2;
 }
 
 
