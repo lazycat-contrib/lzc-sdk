@@ -32,7 +32,7 @@ type HPortalSysClient interface {
 	// 获取盒子所属域名下或下一级域名的https证书。
 	// 注意不是所有ACME服务器都支持泛域名。
 	GetDomainCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
-	GetDomainSelfCert(ctx context.Context, in *DomainSelfCertRequest, opts ...grpc.CallOption) (*DomainSelfCertResponse, error)
+	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
 	// 在部署具体app前，调用此接口获取app证书
 	// APP证书格式为:
 	//
@@ -123,8 +123,8 @@ func (c *hPortalSysClient) GetDomainCert(ctx context.Context, in *DomainCertRequ
 	return out, nil
 }
 
-func (c *hPortalSysClient) GetDomainSelfCert(ctx context.Context, in *DomainSelfCertRequest, opts ...grpc.CallOption) (*DomainSelfCertResponse, error) {
-	out := new(DomainSelfCertResponse)
+func (c *hPortalSysClient) GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error) {
+	out := new(DomainCertReply)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -294,7 +294,7 @@ type HPortalSysServer interface {
 	// 获取盒子所属域名下或下一级域名的https证书。
 	// 注意不是所有ACME服务器都支持泛域名。
 	GetDomainCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
-	GetDomainSelfCert(context.Context, *DomainSelfCertRequest) (*DomainSelfCertResponse, error)
+	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
 	// 在部署具体app前，调用此接口获取app证书
 	// APP证书格式为:
 	//
@@ -352,7 +352,7 @@ func (UnimplementedHPortalSysServer) QueryBoxInfo(context.Context, *emptypb.Empt
 func (UnimplementedHPortalSysServer) GetDomainCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDomainCert not implemented")
 }
-func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainSelfCertRequest) (*DomainSelfCertResponse, error) {
+func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDomainSelfCert not implemented")
 }
 func (UnimplementedHPortalSysServer) GetAppCert(context.Context, *AppCertRequest) (*AppCertReply, error) {
@@ -501,7 +501,7 @@ func _HPortalSys_GetDomainCert_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _HPortalSys_GetDomainSelfCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DomainSelfCertRequest)
+	in := new(DomainCertRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -513,7 +513,7 @@ func _HPortalSys_GetDomainSelfCert_Handler(srv interface{}, ctx context.Context,
 		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).GetDomainSelfCert(ctx, req.(*DomainSelfCertRequest))
+		return srv.(HPortalSysServer).GetDomainSelfCert(ctx, req.(*DomainCertRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
