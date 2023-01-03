@@ -81,6 +81,14 @@ const UNSAFE = {
     // 目前只支持android
     GetValue: function(key){
 	    return view.GetValue(key)
-    }
+    },
+    // callbackMethod: 结果回调方法
+    CanGoback: function(callbackMethod){
+       return view.CanGoback(callbackMethod);
+    },
+    // controlViewHeight 两种使用方式,第一种是使用pixel: 100px ,另外一种使用百分比: 20%,
+    SetControlViewHeight:function (controlViewHeight){
+        view.SetControlViewHeight(controlViewHeight);
+    },
 };
 
