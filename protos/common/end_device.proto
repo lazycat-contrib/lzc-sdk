@@ -48,6 +48,9 @@ message EndDevice {
 
   // 设备第一次允许登陆的时间戳
   google.protobuf.Timestamp binding_time = 7;
+
+  // 设备是否是移动平台
+  bool is_mobile = 8;
 }
 
 message ListEndDeviceRequest {
@@ -61,4 +64,3 @@ message RemoveEndDeviceRequest{
   string uid = 1;
   string unique_deivce_id = 2;
 }
-
