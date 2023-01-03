@@ -245,6 +245,9 @@ message Device {
   string model = 5;
   // 设备绑定时间
   google.protobuf.Timestamp binding_time = 6;
+
+  // 设备是否是移动平台
+  bool is_mobile = 8;
 }
 
 message ListDeviceRequest {

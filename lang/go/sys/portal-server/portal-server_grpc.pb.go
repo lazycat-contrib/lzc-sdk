@@ -35,37 +35,38 @@ type HPortalSysClient interface {
 	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
 	// 在部署具体app前，调用此接口获取app证书
 	// APP证书格式为:
-	//   Issuer: O = $BOX.ORIGIN, CN = $BOX.DOMAIN, serialNumber = $BOX.ID
-	//   Subject: O = $BOX.ORIGIN, CN = $APP.DOMAIN, serialNumber = '$UID@$APP.ID || $APP.ID'
+	//
+	//	Issuer: O = $BOX.ORIGIN, CN = $BOX.DOMAIN, serialNumber = $BOX.ID
+	//	Subject: O = $BOX.ORIGIN, CN = $APP.DOMAIN, serialNumber = '$UID@$APP.ID || $APP.ID'
+	//
 	// Issuer为box.crt，通过QueryBoxInfo查询到BoxInfo.BoxCrt。并且box.crt的公钥与box.id是一一对应关系。
 	//
 	// 盒子内部组件可以直接通过QueryBoxInfo来验证信任链是否合法，盒子外部系统需要通过其他机制比如libp2p.identify去验证box.crt的合法性。
-	//
 	GetAppCert(ctx context.Context, in *AppCertRequest, opts ...grpc.CallOption) (*AppCertReply, error)
 	// 申请额外的外部可访问的IP,并配置对应访问域名
 	AllocVirtualExternalIP(ctx context.Context, in *AllocVEIPRequest, opts ...grpc.CallOption) (*AllocVEIPReply, error)
 	// 释放虚拟IP
 	FreeVirtualExternalIP(ctx context.Context, in *FreeVEIPRequest, opts ...grpc.CallOption) (*FreeVEIPReply, error)
 	PairDevices(ctx context.Context, in *PairDevicesRequest, opts ...grpc.CallOption) (HPortalSys_PairDevicesClient, error)
-	//  查询所有UID
+	// 查询所有UID
 	ListUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListUsersReply, error)
-	//  根据用户uid查询用户信息
+	// 根据用户uid查询用户信息
 	QueryRole(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*QueryRoleReply, error)
-	//  修改指定uid的用户角色
+	// 修改指定uid的用户角色
 	ChangeRole(ctx context.Context, in *ChangeRoleReqeust, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	//  通过验证旧密码修改新的密码
+	// 通过验证旧密码修改新的密码
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	//  删除用户信息
+	// 删除用户信息
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	//  创建用户信息
+	// 创建用户信息
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	//  强制重置用户密码
+	// 强制重置用户密码
 	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 生成用户注册token,以便上层实现各类用户注册机制
 	GenUserInvitation(ctx context.Context, in *GenUserInvitationRequest, opts ...grpc.CallOption) (*UserInvitation, error)
 	// 注销当前用户指定设备，同时将连接断开
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	//校验用户密码是否正确
+	// 校验用户密码是否正确
 	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -296,37 +297,38 @@ type HPortalSysServer interface {
 	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
 	// 在部署具体app前，调用此接口获取app证书
 	// APP证书格式为:
-	//   Issuer: O = $BOX.ORIGIN, CN = $BOX.DOMAIN, serialNumber = $BOX.ID
-	//   Subject: O = $BOX.ORIGIN, CN = $APP.DOMAIN, serialNumber = '$UID@$APP.ID || $APP.ID'
+	//
+	//	Issuer: O = $BOX.ORIGIN, CN = $BOX.DOMAIN, serialNumber = $BOX.ID
+	//	Subject: O = $BOX.ORIGIN, CN = $APP.DOMAIN, serialNumber = '$UID@$APP.ID || $APP.ID'
+	//
 	// Issuer为box.crt，通过QueryBoxInfo查询到BoxInfo.BoxCrt。并且box.crt的公钥与box.id是一一对应关系。
 	//
 	// 盒子内部组件可以直接通过QueryBoxInfo来验证信任链是否合法，盒子外部系统需要通过其他机制比如libp2p.identify去验证box.crt的合法性。
-	//
 	GetAppCert(context.Context, *AppCertRequest) (*AppCertReply, error)
 	// 申请额外的外部可访问的IP,并配置对应访问域名
 	AllocVirtualExternalIP(context.Context, *AllocVEIPRequest) (*AllocVEIPReply, error)
 	// 释放虚拟IP
 	FreeVirtualExternalIP(context.Context, *FreeVEIPRequest) (*FreeVEIPReply, error)
 	PairDevices(*PairDevicesRequest, HPortalSys_PairDevicesServer) error
-	//  查询所有UID
+	// 查询所有UID
 	ListUsers(context.Context, *emptypb.Empty) (*ListUsersReply, error)
-	//  根据用户uid查询用户信息
+	// 根据用户uid查询用户信息
 	QueryRole(context.Context, *UserID) (*QueryRoleReply, error)
-	//  修改指定uid的用户角色
+	// 修改指定uid的用户角色
 	ChangeRole(context.Context, *ChangeRoleReqeust) (*emptypb.Empty, error)
-	//  通过验证旧密码修改新的密码
+	// 通过验证旧密码修改新的密码
 	ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error)
-	//  删除用户信息
+	// 删除用户信息
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
-	//  创建用户信息
+	// 创建用户信息
 	CreateUser(context.Context, *CreateUserRequest) (*emptypb.Empty, error)
-	//  强制重置用户密码
+	// 强制重置用户密码
 	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
 	// 生成用户注册token,以便上层实现各类用户注册机制
 	GenUserInvitation(context.Context, *GenUserInvitationRequest) (*UserInvitation, error)
 	// 注销当前用户指定设备，同时将连接断开
 	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
-	//校验用户密码是否正确
+	// 校验用户密码是否正确
 	CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
