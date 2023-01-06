@@ -22,9 +22,10 @@ type APIGateway struct {
 	Permisions       common.PermissionManagerClient
 	PeripheralDevice common.PeripheralDeviceServiceClient
 	FileTransfer     common.FileTransferServiceClient
-	PkgManager       sys.PackageManagerClient
-	Ingress          sys.IngressServiceClient
 
+	PkgManager sys.PackageManagerClient
+	Ingress    sys.IngressServiceClient
+	Network    sys.NetworkManagerClient
 	OSUpgrader sys.OSUpgradeServiceClient
 	OSSnapshot sys.OSSnapshotServiceClient
 }
@@ -95,6 +96,7 @@ func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
 		OSSnapshot: sys.NewOSSnapshotServiceClient(conn),
 		PkgManager: sys.NewPackageManagerClient(conn),
 		Ingress:    sys.NewIngressServiceClient(conn),
+		Network:    sys.NewNetworkManagerClient(conn),
 
 		Box:              common.NewBoxServiceClient(conn),
 		Users:            common.NewUserManagerClient(conn),
