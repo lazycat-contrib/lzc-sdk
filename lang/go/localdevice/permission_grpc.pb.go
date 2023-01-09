@@ -23,7 +23,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PermissionManagerClient interface {
 	// 检测权限
-	CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*CheckPermissionReply, error)
+	GetPermission(ctx context.Context, in *PermissionRequest, opts ...grpc.CallOption) (*PermissionReply, error)
+	// 申请权限（会弹出对话框让用户决定是否同意）
+	RequestPermission(ctx context.Context, in *PermissionRequest, opts ...grpc.CallOption) (*PermissionReply, error)
 }
 
 type permissionManagerClient struct {
@@ -34,9 +36,18 @@ func NewPermissionManagerClient(cc grpc.ClientConnInterface) PermissionManagerCl
 	return &permissionManagerClient{cc}
 }
 
-func (c *permissionManagerClient) CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*CheckPermissionReply, error) {
-	out := new(CheckPermissionReply)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.PermissionManager/CheckPermission", in, out, opts...)
+func (c *permissionManagerClient) GetPermission(ctx context.Context, in *PermissionRequest, opts ...grpc.CallOption) (*PermissionReply, error) {
+	out := new(PermissionReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.PermissionManager/GetPermission", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *permissionManagerClient) RequestPermission(ctx context.Context, in *PermissionRequest, opts ...grpc.CallOption) (*PermissionReply, error) {
+	out := new(PermissionReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.PermissionManager/RequestPermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +59,9 @@ func (c *permissionManagerClient) CheckPermission(ctx context.Context, in *Check
 // for forward compatibility
 type PermissionManagerServer interface {
 	// 检测权限
-	CheckPermission(context.Context, *CheckPermissionRequest) (*CheckPermissionReply, error)
+	GetPermission(context.Context, *PermissionRequest) (*PermissionReply, error)
+	// 申请权限（会弹出对话框让用户决定是否同意）
+	RequestPermission(context.Context, *PermissionRequest) (*PermissionReply, error)
 	mustEmbedUnimplementedPermissionManagerServer()
 }
 
@@ -56,8 +69,11 @@ type PermissionManagerServer interface {
 type UnimplementedPermissionManagerServer struct {
 }
 
-func (UnimplementedPermissionManagerServer) CheckPermission(context.Context, *CheckPermissionRequest) (*CheckPermissionReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckPermission not implemented")
+func (UnimplementedPermissionManagerServer) GetPermission(context.Context, *PermissionRequest) (*PermissionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPermission not implemented")
+}
+func (UnimplementedPermissionManagerServer) RequestPermission(context.Context, *PermissionRequest) (*PermissionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestPermission not implemented")
 }
 func (UnimplementedPermissionManagerServer) mustEmbedUnimplementedPermissionManagerServer() {}
 
@@ -72,20 +88,38 @@ func RegisterPermissionManagerServer(s grpc.ServiceRegistrar, srv PermissionMana
 	s.RegisterService(&PermissionManager_ServiceDesc, srv)
 }
 
-func _PermissionManager_CheckPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckPermissionRequest)
+func _PermissionManager_GetPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PermissionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PermissionManagerServer).CheckPermission(ctx, in)
+		return srv.(PermissionManagerServer).GetPermission(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.localdevice.PermissionManager/CheckPermission",
+		FullMethod: "/cloud.lazycat.apis.localdevice.PermissionManager/GetPermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionManagerServer).CheckPermission(ctx, req.(*CheckPermissionRequest))
+		return srv.(PermissionManagerServer).GetPermission(ctx, req.(*PermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PermissionManager_RequestPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionManagerServer).RequestPermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.localdevice.PermissionManager/RequestPermission",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionManagerServer).RequestPermission(ctx, req.(*PermissionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -98,8 +132,12 @@ var PermissionManager_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PermissionManagerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CheckPermission",
-			Handler:    _PermissionManager_CheckPermission_Handler,
+			MethodName: "GetPermission",
+			Handler:    _PermissionManager_GetPermission_Handler,
+		},
+		{
+			MethodName: "RequestPermission",
+			Handler:    _PermissionManager_RequestPermission_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
