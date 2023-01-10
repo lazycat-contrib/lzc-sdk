@@ -4,12 +4,16 @@ package cloud.lazycat.apis.localdevice;
 
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
 
+import "google/protobuf/empty.proto";
+
 // 权限管理
 service  PermissionManager{
   // 检测权限
   rpc GetPermission(PermissionRequest) returns (PermissionReply) {}
   // 申请权限（会弹出对话框让用户决定是否同意）
   rpc RequestPermission(PermissionRequest) returns (PermissionReply) {}
+  // 列举权限
+  rpc ListPermissions(google.protobuf.Empty) returns (ListPermissionsReply) {}
 }
 
 enum Permission {
@@ -37,4 +41,9 @@ message PermissionRequest {
 
 message PermissionReply{
   bool result = 1;
+}
+
+message ListPermissionsReply {
+  // map<Permission, bool>
+  map<int32, bool> result = 1;
 }

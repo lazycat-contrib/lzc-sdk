@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -26,6 +27,8 @@ type PermissionManagerClient interface {
 	GetPermission(ctx context.Context, in *PermissionRequest, opts ...grpc.CallOption) (*PermissionReply, error)
 	// 申请权限（会弹出对话框让用户决定是否同意）
 	RequestPermission(ctx context.Context, in *PermissionRequest, opts ...grpc.CallOption) (*PermissionReply, error)
+	// 列举权限
+	ListPermissions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListPermissionsReply, error)
 }
 
 type permissionManagerClient struct {
@@ -54,6 +57,15 @@ func (c *permissionManagerClient) RequestPermission(ctx context.Context, in *Per
 	return out, nil
 }
 
+func (c *permissionManagerClient) ListPermissions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListPermissionsReply, error) {
+	out := new(ListPermissionsReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.PermissionManager/ListPermissions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PermissionManagerServer is the server API for PermissionManager service.
 // All implementations must embed UnimplementedPermissionManagerServer
 // for forward compatibility
@@ -62,6 +74,8 @@ type PermissionManagerServer interface {
 	GetPermission(context.Context, *PermissionRequest) (*PermissionReply, error)
 	// 申请权限（会弹出对话框让用户决定是否同意）
 	RequestPermission(context.Context, *PermissionRequest) (*PermissionReply, error)
+	// 列举权限
+	ListPermissions(context.Context, *emptypb.Empty) (*ListPermissionsReply, error)
 	mustEmbedUnimplementedPermissionManagerServer()
 }
 
@@ -74,6 +88,9 @@ func (UnimplementedPermissionManagerServer) GetPermission(context.Context, *Perm
 }
 func (UnimplementedPermissionManagerServer) RequestPermission(context.Context, *PermissionRequest) (*PermissionReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RequestPermission not implemented")
+}
+func (UnimplementedPermissionManagerServer) ListPermissions(context.Context, *emptypb.Empty) (*ListPermissionsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListPermissions not implemented")
 }
 func (UnimplementedPermissionManagerServer) mustEmbedUnimplementedPermissionManagerServer() {}
 
@@ -124,6 +141,24 @@ func _PermissionManager_RequestPermission_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PermissionManager_ListPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionManagerServer).ListPermissions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.localdevice.PermissionManager/ListPermissions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionManagerServer).ListPermissions(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PermissionManager_ServiceDesc is the grpc.ServiceDesc for PermissionManager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -138,6 +173,10 @@ var PermissionManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RequestPermission",
 			Handler:    _PermissionManager_RequestPermission_Handler,
+		},
+		{
+			MethodName: "ListPermissions",
+			Handler:    _PermissionManager_ListPermissions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
