@@ -29,6 +29,8 @@ type PermissionManagerClient interface {
 	RequestPermission(ctx context.Context, in *PermissionRequest, opts ...grpc.CallOption) (*PermissionReply, error)
 	// 列举权限
 	ListPermissions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListPermissionsReply, error)
+	// 申请Token
+	RequestAuthToken(ctx context.Context, in *RequestAuthTokenRequest, opts ...grpc.CallOption) (*RequestAuthTokenResponse, error)
 }
 
 type permissionManagerClient struct {
@@ -66,6 +68,15 @@ func (c *permissionManagerClient) ListPermissions(ctx context.Context, in *empty
 	return out, nil
 }
 
+func (c *permissionManagerClient) RequestAuthToken(ctx context.Context, in *RequestAuthTokenRequest, opts ...grpc.CallOption) (*RequestAuthTokenResponse, error) {
+	out := new(RequestAuthTokenResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.PermissionManager/RequestAuthToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PermissionManagerServer is the server API for PermissionManager service.
 // All implementations must embed UnimplementedPermissionManagerServer
 // for forward compatibility
@@ -76,6 +87,8 @@ type PermissionManagerServer interface {
 	RequestPermission(context.Context, *PermissionRequest) (*PermissionReply, error)
 	// 列举权限
 	ListPermissions(context.Context, *emptypb.Empty) (*ListPermissionsReply, error)
+	// 申请Token
+	RequestAuthToken(context.Context, *RequestAuthTokenRequest) (*RequestAuthTokenResponse, error)
 	mustEmbedUnimplementedPermissionManagerServer()
 }
 
@@ -91,6 +104,9 @@ func (UnimplementedPermissionManagerServer) RequestPermission(context.Context, *
 }
 func (UnimplementedPermissionManagerServer) ListPermissions(context.Context, *emptypb.Empty) (*ListPermissionsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPermissions not implemented")
+}
+func (UnimplementedPermissionManagerServer) RequestAuthToken(context.Context, *RequestAuthTokenRequest) (*RequestAuthTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestAuthToken not implemented")
 }
 func (UnimplementedPermissionManagerServer) mustEmbedUnimplementedPermissionManagerServer() {}
 
@@ -159,6 +175,24 @@ func _PermissionManager_ListPermissions_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PermissionManager_RequestAuthToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestAuthTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionManagerServer).RequestAuthToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.localdevice.PermissionManager/RequestAuthToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionManagerServer).RequestAuthToken(ctx, req.(*RequestAuthTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PermissionManager_ServiceDesc is the grpc.ServiceDesc for PermissionManager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -177,6 +211,10 @@ var PermissionManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListPermissions",
 			Handler:    _PermissionManager_ListPermissions_Handler,
+		},
+		{
+			MethodName: "RequestAuthToken",
+			Handler:    _PermissionManager_RequestAuthToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

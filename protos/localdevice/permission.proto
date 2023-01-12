@@ -14,6 +14,8 @@ service  PermissionManager{
   rpc RequestPermission(PermissionRequest) returns (PermissionReply) {}
   // 列举权限
   rpc ListPermissions(google.protobuf.Empty) returns (ListPermissionsReply) {}
+  // 申请Token
+  rpc RequestAuthToken(RequestAuthTokenRequest) returns (RequestAuthTokenResponse) {}
 }
 
 enum Permission {
@@ -38,7 +40,6 @@ enum Permission {
 message PermissionRequest {
   Permission permission = 1;
 }
-
 message PermissionReply{
   bool result = 1;
 }
@@ -46,4 +47,12 @@ message PermissionReply{
 message ListPermissionsReply {
   // map<Permission, bool>
   map<int32, bool> result = 1;
+}
+
+message RequestAuthTokenRequest {
+  bytes box_cert = 1;
+  bytes app_cert = 2;
+}
+message RequestAuthTokenResponse {
+  string token = 1;
 }
