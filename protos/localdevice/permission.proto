@@ -52,6 +52,8 @@ message ListPermissionsReply {
 message RequestAuthTokenRequest {
   bytes box_cert = 1;
   bytes app_cert = 2;
+  // signature of $LAZYCAT_APPID.$LAZYCAT_BOX_DOMAIN
+  bytes signature = 3;
 }
 message RequestAuthTokenResponse {
   string token = 1;
