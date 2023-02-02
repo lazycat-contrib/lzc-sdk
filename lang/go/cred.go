@@ -10,42 +10,19 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"net/url"
 	"os"
-	"strings"
 
 	"gitee.com/linakesi/lzc-sdk/lang/go/localdevice"
+	"google.golang.org/grpc"
 )
 
 type metadataCredentials struct {
-	authToken        string
-	authTokenRequest *localdevice.RequestAuthTokenRequest
-	perm             localdevice.PermissionManagerClient
+	authToken string
 }
 
 func (c *metadataCredentials) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
-	if c.perm == nil {
-		return nil, errors.New("permission manager not set")
-	}
 	if len(uri) != 1 {
 		fmt.Println("BUG: unexpected uri", uri)
-	}
-
-	parsedUrl, err := url.Parse(uri[0])
-	if err != nil {
-		return nil, err
-	}
-	fullMethod := strings.TrimPrefix(parsedUrl.Path, "/")
-	if fullMethod == "cloud.lazycat.apis.localdevice.PermissionManager" {
-		return map[string]string{}, nil
-	}
-
-	if c.authToken == "" {
-		resp, err := c.perm.RequestAuthToken(ctx, c.authTokenRequest)
-		if err != nil {
-			return nil, err
-		}
-		c.authToken = resp.Token
 	}
 	return map[string]string{
 		"lzc_dapi_auth_token": c.authToken,
@@ -56,16 +33,21 @@ func (c *metadataCredentials) RequireTransportSecurity() bool {
 	return true
 }
 
-func (c *metadataCredentials) SetPermsissionManager(perm localdevice.PermissionManagerClient) {
-	c.perm = perm
+func newMetadataCredentials(authToken string) (*metadataCredentials, error) {
+	return &metadataCredentials{authToken: authToken}, nil
 }
 
-func newMetadataCredentials() (*metadataCredentials, error) {
+func requestAuthToken(conn *grpc.ClientConn) (string, error) {
+	perm := localdevice.NewPermissionManagerClient(conn)
 	atr, err := genRequestAuthTokenRequest()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return &metadataCredentials{authTokenRequest: atr}, nil
+	resp, err := perm.RequestAuthToken(context.Background(), atr)
+	if err != nil {
+		return "", err
+	}
+	return resp.Token, nil
 }
 
 func genRequestAuthTokenRequest() (*localdevice.RequestAuthTokenRequest, error) {

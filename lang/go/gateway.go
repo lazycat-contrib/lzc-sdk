@@ -54,7 +54,17 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 		cred = grpc.WithTransportCredentials(insecure.NewCredentials())
 	}
 
-	metaCred, err := newMetadataCredentials()
+	unauthedConn, err := grpc.Dial(parsedUrl.Host, cred)
+	if err != nil {
+		return nil, err
+	}
+	defer unauthedConn.Close()
+	authToken, err := requestAuthToken(unauthedConn)
+	if err != nil {
+		return nil, err
+	}
+
+	metaCred, err := newMetadataCredentials(authToken)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +75,6 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 	if err != nil {
 		return nil, err
 	}
-	metaCred.SetPermsissionManager(localdevice.NewPermissionManagerClient(conn))
 
 	return &DeviceProxy{
 		conn: conn,
