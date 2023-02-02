@@ -38,6 +38,7 @@ type DeviceProxy struct {
 	Dialog       localdevice.DialogManagerClient
 	PhotoLibrary localdevice.PhotoLibraryClient
 	Network      localdevice.NetworkManagerClient
+	Permission   localdevice.PermissionManagerClient
 }
 
 func (d *DeviceProxy) Close() error { return d.conn.Close() }
@@ -53,10 +54,18 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 		cred = grpc.WithTransportCredentials(insecure.NewCredentials())
 	}
 
-	conn, err := grpc.Dial(parsedUrl.Host, cred)
+	metaCred, err := newMetadataCredentials()
 	if err != nil {
 		return nil, err
 	}
+	conn, err := grpc.Dial(
+		parsedUrl.Host, cred,
+		grpc.WithPerRPCCredentials(metaCred),
+	)
+	if err != nil {
+		return nil, err
+	}
+	metaCred.SetPermsissionManager(localdevice.NewPermissionManagerClient(conn))
 
 	return &DeviceProxy{
 		conn: conn,
@@ -67,6 +76,7 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 		Dialog:       localdevice.NewDialogManagerClient(conn),
 		PhotoLibrary: localdevice.NewPhotoLibraryClient(conn),
 		Network:      localdevice.NewNetworkManagerClient(conn),
+		Permission:   localdevice.NewPermissionManagerClient(conn),
 	}, nil
 }
 
