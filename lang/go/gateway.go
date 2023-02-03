@@ -59,7 +59,7 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 		return nil, err
 	}
 	defer unauthedConn.Close()
-	authToken, err := requestAuthToken(unauthedConn)
+	authToken, err := RequestAuthToken(unauthedConn)
 	if err != nil {
 		return nil, err
 	}

@@ -37,7 +37,7 @@ func newMetadataCredentials(authToken string) (*metadataCredentials, error) {
 	return &metadataCredentials{authToken: authToken}, nil
 }
 
-func requestAuthToken(conn *grpc.ClientConn) (string, error) {
+func RequestAuthToken(conn *grpc.ClientConn) (string, error) {
 	perm := localdevice.NewPermissionManagerClient(conn)
 	atr, err := genRequestAuthTokenRequest()
 	if err != nil {
