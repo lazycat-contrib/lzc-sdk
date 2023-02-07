@@ -17,7 +17,7 @@ import { NetworkManager as NM, NetworkManagerClientImpl as NMClientImpl } from "
 import { OSSnapshotService, OSSnapshotServiceClientImpl } from "./sys/OS_snapshot"
 import { OSUpgradeService, OSUpgradeServiceClientImpl } from "./sys/OS_upgrader"
 import { IngressService, IngressServiceClientImpl } from "./sys/ingress"
-import { OsDaemonService, OsDaemonServiceClientImpl} from "./sys/OS_daemon"
+import { OsDaemonService, OsDaemonServiceClientImpl } from "./sys/OS_daemon"
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog"
 import { UserConfig, UserConfigClientImpl } from "./localdevice/config";
@@ -25,10 +25,10 @@ import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clip
 import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo"
 import { NetworkManagerClientImpl, NetworkManager } from "./localdevice/network"
 import { DeviceServiceClientImpl, DeviceService } from "./localdevice/device"
-import { PermissionManager as DevicePermissionManager,  PermissionManagerClientImpl as DevicePermissionManagerClientImpl } from "./localdevice/permission"
-import { FileHandlerClientImpl,FileHandler } from "./common/file_handler"
+import { PermissionManager as DevicePermissionManager, PermissionManagerClientImpl as DevicePermissionManagerClientImpl } from "./localdevice/permission"
+import { FileHandlerClientImpl, FileHandler } from "./common/file_handler"
 import { FileTransferServiceClientImpl, FileTransferService } from "./common/filetrans"
-import { LocalLaunchService,LocalLaunchServiceClientImpl } from "./localdevice/local-launch"
+import { LocalLaunchService, LocalLaunchServiceClientImpl } from "./localdevice/local-launch"
 import { RemoteMediaPlayerService, RemoteMediaPlayerServiceClientImpl } from "./dlna/dlna"
 import { grpc } from "@improbable-eng/grpc-web";
 
@@ -40,14 +40,41 @@ const opt = {
 }
 
 
-
-async function buildCurrentDevice(cc: lzcAPIGateway) : Promise<EndDeviceProxy>{
+async function getApiUrl(cc: lzcAPIGateway): Promise<URL> {
     let s = await cc.session
     let uid = s.uid
-    let ds = await cc.devices.ListEndDevices({uid})
+    let ds = await cc.devices.ListEndDevices({ uid })
     let d = ds.devices.find((d) => d.uniqueDeivceId == s.deviceId)
-    let u = new URL(d.deviceApiUrl)
-    return new EndDeviceProxy(u.protocol + "//" + u.host.replace(".d.", ".local."))
+    return new URL(d.deviceApiUrl)
+}
+
+async function getAuthToken(apiurl: string): Promise<string> {
+    return (await fetch(window.origin + "/_lzc/auth_token", {
+        method: "POST",
+        body: apiurl,
+    })).text()
+}
+
+async function buildGrpcMetaData(apiurl: string): Promise<grpc.Metadata> {
+    let metadata = new grpc.Metadata()
+    metadata.set("lzc_dapi_auth_token", await getAuthToken(apiurl))
+    return metadata
+}
+
+async function buildCurrentDevice(cc: lzcAPIGateway): Promise<EndDeviceProxy> {
+    const url = (await getApiUrl(cc)).toString()
+    const localUrl = url.replace(".d.", ".local.")
+
+    let metadata: grpc.Metadata
+    try {
+        metadata = await buildGrpcMetaData(url)
+    } catch (e) {
+        metadata = new grpc.Metadata()
+        console.log(e)
+    }
+
+    const rpc = new GrpcWebImpl(localUrl, {...opt, ...{metadata: metadata}})
+    return new EndDeviceProxy(rpc)
 }
 
 
@@ -81,10 +108,10 @@ export class lzcAPIGateway {
         this.currentDevice = buildCurrentDevice(this)
         dumpInfo(this.bo)
     }
-    private bo : BrowserOnlyProxy;
-    private gw : APIGateway;
-    private pm : PermissionManager;
-    public pd : PeripheralDeviceService;
+    private bo: BrowserOnlyProxy;
+    private gw: APIGateway;
+    private pm: PermissionManager;
+    public pd: PeripheralDeviceService;
 
     public async openDevices() {
         return new Promise<void>((resolve, reject) => {
@@ -107,11 +134,11 @@ export class lzcAPIGateway {
 
     public osUpgrader: OSUpgradeService
     public osSnapshot: OSSnapshotService
-    public osDaemon :  OsDaemonService
+    public osDaemon: OsDaemonService
 
     public appinfo: Promise<AppInfo>;
     public devices: EndDeviceService;
-    public rmp : RemoteMediaPlayerService;
+    public rmp: RemoteMediaPlayerService;
 
 }
 
@@ -121,8 +148,7 @@ async function test() {
 }
 
 export class EndDeviceProxy {
-    constructor(apiurl: string = window.origin) {
-        const rpc = new GrpcWebImpl(apiurl, opt)
+    constructor(rpc: GrpcWebImpl) {
         this.dialog = new DialogManagerClientImpl(rpc)
         this.config = new UserConfigClientImpl(rpc);
         this.clipboard = new ClipboardManagerClientImpl(rpc)
@@ -135,22 +161,22 @@ export class EndDeviceProxy {
         this.localLaunch = new LocalLaunchServiceClientImpl(rpc);
     }
 
-    public device : DeviceService;
-    public dialog : DialogManager;
-    public config : UserConfig;
+    public device: DeviceService;
+    public dialog: DialogManager;
+    public config: UserConfig;
     public clipboard: ClipboardManager;
     public photolibrary: PhotoLibrary;
     public network: NetworkManager;
     public fileHandler: FileHandler;
     public fileTransfer: FileTransferService;
     public permission: DevicePermissionManager;
-    public localLaunch : LocalLaunchService;
+    public localLaunch: LocalLaunchService;
 }
 
 
 import pkg from './package.json';
 
-async function dumpInfo(bo :BrowserOnlyProxy) {
+async function dumpInfo(bo: BrowserOnlyProxy) {
     function capsule(title, info) {
         console.log(
             `%c ${title} %c ${info} %c`,
@@ -168,6 +194,6 @@ async function dumpInfo(bo :BrowserOnlyProxy) {
 /**
  * 是否是webshell环境
  */
-export function isWebShell(){
-   return navigator.userAgent.indexOf("Lazycat") != -1;
+export function isWebShell() {
+    return navigator.userAgent.indexOf("Lazycat") != -1;
 }
