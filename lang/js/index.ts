@@ -62,7 +62,7 @@ async function buildGrpcMetaData(apiurl: string): Promise<grpc.Metadata> {
 }
 
 async function buildCurrentDevice(cc: lzcAPIGateway): Promise<EndDeviceProxy> {
-    const url = (await getApiUrl(cc)).toString()
+    const url = (await getApiUrl(cc)).toString().replace(/\/+$/, '')
     const localUrl = url.replace(".d.", ".local.")
 
     let metadata: grpc.Metadata
