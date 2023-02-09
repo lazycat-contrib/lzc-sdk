@@ -5,16 +5,16 @@ package scontext
 func ListPermission(methodName string) []int {
 	switch methodName {
 	case "cloud.lazycat.apis.common.PeripheralDeviceService.MountDisk":
-		// [USER_DOCUMENT]
+		//[USER_DOCUMENT]
 		return []int{0}
 	case "cloud.lazycat.apis.sys.PackageManager.Install":
-		// [INSTALL_PACKAGE]
+		//[INSTALL_PACKAGE]
 		return []int{1}
 	case "cloud.lazycat.apis.sys.PackageManager.PauseAppDownload":
-		// [INSTALL_PACKAGE]
+		//[INSTALL_PACKAGE]
 		return []int{1}
 	case "cloud.lazycat.apis.sys.PackageManager.Uninstall":
-		// [INSTALL_PACKAGE]
+		//[INSTALL_PACKAGE]
 		return []int{1}
 	}
 	return nil

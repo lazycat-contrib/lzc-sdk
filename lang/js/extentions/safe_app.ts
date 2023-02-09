@@ -3,7 +3,7 @@ const SCREEN_ORIENTATION_SENSOR_PORTRAIT = 1
 // 横向屏幕
 const SCREEN_ORIENTATION_SENSOR_LANDSCAPE = 2
 
-const SAFE = {
+export const SAFE = {
 // h5调用webview 打开App
     OpenApp: function (url, isFullScreen) {
         if (isWebShell()) {
@@ -48,5 +48,11 @@ const SAFE = {
     },
     SubVoice() {
         view.SubVoice();
+    },
+    CloseWindow(){
+        view.CloseWindow
+    },
+    Minimize(){
+        view.Minimize();
     }
 }
