@@ -20,3 +20,5 @@
 /java_api_workspace/target/
 /tools/protoc-gen-lzc/protoc-gen-lzc
 /examples/serveless/serverless-v0.0.1.lpk
+
+/.vscode/

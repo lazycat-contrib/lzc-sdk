@@ -13,11 +13,14 @@ service LocalLaunchService{
 
   // 打开指定的懒猫云应用
   rpc OpenApp(OpenAppRequest) returns(OpenAppReply){}
-
+  
   // 使用不安全模式打开指定APP
   // App页面由两个webview组成：一个control-view,一个content-view
   // 其中app渲染在control-view中，content-view的内容由App代码控制
   rpc OpenUnsafeApp(OpenUnsafeAppRequest) returns (OpenAppReply) {}
+  
+  // 当前设备支持的应用打开方式
+  rpc OpenAppWay(OpenAppWayRequest) returns(OpenAppWayReply){}
 }
 
 message PinAppRequest{
@@ -88,4 +91,18 @@ message OpenUnsafeAppRequest {
     5. OnContentMessage(msg string) //在content-view中调用post-message发送的任何消息
    */
   repeated Feature features = 4;
+}
+
+message OpenAppWayRequest {}
+
+message OpenAppWayReply {
+
+    enum Mode {
+        All = 0;
+        AllNot = 1;
+        Browser = 2;
+        Client = 3;
+    }; // 应用打开方式
+
+    Mode support = 1; // 当前设备支持的应用打开方式
 }
