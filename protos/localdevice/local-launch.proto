@@ -20,7 +20,7 @@ service LocalLaunchService{
   rpc OpenUnsafeApp(OpenUnsafeAppRequest) returns (OpenAppReply) {}
   
   // 当前设备支持的应用打开方式
-  rpc OpenAppWay(OpenAppWayRequest) returns(OpenAppWayReply){}
+  rpc OpenAppMethod(OpenAppMethodRequest) returns(OpenAppMethodReply){}
 }
 
 message PinAppRequest{
@@ -93,9 +93,9 @@ message OpenUnsafeAppRequest {
   repeated Feature features = 4;
 }
 
-message OpenAppWayRequest {}
+message OpenAppMethodRequest {}
 
-message OpenAppWayReply {
+message OpenAppMethodReply {
 
     enum Mode {
         All = 0;

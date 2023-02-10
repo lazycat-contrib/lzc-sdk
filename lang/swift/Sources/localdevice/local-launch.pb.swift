@@ -212,7 +212,7 @@ extension Cloud_Lazycat_Apis_Localdevice_OpenUnsafeAppRequest.Feature: CaseItera
 
 #endif  // swift(>=4.2)
 
-public struct Cloud_Lazycat_Apis_Localdevice_OpenAppWayRequest {
+public struct Cloud_Lazycat_Apis_Localdevice_OpenAppMethodRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -222,13 +222,13 @@ public struct Cloud_Lazycat_Apis_Localdevice_OpenAppWayRequest {
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Localdevice_OpenAppWayReply {
+public struct Cloud_Lazycat_Apis_Localdevice_OpenAppMethodReply {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// 当前设备支持的应用打开方式
-  public var support: Cloud_Lazycat_Apis_Localdevice_OpenAppWayReply.Mode = .all
+  public var support: Cloud_Lazycat_Apis_Localdevice_OpenAppMethodReply.Mode = .all
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -271,9 +271,9 @@ public struct Cloud_Lazycat_Apis_Localdevice_OpenAppWayReply {
 
 #if swift(>=4.2)
 
-extension Cloud_Lazycat_Apis_Localdevice_OpenAppWayReply.Mode: CaseIterable {
+extension Cloud_Lazycat_Apis_Localdevice_OpenAppMethodReply.Mode: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Cloud_Lazycat_Apis_Localdevice_OpenAppWayReply.Mode] = [
+  public static var allCases: [Cloud_Lazycat_Apis_Localdevice_OpenAppMethodReply.Mode] = [
     .all,
     .allNot,
     .browser,
@@ -293,9 +293,9 @@ extension Cloud_Lazycat_Apis_Localdevice_OpenAppReply: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Localdevice_OpenUnsafeAppRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Localdevice_OpenUnsafeAppRequest.Position: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Localdevice_OpenUnsafeAppRequest.Feature: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Localdevice_OpenAppWayRequest: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Localdevice_OpenAppWayReply: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Localdevice_OpenAppWayReply.Mode: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Localdevice_OpenAppMethodRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Localdevice_OpenAppMethodReply: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Localdevice_OpenAppMethodReply.Mode: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -539,8 +539,8 @@ extension Cloud_Lazycat_Apis_Localdevice_OpenUnsafeAppRequest.Feature: SwiftProt
   ]
 }
 
-extension Cloud_Lazycat_Apis_Localdevice_OpenAppWayRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".OpenAppWayRequest"
+extension Cloud_Lazycat_Apis_Localdevice_OpenAppMethodRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".OpenAppMethodRequest"
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -552,14 +552,14 @@ extension Cloud_Lazycat_Apis_Localdevice_OpenAppWayRequest: SwiftProtobuf.Messag
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_OpenAppWayRequest, rhs: Cloud_Lazycat_Apis_Localdevice_OpenAppWayRequest) -> Bool {
+  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_OpenAppMethodRequest, rhs: Cloud_Lazycat_Apis_Localdevice_OpenAppMethodRequest) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension Cloud_Lazycat_Apis_Localdevice_OpenAppWayReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".OpenAppWayReply"
+extension Cloud_Lazycat_Apis_Localdevice_OpenAppMethodReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".OpenAppMethodReply"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "support"),
   ]
@@ -583,14 +583,14 @@ extension Cloud_Lazycat_Apis_Localdevice_OpenAppWayReply: SwiftProtobuf.Message,
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_OpenAppWayReply, rhs: Cloud_Lazycat_Apis_Localdevice_OpenAppWayReply) -> Bool {
+  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_OpenAppMethodReply, rhs: Cloud_Lazycat_Apis_Localdevice_OpenAppMethodReply) -> Bool {
     if lhs.support != rhs.support {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension Cloud_Lazycat_Apis_Localdevice_OpenAppWayReply.Mode: SwiftProtobuf._ProtoNameProviding {
+extension Cloud_Lazycat_Apis_Localdevice_OpenAppMethodReply.Mode: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "All"),
     1: .same(proto: "AllNot"),

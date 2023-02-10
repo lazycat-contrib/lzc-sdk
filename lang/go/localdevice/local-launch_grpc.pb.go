@@ -33,7 +33,7 @@ type LocalLaunchServiceClient interface {
 	// 其中app渲染在control-view中，content-view的内容由App代码控制
 	OpenUnsafeApp(ctx context.Context, in *OpenUnsafeAppRequest, opts ...grpc.CallOption) (*OpenAppReply, error)
 	// 当前设备支持的应用打开方式
-	OpenAppWay(ctx context.Context, in *OpenAppWayRequest, opts ...grpc.CallOption) (*OpenAppWayReply, error)
+	OpenAppMethod(ctx context.Context, in *OpenAppMethodRequest, opts ...grpc.CallOption) (*OpenAppMethodReply, error)
 }
 
 type localLaunchServiceClient struct {
@@ -80,9 +80,9 @@ func (c *localLaunchServiceClient) OpenUnsafeApp(ctx context.Context, in *OpenUn
 	return out, nil
 }
 
-func (c *localLaunchServiceClient) OpenAppWay(ctx context.Context, in *OpenAppWayRequest, opts ...grpc.CallOption) (*OpenAppWayReply, error) {
-	out := new(OpenAppWayReply)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.LocalLaunchService/OpenAppWay", in, out, opts...)
+func (c *localLaunchServiceClient) OpenAppMethod(ctx context.Context, in *OpenAppMethodRequest, opts ...grpc.CallOption) (*OpenAppMethodReply, error) {
+	out := new(OpenAppMethodReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.localdevice.LocalLaunchService/OpenAppMethod", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ type LocalLaunchServiceServer interface {
 	// 其中app渲染在control-view中，content-view的内容由App代码控制
 	OpenUnsafeApp(context.Context, *OpenUnsafeAppRequest) (*OpenAppReply, error)
 	// 当前设备支持的应用打开方式
-	OpenAppWay(context.Context, *OpenAppWayRequest) (*OpenAppWayReply, error)
+	OpenAppMethod(context.Context, *OpenAppMethodRequest) (*OpenAppMethodReply, error)
 	mustEmbedUnimplementedLocalLaunchServiceServer()
 }
 
@@ -124,8 +124,8 @@ func (UnimplementedLocalLaunchServiceServer) OpenApp(context.Context, *OpenAppRe
 func (UnimplementedLocalLaunchServiceServer) OpenUnsafeApp(context.Context, *OpenUnsafeAppRequest) (*OpenAppReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OpenUnsafeApp not implemented")
 }
-func (UnimplementedLocalLaunchServiceServer) OpenAppWay(context.Context, *OpenAppWayRequest) (*OpenAppWayReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OpenAppWay not implemented")
+func (UnimplementedLocalLaunchServiceServer) OpenAppMethod(context.Context, *OpenAppMethodRequest) (*OpenAppMethodReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OpenAppMethod not implemented")
 }
 func (UnimplementedLocalLaunchServiceServer) mustEmbedUnimplementedLocalLaunchServiceServer() {}
 
@@ -212,20 +212,20 @@ func _LocalLaunchService_OpenUnsafeApp_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _LocalLaunchService_OpenAppWay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OpenAppWayRequest)
+func _LocalLaunchService_OpenAppMethod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OpenAppMethodRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LocalLaunchServiceServer).OpenAppWay(ctx, in)
+		return srv.(LocalLaunchServiceServer).OpenAppMethod(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.localdevice.LocalLaunchService/OpenAppWay",
+		FullMethod: "/cloud.lazycat.apis.localdevice.LocalLaunchService/OpenAppMethod",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LocalLaunchServiceServer).OpenAppWay(ctx, req.(*OpenAppWayRequest))
+		return srv.(LocalLaunchServiceServer).OpenAppMethod(ctx, req.(*OpenAppMethodRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -254,8 +254,8 @@ var LocalLaunchService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _LocalLaunchService_OpenUnsafeApp_Handler,
 		},
 		{
-			MethodName: "OpenAppWay",
-			Handler:    _LocalLaunchService_OpenAppWay_Handler,
+			MethodName: "OpenAppMethod",
+			Handler:    _LocalLaunchService_OpenAppMethod_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
