@@ -105,6 +105,29 @@ public struct Cloud_Lazycat_Apis_Sys_GenUserInvitationRequest {
   /// Clears the value of `limitRole`. Subsequent reads from it will return its default value.
   public mutating func clearLimitRole() {self._limitRole = nil}
 
+  /// 是否允许新用户安装应用
+  public var allowInstallApp: Bool {
+    get {return _allowInstallApp ?? false}
+    set {_allowInstallApp = newValue}
+  }
+  /// Returns true if `allowInstallApp` has been explicitly set.
+  public var hasAllowInstallApp: Bool {return self._allowInstallApp != nil}
+  /// Clears the value of `allowInstallApp`. Subsequent reads from it will return its default value.
+  public mutating func clearAllowInstallApp() {self._allowInstallApp = nil}
+
+  /// 是否启用应用白名单
+  public var enableAllowList: Bool {
+    get {return _enableAllowList ?? false}
+    set {_enableAllowList = newValue}
+  }
+  /// Returns true if `enableAllowList` has been explicitly set.
+  public var hasEnableAllowList: Bool {return self._enableAllowList != nil}
+  /// Clears the value of `enableAllowList`. Subsequent reads from it will return its default value.
+  public mutating func clearEnableAllowList() {self._enableAllowList = nil}
+
+  /// 对新用户可见的应用列表(appid)
+  public var appAllowList: [String] = []
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -113,6 +136,8 @@ public struct Cloud_Lazycat_Apis_Sys_GenUserInvitationRequest {
   fileprivate var _notAfter: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
   fileprivate var _limitUsageCount: Int32? = nil
   fileprivate var _limitRole: Cloud_Lazycat_Apis_Sys_Role? = nil
+  fileprivate var _allowInstallApp: Bool? = nil
+  fileprivate var _enableAllowList: Bool? = nil
 }
 
 public struct Cloud_Lazycat_Apis_Sys_UserInvitation {
@@ -262,14 +287,62 @@ public struct Cloud_Lazycat_Apis_Sys_AuthToken {
   /// 若token为空表示自动搜索token失败。
   public var autologinTokenPostURL: String = String()
 
+  /// 若token_type = HTTPBasicAuth或使用autologin机制，
+  /// 则必须包含此字段，以便hportal可以分析出正确的登陆设备
   public var accessIp: String = String()
 
   public var autologinRedirectURL: String = String()
 
+  public var tokenType: Cloud_Lazycat_Apis_Sys_AuthToken.TokenType = .raw
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum TokenType: SwiftProtobuf.Enum {
+    public typealias RawValue = Int
+
+    /// token return by hportal-server login method
+    case raw // = 0
+
+    /// QWxhZGRpbjpvcGVuIHNlc2FtZQ==
+    case httpbasicAuth // = 1
+    case UNRECOGNIZED(Int)
+
+    public init() {
+      self = .raw
+    }
+
+    public init?(rawValue: Int) {
+      switch rawValue {
+      case 0: self = .raw
+      case 1: self = .httpbasicAuth
+      default: self = .UNRECOGNIZED(rawValue)
+      }
+    }
+
+    public var rawValue: Int {
+      switch self {
+      case .raw: return 0
+      case .httpbasicAuth: return 1
+      case .UNRECOGNIZED(let i): return i
+      }
+    }
+
+  }
 
   public init() {}
 }
+
+#if swift(>=4.2)
+
+extension Cloud_Lazycat_Apis_Sys_AuthToken.TokenType: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [Cloud_Lazycat_Apis_Sys_AuthToken.TokenType] = [
+    .raw,
+    .httpbasicAuth,
+  ]
+}
+
+#endif  // swift(>=4.2)
 
 public struct Cloud_Lazycat_Apis_Sys_LoginInfo {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -293,6 +366,9 @@ public struct Cloud_Lazycat_Apis_Sys_LoginInfo {
   /// 此html片段会尝试与hclient通讯获取auth-token后post到AuthToken.autologin_token_post_url上
   public var autologinTokenRequestContent: String = String()
 
+  /// 当前登陆设备的版本信息
+  public var deviceVersion: String = String()
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -300,7 +376,7 @@ public struct Cloud_Lazycat_Apis_Sys_LoginInfo {
   fileprivate var _when: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 }
 
-public struct Cloud_Lazycat_Apis_Sys_PeerID {
+public struct Cloud_Lazycat_Apis_Sys_DeviceID {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -364,6 +440,8 @@ public struct Cloud_Lazycat_Apis_Sys_DomainCertReply {
 
   public var key: String = String()
 
+  public var ocsp: Data = Data()
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -374,6 +452,9 @@ public struct Cloud_Lazycat_Apis_Sys_Device {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  public var udid: String = String()
+
+  /// TODO 待删除
   public var peerID: String = String()
 
   public var isOnline: Bool = false
@@ -381,9 +462,30 @@ public struct Cloud_Lazycat_Apis_Sys_Device {
   /// 因为device api的监听端口可能会变化，所以此url有效性不会太长
   public var deviceApiURL: String = String()
 
+  /// 设备名称
+  public var name: String = String()
+
+  /// 设备型号
+  public var model: String = String()
+
+  /// 设备绑定时间
+  public var bindingTime: SwiftProtobuf.Google_Protobuf_Timestamp {
+    get {return _bindingTime ?? SwiftProtobuf.Google_Protobuf_Timestamp()}
+    set {_bindingTime = newValue}
+  }
+  /// Returns true if `bindingTime` has been explicitly set.
+  public var hasBindingTime: Bool {return self._bindingTime != nil}
+  /// Clears the value of `bindingTime`. Subsequent reads from it will return its default value.
+  public mutating func clearBindingTime() {self._bindingTime = nil}
+
+  /// 设备是否是移动平台
+  public var isMobile: Bool = false
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
+
+  fileprivate var _bindingTime: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 }
 
 public struct Cloud_Lazycat_Apis_Sys_ListDeviceRequest {
@@ -508,6 +610,78 @@ public struct Cloud_Lazycat_Apis_Sys_ForceResetPasswordRequest {
   public init() {}
 }
 
+public struct Cloud_Lazycat_Apis_Sys_LogoutRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var uid: String = String()
+
+  /// 设备唯一id
+  public var udid: String = String()
+
+  /// 注销原因
+  public var reason: Cloud_Lazycat_Apis_Sys_LogoutRequest.Reason = .logoutByDeleting
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum Reason: SwiftProtobuf.Enum {
+    public typealias RawValue = Int
+    case logoutByDeleting // = 0
+    case logoutByUser // = 1
+    case UNRECOGNIZED(Int)
+
+    public init() {
+      self = .logoutByDeleting
+    }
+
+    public init?(rawValue: Int) {
+      switch rawValue {
+      case 0: self = .logoutByDeleting
+      case 1: self = .logoutByUser
+      default: self = .UNRECOGNIZED(rawValue)
+      }
+    }
+
+    public var rawValue: Int {
+      switch self {
+      case .logoutByDeleting: return 0
+      case .logoutByUser: return 1
+      case .UNRECOGNIZED(let i): return i
+      }
+    }
+
+  }
+
+  public init() {}
+}
+
+#if swift(>=4.2)
+
+extension Cloud_Lazycat_Apis_Sys_LogoutRequest.Reason: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [Cloud_Lazycat_Apis_Sys_LogoutRequest.Reason] = [
+    .logoutByDeleting,
+    .logoutByUser,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
+public struct Cloud_Lazycat_Apis_Sys_CheckPasswordRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var uid: String = String()
+
+  public var password: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Cloud_Lazycat_Apis_Sys_Role: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_GenUserInvitationRequest: @unchecked Sendable {}
@@ -521,8 +695,9 @@ extension Cloud_Lazycat_Apis_Sys_FreeVEIPReply: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_AppCertRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_AppCertReply: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_AuthToken: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_AuthToken.TokenType: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_LoginInfo: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Sys_PeerID: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_DeviceID: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_BoxInfo: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_DomainCertRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_DomainCertReply: @unchecked Sendable {}
@@ -536,6 +711,9 @@ extension Cloud_Lazycat_Apis_Sys_ResetPasswordRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_DeleteUserRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_CreateUserRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_ForceResetPasswordRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_LogoutRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_LogoutRequest.Reason: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_CheckPasswordRequest: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -556,6 +734,9 @@ extension Cloud_Lazycat_Apis_Sys_GenUserInvitationRequest: SwiftProtobuf.Message
     2: .standard(proto: "not_after"),
     3: .standard(proto: "limit_usage_count"),
     4: .standard(proto: "limit_role"),
+    5: .standard(proto: "allow_install_app"),
+    7: .standard(proto: "enable_allow_list"),
+    6: .standard(proto: "app_allow_list"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -568,6 +749,9 @@ extension Cloud_Lazycat_Apis_Sys_GenUserInvitationRequest: SwiftProtobuf.Message
       case 2: try { try decoder.decodeSingularMessageField(value: &self._notAfter) }()
       case 3: try { try decoder.decodeSingularInt32Field(value: &self._limitUsageCount) }()
       case 4: try { try decoder.decodeSingularEnumField(value: &self._limitRole) }()
+      case 5: try { try decoder.decodeSingularBoolField(value: &self._allowInstallApp) }()
+      case 6: try { try decoder.decodeRepeatedStringField(value: &self.appAllowList) }()
+      case 7: try { try decoder.decodeSingularBoolField(value: &self._enableAllowList) }()
       default: break
       }
     }
@@ -590,6 +774,15 @@ extension Cloud_Lazycat_Apis_Sys_GenUserInvitationRequest: SwiftProtobuf.Message
     try { if let v = self._limitRole {
       try visitor.visitSingularEnumField(value: v, fieldNumber: 4)
     } }()
+    try { if let v = self._allowInstallApp {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 5)
+    } }()
+    if !self.appAllowList.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.appAllowList, fieldNumber: 6)
+    }
+    try { if let v = self._enableAllowList {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 7)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -598,6 +791,9 @@ extension Cloud_Lazycat_Apis_Sys_GenUserInvitationRequest: SwiftProtobuf.Message
     if lhs._notAfter != rhs._notAfter {return false}
     if lhs._limitUsageCount != rhs._limitUsageCount {return false}
     if lhs._limitRole != rhs._limitRole {return false}
+    if lhs._allowInstallApp != rhs._allowInstallApp {return false}
+    if lhs._enableAllowList != rhs._enableAllowList {return false}
+    if lhs.appAllowList != rhs.appAllowList {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -927,6 +1123,7 @@ extension Cloud_Lazycat_Apis_Sys_AuthToken: SwiftProtobuf.Message, SwiftProtobuf
     2: .standard(proto: "autologin_token_post_url"),
     3: .standard(proto: "access_ip"),
     4: .standard(proto: "autologin_redirect_url"),
+    5: .standard(proto: "token_type"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -939,6 +1136,7 @@ extension Cloud_Lazycat_Apis_Sys_AuthToken: SwiftProtobuf.Message, SwiftProtobuf
       case 2: try { try decoder.decodeSingularStringField(value: &self.autologinTokenPostURL) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.accessIp) }()
       case 4: try { try decoder.decodeSingularStringField(value: &self.autologinRedirectURL) }()
+      case 5: try { try decoder.decodeSingularEnumField(value: &self.tokenType) }()
       default: break
       }
     }
@@ -957,6 +1155,9 @@ extension Cloud_Lazycat_Apis_Sys_AuthToken: SwiftProtobuf.Message, SwiftProtobuf
     if !self.autologinRedirectURL.isEmpty {
       try visitor.visitSingularStringField(value: self.autologinRedirectURL, fieldNumber: 4)
     }
+    if self.tokenType != .raw {
+      try visitor.visitSingularEnumField(value: self.tokenType, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -965,9 +1166,17 @@ extension Cloud_Lazycat_Apis_Sys_AuthToken: SwiftProtobuf.Message, SwiftProtobuf
     if lhs.autologinTokenPostURL != rhs.autologinTokenPostURL {return false}
     if lhs.accessIp != rhs.accessIp {return false}
     if lhs.autologinRedirectURL != rhs.autologinRedirectURL {return false}
+    if lhs.tokenType != rhs.tokenType {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
+}
+
+extension Cloud_Lazycat_Apis_Sys_AuthToken.TokenType: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "Raw"),
+    1: .same(proto: "HTTPBasicAuth"),
+  ]
 }
 
 extension Cloud_Lazycat_Apis_Sys_LoginInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
@@ -977,6 +1186,7 @@ extension Cloud_Lazycat_Apis_Sys_LoginInfo: SwiftProtobuf.Message, SwiftProtobuf
     2: .standard(proto: "device_id"),
     3: .same(proto: "when"),
     4: .standard(proto: "autologin_token_request_content"),
+    5: .standard(proto: "device_version"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -989,6 +1199,7 @@ extension Cloud_Lazycat_Apis_Sys_LoginInfo: SwiftProtobuf.Message, SwiftProtobuf
       case 2: try { try decoder.decodeSingularStringField(value: &self.deviceID) }()
       case 3: try { try decoder.decodeSingularMessageField(value: &self._when) }()
       case 4: try { try decoder.decodeSingularStringField(value: &self.autologinTokenRequestContent) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self.deviceVersion) }()
       default: break
       }
     }
@@ -1011,6 +1222,9 @@ extension Cloud_Lazycat_Apis_Sys_LoginInfo: SwiftProtobuf.Message, SwiftProtobuf
     if !self.autologinTokenRequestContent.isEmpty {
       try visitor.visitSingularStringField(value: self.autologinTokenRequestContent, fieldNumber: 4)
     }
+    if !self.deviceVersion.isEmpty {
+      try visitor.visitSingularStringField(value: self.deviceVersion, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1019,13 +1233,14 @@ extension Cloud_Lazycat_Apis_Sys_LoginInfo: SwiftProtobuf.Message, SwiftProtobuf
     if lhs.deviceID != rhs.deviceID {return false}
     if lhs._when != rhs._when {return false}
     if lhs.autologinTokenRequestContent != rhs.autologinTokenRequestContent {return false}
+    if lhs.deviceVersion != rhs.deviceVersion {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension Cloud_Lazycat_Apis_Sys_PeerID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".PeerID"
+extension Cloud_Lazycat_Apis_Sys_DeviceID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".DeviceID"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "id"),
   ]
@@ -1049,7 +1264,7 @@ extension Cloud_Lazycat_Apis_Sys_PeerID: SwiftProtobuf.Message, SwiftProtobuf._M
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_PeerID, rhs: Cloud_Lazycat_Apis_Sys_PeerID) -> Bool {
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_DeviceID, rhs: Cloud_Lazycat_Apis_Sys_DeviceID) -> Bool {
     if lhs.id != rhs.id {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
@@ -1161,6 +1376,7 @@ extension Cloud_Lazycat_Apis_Sys_DomainCertReply: SwiftProtobuf.Message, SwiftPr
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "cert"),
     2: .same(proto: "key"),
+    3: .same(proto: "ocsp"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1171,6 +1387,7 @@ extension Cloud_Lazycat_Apis_Sys_DomainCertReply: SwiftProtobuf.Message, SwiftPr
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.cert) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.key) }()
+      case 3: try { try decoder.decodeSingularBytesField(value: &self.ocsp) }()
       default: break
       }
     }
@@ -1183,12 +1400,16 @@ extension Cloud_Lazycat_Apis_Sys_DomainCertReply: SwiftProtobuf.Message, SwiftPr
     if !self.key.isEmpty {
       try visitor.visitSingularStringField(value: self.key, fieldNumber: 2)
     }
+    if !self.ocsp.isEmpty {
+      try visitor.visitSingularBytesField(value: self.ocsp, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Sys_DomainCertReply, rhs: Cloud_Lazycat_Apis_Sys_DomainCertReply) -> Bool {
     if lhs.cert != rhs.cert {return false}
     if lhs.key != rhs.key {return false}
+    if lhs.ocsp != rhs.ocsp {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1197,9 +1418,14 @@ extension Cloud_Lazycat_Apis_Sys_DomainCertReply: SwiftProtobuf.Message, SwiftPr
 extension Cloud_Lazycat_Apis_Sys_Device: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Device"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    7: .same(proto: "udid"),
     1: .standard(proto: "peer_id"),
     2: .standard(proto: "is_online"),
     3: .standard(proto: "device_api_url"),
+    4: .same(proto: "name"),
+    5: .same(proto: "model"),
+    6: .standard(proto: "binding_time"),
+    8: .standard(proto: "is_mobile"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1211,12 +1437,21 @@ extension Cloud_Lazycat_Apis_Sys_Device: SwiftProtobuf.Message, SwiftProtobuf._M
       case 1: try { try decoder.decodeSingularStringField(value: &self.peerID) }()
       case 2: try { try decoder.decodeSingularBoolField(value: &self.isOnline) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.deviceApiURL) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self.model) }()
+      case 6: try { try decoder.decodeSingularMessageField(value: &self._bindingTime) }()
+      case 7: try { try decoder.decodeSingularStringField(value: &self.udid) }()
+      case 8: try { try decoder.decodeSingularBoolField(value: &self.isMobile) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if !self.peerID.isEmpty {
       try visitor.visitSingularStringField(value: self.peerID, fieldNumber: 1)
     }
@@ -1226,13 +1461,33 @@ extension Cloud_Lazycat_Apis_Sys_Device: SwiftProtobuf.Message, SwiftProtobuf._M
     if !self.deviceApiURL.isEmpty {
       try visitor.visitSingularStringField(value: self.deviceApiURL, fieldNumber: 3)
     }
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 4)
+    }
+    if !self.model.isEmpty {
+      try visitor.visitSingularStringField(value: self.model, fieldNumber: 5)
+    }
+    try { if let v = self._bindingTime {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+    } }()
+    if !self.udid.isEmpty {
+      try visitor.visitSingularStringField(value: self.udid, fieldNumber: 7)
+    }
+    if self.isMobile != false {
+      try visitor.visitSingularBoolField(value: self.isMobile, fieldNumber: 8)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Sys_Device, rhs: Cloud_Lazycat_Apis_Sys_Device) -> Bool {
+    if lhs.udid != rhs.udid {return false}
     if lhs.peerID != rhs.peerID {return false}
     if lhs.isOnline != rhs.isOnline {return false}
     if lhs.deviceApiURL != rhs.deviceApiURL {return false}
+    if lhs.name != rhs.name {return false}
+    if lhs.model != rhs.model {return false}
+    if lhs._bindingTime != rhs._bindingTime {return false}
+    if lhs.isMobile != rhs.isMobile {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1563,6 +1818,95 @@ extension Cloud_Lazycat_Apis_Sys_ForceResetPasswordRequest: SwiftProtobuf.Messag
   public static func ==(lhs: Cloud_Lazycat_Apis_Sys_ForceResetPasswordRequest, rhs: Cloud_Lazycat_Apis_Sys_ForceResetPasswordRequest) -> Bool {
     if lhs.uid != rhs.uid {return false}
     if lhs.newPassword != rhs.newPassword {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_LogoutRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".LogoutRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "uid"),
+    2: .same(proto: "udid"),
+    3: .same(proto: "reason"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.uid) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.udid) }()
+      case 3: try { try decoder.decodeSingularEnumField(value: &self.reason) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.uid.isEmpty {
+      try visitor.visitSingularStringField(value: self.uid, fieldNumber: 1)
+    }
+    if !self.udid.isEmpty {
+      try visitor.visitSingularStringField(value: self.udid, fieldNumber: 2)
+    }
+    if self.reason != .logoutByDeleting {
+      try visitor.visitSingularEnumField(value: self.reason, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_LogoutRequest, rhs: Cloud_Lazycat_Apis_Sys_LogoutRequest) -> Bool {
+    if lhs.uid != rhs.uid {return false}
+    if lhs.udid != rhs.udid {return false}
+    if lhs.reason != rhs.reason {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_LogoutRequest.Reason: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "LogoutByDeleting"),
+    1: .same(proto: "LogoutByUser"),
+  ]
+}
+
+extension Cloud_Lazycat_Apis_Sys_CheckPasswordRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".CheckPasswordRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "uid"),
+    2: .same(proto: "password"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.uid) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.password) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.uid.isEmpty {
+      try visitor.visitSingularStringField(value: self.uid, fieldNumber: 1)
+    }
+    if !self.password.isEmpty {
+      try visitor.visitSingularStringField(value: self.password, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_CheckPasswordRequest, rhs: Cloud_Lazycat_Apis_Sys_CheckPasswordRequest) -> Bool {
+    if lhs.uid != rhs.uid {return false}
+    if lhs.password != rhs.password {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

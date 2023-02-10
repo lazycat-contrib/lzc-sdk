@@ -65,6 +65,10 @@ export const ForwardRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<ForwardRequest>, I>>(base?: I): ForwardRequest {
+    return ForwardRequest.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<ForwardRequest>, I>>(object: I): ForwardRequest {
     const message = createBaseForwardRequest();
     message.serviceName = object.serviceName ?? "";
@@ -113,6 +117,10 @@ export const ForwardResponse = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<ForwardResponse>, I>>(base?: I): ForwardResponse {
+    return ForwardResponse.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<ForwardResponse>, I>>(object: I): ForwardResponse {
     const message = createBaseForwardResponse();
     message.proxyUrl = object.proxyUrl ?? "";
@@ -157,10 +165,11 @@ export const LanForwardServiceForwardDesc: UnaryMethodDefinitionish = {
   } as any,
   responseType: {
     deserializeBinary(data: Uint8Array) {
+      const value = ForwardResponse.decode(data);
       return {
-        ...ForwardResponse.decode(data),
+        ...value,
         toObject() {
-          return this;
+          return value;
         },
       };
     },
@@ -229,7 +238,7 @@ export class GrpcWebImpl {
         debug: this.options.debug,
         onEnd: function (response) {
           if (response.status === grpc.Code.OK) {
-            resolve(response.message);
+            resolve(response.message!.toObject());
           } else {
             const err = new GrpcWebError(response.statusMessage, response.status, response.trailers);
             reject(err);
@@ -279,6 +288,25 @@ export class GrpcWebImpl {
   }
 }
 
+declare var self: any | undefined;
+declare var window: any | undefined;
+declare var global: any | undefined;
+var tsProtoGlobalThis: any = (() => {
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
+  throw "Unable to locate global object";
+})();
+
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
@@ -294,7 +322,7 @@ function isSet(value: any): boolean {
   return value !== null && value !== undefined;
 }
 
-export class GrpcWebError extends Error {
+export class GrpcWebError extends tsProtoGlobalThis.Error {
   constructor(message: string, public code: grpc.Code, public metadata: grpc.Metadata) {
     super(message);
   }

@@ -31,6 +31,8 @@ public struct Cloud_Lazycat_Apis_Localdevice_DeviceInfo {
 
   public var name: String = String()
 
+  public var documentRootDir: String = String()
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -50,6 +52,7 @@ extension Cloud_Lazycat_Apis_Localdevice_DeviceInfo: SwiftProtobuf.Message, Swif
     1: .same(proto: "OS"),
     2: .same(proto: "CPU"),
     3: .same(proto: "name"),
+    4: .same(proto: "documentRootDir"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -61,6 +64,7 @@ extension Cloud_Lazycat_Apis_Localdevice_DeviceInfo: SwiftProtobuf.Message, Swif
       case 1: try { try decoder.decodeSingularStringField(value: &self.os) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.cpu) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.documentRootDir) }()
       default: break
       }
     }
@@ -76,6 +80,9 @@ extension Cloud_Lazycat_Apis_Localdevice_DeviceInfo: SwiftProtobuf.Message, Swif
     if !self.name.isEmpty {
       try visitor.visitSingularStringField(value: self.name, fieldNumber: 3)
     }
+    if !self.documentRootDir.isEmpty {
+      try visitor.visitSingularStringField(value: self.documentRootDir, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -83,6 +90,7 @@ extension Cloud_Lazycat_Apis_Localdevice_DeviceInfo: SwiftProtobuf.Message, Swif
     if lhs.os != rhs.os {return false}
     if lhs.cpu != rhs.cpu {return false}
     if lhs.name != rhs.name {return false}
+    if lhs.documentRootDir != rhs.documentRootDir {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

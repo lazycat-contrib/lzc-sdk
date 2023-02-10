@@ -20,28 +20,107 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public struct Cloud_Lazycat_Apis_Common_ListRemovableDiskReply {
+public struct Cloud_Lazycat_Apis_Common_MountArchiveRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  ///当前APP未挂载的磁盘列表
-  public var umounted: [Cloud_Lazycat_Apis_Common_RemovableFilesystemPartion] = []
+  /// 要挂载的压缩文件的相对路径
+  public var srcPath: String = String()
 
-  ///当前APP已挂载的磁盘列表。
-  public var mounted: [Cloud_Lazycat_Apis_Common_RemovableFilesystemPartion] = []
+  /// 压缩文件要挂载到的目标路径
+  public var mountpoint: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Common_MountFilesystemRequest {
+public struct Cloud_Lazycat_Apis_Common_ListFilesystemsReply {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  ///当前APP未挂载的磁盘列表
+  public var umounted: [Cloud_Lazycat_Apis_Common_Filesystem] = []
+
+  ///当前APP已挂载的磁盘列表。
+  public var mounted: [Cloud_Lazycat_Apis_Common_Filesystem] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Common_Filesystem {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var source: String = String()
+
+  /// ntfs/fat32/ext4 ...
+  public var fstype: String = String()
+
+  /// partion label name or other meaningful name for user(eg. sda)
+  public var name: String = String()
+
+  /// size unit in bytes
+  public var size: UInt64 = 0
+
+  /// uuid of filesystem, maybe nil(eg. for fuse)
+  public var uuid: String {
+    get {return _uuid ?? String()}
+    set {_uuid = newValue}
+  }
+  /// Returns true if `uuid` has been explicitly set.
+  public var hasUuid: Bool {return self._uuid != nil}
+  /// Clears the value of `uuid`. Subsequent reads from it will return its default value.
+  public mutating func clearUuid() {self._uuid = nil}
+
+  /// mountpoint of filesystem, nil if it's not mounted
+  public var mountpoint: String {
+    get {return _mountpoint ?? String()}
+    set {_mountpoint = newValue}
+  }
+  /// Returns true if `mountpoint` has been explicitly set.
+  public var hasMountpoint: Bool {return self._mountpoint != nil}
+  /// Clears the value of `mountpoint`. Subsequent reads from it will return its default value.
+  public mutating func clearMountpoint() {self._mountpoint = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _uuid: String? = nil
+  fileprivate var _mountpoint: String? = nil
+}
+
+public struct Cloud_Lazycat_Apis_Common_MountDiskRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   public var uuid: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Common_MountWebDavRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var url: String = String()
+
+  /// relative to webdav home root
+  public var mountpoint: String = String()
+
+  public var username: String = String()
+
+  public var password: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -63,19 +142,19 @@ public struct Cloud_Lazycat_Apis_Common_UmountFilesystemRequest {
     set {target = .uuid(newValue)}
   }
 
-  public var mountPoint: String {
+  public var mountpoint: String {
     get {
-      if case .mountPoint(let v)? = target {return v}
+      if case .mountpoint(let v)? = target {return v}
       return String()
     }
-    set {target = .mountPoint(newValue)}
+    set {target = .mountpoint(newValue)}
   }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Target: Equatable {
     case uuid(String)
-    case mountPoint(String)
+    case mountpoint(String)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Cloud_Lazycat_Apis_Common_UmountFilesystemRequest.OneOf_Target, rhs: Cloud_Lazycat_Apis_Common_UmountFilesystemRequest.OneOf_Target) -> Bool {
@@ -87,8 +166,8 @@ public struct Cloud_Lazycat_Apis_Common_UmountFilesystemRequest {
         guard case .uuid(let l) = lhs, case .uuid(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
-      case (.mountPoint, .mountPoint): return {
-        guard case .mountPoint(let l) = lhs, case .mountPoint(let r) = rhs else { preconditionFailure() }
+      case (.mountpoint, .mountpoint): return {
+        guard case .mountpoint(let l) = lhs, case .mountpoint(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       default: return false
@@ -100,51 +179,60 @@ public struct Cloud_Lazycat_Apis_Common_UmountFilesystemRequest {
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Common_RemovableFilesystemPartion {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  /// partion's uuid.
-  public var uuid: String = String()
-
-  /// size unit in bytes
-  public var size: Int64 = 0
-
-  /// ntfs/fat32/ext4 ...
-  public var fstype: String = String()
-
-  /// partion label name or other meaningful name for user
-  public var name: String {
-    get {return _name ?? String()}
-    set {_name = newValue}
-  }
-  /// Returns true if `name` has been explicitly set.
-  public var hasName: Bool {return self._name != nil}
-  /// Clears the value of `name`. Subsequent reads from it will return its default value.
-  public mutating func clearName() {self._name = nil}
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-
-  fileprivate var _name: String? = nil
-}
-
 #if swift(>=5.5) && canImport(_Concurrency)
-extension Cloud_Lazycat_Apis_Common_ListRemovableDiskReply: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Common_MountFilesystemRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Common_MountArchiveRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Common_ListFilesystemsReply: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Common_Filesystem: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Common_MountDiskRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Common_MountWebDavRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Common_UmountFilesystemRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Common_UmountFilesystemRequest.OneOf_Target: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Common_RemovableFilesystemPartion: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "cloud.lazycat.apis.common"
 
-extension Cloud_Lazycat_Apis_Common_ListRemovableDiskReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ListRemovableDiskReply"
+extension Cloud_Lazycat_Apis_Common_MountArchiveRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MountArchiveRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "src_path"),
+    2: .same(proto: "mountpoint"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.srcPath) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.mountpoint) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.srcPath.isEmpty {
+      try visitor.visitSingularStringField(value: self.srcPath, fieldNumber: 1)
+    }
+    if !self.mountpoint.isEmpty {
+      try visitor.visitSingularStringField(value: self.mountpoint, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Common_MountArchiveRequest, rhs: Cloud_Lazycat_Apis_Common_MountArchiveRequest) -> Bool {
+    if lhs.srcPath != rhs.srcPath {return false}
+    if lhs.mountpoint != rhs.mountpoint {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Common_ListFilesystemsReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ListFilesystemsReply"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "umounted"),
     2: .same(proto: "mounted"),
@@ -173,7 +261,7 @@ extension Cloud_Lazycat_Apis_Common_ListRemovableDiskReply: SwiftProtobuf.Messag
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Common_ListRemovableDiskReply, rhs: Cloud_Lazycat_Apis_Common_ListRemovableDiskReply) -> Bool {
+  public static func ==(lhs: Cloud_Lazycat_Apis_Common_ListFilesystemsReply, rhs: Cloud_Lazycat_Apis_Common_ListFilesystemsReply) -> Bool {
     if lhs.umounted != rhs.umounted {return false}
     if lhs.mounted != rhs.mounted {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -181,8 +269,74 @@ extension Cloud_Lazycat_Apis_Common_ListRemovableDiskReply: SwiftProtobuf.Messag
   }
 }
 
-extension Cloud_Lazycat_Apis_Common_MountFilesystemRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".MountFilesystemRequest"
+extension Cloud_Lazycat_Apis_Common_Filesystem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Filesystem"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "source"),
+    2: .same(proto: "fstype"),
+    3: .same(proto: "name"),
+    4: .same(proto: "size"),
+    5: .same(proto: "uuid"),
+    6: .same(proto: "mountpoint"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.source) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.fstype) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 4: try { try decoder.decodeSingularUInt64Field(value: &self.size) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self._uuid) }()
+      case 6: try { try decoder.decodeSingularStringField(value: &self._mountpoint) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.source.isEmpty {
+      try visitor.visitSingularStringField(value: self.source, fieldNumber: 1)
+    }
+    if !self.fstype.isEmpty {
+      try visitor.visitSingularStringField(value: self.fstype, fieldNumber: 2)
+    }
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 3)
+    }
+    if self.size != 0 {
+      try visitor.visitSingularUInt64Field(value: self.size, fieldNumber: 4)
+    }
+    try { if let v = self._uuid {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 5)
+    } }()
+    try { if let v = self._mountpoint {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Common_Filesystem, rhs: Cloud_Lazycat_Apis_Common_Filesystem) -> Bool {
+    if lhs.source != rhs.source {return false}
+    if lhs.fstype != rhs.fstype {return false}
+    if lhs.name != rhs.name {return false}
+    if lhs.size != rhs.size {return false}
+    if lhs._uuid != rhs._uuid {return false}
+    if lhs._mountpoint != rhs._mountpoint {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Common_MountDiskRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MountDiskRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "uuid"),
   ]
@@ -206,8 +360,58 @@ extension Cloud_Lazycat_Apis_Common_MountFilesystemRequest: SwiftProtobuf.Messag
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Common_MountFilesystemRequest, rhs: Cloud_Lazycat_Apis_Common_MountFilesystemRequest) -> Bool {
+  public static func ==(lhs: Cloud_Lazycat_Apis_Common_MountDiskRequest, rhs: Cloud_Lazycat_Apis_Common_MountDiskRequest) -> Bool {
     if lhs.uuid != rhs.uuid {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Common_MountWebDavRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MountWebDavRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "url"),
+    2: .same(proto: "mountpoint"),
+    3: .same(proto: "username"),
+    4: .same(proto: "password"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.url) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.mountpoint) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.username) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.password) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.url.isEmpty {
+      try visitor.visitSingularStringField(value: self.url, fieldNumber: 1)
+    }
+    if !self.mountpoint.isEmpty {
+      try visitor.visitSingularStringField(value: self.mountpoint, fieldNumber: 2)
+    }
+    if !self.username.isEmpty {
+      try visitor.visitSingularStringField(value: self.username, fieldNumber: 3)
+    }
+    if !self.password.isEmpty {
+      try visitor.visitSingularStringField(value: self.password, fieldNumber: 4)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Common_MountWebDavRequest, rhs: Cloud_Lazycat_Apis_Common_MountWebDavRequest) -> Bool {
+    if lhs.url != rhs.url {return false}
+    if lhs.mountpoint != rhs.mountpoint {return false}
+    if lhs.username != rhs.username {return false}
+    if lhs.password != rhs.password {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -217,7 +421,7 @@ extension Cloud_Lazycat_Apis_Common_UmountFilesystemRequest: SwiftProtobuf.Messa
   public static let protoMessageName: String = _protobuf_package + ".UmountFilesystemRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "uuid"),
-    2: .standard(proto: "mount_point"),
+    2: .same(proto: "mountpoint"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -239,7 +443,7 @@ extension Cloud_Lazycat_Apis_Common_UmountFilesystemRequest: SwiftProtobuf.Messa
         try decoder.decodeSingularStringField(value: &v)
         if let v = v {
           if self.target != nil {try decoder.handleConflictingOneOf()}
-          self.target = .mountPoint(v)
+          self.target = .mountpoint(v)
         }
       }()
       default: break
@@ -257,8 +461,8 @@ extension Cloud_Lazycat_Apis_Common_UmountFilesystemRequest: SwiftProtobuf.Messa
       guard case .uuid(let v)? = self.target else { preconditionFailure() }
       try visitor.visitSingularStringField(value: v, fieldNumber: 1)
     }()
-    case .mountPoint?: try {
-      guard case .mountPoint(let v)? = self.target else { preconditionFailure() }
+    case .mountpoint?: try {
+      guard case .mountpoint(let v)? = self.target else { preconditionFailure() }
       try visitor.visitSingularStringField(value: v, fieldNumber: 2)
     }()
     case nil: break
@@ -268,60 +472,6 @@ extension Cloud_Lazycat_Apis_Common_UmountFilesystemRequest: SwiftProtobuf.Messa
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Common_UmountFilesystemRequest, rhs: Cloud_Lazycat_Apis_Common_UmountFilesystemRequest) -> Bool {
     if lhs.target != rhs.target {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Cloud_Lazycat_Apis_Common_RemovableFilesystemPartion: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".RemovableFilesystemPartion"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "uuid"),
-    2: .same(proto: "size"),
-    3: .same(proto: "fstype"),
-    4: .same(proto: "name"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.uuid) }()
-      case 2: try { try decoder.decodeSingularInt64Field(value: &self.size) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self.fstype) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self._name) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    if !self.uuid.isEmpty {
-      try visitor.visitSingularStringField(value: self.uuid, fieldNumber: 1)
-    }
-    if self.size != 0 {
-      try visitor.visitSingularInt64Field(value: self.size, fieldNumber: 2)
-    }
-    if !self.fstype.isEmpty {
-      try visitor.visitSingularStringField(value: self.fstype, fieldNumber: 3)
-    }
-    try { if let v = self._name {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 4)
-    } }()
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Cloud_Lazycat_Apis_Common_RemovableFilesystemPartion, rhs: Cloud_Lazycat_Apis_Common_RemovableFilesystemPartion) -> Bool {
-    if lhs.uuid != rhs.uuid {return false}
-    if lhs.size != rhs.size {return false}
-    if lhs.fstype != rhs.fstype {return false}
-    if lhs._name != rhs._name {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

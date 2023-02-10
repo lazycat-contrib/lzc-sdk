@@ -38,6 +38,7 @@ public struct Cloud_Lazycat_Apis_Common_EndDevice {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  /// TODO 待删除
   public var peerID: String = String()
 
   public var isOnline: Bool = false
@@ -65,6 +66,9 @@ public struct Cloud_Lazycat_Apis_Common_EndDevice {
   public var hasBindingTime: Bool {return self._bindingTime != nil}
   /// Clears the value of `bindingTime`. Subsequent reads from it will return its default value.
   public mutating func clearBindingTime() {self._bindingTime = nil}
+
+  /// 设备是否是移动平台
+  public var isMobile: Bool = false
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -97,11 +101,26 @@ public struct Cloud_Lazycat_Apis_Common_ListEndDeviceReply {
   public init() {}
 }
 
+public struct Cloud_Lazycat_Apis_Common_RemoveEndDeviceRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var uid: String = String()
+
+  public var uniqueDeivceID: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Cloud_Lazycat_Apis_Common_PairEndDeviceRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Common_EndDevice: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Common_ListEndDeviceRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Common_ListEndDeviceReply: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Common_RemoveEndDeviceRequest: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -150,6 +169,7 @@ extension Cloud_Lazycat_Apis_Common_EndDevice: SwiftProtobuf.Message, SwiftProto
     5: .same(proto: "model"),
     6: .same(proto: "name"),
     7: .standard(proto: "binding_time"),
+    8: .standard(proto: "is_mobile"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -165,6 +185,7 @@ extension Cloud_Lazycat_Apis_Common_EndDevice: SwiftProtobuf.Message, SwiftProto
       case 5: try { try decoder.decodeSingularStringField(value: &self.model) }()
       case 6: try { try decoder.decodeSingularStringField(value: &self.name) }()
       case 7: try { try decoder.decodeSingularMessageField(value: &self._bindingTime) }()
+      case 8: try { try decoder.decodeSingularBoolField(value: &self.isMobile) }()
       default: break
       }
     }
@@ -196,6 +217,9 @@ extension Cloud_Lazycat_Apis_Common_EndDevice: SwiftProtobuf.Message, SwiftProto
     try { if let v = self._bindingTime {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
     } }()
+    if self.isMobile != false {
+      try visitor.visitSingularBoolField(value: self.isMobile, fieldNumber: 8)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -207,6 +231,7 @@ extension Cloud_Lazycat_Apis_Common_EndDevice: SwiftProtobuf.Message, SwiftProto
     if lhs.model != rhs.model {return false}
     if lhs.name != rhs.name {return false}
     if lhs._bindingTime != rhs._bindingTime {return false}
+    if lhs.isMobile != rhs.isMobile {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -271,6 +296,44 @@ extension Cloud_Lazycat_Apis_Common_ListEndDeviceReply: SwiftProtobuf.Message, S
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Common_ListEndDeviceReply, rhs: Cloud_Lazycat_Apis_Common_ListEndDeviceReply) -> Bool {
     if lhs.devices != rhs.devices {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Common_RemoveEndDeviceRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".RemoveEndDeviceRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "uid"),
+    2: .standard(proto: "unique_deivce_id"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.uid) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.uniqueDeivceID) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.uid.isEmpty {
+      try visitor.visitSingularStringField(value: self.uid, fieldNumber: 1)
+    }
+    if !self.uniqueDeivceID.isEmpty {
+      try visitor.visitSingularStringField(value: self.uniqueDeivceID, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Common_RemoveEndDeviceRequest, rhs: Cloud_Lazycat_Apis_Common_RemoveEndDeviceRequest) -> Bool {
+    if lhs.uid != rhs.uid {return false}
+    if lhs.uniqueDeivceID != rhs.uniqueDeivceID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

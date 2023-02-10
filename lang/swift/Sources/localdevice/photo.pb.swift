@@ -124,19 +124,6 @@ public struct Cloud_Lazycat_Apis_Localdevice_QueryPhotoHashRequest {
   fileprivate var _changedAfter: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
 }
 
-public struct Cloud_Lazycat_Apis_Localdevice_PhotoHashSet {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  /// hash --> id
-  public var entry: Dictionary<String,String> = [:]
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
 public struct Cloud_Lazycat_Apis_Localdevice_QueryPhotoRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -149,17 +136,88 @@ public struct Cloud_Lazycat_Apis_Localdevice_QueryPhotoRequest {
   public init() {}
 }
 
+public struct Cloud_Lazycat_Apis_Localdevice_MakeAlbumRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var title: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Localdevice_PutPhotoRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var albumID: String = String()
+
+  /// 图片路径, 支持dataurl
+  public var url: String = String()
+
+  public var fileName: String {
+    get {return _fileName ?? String()}
+    set {_fileName = newValue}
+  }
+  /// Returns true if `fileName` has been explicitly set.
+  public var hasFileName: Bool {return self._fileName != nil}
+  /// Clears the value of `fileName`. Subsequent reads from it will return its default value.
+  public mutating func clearFileName() {self._fileName = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _fileName: String? = nil
+}
+
 public struct Cloud_Lazycat_Apis_Localdevice_PutPhotoReply {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  /// 新添加图片的id
-  public var id: String = String()
+  /// 是否完成. 若已完成则photo_id字段生效
+  public var done: Bool = false
+
+  /// 若无total_size表示无法获取文件大小，此时无法计算出准确进度
+  public var totalSize: Int64 {
+    get {return _totalSize ?? 0}
+    set {_totalSize = newValue}
+  }
+  /// Returns true if `totalSize` has been explicitly set.
+  public var hasTotalSize: Bool {return self._totalSize != nil}
+  /// Clears the value of `totalSize`. Subsequent reads from it will return its default value.
+  public mutating func clearTotalSize() {self._totalSize = nil}
+
+  public var fetchedSize: Int64 {
+    get {return _fetchedSize ?? 0}
+    set {_fetchedSize = newValue}
+  }
+  /// Returns true if `fetchedSize` has been explicitly set.
+  public var hasFetchedSize: Bool {return self._fetchedSize != nil}
+  /// Clears the value of `fetchedSize`. Subsequent reads from it will return its default value.
+  public mutating func clearFetchedSize() {self._fetchedSize = nil}
+
+  /// 新添加图片的id, 仅在completed=true后才有意义
+  public var photoID: String {
+    get {return _photoID ?? String()}
+    set {_photoID = newValue}
+  }
+  /// Returns true if `photoID` has been explicitly set.
+  public var hasPhotoID: Bool {return self._photoID != nil}
+  /// Clears the value of `photoID`. Subsequent reads from it will return its default value.
+  public mutating func clearPhotoID() {self._photoID = nil}
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
+
+  fileprivate var _totalSize: Int64? = nil
+  fileprivate var _fetchedSize: Int64? = nil
+  fileprivate var _photoID: String? = nil
 }
 
 public struct Cloud_Lazycat_Apis_Localdevice_DeletePhotoReply {
@@ -310,11 +368,6 @@ public struct Cloud_Lazycat_Apis_Localdevice_PhotoMeta {
     set {_uniqueStorage()._mime = newValue}
   }
 
-  public var hash: String {
-    get {return _storage._hash}
-    set {_uniqueStorage()._hash = newValue}
-  }
-
   public var fileName: String {
     get {return _storage._fileName ?? String()}
     set {_uniqueStorage()._fileName = newValue}
@@ -452,49 +505,12 @@ public struct Cloud_Lazycat_Apis_Localdevice_ListAlbumsReply {
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Localdevice_PutPhotoRequest {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var albumID: String = String()
-
-  /// 图片路径, 支持dataurl
-  public var url: String = String()
-
-  public var fileName: String {
-    get {return _fileName ?? String()}
-    set {_fileName = newValue}
-  }
-  /// Returns true if `fileName` has been explicitly set.
-  public var hasFileName: Bool {return self._fileName != nil}
-  /// Clears the value of `fileName`. Subsequent reads from it will return its default value.
-  public mutating func clearFileName() {self._fileName = nil}
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-
-  fileprivate var _fileName: String? = nil
-}
-
-public struct Cloud_Lazycat_Apis_Localdevice_PhotoMetas {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var photoMetas: [Cloud_Lazycat_Apis_Localdevice_PhotoMeta] = []
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Cloud_Lazycat_Apis_Localdevice_PhotoMetasSortType: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Localdevice_QueryPhotoHashRequest: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Localdevice_PhotoHashSet: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Localdevice_QueryPhotoRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Localdevice_MakeAlbumRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Localdevice_PutPhotoRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Localdevice_PutPhotoReply: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Localdevice_DeletePhotoReply: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Localdevice_DeletePhotoRequest: @unchecked Sendable {}
@@ -503,8 +519,6 @@ extension Cloud_Lazycat_Apis_Localdevice_PhotoMeta: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Localdevice_Album: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Localdevice_ListAlbumsRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Localdevice_ListAlbumsReply: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Localdevice_PutPhotoRequest: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Localdevice_PhotoMetas: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -560,38 +574,6 @@ extension Cloud_Lazycat_Apis_Localdevice_QueryPhotoHashRequest: SwiftProtobuf.Me
   }
 }
 
-extension Cloud_Lazycat_Apis_Localdevice_PhotoHashSet: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".PhotoHashSet"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "entry"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufString>.self, value: &self.entry) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.entry.isEmpty {
-      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufString>.self, value: self.entry, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_PhotoHashSet, rhs: Cloud_Lazycat_Apis_Localdevice_PhotoHashSet) -> Bool {
-    if lhs.entry != rhs.entry {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
 extension Cloud_Lazycat_Apis_Localdevice_QueryPhotoRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".QueryPhotoRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -624,10 +606,10 @@ extension Cloud_Lazycat_Apis_Localdevice_QueryPhotoRequest: SwiftProtobuf.Messag
   }
 }
 
-extension Cloud_Lazycat_Apis_Localdevice_PutPhotoReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".PutPhotoReply"
+extension Cloud_Lazycat_Apis_Localdevice_MakeAlbumRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MakeAlbumRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
+    1: .same(proto: "title"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -636,21 +618,123 @@ extension Cloud_Lazycat_Apis_Localdevice_PutPhotoReply: SwiftProtobuf.Message, S
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self.title) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.id.isEmpty {
-      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
+    if !self.title.isEmpty {
+      try visitor.visitSingularStringField(value: self.title, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
+  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_MakeAlbumRequest, rhs: Cloud_Lazycat_Apis_Localdevice_MakeAlbumRequest) -> Bool {
+    if lhs.title != rhs.title {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Localdevice_PutPhotoRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".PutPhotoRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "album_id"),
+    2: .same(proto: "url"),
+    3: .standard(proto: "file_name"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.albumID) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.url) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self._fileName) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.albumID.isEmpty {
+      try visitor.visitSingularStringField(value: self.albumID, fieldNumber: 1)
+    }
+    if !self.url.isEmpty {
+      try visitor.visitSingularStringField(value: self.url, fieldNumber: 2)
+    }
+    try { if let v = self._fileName {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 3)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_PutPhotoRequest, rhs: Cloud_Lazycat_Apis_Localdevice_PutPhotoRequest) -> Bool {
+    if lhs.albumID != rhs.albumID {return false}
+    if lhs.url != rhs.url {return false}
+    if lhs._fileName != rhs._fileName {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Localdevice_PutPhotoReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".PutPhotoReply"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "done"),
+    2: .standard(proto: "total_size"),
+    3: .standard(proto: "fetched_size"),
+    4: .standard(proto: "photo_id"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBoolField(value: &self.done) }()
+      case 2: try { try decoder.decodeSingularInt64Field(value: &self._totalSize) }()
+      case 3: try { try decoder.decodeSingularInt64Field(value: &self._fetchedSize) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self._photoID) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if self.done != false {
+      try visitor.visitSingularBoolField(value: self.done, fieldNumber: 1)
+    }
+    try { if let v = self._totalSize {
+      try visitor.visitSingularInt64Field(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._fetchedSize {
+      try visitor.visitSingularInt64Field(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._photoID {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 4)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
   public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_PutPhotoReply, rhs: Cloud_Lazycat_Apis_Localdevice_PutPhotoReply) -> Bool {
-    if lhs.id != rhs.id {return false}
+    if lhs.done != rhs.done {return false}
+    if lhs._totalSize != rhs._totalSize {return false}
+    if lhs._fetchedSize != rhs._fetchedSize {return false}
+    if lhs._photoID != rhs._photoID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -821,7 +905,6 @@ extension Cloud_Lazycat_Apis_Localdevice_PhotoMeta: SwiftProtobuf.Message, Swift
     6: .standard(proto: "album_ids"),
     7: .same(proto: "size"),
     8: .same(proto: "mime"),
-    9: .same(proto: "hash"),
     10: .standard(proto: "file_name"),
     11: .standard(proto: "creation_date"),
     12: .same(proto: "latitude"),
@@ -839,7 +922,6 @@ extension Cloud_Lazycat_Apis_Localdevice_PhotoMeta: SwiftProtobuf.Message, Swift
     var _albumIds: [String] = []
     var _size: Int64 = 0
     var _mime: String = String()
-    var _hash: String = String()
     var _fileName: String? = nil
     var _creationDate: SwiftProtobuf.Google_Protobuf_Timestamp? = nil
     var _latitude: Float? = nil
@@ -860,7 +942,6 @@ extension Cloud_Lazycat_Apis_Localdevice_PhotoMeta: SwiftProtobuf.Message, Swift
       _albumIds = source._albumIds
       _size = source._size
       _mime = source._mime
-      _hash = source._hash
       _fileName = source._fileName
       _creationDate = source._creationDate
       _latitude = source._latitude
@@ -893,7 +974,6 @@ extension Cloud_Lazycat_Apis_Localdevice_PhotoMeta: SwiftProtobuf.Message, Swift
         case 6: try { try decoder.decodeRepeatedStringField(value: &_storage._albumIds) }()
         case 7: try { try decoder.decodeSingularInt64Field(value: &_storage._size) }()
         case 8: try { try decoder.decodeSingularStringField(value: &_storage._mime) }()
-        case 9: try { try decoder.decodeSingularStringField(value: &_storage._hash) }()
         case 10: try { try decoder.decodeSingularStringField(value: &_storage._fileName) }()
         case 11: try { try decoder.decodeSingularMessageField(value: &_storage._creationDate) }()
         case 12: try { try decoder.decodeSingularFloatField(value: &_storage._latitude) }()
@@ -936,9 +1016,6 @@ extension Cloud_Lazycat_Apis_Localdevice_PhotoMeta: SwiftProtobuf.Message, Swift
       if !_storage._mime.isEmpty {
         try visitor.visitSingularStringField(value: _storage._mime, fieldNumber: 8)
       }
-      if !_storage._hash.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._hash, fieldNumber: 9)
-      }
       try { if let v = _storage._fileName {
         try visitor.visitSingularStringField(value: v, fieldNumber: 10)
       } }()
@@ -974,7 +1051,6 @@ extension Cloud_Lazycat_Apis_Localdevice_PhotoMeta: SwiftProtobuf.Message, Swift
         if _storage._albumIds != rhs_storage._albumIds {return false}
         if _storage._size != rhs_storage._size {return false}
         if _storage._mime != rhs_storage._mime {return false}
-        if _storage._hash != rhs_storage._hash {return false}
         if _storage._fileName != rhs_storage._fileName {return false}
         if _storage._creationDate != rhs_storage._creationDate {return false}
         if _storage._latitude != rhs_storage._latitude {return false}
@@ -1127,86 +1203,6 @@ extension Cloud_Lazycat_Apis_Localdevice_ListAlbumsReply: SwiftProtobuf.Message,
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_ListAlbumsReply, rhs: Cloud_Lazycat_Apis_Localdevice_ListAlbumsReply) -> Bool {
     if lhs.albums != rhs.albums {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Cloud_Lazycat_Apis_Localdevice_PutPhotoRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".PutPhotoRequest"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "album_id"),
-    2: .same(proto: "url"),
-    3: .standard(proto: "file_name"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.albumID) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.url) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self._fileName) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    if !self.albumID.isEmpty {
-      try visitor.visitSingularStringField(value: self.albumID, fieldNumber: 1)
-    }
-    if !self.url.isEmpty {
-      try visitor.visitSingularStringField(value: self.url, fieldNumber: 2)
-    }
-    try { if let v = self._fileName {
-      try visitor.visitSingularStringField(value: v, fieldNumber: 3)
-    } }()
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_PutPhotoRequest, rhs: Cloud_Lazycat_Apis_Localdevice_PutPhotoRequest) -> Bool {
-    if lhs.albumID != rhs.albumID {return false}
-    if lhs.url != rhs.url {return false}
-    if lhs._fileName != rhs._fileName {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Cloud_Lazycat_Apis_Localdevice_PhotoMetas: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".PhotoMetas"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "photoMetas"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.photoMetas) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.photoMetas.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.photoMetas, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_PhotoMetas, rhs: Cloud_Lazycat_Apis_Localdevice_PhotoMetas) -> Bool {
-    if lhs.photoMetas != rhs.photoMetas {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -20,7 +20,32 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public struct Cloud_Lazycat_Apis_Sys_IngressBlockRequest {
+public struct Cloud_Lazycat_Apis_Sys_DevSetting {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// 默认使用 http，而不是 https（禁用TLS）
+  public var httpOnlyMode: Bool = false
+
+  /// 默认使用 http，而不是 https（不禁用TLS）
+  public var httpMode: Bool = false
+
+  /// 禁用自动休眠长时间未使用的应用
+  public var disableHibernation: Bool = false
+
+  /// 开启 debug bridge
+  public var debugBridge: Bool = false
+
+  /// 开启 sshd 服务
+  public var debugSshd: Bool = false
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Cloud_Lazycat_Apis_Sys_IngressAllowRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -34,7 +59,7 @@ public struct Cloud_Lazycat_Apis_Sys_IngressBlockRequest {
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Sys_IngressBlockDelAllRequest {
+public struct Cloud_Lazycat_Apis_Sys_IngressAllowDelAllRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -46,7 +71,7 @@ public struct Cloud_Lazycat_Apis_Sys_IngressBlockDelAllRequest {
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Sys_IngressBlockListRequest {
+public struct Cloud_Lazycat_Apis_Sys_IngressAllowListRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -58,7 +83,7 @@ public struct Cloud_Lazycat_Apis_Sys_IngressBlockListRequest {
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Sys_IngressBlockListResponse {
+public struct Cloud_Lazycat_Apis_Sys_IngressAllowListResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -70,7 +95,7 @@ public struct Cloud_Lazycat_Apis_Sys_IngressBlockListResponse {
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Sys_IngressBlockGetRequest {
+public struct Cloud_Lazycat_Apis_Sys_IngressAllowGetRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -84,12 +109,12 @@ public struct Cloud_Lazycat_Apis_Sys_IngressBlockGetRequest {
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Sys_IngressBlockGetResponse {
+public struct Cloud_Lazycat_Apis_Sys_IngressAllowGetResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var isBlocked: Bool = false
+  public var isAllowed: Bool = false
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -120,23 +145,117 @@ public struct Cloud_Lazycat_Apis_Sys_IngressAppLastAccessTimeResponse {
   public init() {}
 }
 
+public struct Cloud_Lazycat_Apis_Sys_IngressAllowManageRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var userID: String = String()
+
+  public var enabled: Bool {
+    get {return _enabled ?? false}
+    set {_enabled = newValue}
+  }
+  /// Returns true if `enabled` has been explicitly set.
+  public var hasEnabled: Bool {return self._enabled != nil}
+  /// Clears the value of `enabled`. Subsequent reads from it will return its default value.
+  public mutating func clearEnabled() {self._enabled = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _enabled: Bool? = nil
+}
+
+public struct Cloud_Lazycat_Apis_Sys_IngressAllowManageResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var enabled: Bool = false
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 #if swift(>=5.5) && canImport(_Concurrency)
-extension Cloud_Lazycat_Apis_Sys_IngressBlockRequest: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Sys_IngressBlockDelAllRequest: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Sys_IngressBlockListRequest: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Sys_IngressBlockListResponse: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Sys_IngressBlockGetRequest: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Sys_IngressBlockGetResponse: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_DevSetting: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_IngressAllowRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_IngressAllowDelAllRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_IngressAllowListRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_IngressAllowListResponse: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_IngressAllowGetRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_IngressAllowGetResponse: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_IngressAppLastAccessTimeRequest: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Sys_IngressAppLastAccessTimeResponse: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_IngressAllowManageRequest: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Sys_IngressAllowManageResponse: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "cloud.lazycat.apis.sys"
 
-extension Cloud_Lazycat_Apis_Sys_IngressBlockRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".IngressBlockRequest"
+extension Cloud_Lazycat_Apis_Sys_DevSetting: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".DevSetting"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "HttpOnlyMode"),
+    2: .same(proto: "HttpMode"),
+    3: .same(proto: "DisableHibernation"),
+    4: .same(proto: "DebugBridge"),
+    5: .same(proto: "DebugSshd"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBoolField(value: &self.httpOnlyMode) }()
+      case 2: try { try decoder.decodeSingularBoolField(value: &self.httpMode) }()
+      case 3: try { try decoder.decodeSingularBoolField(value: &self.disableHibernation) }()
+      case 4: try { try decoder.decodeSingularBoolField(value: &self.debugBridge) }()
+      case 5: try { try decoder.decodeSingularBoolField(value: &self.debugSshd) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.httpOnlyMode != false {
+      try visitor.visitSingularBoolField(value: self.httpOnlyMode, fieldNumber: 1)
+    }
+    if self.httpMode != false {
+      try visitor.visitSingularBoolField(value: self.httpMode, fieldNumber: 2)
+    }
+    if self.disableHibernation != false {
+      try visitor.visitSingularBoolField(value: self.disableHibernation, fieldNumber: 3)
+    }
+    if self.debugBridge != false {
+      try visitor.visitSingularBoolField(value: self.debugBridge, fieldNumber: 4)
+    }
+    if self.debugSshd != false {
+      try visitor.visitSingularBoolField(value: self.debugSshd, fieldNumber: 5)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_DevSetting, rhs: Cloud_Lazycat_Apis_Sys_DevSetting) -> Bool {
+    if lhs.httpOnlyMode != rhs.httpOnlyMode {return false}
+    if lhs.httpMode != rhs.httpMode {return false}
+    if lhs.disableHibernation != rhs.disableHibernation {return false}
+    if lhs.debugBridge != rhs.debugBridge {return false}
+    if lhs.debugSshd != rhs.debugSshd {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_IngressAllowRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".IngressAllowRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "UserId"),
     2: .same(proto: "AppIdList"),
@@ -165,7 +284,7 @@ extension Cloud_Lazycat_Apis_Sys_IngressBlockRequest: SwiftProtobuf.Message, Swi
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressBlockRequest, rhs: Cloud_Lazycat_Apis_Sys_IngressBlockRequest) -> Bool {
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressAllowRequest, rhs: Cloud_Lazycat_Apis_Sys_IngressAllowRequest) -> Bool {
     if lhs.userID != rhs.userID {return false}
     if lhs.appIDList != rhs.appIDList {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -173,8 +292,8 @@ extension Cloud_Lazycat_Apis_Sys_IngressBlockRequest: SwiftProtobuf.Message, Swi
   }
 }
 
-extension Cloud_Lazycat_Apis_Sys_IngressBlockDelAllRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".IngressBlockDelAllRequest"
+extension Cloud_Lazycat_Apis_Sys_IngressAllowDelAllRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".IngressAllowDelAllRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "UserId"),
   ]
@@ -198,15 +317,15 @@ extension Cloud_Lazycat_Apis_Sys_IngressBlockDelAllRequest: SwiftProtobuf.Messag
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressBlockDelAllRequest, rhs: Cloud_Lazycat_Apis_Sys_IngressBlockDelAllRequest) -> Bool {
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressAllowDelAllRequest, rhs: Cloud_Lazycat_Apis_Sys_IngressAllowDelAllRequest) -> Bool {
     if lhs.userID != rhs.userID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension Cloud_Lazycat_Apis_Sys_IngressBlockListRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".IngressBlockListRequest"
+extension Cloud_Lazycat_Apis_Sys_IngressAllowListRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".IngressAllowListRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "UserId"),
   ]
@@ -230,15 +349,15 @@ extension Cloud_Lazycat_Apis_Sys_IngressBlockListRequest: SwiftProtobuf.Message,
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressBlockListRequest, rhs: Cloud_Lazycat_Apis_Sys_IngressBlockListRequest) -> Bool {
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressAllowListRequest, rhs: Cloud_Lazycat_Apis_Sys_IngressAllowListRequest) -> Bool {
     if lhs.userID != rhs.userID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension Cloud_Lazycat_Apis_Sys_IngressBlockListResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".IngressBlockListResponse"
+extension Cloud_Lazycat_Apis_Sys_IngressAllowListResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".IngressAllowListResponse"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "AppIdList"),
   ]
@@ -262,15 +381,15 @@ extension Cloud_Lazycat_Apis_Sys_IngressBlockListResponse: SwiftProtobuf.Message
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressBlockListResponse, rhs: Cloud_Lazycat_Apis_Sys_IngressBlockListResponse) -> Bool {
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressAllowListResponse, rhs: Cloud_Lazycat_Apis_Sys_IngressAllowListResponse) -> Bool {
     if lhs.appIDList != rhs.appIDList {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension Cloud_Lazycat_Apis_Sys_IngressBlockGetRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".IngressBlockGetRequest"
+extension Cloud_Lazycat_Apis_Sys_IngressAllowGetRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".IngressAllowGetRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "UserId"),
     2: .same(proto: "AppId"),
@@ -299,7 +418,7 @@ extension Cloud_Lazycat_Apis_Sys_IngressBlockGetRequest: SwiftProtobuf.Message, 
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressBlockGetRequest, rhs: Cloud_Lazycat_Apis_Sys_IngressBlockGetRequest) -> Bool {
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressAllowGetRequest, rhs: Cloud_Lazycat_Apis_Sys_IngressAllowGetRequest) -> Bool {
     if lhs.userID != rhs.userID {return false}
     if lhs.appID != rhs.appID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -307,10 +426,10 @@ extension Cloud_Lazycat_Apis_Sys_IngressBlockGetRequest: SwiftProtobuf.Message, 
   }
 }
 
-extension Cloud_Lazycat_Apis_Sys_IngressBlockGetResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".IngressBlockGetResponse"
+extension Cloud_Lazycat_Apis_Sys_IngressAllowGetResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".IngressAllowGetResponse"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "IsBlocked"),
+    1: .same(proto: "IsAllowed"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -319,21 +438,21 @@ extension Cloud_Lazycat_Apis_Sys_IngressBlockGetResponse: SwiftProtobuf.Message,
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularBoolField(value: &self.isBlocked) }()
+      case 1: try { try decoder.decodeSingularBoolField(value: &self.isAllowed) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.isBlocked != false {
-      try visitor.visitSingularBoolField(value: self.isBlocked, fieldNumber: 1)
+    if self.isAllowed != false {
+      try visitor.visitSingularBoolField(value: self.isAllowed, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressBlockGetResponse, rhs: Cloud_Lazycat_Apis_Sys_IngressBlockGetResponse) -> Bool {
-    if lhs.isBlocked != rhs.isBlocked {return false}
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressAllowGetResponse, rhs: Cloud_Lazycat_Apis_Sys_IngressAllowGetResponse) -> Bool {
+    if lhs.isAllowed != rhs.isAllowed {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -398,6 +517,80 @@ extension Cloud_Lazycat_Apis_Sys_IngressAppLastAccessTimeResponse: SwiftProtobuf
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressAppLastAccessTimeResponse, rhs: Cloud_Lazycat_Apis_Sys_IngressAppLastAccessTimeResponse) -> Bool {
     if lhs.unixTime != rhs.unixTime {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_IngressAllowManageRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".IngressAllowManageRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "UserId"),
+    2: .same(proto: "Enabled"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.userID) }()
+      case 2: try { try decoder.decodeSingularBoolField(value: &self._enabled) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.userID.isEmpty {
+      try visitor.visitSingularStringField(value: self.userID, fieldNumber: 1)
+    }
+    try { if let v = self._enabled {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 2)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressAllowManageRequest, rhs: Cloud_Lazycat_Apis_Sys_IngressAllowManageRequest) -> Bool {
+    if lhs.userID != rhs.userID {return false}
+    if lhs._enabled != rhs._enabled {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Cloud_Lazycat_Apis_Sys_IngressAllowManageResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".IngressAllowManageResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "Enabled"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBoolField(value: &self.enabled) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.enabled != false {
+      try visitor.visitSingularBoolField(value: self.enabled, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Cloud_Lazycat_Apis_Sys_IngressAllowManageResponse, rhs: Cloud_Lazycat_Apis_Sys_IngressAllowManageResponse) -> Bool {
+    if lhs.enabled != rhs.enabled {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

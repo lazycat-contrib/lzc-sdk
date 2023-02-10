@@ -33,7 +33,7 @@ public struct Cloud_Lazycat_Apis_Localdevice_ReadClipRequest {
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Localdevice_ReadClipReply {
+public struct Cloud_Lazycat_Apis_Localdevice_ReadClipResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -50,7 +50,7 @@ public struct Cloud_Lazycat_Apis_Localdevice_WriteClipRequest {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var mimie: String = String()
+  public var mime: String = String()
 
   public var content: Data = Data()
 
@@ -59,10 +59,12 @@ public struct Cloud_Lazycat_Apis_Localdevice_WriteClipRequest {
   public init() {}
 }
 
-public struct Cloud_Lazycat_Apis_Localdevice_WriteClipReply {
+public struct Cloud_Lazycat_Apis_Localdevice_WriteClipResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
+
+  public var success: Bool = false
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -71,9 +73,9 @@ public struct Cloud_Lazycat_Apis_Localdevice_WriteClipReply {
 
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Cloud_Lazycat_Apis_Localdevice_ReadClipRequest: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Localdevice_ReadClipReply: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Localdevice_ReadClipResponse: @unchecked Sendable {}
 extension Cloud_Lazycat_Apis_Localdevice_WriteClipRequest: @unchecked Sendable {}
-extension Cloud_Lazycat_Apis_Localdevice_WriteClipReply: @unchecked Sendable {}
+extension Cloud_Lazycat_Apis_Localdevice_WriteClipResponse: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -112,8 +114,8 @@ extension Cloud_Lazycat_Apis_Localdevice_ReadClipRequest: SwiftProtobuf.Message,
   }
 }
 
-extension Cloud_Lazycat_Apis_Localdevice_ReadClipReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ReadClipReply"
+extension Cloud_Lazycat_Apis_Localdevice_ReadClipResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ReadClipResponse"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "content"),
   ]
@@ -137,7 +139,7 @@ extension Cloud_Lazycat_Apis_Localdevice_ReadClipReply: SwiftProtobuf.Message, S
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_ReadClipReply, rhs: Cloud_Lazycat_Apis_Localdevice_ReadClipReply) -> Bool {
+  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_ReadClipResponse, rhs: Cloud_Lazycat_Apis_Localdevice_ReadClipResponse) -> Bool {
     if lhs.content != rhs.content {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
@@ -147,7 +149,7 @@ extension Cloud_Lazycat_Apis_Localdevice_ReadClipReply: SwiftProtobuf.Message, S
 extension Cloud_Lazycat_Apis_Localdevice_WriteClipRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".WriteClipRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "mimie"),
+    1: .same(proto: "mime"),
     2: .same(proto: "content"),
   ]
 
@@ -157,7 +159,7 @@ extension Cloud_Lazycat_Apis_Localdevice_WriteClipRequest: SwiftProtobuf.Message
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.mimie) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self.mime) }()
       case 2: try { try decoder.decodeSingularBytesField(value: &self.content) }()
       default: break
       }
@@ -165,8 +167,8 @@ extension Cloud_Lazycat_Apis_Localdevice_WriteClipRequest: SwiftProtobuf.Message
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.mimie.isEmpty {
-      try visitor.visitSingularStringField(value: self.mimie, fieldNumber: 1)
+    if !self.mime.isEmpty {
+      try visitor.visitSingularStringField(value: self.mime, fieldNumber: 1)
     }
     if !self.content.isEmpty {
       try visitor.visitSingularBytesField(value: self.content, fieldNumber: 2)
@@ -175,27 +177,40 @@ extension Cloud_Lazycat_Apis_Localdevice_WriteClipRequest: SwiftProtobuf.Message
   }
 
   public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_WriteClipRequest, rhs: Cloud_Lazycat_Apis_Localdevice_WriteClipRequest) -> Bool {
-    if lhs.mimie != rhs.mimie {return false}
+    if lhs.mime != rhs.mime {return false}
     if lhs.content != rhs.content {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension Cloud_Lazycat_Apis_Localdevice_WriteClipReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".WriteClipReply"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+extension Cloud_Lazycat_Apis_Localdevice_WriteClipResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".WriteClipResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "success"),
+  ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBoolField(value: &self.success) }()
+      default: break
+      }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.success != false {
+      try visitor.visitSingularBoolField(value: self.success, fieldNumber: 1)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_WriteClipReply, rhs: Cloud_Lazycat_Apis_Localdevice_WriteClipReply) -> Bool {
+  public static func ==(lhs: Cloud_Lazycat_Apis_Localdevice_WriteClipResponse, rhs: Cloud_Lazycat_Apis_Localdevice_WriteClipResponse) -> Bool {
+    if lhs.success != rhs.success {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
