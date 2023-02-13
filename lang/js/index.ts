@@ -105,6 +105,8 @@ export class lzcAPIGateway {
 
         this.rmp = new RemoteMediaPlayerServiceClientImpl(rpc);
 
+        this.fileTransfer = new FileTransferServiceClientImpl(rpc)
+
         this.currentDevice = buildCurrentDevice(this)
         dumpInfo(this.bo)
     }
@@ -137,8 +139,9 @@ export class lzcAPIGateway {
     public osDaemon: OsDaemonService
 
     public appinfo: Promise<AppInfo>;
-    public devices: EndDeviceService;
+    public fileTransfer: FileTransferService;
     public rmp: RemoteMediaPlayerService;
+    public devices: EndDeviceService;
 
 }
 
@@ -156,7 +159,6 @@ export class EndDeviceProxy {
         this.network = new NetworkManagerClientImpl(rpc)
         this.device = new DeviceServiceClientImpl(rpc)
         this.fileHandler = new FileHandlerClientImpl(rpc)
-        this.fileTransfer = new FileTransferServiceClientImpl(rpc)
         this.permission = new DevicePermissionManagerClientImpl(rpc)
         this.localLaunch = new LocalLaunchServiceClientImpl(rpc);
     }
@@ -168,7 +170,6 @@ export class EndDeviceProxy {
     public photolibrary: PhotoLibrary;
     public network: NetworkManager;
     public fileHandler: FileHandler;
-    public fileTransfer: FileTransferService;
     public permission: DevicePermissionManager;
     public localLaunch: LocalLaunchService;
 }
