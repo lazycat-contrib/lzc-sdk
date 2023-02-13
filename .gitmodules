@@ -1,0 +1,3 @@
+[submodule "lang/swift"]
+	path = lang/swift
+	url = https://gitee.com/linakesi/lzc-sdk-swift.git
