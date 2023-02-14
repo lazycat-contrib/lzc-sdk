@@ -54,7 +54,7 @@ enum TaskStatus {
 }
 
 // TODO 考虑空文件夹
-
+message MetaInfo {string meta_info = 1;}
 // Task创建请求
 message TaskCreateRequest {
   // src任意http url
@@ -73,6 +73,7 @@ message TaskCreateRequest {
   TaskQueueID queue_id = 4;
 
   optional TaskStatus status = 5;
+  optional MetaInfo  meta_info = 6;
 }
 
 // Task结构体
