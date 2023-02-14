@@ -98,6 +98,7 @@ message Task {
   optional TransmitInfo info = 8;
   optional google.protobuf.Timestamp created_at = 9;
   optional google.protobuf.Timestamp updated_at = 10;
+  optional MetaInfo  meta_info = 11;
 }
 
 /*
