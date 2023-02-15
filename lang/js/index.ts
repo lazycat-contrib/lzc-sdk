@@ -48,16 +48,16 @@ async function getApiUrl(cc: lzcAPIGateway): Promise<URL> {
     return new URL(d.deviceApiUrl)
 }
 
-async function getAuthToken(apiurl: string): Promise<string> {
-    return (await fetch(window.origin + "/_lzc/auth_token", {
+async function getAuthToken(host: string, apiurl: string): Promise<string> {
+    return (await fetch(host + "/_lzc/auth_token", {
         method: "POST",
         body: apiurl,
     })).text()
 }
 
-async function buildGrpcMetaData(apiurl: string): Promise<grpc.Metadata> {
+async function buildGrpcMetaData(host: string, apiurl: string): Promise<grpc.Metadata> {
     let metadata = new grpc.Metadata()
-    metadata.set("lzc_dapi_auth_token", await getAuthToken(apiurl))
+    metadata.set("lzc_dapi_auth_token", await getAuthToken(host, apiurl))
     return metadata
 }
 
@@ -67,7 +67,7 @@ async function buildCurrentDevice(cc: lzcAPIGateway): Promise<EndDeviceProxy> {
 
     let metadata: grpc.Metadata
     try {
-        metadata = await buildGrpcMetaData(url)
+        metadata = await buildGrpcMetaData(cc.host, url)
     } catch (e) {
         metadata = new grpc.Metadata()
         console.log(e)
@@ -81,6 +81,8 @@ async function buildCurrentDevice(cc: lzcAPIGateway): Promise<EndDeviceProxy> {
 export class lzcAPIGateway {
     constructor(host: string = window.origin) {
         host = host.replace(/\/+$/, '')
+        this.host = host
+
         const rpc = new GrpcWebImpl(host, opt)
         this.devices = new EndDeviceServiceClientImpl(rpc);
         this.users = new UserManagerClientImpl(rpc);
@@ -110,6 +112,8 @@ export class lzcAPIGateway {
         this.currentDevice = buildCurrentDevice(this)
         dumpInfo(this.bo)
     }
+    public host: string;
+
     private bo: BrowserOnlyProxy;
     private gw: APIGateway;
     private pm: PermissionManager;
