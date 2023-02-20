@@ -182,6 +182,8 @@ service FileTransferService {
 
   // 暂时不支持创建Task时创建任务，需要提前创建好任务。queue_id不存在则报错
   rpc CreateTask(TaskCreateRequest) returns (Task) {}
+  
+  rpc CreateTasks(stream TaskCreateRequest) returns (stream Task) {}
 
   // 根据 ID 获取单个任务状态
   rpc QueryTask(TaskID) returns (stream Task) {}
