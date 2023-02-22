@@ -109,6 +109,8 @@ export class lzcAPIGateway {
 
         this.fileTransfer = new FileTransferServiceClientImpl(rpc)
 
+        this.devopt = new DevOptServiceClientImpl(rpc);
+
         this.currentDevice = buildCurrentDevice(this)
         dumpInfo(this.bo)
     }
@@ -144,6 +146,7 @@ export class lzcAPIGateway {
 
     public appinfo: Promise<AppInfo>;
     public fileTransfer: FileTransferService;
+    public devopt: DevOptService;
     public rmp: RemoteMediaPlayerService;
     public devices: EndDeviceService;
 
@@ -180,6 +183,7 @@ export class EndDeviceProxy {
 
 
 import pkg from './package.json';
+import { DevOptService, DevOptServiceClientImpl } from "./sys/devopt";
 
 async function dumpInfo(bo: BrowserOnlyProxy) {
     function capsule(title, info) {
