@@ -10,10 +10,6 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 // 1. 默认用户可以访问所有 app
 // 2. 如果调用了 AllowAdd ，则该用户进入白名单模式，只有被管理员允许访问的应用才可以访问
 service IngressService {
-    rpc GetDevSetting(google.protobuf.Empty) returns (DevSetting) {}
-
-    rpc SetDevSetting(DevSetting) returns (DevSetting) {}
-
     // 允许一个用户对指定 app 的访问
     rpc AllowAdd(IngressAllowRequest)  returns (google.protobuf.Empty) {}
 
@@ -37,19 +33,6 @@ service IngressService {
 
     // 获取指定 app 最后一次被访问的时刻
     rpc GetAppLastAccessTime(IngressAppLastAccessTimeRequest) returns (IngressAppLastAccessTimeResponse) {}
-}
-
-message DevSetting {
-    // 默认使用 http，而不是 https（禁用TLS）
-    bool HttpOnlyMode = 1;
-    // 默认使用 http，而不是 https（不禁用TLS）
-    bool HttpMode = 2;
-    // 禁用自动休眠长时间未使用的应用
-    bool DisableHibernation = 3;
-    // 开启 debug bridge
-    bool DebugBridge = 4;
-    // 开启 sshd 服务
-    bool DebugSshd = 5;
 }
 
 message IngressAllowRequest {
