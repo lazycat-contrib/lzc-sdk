@@ -2,10 +2,12 @@ package telemetry
 
 import (
 	"context"
+	"errors"
 	"net"
 	"os"
 	"sync"
 
+	"gitee.com/linakesi/lzc-sdk/lang/go/sys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
@@ -13,8 +15,15 @@ import (
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
+	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
+)
+
+const (
+	DevoptSocketPath    = "/run/lzc-sys/devopt.sock"
+	AltDevoptSocketPath = "/lzcapp/run/sys/devopt.sock"
 )
 
 type _Config struct {
@@ -105,6 +114,31 @@ func Tracer(name string, opts ...trace.TracerOption) trace.Tracer {
 }
 
 func InitTracerProvider(ctx context.Context, opts ...Option) error {
+	var socketPath string
+	if _, err := os.Stat(DevoptSocketPath); err == nil {
+		socketPath = DevoptSocketPath
+	} else if _, err := os.Stat(AltDevoptSocketPath); err == nil {
+		socketPath = AltDevoptSocketPath
+	} else {
+		return errors.New("devopt socket not found")
+	}
+	conn, err := grpc.Dial("unix://" + socketPath)
+	if err != nil {
+		return err
+	}
+	devopt := sys.NewDevOptServiceClient(conn)
+	resp, err := devopt.GetDeveloperOptions(context.Background(), &emptypb.Empty{})
+	if err != nil {
+		return err
+	}
+	if resp.OpenTelemetry {
+		return initTracerProvider(ctx, opts...)
+	} else {
+		return nil
+	}
+}
+
+func initTracerProvider(ctx context.Context, opts ...Option) error {
 	cfg, err := apply(opts...)
 	if err != nil {
 		return err
