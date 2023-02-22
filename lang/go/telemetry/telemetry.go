@@ -16,6 +16,7 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
@@ -122,7 +123,7 @@ func InitTracerProvider(ctx context.Context, opts ...Option) error {
 	} else {
 		return errors.New("devopt socket not found")
 	}
-	conn, err := grpc.Dial("unix://" + socketPath)
+	conn, err := grpc.Dial("unix://" + socketPath, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err
 	}
