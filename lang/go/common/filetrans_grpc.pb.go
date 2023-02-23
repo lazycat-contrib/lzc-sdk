@@ -41,7 +41,7 @@ type FileTransferServiceClient interface {
 	QueryQueueMessage(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (FileTransferService_QueryQueueMessageClient, error)
 	// 暂时不支持创建Task时创建任务，需要提前创建好任务。queue_id不存在则报错
 	CreateTask(ctx context.Context, in *TaskCreateRequest, opts ...grpc.CallOption) (*Task, error)
-	CreateTasks(ctx context.Context, opts ...grpc.CallOption) (FileTransferService_CreateTasksClient, error)
+	CreateTasks(ctx context.Context, in *TaskCreateRequests, opts ...grpc.CallOption) (FileTransferService_CreateTasksClient, error)
 	// 根据 ID 获取单个任务状态
 	QueryTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (FileTransferService_QueryTaskClient, error)
 	// 根据 ID 开始单个任务
@@ -187,27 +187,28 @@ func (c *fileTransferServiceClient) CreateTask(ctx context.Context, in *TaskCrea
 	return out, nil
 }
 
-func (c *fileTransferServiceClient) CreateTasks(ctx context.Context, opts ...grpc.CallOption) (FileTransferService_CreateTasksClient, error) {
+func (c *fileTransferServiceClient) CreateTasks(ctx context.Context, in *TaskCreateRequests, opts ...grpc.CallOption) (FileTransferService_CreateTasksClient, error) {
 	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[2], "/cloud.lazycat.apis.common.FileTransferService/CreateTasks", opts...)
 	if err != nil {
 		return nil, err
 	}
 	x := &fileTransferServiceCreateTasksClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
 	return x, nil
 }
 
 type FileTransferService_CreateTasksClient interface {
-	Send(*TaskCreateRequest) error
 	Recv() (*Task, error)
 	grpc.ClientStream
 }
 
 type fileTransferServiceCreateTasksClient struct {
 	grpc.ClientStream
-}
-
-func (x *fileTransferServiceCreateTasksClient) Send(m *TaskCreateRequest) error {
-	return x.ClientStream.SendMsg(m)
 }
 
 func (x *fileTransferServiceCreateTasksClient) Recv() (*Task, error) {
@@ -299,7 +300,7 @@ type FileTransferServiceServer interface {
 	QueryQueueMessage(*TaskQueueQueryReq, FileTransferService_QueryQueueMessageServer) error
 	// 暂时不支持创建Task时创建任务，需要提前创建好任务。queue_id不存在则报错
 	CreateTask(context.Context, *TaskCreateRequest) (*Task, error)
-	CreateTasks(FileTransferService_CreateTasksServer) error
+	CreateTasks(*TaskCreateRequests, FileTransferService_CreateTasksServer) error
 	// 根据 ID 获取单个任务状态
 	QueryTask(*TaskID, FileTransferService_QueryTaskServer) error
 	// 根据 ID 开始单个任务
@@ -342,7 +343,7 @@ func (UnimplementedFileTransferServiceServer) QueryQueueMessage(*TaskQueueQueryR
 func (UnimplementedFileTransferServiceServer) CreateTask(context.Context, *TaskCreateRequest) (*Task, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTask not implemented")
 }
-func (UnimplementedFileTransferServiceServer) CreateTasks(FileTransferService_CreateTasksServer) error {
+func (UnimplementedFileTransferServiceServer) CreateTasks(*TaskCreateRequests, FileTransferService_CreateTasksServer) error {
 	return status.Errorf(codes.Unimplemented, "method CreateTasks not implemented")
 }
 func (UnimplementedFileTransferServiceServer) QueryTask(*TaskID, FileTransferService_QueryTaskServer) error {
@@ -539,12 +540,15 @@ func _FileTransferService_CreateTask_Handler(srv interface{}, ctx context.Contex
 }
 
 func _FileTransferService_CreateTasks_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(FileTransferServiceServer).CreateTasks(&fileTransferServiceCreateTasksServer{stream})
+	m := new(TaskCreateRequests)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FileTransferServiceServer).CreateTasks(m, &fileTransferServiceCreateTasksServer{stream})
 }
 
 type FileTransferService_CreateTasksServer interface {
 	Send(*Task) error
-	Recv() (*TaskCreateRequest, error)
 	grpc.ServerStream
 }
 
@@ -554,14 +558,6 @@ type fileTransferServiceCreateTasksServer struct {
 
 func (x *fileTransferServiceCreateTasksServer) Send(m *Task) error {
 	return x.ServerStream.SendMsg(m)
-}
-
-func (x *fileTransferServiceCreateTasksServer) Recv() (*TaskCreateRequest, error) {
-	m := new(TaskCreateRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 func _FileTransferService_QueryTask_Handler(srv interface{}, stream grpc.ServerStream) error {
@@ -702,7 +698,6 @@ var FileTransferService_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "CreateTasks",
 			Handler:       _FileTransferService_CreateTasks_Handler,
 			ServerStreams: true,
-			ClientStreams: true,
 		},
 		{
 			StreamName:    "QueryTask",
