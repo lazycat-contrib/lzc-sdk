@@ -68,9 +68,10 @@ application:
       404: /lzcapp/pkg/content/errors/404.html.tpl
 
   ingress:
-    - protocol: tcp  #tcp or udp
-      port: 22       #需要曝露的端口号
-      service: db    #为空则为此app容器内的端口,也可以指定为db等其他service的名称
+    - protocol: tcp     #tcp or udp
+      port: 22          #需要曝露的端口号
+      service: db       #为空则为此app容器内的端口,也可以指定为db等其他service的名称
+      authcallback: xxx #oauth相关
 
   image: alpine:3.16  #可选的运行环境，为空则使用sdk对应版本的镜像。若上架到商店，则此处的镜像必须上传到商店仓库统一托管。
 
@@ -85,6 +86,10 @@ services: #传统docker镜像启动方式，如果需要数据库等配套容器
     image: bitnami/wordpress:5.8.2
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+      # oauth相关的环境变量
+      - LAZYCAT_AUTH_OIDC_CLIENT_ID=xxx
+      - LAZYCAT_AUTH_OIDC_CLIENT_SECRET=xxx
+      - LAZYCAT_AUTH_OIDC_ISSUER_URL=xxx
     # 仅支持以/lzcapp开头的挂载点，且遵循仅var,tmp,cache等目录可写的原则。
     # 其中 /lzcapp/var 和 /lzcapp/cache 目录，每个 service 之间互相可见
     binds:
