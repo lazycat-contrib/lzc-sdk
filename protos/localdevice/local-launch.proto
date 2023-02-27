@@ -49,6 +49,9 @@ message OpenAppRequest{
   string version = 4;
   string title = 5;
   string icon = 6;
+  // 当已经存在当前地址的窗口的时候，是否要求使用该地址强制打开。
+  // 使用场景，比如播放器存在已经存在，这个时候需要使用过新的链接打开，然后覆盖上一次的播放界面，然后指定forceOpen=true即可.
+  bool forceOpen = 7;
 }
 
 message OpenAppReply{
