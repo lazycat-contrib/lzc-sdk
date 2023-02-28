@@ -24,6 +24,9 @@ service PackageManager {
     option (cloud.lazycat.apis.common.scontext).require_permissions = INSTALL_PACKAGE;
   }
 
+  // 根据 AppId 清除缓存
+  rpc ClearCache(Appid) returns (google.protobuf.Empty) {}
+
   // 查询用户安装的特定应用的详情
   rpc QueryApplication(QueryApplicationRequest) returns (QueryApplicationResponse) {}
 

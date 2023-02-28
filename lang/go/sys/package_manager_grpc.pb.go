@@ -27,6 +27,8 @@ type PackageManagerClient interface {
 	Install(ctx context.Context, in *InstallRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据 AppId 卸载应用
 	Uninstall(ctx context.Context, in *UninstallRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 根据 AppId 清除缓存
+	ClearCache(ctx context.Context, in *Appid, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 查询用户安装的特定应用的详情
 	QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*QueryApplicationResponse, error)
 	// 获取应用占用的存储空间详情
@@ -63,6 +65,15 @@ func (c *packageManagerClient) Install(ctx context.Context, in *InstallRequest, 
 func (c *packageManagerClient) Uninstall(ctx context.Context, in *UninstallRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.PackageManager/Uninstall", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *packageManagerClient) ClearCache(ctx context.Context, in *Appid, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.PackageManager/ClearCache", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -140,6 +151,8 @@ type PackageManagerServer interface {
 	Install(context.Context, *InstallRequest) (*emptypb.Empty, error)
 	// 根据 AppId 卸载应用
 	Uninstall(context.Context, *UninstallRequest) (*emptypb.Empty, error)
+	// 根据 AppId 清除缓存
+	ClearCache(context.Context, *Appid) (*emptypb.Empty, error)
 	// 查询用户安装的特定应用的详情
 	QueryApplication(context.Context, *QueryApplicationRequest) (*QueryApplicationResponse, error)
 	// 获取应用占用的存储空间详情
@@ -166,6 +179,9 @@ func (UnimplementedPackageManagerServer) Install(context.Context, *InstallReques
 }
 func (UnimplementedPackageManagerServer) Uninstall(context.Context, *UninstallRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Uninstall not implemented")
+}
+func (UnimplementedPackageManagerServer) ClearCache(context.Context, *Appid) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ClearCache not implemented")
 }
 func (UnimplementedPackageManagerServer) QueryApplication(context.Context, *QueryApplicationRequest) (*QueryApplicationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryApplication not implemented")
@@ -233,6 +249,24 @@ func _PackageManager_Uninstall_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PackageManagerServer).Uninstall(ctx, req.(*UninstallRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PackageManager_ClearCache_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Appid)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).ClearCache(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.PackageManager/ClearCache",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).ClearCache(ctx, req.(*Appid))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -377,6 +411,10 @@ var PackageManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Uninstall",
 			Handler:    _PackageManager_Uninstall_Handler,
+		},
+		{
+			MethodName: "ClearCache",
+			Handler:    _PackageManager_ClearCache_Handler,
 		},
 		{
 			MethodName: "QueryApplication",
