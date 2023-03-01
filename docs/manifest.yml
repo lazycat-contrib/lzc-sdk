@@ -46,7 +46,7 @@ application:
 
   routes:
     - /api/=exec://8000,/lzcapp/pkg/content/bin/backend     #格式与/usr/bin/lzcinit -up参数一致
-    - /api/=http://$uid.$service.$appid.lzcapp:8000            #多实例应用需要在route里加上$uid，请求时lzcinit会自动替换成真正请求的用户
+    - /api/=http://$uid.service.appid.lzcapp:8000            #多实例应用需要在route里加上"$uid"，请求时lzcinit会自动替换成真正请求的用户
     - /=file:///lzcapp/pkg/content/dist/
 
   handlers:
@@ -90,14 +90,17 @@ services: #传统docker镜像启动方式，如果需要数据库等配套容器
       - LAZYCAT_AUTH_OIDC_CLIENT_ID=xxx
       - LAZYCAT_AUTH_OIDC_CLIENT_SECRET=xxx
       - LAZYCAT_AUTH_OIDC_ISSUER_URL=xxx
-    # 仅支持以/lzcapp开头的挂载点，且遵循仅var,tmp,cache等目录可写的原则。
-    # 其中 /lzcapp/var 和 /lzcapp/cache 目录，每个 service 之间互相可见
+    # 仅支持以下挂载点:
+    # - $run   (/lzcapp/run) ($run对应容器中的/lzcapp/run)
+    # - $home  (/lzcapp/run/mnt/home)
+    # - $var   (/lzcapp/var)
+    # - $cache (/lzcapp/cache)
+    # - $pkg   (/lzcapp/pkg)
     binds:
-      - /lzcapp/run/mnt/home:/home # 挂载home目录
-      - /lzcapp/run/mnt/home/$uid:/home # 多实例应用仅会挂载当前用户的home目录
-      - /lzcapp/var/db/:/data
-      - /lzcapp/cache/db:/cache/
-      - /lzcapp/pkg/content/xxx:/xxx/xxx # 挂载lpk包内的文件
+      - $home:/home
+      - $var/db:/data
+      - $cache/db:/cache
+      - $pkg/content/entrypoint.sh:/entrypoint.sh # 挂载lpk包内的文件
     entrypoint: /bin/sh -c
     command: "/usr/bin/nextcloud"
     #depends_on:
