@@ -93,7 +93,8 @@ services: #传统docker镜像启动方式，如果需要数据库等配套容器
     # 仅支持以/lzcapp开头的挂载点，且遵循仅var,tmp,cache等目录可写的原则。
     # 其中 /lzcapp/var 和 /lzcapp/cache 目录，每个 service 之间互相可见
     binds:
-      - /lzcapp/run/mnt/home:/home # 挂载home目录，如果是多实例应用仅会挂载当前用户的home目录
+      - /lzcapp/run/mnt/home:/home # 挂载home目录
+      - /lzcapp/run/mnt/home/$uid:/home # 多实例应用仅会挂载当前用户的home目录
       - /lzcapp/var/db/:/data
       - /lzcapp/cache/db:/cache/
       - /lzcapp/pkg/content/xxx:/xxx/xxx # 挂载lpk包内的文件
