@@ -91,16 +91,16 @@ services: #传统docker镜像启动方式，如果需要数据库等配套容器
       - LAZYCAT_AUTH_OIDC_CLIENT_SECRET=xxx
       - LAZYCAT_AUTH_OIDC_ISSUER_URL=xxx
     # 仅支持以下挂载点:
-    # - $run   (/lzcapp/run) ($run对应容器中的/lzcapp/run)
-    # - $home  (/lzcapp/run/mnt/home)
-    # - $var   (/lzcapp/var)
-    # - $cache (/lzcapp/cache)
-    # - $pkg   (/lzcapp/pkg)
+    # - ~run   (/lzcapp/run) (~run对应容器中的/lzcapp/run)
+    # - ~home  (/lzcapp/run/mnt/home)
+    # - ~var   (/lzcapp/var)
+    # - ~cache (/lzcapp/cache)
+    # - ~pkg   (/lzcapp/pkg)
     binds:
-      - $home:/home
-      - $var/db:/data
-      - $cache/db:/cache
-      - $pkg/content/entrypoint.sh:/entrypoint.sh # 挂载lpk包内的文件
+      - ~home:/home
+      - ~var/db:/data
+      - ~cache/db:/cache
+      - ~pkg/content/entrypoint.sh:/entrypoint.sh # 挂载lpk包内的文件
     entrypoint: /bin/sh -c
     command: "/usr/bin/nextcloud"
     #depends_on:
