@@ -35,6 +35,8 @@ enum Permission {
   PHOTO_LIBRARY = 6;
   // 文件
   DOCUMENT = 7;
+  // 用户配置
+  USER_CONFIG = 8;
 }
 
 message PermissionRequest {
