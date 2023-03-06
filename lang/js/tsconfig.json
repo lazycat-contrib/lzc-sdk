@@ -6,6 +6,8 @@
     "allowJs": true,
     "sourceMap": true,
     "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "outDir": "dist",
     "module": "commonjs",
     "target": "es6"
