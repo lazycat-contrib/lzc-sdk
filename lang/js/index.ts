@@ -55,20 +55,16 @@ async function getAuthToken(host: string, apiurl: string): Promise<string> {
     })).text()
 }
 
-async function buildGrpcMetaData(host: string, apiurl: string): Promise<grpc.Metadata> {
-    let metadata = new grpc.Metadata()
-    metadata.set("lzc_dapi_auth_token", await getAuthToken(host, apiurl))
-    return metadata
-}
-
 async function buildCurrentDevice(cc: lzcAPIGateway): Promise<EndDeviceProxy> {
     const url = (await getApiUrl(cc)).toString().replace(/\/+$/, '')
 
-    let metadata: grpc.Metadata
+    const authToken = await getAuthToken(cc.host, url)
+    cc.authToken = authToken
+
+    const metadata = new grpc.Metadata()
     try {
-        metadata = await buildGrpcMetaData(cc.host, url)
+        metadata.set("lzc_dapi_auth_token", authToken)
     } catch (e) {
-        metadata = new grpc.Metadata()
         console.log(e)
     }
 
@@ -149,6 +145,7 @@ export class lzcAPIGateway {
     public rmp: RemoteMediaPlayerService;
     public devices: EndDeviceService;
 
+    public authToken: string;
 }
 
 async function test() {
