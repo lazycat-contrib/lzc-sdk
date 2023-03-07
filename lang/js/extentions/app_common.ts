@@ -25,14 +25,18 @@ class AppCommon extends LzcAppSdkManage {
     )
     public static async LaunchApp(url: string, appid: string): Promise<void> {
         let browserOnly = false // 读取用户是否设置为在浏览器打开
-
         if (!LzcAppSdk.isInApplication() || browserOnly) {
             // 判断是否在浏览器中，在浏览器中时或者用户设置为在浏览器打开时，将直接使用 window.open 打开页面
             window.open(url, '_blank')
         } else {
-            // 判断是在客户端中
-            const jsBridge = await LzcAppSdk.useNativeAsync()
-            jsBridge.LaunchApp(url, appid)
+            if(LzcAppSdk.isAndroidWebShell()){
+                const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_app)
+                jsBridge.LaunchApp(url, appid)
+            }else{
+                // 判断是在客户端中
+                const jsBridge = await LzcAppSdk.useNativeAsync()
+                jsBridge.LaunchApp(url, appid)
+            }
         }
     }
 

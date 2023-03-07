@@ -3,17 +3,6 @@
  * @Date: 2023-03-03
  * @FilePath: /lzc-sdk/lang/js/extentions/base.ts
  */
-declare global {
-    interface Window {
-        electronAPI?: any
-        webkit?: any
-        lzcAppSdk_responseCallBackFuncDict?: any
-        lzcAppSdk_responseCallBackFuncUniqueID?: any
-        lzcAppSdk_sendCallBackFunc?: any
-        lzcAppSdk_client?: any
-    }
-    const android: any
-}
 
 enum PlatformType {
     Android,
