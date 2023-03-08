@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.common;
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/common";
+
+service MediaMeta {
+    rpc GetUserMediaMeta(GetUserMediaMetaRequest) returns (GetUserMediaMetaResponse) {}
+}
+
+message GetUserMediaMetaRequest {
+    string user_id = 1;
+    // 相对于用户 home 目录的相对路径
+    string file_path = 2;
+}
+
+message GetUserMediaMetaResponse {
+    string mime_type = 1;
+    uint32 width = 2;
+    uint32 height = 3;
+    uint64 datetime = 4;
+}
