@@ -15,4 +15,5 @@
 #echo "push java-lib complete"
 
 cd java_api_workspace/target
-scp -O -P 2022  cloud-lazycat-apis-1.0.jar  root@192.168.1.189:/mnt/dl/sdk/
+md5sum cloud-lazycat-apis-1.0.jar | cut -c-32 > cloud-lazycat-apis-1.0.jar.md5
+scp -O -P 2022  cloud-lazycat-apis-1.0.jar cloud-lazycat-apis-1.0.jar.md5 root@192.168.1.189:/mnt/dl/sdk/
