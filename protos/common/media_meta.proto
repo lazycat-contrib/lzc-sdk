@@ -18,5 +18,5 @@ message GetUserMediaMetaResponse {
     string mime_type = 1;
     uint32 width = 2;
     uint32 height = 3;
-    uint64 datetime = 4;
+    int64 datetime = 4;
 }
