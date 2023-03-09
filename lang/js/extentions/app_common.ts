@@ -24,26 +24,38 @@ class AppCommon extends LzcAppSdkManage {
         LzcAppPlatformType.Browser
     )
     public static async LaunchApp(url: string, appid: string): Promise<void> {
-        let browserOnly = false // 读取用户是否设置为在浏览器打开
-        if (!LzcAppSdk.isInApplication() || browserOnly) {
+        if (!LzcAppSdk.isInApplication()) {
             // 判断是否在浏览器中，在浏览器中时或者用户设置为在浏览器打开时，将直接使用 window.open 打开页面
             window.open(url, '_blank')
         } else {
             if(LzcAppSdk.isAndroidWebShell()){
-                const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_app)
-                jsBridge.LaunchApp(url, appid)
+                const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
+                const openApprequest = {
+                    "appid": appid,
+                    "url": url,
+                }
+                var openAppRequestJsonStr = JSON.stringify(openApprequest);
+                jsBridge.LaunchApp(openAppRequestJsonStr)
             }else{
-                // 判断是在客户端中
                 const jsBridge = await LzcAppSdk.useNativeAsync()
                 jsBridge.LaunchApp(url, appid)
             }
         }
     }
 
-    public static async LaunchNativeApp() {
+    public static async LaunchNativeApp(filepath: string,appid: string) {
         // TODO: 待实现
-        const jsBridge = LzcAppSdk.useNative()
-        console.error("LaunchNativeApp 方法暂未实现。")
+        if(LzcAppSdk.isAndroidWebShell()){
+            const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
+            const openApprequest = {
+                "appid": appid,
+                "filepath": filepath,
+            }
+            var requestStr = JSON.stringify(openApprequest);
+            jsBridge.LaunchNativeApp(requestStr)
+        }else{
+            console.error("LaunchNativeApp 方法暂未实现。")
+        }
     }
 
 }

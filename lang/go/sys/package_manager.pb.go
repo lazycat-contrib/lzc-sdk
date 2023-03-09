@@ -135,12 +135,9 @@ type PkgURL struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 内部地址
-	//
-	//	http://pkgm.api-server.lzcapp/tmp/xxxx-0.2.1.lpk
-	//
+	//     http://pkgm.api-server.lzcapp/tmp/xxxx-0.2.1.lpk
 	// 或外网地址
-	//
-	//	https://repo.lazycat.cloud/a/c/accc-0.2.1.lpk
+	//     https://repo.lazycat.cloud/a/c/accc-0.2.1.lpk
 	Url string `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
 	// pkg对应的sha256值，若不为空，
 	// 1. 本地有对应包的缓存，则会直接使用缓存
@@ -202,12 +199,9 @@ type InstallRequest struct {
 	// 应用的 appid
 	Appid string `protobuf:"bytes,1,opt,name=appid,proto3" json:"appid,omitempty"`
 	// 内部地址
-	//
-	//	http://pkgm.api-server.lzcapp/tmp/xxxx-0.2.1.lpk
-	//
+	//     http://pkgm.api-server.lzcapp/tmp/xxxx-0.2.1.lpk
 	// 或外网地址
-	//
-	//	https://repo.lazycat.cloud/a/c/accc-0.2.1.lpk
+	//     https://repo.lazycat.cloud/a/c/accc-0.2.1.lpk
 	Url string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
 	// pkg对应的sha256值，若不为空，
 	// 1. 本地有对应包的缓存，则会直接使用缓存

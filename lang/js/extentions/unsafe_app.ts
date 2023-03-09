@@ -1,4 +1,10 @@
 import App, { LzcClient } from './base';
+import Extentions from "./index";
+import LzcAppSdk from "./base";
+
+declare global {
+    const android_ad_blocker: any
+}
 
 const UNSAFE = {
     // h5调用webview 打开App
@@ -92,4 +98,10 @@ const UNSAFE = {
     SetControlViewHeight: function (controlViewHeight) {
         LzcClient.SetControlViewHeight(controlViewHeight);
     },
+    ImportAdHosts: async function (hostUrl) {
+        if (LzcAppSdk.isAndroidWebShell()) {
+            const jsBridge = await LzcAppSdk.useNativeAsync(android_ad_blocker)
+            jsBridge.ImportAdHosts(hostUrl)
+        }
+    }
 };

@@ -17,7 +17,7 @@ declare global {
         lzcAppSdk_client?: any
     }
     const android: any
-    const android_launch_app: any
+    const android_launch_service: any
 }
 export default LzcApp
 export { LzcAppPlatformType, LzcClient } from './base'

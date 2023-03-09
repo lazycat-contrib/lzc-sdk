@@ -10,7 +10,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@lazycatcloud/sdk": "^0.1.14",
+		"@lazycatcloud/sdk": "file:../../lang/js",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"tdesign-icons-react": "^0.1.6"
