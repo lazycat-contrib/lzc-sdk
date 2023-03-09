@@ -57,8 +57,8 @@ function disabled(...platforms: PlatformType[]) {
  * @param {array} platforms
  * @return {Function}
  */
-function native(...platforms: PlatformType[]): Function {
-    return function (target: Object, propertyKey: string, descriptor: PropertyDescriptor) {
+function native(...platforms: PlatformType[]): (...args: any[]) => any {
+    return function (target: object, propertyKey: string, descriptor: PropertyDescriptor) {
         const lzcSdk = LzcAppSdk.getInstance()
         if (!lzcSdk) {
             console.error("LzcAppSdk:", `instance is null`)
@@ -100,10 +100,10 @@ function native(...platforms: PlatformType[]): Function {
                 console.warn("LzcAppSdk:", `The current platform does not support the ${propertyKey} method`)
                 if (Object.prototype.toString.call(target) === "[object AsyncFunction]") {
                     // AsyncFunction
-                    return (async function () { })()
+                    return (async function () { return undefined })()
                 } else {
                     // Function
-                    return (() => { })()
+                    return (() => { return undefined })()
                 }
             },
         })
@@ -242,9 +242,9 @@ class LzcAppSdk {
      * @param {Function} responseCallBackFunc
      * @return {string}
      */
-    public static addToCallBackFuncDictWith(responseCallBackFunc: Function): string {
+    public static addToCallBackFuncDictWith(responseCallBackFunc: (...args: any[]) => any): string {
         if (!responseCallBackFunc) return 'unValid_funcUniqueID'
-        var funcUniqueID = `lzc_${window.lzcAppSdk_responseCallBackFuncUniqueID++}_${new Date().getTime()}`
+        const funcUniqueID = `lzc_${window.lzcAppSdk_responseCallBackFuncUniqueID++}_${new Date().getTime()}`
         window.lzcAppSdk_responseCallBackFuncDict[funcUniqueID] =
             responseCallBackFunc
         return funcUniqueID

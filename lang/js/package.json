@@ -3,7 +3,8 @@
   "version": "0.1.145",
   "author": "snyh",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "prepublishOnly": "eslint . --ext .ts"
   },
   "main": "dist/index.js",
   "files": [
@@ -15,6 +16,9 @@
     "ts-proto": "^1.121.1"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.54.1",
+    "@typescript-eslint/parser": "^5.54.1",
+    "eslint": "^8.35.0",
     "typescript": "^4.7.3"
   },
   "publishConfig": {
