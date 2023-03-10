@@ -103,5 +103,19 @@ const UNSAFE = {
             const jsBridge = await LzcAppSdk.useNativeAsync(android_ad_blocker)
             jsBridge.ImportAdHosts(hostUrl)
         }
+    },
+    // (暂停contentview 内容加载)仅仅android 平台支持
+    ContentViewPause: async function () {
+        if (LzcAppSdk.isAndroidWebShell()) {
+            const jsBridge = await LzcAppSdk.useNativeAsync(android)
+            jsBridge.ContentViewPause()
+        }
+    },
+    // (恢复contentview 内容加载)仅仅android 平台支持
+    ContentViewResume: async function () {
+        if (LzcAppSdk.isAndroidWebShell()) {
+            const jsBridge = await LzcAppSdk.useNativeAsync(android)
+            jsBridge.ContentViewResume()
+        }
     }
 };
