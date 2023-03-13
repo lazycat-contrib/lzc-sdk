@@ -41,7 +41,6 @@ func buildClientCredOption(caCrt string, appKey string, appCrt string) (grpc.Dia
 	}
 	cred := credentials.NewTLS(&tls.Config{
 		Certificates:       []tls.Certificate{cert},
-		InsecureSkipVerify: true,
 		RootCAs:            certPool,
 	})
 	return grpc.WithTransportCredentials(cred), nil
