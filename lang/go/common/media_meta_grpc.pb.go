@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MediaMetaClient interface {
 	GetUserMediaMeta(ctx context.Context, in *GetUserMediaMetaRequest, opts ...grpc.CallOption) (*GetUserMediaMetaResponse, error)
+	GetUserMediaMetaBatch(ctx context.Context, opts ...grpc.CallOption) (MediaMeta_GetUserMediaMetaBatchClient, error)
 }
 
 type mediaMetaClient struct {
@@ -42,11 +43,43 @@ func (c *mediaMetaClient) GetUserMediaMeta(ctx context.Context, in *GetUserMedia
 	return out, nil
 }
 
+func (c *mediaMetaClient) GetUserMediaMetaBatch(ctx context.Context, opts ...grpc.CallOption) (MediaMeta_GetUserMediaMetaBatchClient, error) {
+	stream, err := c.cc.NewStream(ctx, &MediaMeta_ServiceDesc.Streams[0], "/cloud.lazycat.apis.common.MediaMeta/GetUserMediaMetaBatch", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &mediaMetaGetUserMediaMetaBatchClient{stream}
+	return x, nil
+}
+
+type MediaMeta_GetUserMediaMetaBatchClient interface {
+	Send(*GetUserMediaMetaRequest) error
+	Recv() (*GetUserMediaMetaResponse, error)
+	grpc.ClientStream
+}
+
+type mediaMetaGetUserMediaMetaBatchClient struct {
+	grpc.ClientStream
+}
+
+func (x *mediaMetaGetUserMediaMetaBatchClient) Send(m *GetUserMediaMetaRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *mediaMetaGetUserMediaMetaBatchClient) Recv() (*GetUserMediaMetaResponse, error) {
+	m := new(GetUserMediaMetaResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // MediaMetaServer is the server API for MediaMeta service.
 // All implementations must embed UnimplementedMediaMetaServer
 // for forward compatibility
 type MediaMetaServer interface {
 	GetUserMediaMeta(context.Context, *GetUserMediaMetaRequest) (*GetUserMediaMetaResponse, error)
+	GetUserMediaMetaBatch(MediaMeta_GetUserMediaMetaBatchServer) error
 	mustEmbedUnimplementedMediaMetaServer()
 }
 
@@ -56,6 +89,9 @@ type UnimplementedMediaMetaServer struct {
 
 func (UnimplementedMediaMetaServer) GetUserMediaMeta(context.Context, *GetUserMediaMetaRequest) (*GetUserMediaMetaResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserMediaMeta not implemented")
+}
+func (UnimplementedMediaMetaServer) GetUserMediaMetaBatch(MediaMeta_GetUserMediaMetaBatchServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetUserMediaMetaBatch not implemented")
 }
 func (UnimplementedMediaMetaServer) mustEmbedUnimplementedMediaMetaServer() {}
 
@@ -88,6 +124,32 @@ func _MediaMeta_GetUserMediaMeta_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MediaMeta_GetUserMediaMetaBatch_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MediaMetaServer).GetUserMediaMetaBatch(&mediaMetaGetUserMediaMetaBatchServer{stream})
+}
+
+type MediaMeta_GetUserMediaMetaBatchServer interface {
+	Send(*GetUserMediaMetaResponse) error
+	Recv() (*GetUserMediaMetaRequest, error)
+	grpc.ServerStream
+}
+
+type mediaMetaGetUserMediaMetaBatchServer struct {
+	grpc.ServerStream
+}
+
+func (x *mediaMetaGetUserMediaMetaBatchServer) Send(m *GetUserMediaMetaResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *mediaMetaGetUserMediaMetaBatchServer) Recv() (*GetUserMediaMetaRequest, error) {
+	m := new(GetUserMediaMetaRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // MediaMeta_ServiceDesc is the grpc.ServiceDesc for MediaMeta service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -100,6 +162,13 @@ var MediaMeta_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MediaMeta_GetUserMediaMeta_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetUserMediaMetaBatch",
+			Handler:       _MediaMeta_GetUserMediaMetaBatch_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "common/media_meta.proto",
 }

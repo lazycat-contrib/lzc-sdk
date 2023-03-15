@@ -6,6 +6,7 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/common";
 
 service MediaMeta {
     rpc GetUserMediaMeta(GetUserMediaMetaRequest) returns (GetUserMediaMetaResponse) {}
+    rpc GetUserMediaMetaBatch(stream GetUserMediaMetaRequest) returns (stream GetUserMediaMetaResponse) {}
 }
 
 message GetUserMediaMetaRequest {
