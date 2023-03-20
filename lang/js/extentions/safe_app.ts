@@ -1,9 +1,15 @@
 import App, { LzcClient } from './base';
 
-// 横屏
-const SCREEN_ORIENTATION_SENSOR_PORTRAIT = 1
-// 横向屏幕
-const SCREEN_ORIENTATION_SENSOR_LANDSCAPE = 2
+
+// android懒猫云商城的第三方应用在打包后，再次激活该窗口的时候，会发送事件。 页面可以通过事件传来的地址，
+
+
+// 跟随系统默认
+const SCREEN_ORIENTATION_UNSPECIFIED = 1
+// 强制横屏
+const SCREEN_ORIENTATION_LANDSCAPE = 2
+// 强制竖屏
+const SCREEN_ORIENTATION_PORTRAIT  = 3
 
 export const SAFE = {
     // h5调用webview 打开App
