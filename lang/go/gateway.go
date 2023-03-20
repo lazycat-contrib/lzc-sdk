@@ -25,6 +25,7 @@ type APIGateway struct {
 	PkgManager       sys.PackageManagerClient
 	Ingress          sys.IngressServiceClient
 	Btrfs            sys.BtrfsUtilClient
+	DirMonitor       sys.DirMonitorClient
 
 	OSUpgrader sys.OSUpgradeServiceClient
 	OSSnapshot sys.OSSnapshotServiceClient
@@ -120,6 +121,7 @@ func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
 		PkgManager: sys.NewPackageManagerClient(conn),
 		Ingress:    sys.NewIngressServiceClient(conn),
 		Btrfs:      sys.NewBtrfsUtilClient(conn),
+		DirMonitor: sys.NewDirMonitorClient(conn),
 
 		Box:              common.NewBoxServiceClient(conn),
 		Users:            common.NewUserManagerClient(conn),
