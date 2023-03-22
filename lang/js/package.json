@@ -1,6 +1,6 @@
 {
   "name": "@lazycatcloud/sdk",
-  "version": "0.1.150",
+  "version": "0.1.154",
   "author": "snyh",
   "scripts": {
     "build": "tsc",

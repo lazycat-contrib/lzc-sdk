@@ -444,7 +444,7 @@ class LzcAppSdk {
      * @return {boolean}
      */
     public isInApplication(): boolean {
-        return navigator.userAgent.indexOf('Lazycat_Client') != -1
+        return navigator.userAgent.indexOf('Lazycat_Client') != -1 || this.isPCWebShell()
     }
 }
 
