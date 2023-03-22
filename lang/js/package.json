@@ -4,7 +4,9 @@
   "author": "snyh",
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "eslint . --ext .ts"
+    "lint": "eslint --ext .ts ./ --max-warnings 0",
+    "prepublishOnly": "npm run lint",
+    "prepare": "npm run build"
   },
   "main": "dist/index.js",
   "files": ["dist"],

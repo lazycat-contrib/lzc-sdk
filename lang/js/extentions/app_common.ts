@@ -23,7 +23,8 @@ class AppCommon extends LzcAppSdkManage {
      * @param {string} appid
      * @return {Promise<void>}
      */
-    @native(LzcAppPlatformType.IOS,
+    @native(
+        LzcAppPlatformType.IOS,
         LzcAppPlatformType.Android,
         LzcAppPlatformType.PC,
         LzcAppPlatformType.Browser
@@ -53,21 +54,21 @@ class AppCommon extends LzcAppSdkManage {
             return
         }
         // Electron launch app
-        if(LzcAppSdk.isPCWebShell()){
+        if (LzcAppSdk.isPCWebShell()) {
             window.ipcRenderer.invoke("launchApp", url, appid)
             return
         }
     }
 
-    @native(
-        LzcAppPlatformType.Android,
-    )
     /**
      * @description: 打开原生应用
      * @param {string} filepath
      * @param {string} appid
      * @return {*}
      */
+    @native(
+        LzcAppPlatformType.Android,
+    )
     public static async LaunchNativeApp(filepath: string, appid: string): Promise<void> {
         // 在浏览器环境中
         if (!LzcAppSdk.isInApplication()) {

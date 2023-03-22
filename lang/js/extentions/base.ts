@@ -12,9 +12,9 @@ enum PlatformType {
 }
 
 declare global {
-  interface Window {
-    ipcRenderer: any
-  }
+    interface Window {
+        ipcRenderer: any
+    }
 }
 
 
@@ -115,80 +115,6 @@ function native(...platforms: PlatformType[]): (...args: any[]) => any {
             },
         })
 
-        // if (!support) {
-        //     console.error("LzcAppSdk:", `The current platform does not support the ${propertyKey} method`)
-        //     let fun = method
-
-        //     if (!!method && typeof method.then === 'function') {
-        //         descriptor.value = (...args: any) => { }
-        //         fun = method.then
-        //     } else {
-        //         descriptor.value = async (...args: any) => { }
-        //     }
-
-        //     return descriptor
-        // }
-
-        // TODO: 处理 Native 函数注入拉平
-        // let useNative = {}
-        // useNative = new Proxy(useNative, {
-        //     get(target, prop, receiver) {
-
-        //         let item = target[prop]
-        //         let nativeClient = LzcAppSdk.getInstance().client
-        //         // let nativeClient = {
-        //         //     open: async () => {
-        //         //         console.log("useNative open.....");
-        //         //     },
-        //         //     getValue: async (name: String) => {
-        //         //         console.log("useNative open.....");
-        //         //         return name + ", emmmm"
-        //         //     }
-        //         // }
-
-        //         // console.log("target", target);
-        //         // console.log("prop", prop);
-        //         // console.log("receiver", receiver);
-
-        //         if (nativeClient) {
-        //             // 原生注入对象存在
-        //             let nativeAttribute = nativeClient[prop]
-        //             if (!item && nativeAttribute) {
-        //                 // 原生注入对象包含该属性/方法
-        //                 item = nativeAttribute
-        //                 if (typeof nativeAttribute == "function") {
-        //                     // 原生注入的是函数，准备拦截
-        //                     item = new Proxy<any>(item, {
-        //                         apply(target, thisArg, argArray) {
-        //                             return target(...argArray);
-        //                         },
-        //                     })
-        //                 }
-        //             }
-        //         }
-
-        //         // 拦截不存在的原生函数调用并提示警告
-        //         if (!item && (!nativeClient || !nativeClient[prop])) {
-        //             item = function (...params: any[]) { }
-        //             console.warn("LzcAppSdk:", `The ${String(prop)} method is not implemented on the current platform`)
-        //         }
-
-        //         return item
-        //     },
-        // })
-
-        // lzcSdk.useNative = useNative
-
-        // descriptor.value = Promise.resolve(function (...args: any) {
-        //     // console.log("应用", target);
-        //     const context = Object.assign(target, this instanceof LzcAppSdk ? {} : { LzcApp: lzcSdk })
-        //     method.apply(context, ...args);
-        //     // method(...args)
-        // })
-
-        // console.log("target", target);
-        // console.log("propertyKey", propertyKey);
-        // console.log("descriptor", descriptor);
         return descriptor
     };
 }
