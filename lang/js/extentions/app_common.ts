@@ -54,8 +54,8 @@ class AppCommon extends LzcAppSdkManage {
         }
         // Electron launch app
         if(LzcAppSdk.isPCWebShell()){
-	    window.ipcRenderer.invoke("launchApp", url, appid)
-	    return
+            window.ipcRenderer.invoke("launchApp", url, appid)
+            return
         }
     }
 

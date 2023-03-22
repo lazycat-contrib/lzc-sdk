@@ -1,15 +1,13 @@
 {
   "name": "@lazycatcloud/sdk",
-  "version": "0.1.148",
+  "version": "0.1.149",
   "author": "snyh",
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "eslint . --ext .ts"
   },
   "main": "dist/index.js",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.15.0",
     "rxjs": "^7.5.5",
