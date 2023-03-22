@@ -52,6 +52,11 @@ class AppCommon extends LzcAppSdkManage {
             jsBridge.LaunchApp(url, appid)
             return
         }
+        // Electron launch app
+        if(LzcAppSdk.isPCWebShell()){
+	    window.ipcRenderer.invoke("launchApp", url, appid)
+	    return
+        }
     }
 
     @native(

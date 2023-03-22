@@ -11,6 +11,13 @@ enum PlatformType {
     Browser
 }
 
+declare global {
+  interface Window {
+    ipcRenderer: any
+  }
+}
+
+
 // 不支持的平台 notSupportPlatform
 function disabled(...platforms: PlatformType[]) {
     // console.log("PlatformType", list);
@@ -405,7 +412,7 @@ class LzcAppSdk {
      * @return {boolean}
      */
     public isPCWebShell(): boolean {
-        return navigator.userAgent.indexOf("Lazycat_102") != -1;
+        return !!window.ipcRenderer;
     }
 
     /**
