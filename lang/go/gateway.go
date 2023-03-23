@@ -32,9 +32,10 @@ type APIGateway struct {
 }
 
 type DeviceProxy struct {
-	conn *grpc.ClientConn
+	conn     *grpc.ClientConn
+	metaCred *metadataCredentials
 
-	AuthToken string
+	authToken *AuthToken
 
 	Config       localdevice.UserConfigClient
 	Device       localdevice.DeviceServiceClient
@@ -43,6 +44,14 @@ type DeviceProxy struct {
 	PhotoLibrary localdevice.PhotoLibraryClient
 	Network      localdevice.NetworkManagerClient
 	Permission   localdevice.PermissionManagerClient
+}
+
+func (d *DeviceProxy) GetAuthToken() (string, error) {
+	authToken, err := d.metaCred.getAuthToken()
+	if err != nil {
+		return "", err
+	}
+	return authToken.Token, nil
 }
 
 func (d *DeviceProxy) Close() error { return d.conn.Close() }
@@ -58,20 +67,7 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 		cred = grpc.WithTransportCredentials(insecure.NewCredentials())
 	}
 
-	unauthedConn, err := grpc.Dial(parsedUrl.Host, cred)
-	if err != nil {
-		return nil, err
-	}
-	defer unauthedConn.Close()
-	authToken, err := RequestAuthToken(unauthedConn)
-	if err != nil {
-		return nil, err
-	}
-
-	metaCred, err := newMetadataCredentials(authToken)
-	if err != nil {
-		return nil, err
-	}
+	metaCred := newMetadataCredentials()
 	conn, err := grpc.Dial(
 		parsedUrl.Host, cred,
 		grpc.WithPerRPCCredentials(metaCred),
@@ -79,11 +75,11 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 	if err != nil {
 		return nil, err
 	}
+	metaCred.setConn(conn)
 
 	return &DeviceProxy{
-		conn: conn,
-
-		AuthToken: authToken,
+		conn:     conn,
+		metaCred: metaCred,
 
 		Config:       localdevice.NewUserConfigClient(conn),
 		Device:       localdevice.NewDeviceServiceClient(conn),

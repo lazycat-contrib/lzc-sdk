@@ -5,6 +5,7 @@ package cloud.lazycat.apis.localdevice;
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 // 权限管理
 service  PermissionManager{
@@ -59,4 +60,5 @@ message RequestAuthTokenRequest {
 }
 message RequestAuthTokenResponse {
   string token = 1;
+  google.protobuf.Timestamp deadline = 2;
 }

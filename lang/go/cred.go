@@ -11,21 +11,39 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"gitee.com/linakesi/lzc-sdk/lang/go/localdevice"
 	"google.golang.org/grpc"
 )
 
 type metadataCredentials struct {
-	authToken string
+	authToken *AuthToken
+	conn      *grpc.ClientConn
 }
 
-func (c *metadataCredentials) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
-	if len(uri) != 1 {
-		fmt.Println("BUG: unexpected uri", uri)
+func (c *metadataCredentials) setConn(conn *grpc.ClientConn) {
+	c.conn = conn
+}
+
+func (c *metadataCredentials) getAuthToken() (*AuthToken, error) {
+	if c.authToken == nil || time.Now().After(c.authToken.Deadline) {
+		return RequestAuthToken(c.conn)
+	} else {
+		return c.authToken, nil
+	}
+}
+
+func (c *metadataCredentials) GetRequestMetadata(context.Context, ...string) (map[string]string, error) {
+	if c.conn == nil {
+		return map[string]string{}, nil
+	}
+	authToken, err := c.getAuthToken()
+	if err != nil {
+		return nil, err
 	}
 	return map[string]string{
-		"lzc_dapi_auth_token": c.authToken,
+		"lzc_dapi_auth_token": authToken.Token,
 	}, nil
 }
 
@@ -33,21 +51,29 @@ func (c *metadataCredentials) RequireTransportSecurity() bool {
 	return true
 }
 
-func newMetadataCredentials(authToken string) (*metadataCredentials, error) {
-	return &metadataCredentials{authToken: authToken}, nil
+func newMetadataCredentials() *metadataCredentials {
+	return &metadataCredentials{}
 }
 
-func RequestAuthToken(conn *grpc.ClientConn) (string, error) {
+type AuthToken struct {
+	Token    string
+	Deadline time.Time
+}
+
+func RequestAuthToken(conn *grpc.ClientConn) (*AuthToken, error) {
 	perm := localdevice.NewPermissionManagerClient(conn)
 	atr, err := genRequestAuthTokenRequest()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	resp, err := perm.RequestAuthToken(context.Background(), atr)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return resp.Token, nil
+	return &AuthToken{
+		Token:    resp.Token,
+		Deadline: resp.Deadline.AsTime(),
+	}, nil
 }
 
 func genRequestAuthTokenRequest() (*localdevice.RequestAuthTokenRequest, error) {
