@@ -11,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"gitee.com/linakesi/lzc-sdk/lang/go/localdevice"
 	"google.golang.org/grpc"
@@ -37,17 +38,25 @@ func newMetadataCredentials(authToken string) (*metadataCredentials, error) {
 	return &metadataCredentials{authToken: authToken}, nil
 }
 
-func RequestAuthToken(conn *grpc.ClientConn) (string, error) {
+type AuthToken struct {
+	Token    string
+	Deadline time.Time
+}
+
+func RequestAuthToken(conn *grpc.ClientConn) (*AuthToken, error) {
 	perm := localdevice.NewPermissionManagerClient(conn)
 	atr, err := genRequestAuthTokenRequest()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	resp, err := perm.RequestAuthToken(context.Background(), atr)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return resp.Token, nil
+	return &AuthToken{
+		Token: resp.Token,
+		Deadline: resp.Deadline.AsTime(),
+	}, nil
 }
 
 func genRequestAuthTokenRequest() (*localdevice.RequestAuthTokenRequest, error) {
