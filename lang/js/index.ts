@@ -49,10 +49,14 @@ async function getApiUrl(cc: lzcAPIGateway): Promise<URL> {
 }
 
 async function getAuthToken(host: string, apiurl: string): Promise<string> {
-    return (await fetch(host + "/_lzc/auth_token", {
+    const resp = (await fetch(host + "/_lzc/auth_token", {
         method: "POST",
         body: apiurl,
-    })).text()
+    }))
+    if (!resp.ok) {
+        throw new Error(`${resp.status}: ${resp.statusText}`)
+    }
+    return resp.json()["token"]
 }
 
 async function buildCurrentDevice(cc: lzcAPIGateway): Promise<EndDeviceProxy> {
@@ -202,3 +206,7 @@ async function dumpInfo(bo: BrowserOnlyProxy) {
 export function isWebShell() {
     return navigator.userAgent.indexOf("Lazycat") != -1;
 }
+
+// Local Variables:
+// typescript-ts-mode-indent-offset: 4
+// End:
