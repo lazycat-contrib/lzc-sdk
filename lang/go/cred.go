@@ -27,10 +27,10 @@ func (c *metadataCredentials) setConn(conn *grpc.ClientConn) {
 }
 
 func (c *metadataCredentials) getAuthToken() (*AuthToken, error) {
-	if c.authToken == nil || time.Now().After(c.authToken.Deadline) {
-		return RequestAuthToken(c.conn)
-	} else {
+	if c.authToken != nil && time.Now().Before(c.authToken.Deadline) {
 		return c.authToken, nil
+	} else {
+		return RequestAuthToken(c.conn)
 	}
 }
 
