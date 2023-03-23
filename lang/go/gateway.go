@@ -46,12 +46,8 @@ type DeviceProxy struct {
 	Permission   localdevice.PermissionManagerClient
 }
 
-func (d *DeviceProxy) GetAuthToken() (string, error) {
-	authToken, err := d.metaCred.getAuthToken()
-	if err != nil {
-		return "", err
-	}
-	return authToken.Token, nil
+func (d *DeviceProxy) GetAuthToken() (*AuthToken, error) {
+	return d.metaCred.getAuthToken()
 }
 
 func (d *DeviceProxy) Close() error { return d.conn.Close() }
