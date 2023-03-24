@@ -1,4 +1,5 @@
 import App, { LzcClient } from './base';
+import LzcAppSdk from "./base";
 
 
 // android懒猫云商城的第三方应用在打包后，再次激活该窗口的时候，会发送事件。 页面可以通过事件传来的地址，
@@ -62,5 +63,36 @@ export const SAFE = {
     },
     Minimize() {
         LzcClient.Minimize();
+    },
+    /**
+     * // 仅仅android 实现
+     * @param dimEnable 是否开启dialog遮罩透明
+     * @param backgroundDimAmount 透明度 0~1
+     * @param url dialog显示的地址
+     * @param callback 回调的callback(),接受结果为CloseDialog中的result 参数
+     * @constructor
+     */
+    OpenDialog(dimEnable: boolean,
+               backgroundDimAmount: number,
+               url :string,
+               callback:string,
+    ) {
+        const openApprequest = {
+            dimEnable: dimEnable,
+            backgroundDimAmount: backgroundDimAmount,
+            url: url
+        }
+        var openAppRequestJsonStr = JSON.stringify(openApprequest);
+        const jsBridge = LzcAppSdk.useNative(android_dialog)
+        jsBridge.OpenDialog(openAppRequestJsonStr,callback)
+    },
+    /**
+     * 仅仅在打开的dialog中可以使用
+     * @param result 关闭dialog 的回调结果
+     * @constructor
+     */
+    CloseDialog(result: string) {
+        const jsBridge = LzcAppSdk.useNative(android_dialog)
+        jsBridge.Close(result);
     }
 }
