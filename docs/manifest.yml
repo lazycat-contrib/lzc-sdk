@@ -50,8 +50,6 @@ application:
     - /=file:///lzcapp/pkg/content/dist/
 
   handlers:
-    acl_handler: http://127.0.0.1:1234/acl #app对于浏览器发起的behalf_of_uid的过滤，如果acl通过则会传递到lzc api services否则403
-
     # 当routes中https/http/exec类型的反代出现错误时，则渲染对应模板。
     # 若错误类型为无法返回任何数据，则会生成一个502响应，比如上游游服务器不存在或网络不通等完全获取不到一个http response的情况。
     #
