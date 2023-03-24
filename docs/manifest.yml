@@ -69,7 +69,8 @@ application:
     - protocol: tcp     #tcp or udp
       port: 22          #需要曝露的端口号
       service: db       #为空则为此app容器内的端口,也可以指定为db等其他service的名称
-      authcallback: xxx #oauth相关
+
+  authcallback: xxx #oauth相关
 
   image: alpine:3.16  #可选的运行环境，为空则使用sdk对应版本的镜像。若上架到商店，则此处的镜像必须上传到商店仓库统一托管。
 
