@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package cloud.lazycat.apis.sys;
 
+import "sys/portal-server/remote_listen.proto";
+
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
@@ -67,6 +69,14 @@ service HPortalSys {
 
   //校验用户密码是否正确
   rpc CheckPassword(CheckPasswordRequest) returns (google.protobuf.Empty){}
+
+
+
+  // 任意一方关闭此RPC，则所对应的Listen资源会被自动释放
+  // 但server_socket_path需要由调用者自行做删除等后续清理工作
+  //
+  // ListenReply可能会返回多个，比如默认网卡地址变动
+  rpc RemoteListen(RemoteListenRequest) returns (stream RemoteListenReply) {}
 }
 
 message GenUserInvitationRequest {

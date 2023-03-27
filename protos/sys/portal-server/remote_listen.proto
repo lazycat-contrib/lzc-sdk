@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.sys;
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys/portal-server";
+
+message RemoteListenRequest {
+  enum ListenType {
+    Unkonwn = 0;
+
+    //在当前hserver所处的物理网络协议栈上监听TCP或UDP服务(含UDP广播)
+    HServerLAN = 1;
+
+    //在当前hserver所处的内部通过token提供定制化的HTTP Server服务，
+    //由hclient配合处理，
+    //hclient会将`http://[fc03:1136:3800::1]:30553/tmpconn/$boxid/$token/$PATH*`
+    //这个地址范围内的所有请求自动转发到监听者的listener去，并将最终PATH改为$PATH并保留query/http header等信息
+    HServerByToken = 2;
+
+    //在指定的的hclient所处的物理网络协议栈上监听TCP或UDP服务(UDP广播取决于hclient是否获取到对应权限)
+    HClientLAN = 3;
+  }
+
+  ListenType listen_type = 1;
+
+  // hclient id
+  optional string target = 2;
+
+  // UDP或TCP
+  string network = 3;
+  // ip 地址+端口
+  string address = 4;
+
+  // 将上述服务转发到这两个参数提供的服务上。
+  //
+  // 被调用者视角的服务地址
+  string server_network = 5;
+  string server_address = 6;
+}
+
+message RemoteListenReply {
+  // 若成功则为true
+  bool ok = 1;
+
+  // 若出错则返回错误信息
+  string error_message = 2;
+
+  //返回当前默认出口网卡的IPv4地址，若无则为空
+  optional string default_ipv4_interface_address = 3;
+
+  //返回当前默认出口网卡的IPv6地址，若无则为空
+  optional string default_ipv6_interface_address = 4;
+
+  //调用者视角的服务地址，若无法判断则不设置
+  optional string server_network = 5;
+  optional string server_address = 6; //若类型为HServerByToken则此字段返回实际的token
+}
