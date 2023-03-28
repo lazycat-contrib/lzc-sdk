@@ -138,7 +138,19 @@ message TaskQueueQueryReq {
   TaskQueueID id = 1;
   repeated TaskStatus status = 2;
 }
-
+message TaskQueueStatisticsReq {
+  repeated TaskQueueID id = 1;
+}
+message TaskQueueStatistics {
+  int64 pending      = 1; // 等待下载
+  int64 transmitting = 2; // 正在下载
+  int64 paused       = 3; // 暂停
+  int64 finished     = 4; // 已完成
+  int64 failed       = 5; // 下载失败
+}
+message TaskQueueStatisticsResp {
+  repeated TaskQueueStatistics statistics = 1;
+}
 enum MsgAction {
   Add = 0;
   Del = 1;
@@ -168,6 +180,8 @@ service FileTransferService {
   rpc ListQueue(google.protobuf.Empty) returns (TaskQueueListResp) {}
   // 通过队列的 ID 和 Status 获取任务列表
   rpc QueryQueue(TaskQueueQueryReq) returns (stream Task) {}
+  // 通过队列的 ID 和 Status 获取任务状态，即running/paused等各个状态中各有多少个任务
+  rpc QueryQueueStatistics(TaskQueueStatisticsReq) returns (TaskQueueStatisticsResp) {}
   // 通过队列的 ID 和 Status 清除任务
   rpc ClearQueue(TaskQueueQueryReq) returns (google.protobuf.Empty) {}
 
