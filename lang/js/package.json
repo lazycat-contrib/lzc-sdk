@@ -1,11 +1,10 @@
 {
   "name": "@lazycatcloud/sdk",
-  "version": "0.1.159",
+  "version": "0.1.160",
   "author": "snyh",
   "scripts": {
     "build": "tsc",
     "lint": "eslint --ext .ts ./ --max-warnings 0",
-    "prepublishOnly": "npm run lint",
     "prepare": "npm run build"
   },
   "main": "dist/index.js",
