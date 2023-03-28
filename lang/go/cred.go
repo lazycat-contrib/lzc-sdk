@@ -22,10 +22,6 @@ type metadataCredentials struct {
 	conn      *grpc.ClientConn
 }
 
-func (c *metadataCredentials) setConn(conn *grpc.ClientConn) {
-	c.conn = conn
-}
-
 func (c *metadataCredentials) getAuthToken() (*AuthToken, error) {
 	if c.authToken != nil && time.Now().Before(c.authToken.Deadline) {
 		return c.authToken, nil
@@ -35,9 +31,6 @@ func (c *metadataCredentials) getAuthToken() (*AuthToken, error) {
 }
 
 func (c *metadataCredentials) GetRequestMetadata(context.Context, ...string) (map[string]string, error) {
-	if c.conn == nil {
-		return map[string]string{}, nil
-	}
 	authToken, err := c.getAuthToken()
 	if err != nil {
 		return nil, err
@@ -51,8 +44,8 @@ func (c *metadataCredentials) RequireTransportSecurity() bool {
 	return true
 }
 
-func newMetadataCredentials() *metadataCredentials {
-	return &metadataCredentials{}
+func newMetadataCredentials(conn *grpc.ClientConn) *metadataCredentials {
+	return &metadataCredentials{conn: conn}
 }
 
 type AuthToken struct {
