@@ -56,7 +56,7 @@ async function getAuthToken(host: string, apiurl: string): Promise<string> {
     if (!resp.ok) {
         throw new Error(`${resp.status}: ${resp.statusText}`)
     }
-    return resp.json()["token"]
+    return resp.json()["Token"]
 }
 
 async function buildCurrentDevice(cc: lzcAPIGateway): Promise<EndDeviceProxy> {
