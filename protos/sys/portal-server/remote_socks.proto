@@ -4,6 +4,29 @@ package cloud.lazycat.apis.sys;
 
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys/portal-server";
 
+message RemoteSocksRequest {
+  enum LocationType {
+    Unkonwn = 0;
+
+    //在当前hserver所处的物理网络协议栈上监听TCP或UDP服务(含UDP广播)
+    HServer = 1;
+
+    //在指定的的hclient所处的物理网络协议栈上监听TCP或UDP服务(UDP广播取决于hclient是否获取到对应权限)
+    HClient = 2;
+  }
+
+  LocationType location_type = 1;
+
+  string address = 2; //若Type为HClient则，填写hclient的peer.ID
+}
+
+message RemoteSocksReply {
+  string server_address = 1; //返回的socks5服务器地址
+  string server_key = 2;     //连接socks5服务器地址的认证信息
+}
+
+
+
 message RemoteListenRequest {
   enum ListenType {
     Unkonwn = 0;

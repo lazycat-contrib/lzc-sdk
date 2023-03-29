@@ -72,6 +72,7 @@ type HPortalSysClient interface {
 	//
 	// ListenReply可能会返回多个，比如默认网卡地址变动
 	RemoteListen(ctx context.Context, in *RemoteListenRequest, opts ...grpc.CallOption) (HPortalSys_RemoteListenClient, error)
+	RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error)
 }
 
 type hPortalSysClient struct {
@@ -317,6 +318,15 @@ func (x *hPortalSysRemoteListenClient) Recv() (*RemoteListenReply, error) {
 	return m, nil
 }
 
+func (c *hPortalSysClient) RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error) {
+	out := new(RemoteSocksReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/RemoteSocks", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HPortalSysServer is the server API for HPortalSys service.
 // All implementations must embed UnimplementedHPortalSysServer
 // for forward compatibility
@@ -370,6 +380,7 @@ type HPortalSysServer interface {
 	//
 	// ListenReply可能会返回多个，比如默认网卡地址变动
 	RemoteListen(*RemoteListenRequest, HPortalSys_RemoteListenServer) error
+	RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -439,6 +450,9 @@ func (UnimplementedHPortalSysServer) CheckPassword(context.Context, *CheckPasswo
 }
 func (UnimplementedHPortalSysServer) RemoteListen(*RemoteListenRequest, HPortalSys_RemoteListenServer) error {
 	return status.Errorf(codes.Unimplemented, "method RemoteListen not implemented")
+}
+func (UnimplementedHPortalSysServer) RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoteSocks not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -837,6 +851,24 @@ func (x *hPortalSysRemoteListenServer) Send(m *RemoteListenReply) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _HPortalSys_RemoteSocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoteSocksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).RemoteSocks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/RemoteSocks",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).RemoteSocks(ctx, req.(*RemoteSocksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HPortalSys_ServiceDesc is the grpc.ServiceDesc for HPortalSys service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -919,6 +951,10 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckPassword",
 			Handler:    _HPortalSys_CheckPassword_Handler,
+		},
+		{
+			MethodName: "RemoteSocks",
+			Handler:    _HPortalSys_RemoteSocks_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

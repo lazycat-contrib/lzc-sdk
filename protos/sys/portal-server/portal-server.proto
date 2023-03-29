@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package cloud.lazycat.apis.sys;
 
-import "sys/portal-server/remote_listen.proto";
+import "sys/portal-server/remote_socks.proto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
@@ -77,6 +77,8 @@ service HPortalSys {
   //
   // ListenReply可能会返回多个，比如默认网卡地址变动
   rpc RemoteListen(RemoteListenRequest) returns (stream RemoteListenReply) {}
+
+  rpc RemoteSocks(RemoteSocksRequest) returns (RemoteSocksReply) {}
 }
 
 message GenUserInvitationRequest {
