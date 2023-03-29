@@ -24,6 +24,12 @@ service PackageManager {
     option (cloud.lazycat.apis.common.scontext).require_permissions = INSTALL_PACKAGE;
   }
 
+  // 休眠应用
+  rpc Pause(AppInstance) returns (google.protobuf.Empty) {}
+
+  // 恢复应用
+  rpc Resume(AppInstance) returns (google.protobuf.Empty) {}
+
   // 根据 AppId 清除缓存
   rpc ClearCache(Appid) returns (google.protobuf.Empty) {}
 
@@ -224,4 +230,9 @@ message FileHandlerInfo {
 
 message ListFileHandlerResponse {
   repeated FileHandlerInfo info_list = 1;
+}
+
+message AppInstance {
+  string appid = 1;
+  string uid = 2;
 }

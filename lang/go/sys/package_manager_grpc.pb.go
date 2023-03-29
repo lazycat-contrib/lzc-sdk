@@ -27,6 +27,10 @@ type PackageManagerClient interface {
 	Install(ctx context.Context, in *InstallRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据 AppId 卸载应用
 	Uninstall(ctx context.Context, in *UninstallRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 休眠应用
+	Pause(ctx context.Context, in *AppInstance, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 恢复应用
+	Resume(ctx context.Context, in *AppInstance, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据 AppId 清除缓存
 	ClearCache(ctx context.Context, in *Appid, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 查询用户安装的特定应用的详情
@@ -65,6 +69,24 @@ func (c *packageManagerClient) Install(ctx context.Context, in *InstallRequest, 
 func (c *packageManagerClient) Uninstall(ctx context.Context, in *UninstallRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.PackageManager/Uninstall", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *packageManagerClient) Pause(ctx context.Context, in *AppInstance, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.PackageManager/Pause", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *packageManagerClient) Resume(ctx context.Context, in *AppInstance, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.PackageManager/Resume", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -151,6 +173,10 @@ type PackageManagerServer interface {
 	Install(context.Context, *InstallRequest) (*emptypb.Empty, error)
 	// 根据 AppId 卸载应用
 	Uninstall(context.Context, *UninstallRequest) (*emptypb.Empty, error)
+	// 休眠应用
+	Pause(context.Context, *AppInstance) (*emptypb.Empty, error)
+	// 恢复应用
+	Resume(context.Context, *AppInstance) (*emptypb.Empty, error)
 	// 根据 AppId 清除缓存
 	ClearCache(context.Context, *Appid) (*emptypb.Empty, error)
 	// 查询用户安装的特定应用的详情
@@ -179,6 +205,12 @@ func (UnimplementedPackageManagerServer) Install(context.Context, *InstallReques
 }
 func (UnimplementedPackageManagerServer) Uninstall(context.Context, *UninstallRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Uninstall not implemented")
+}
+func (UnimplementedPackageManagerServer) Pause(context.Context, *AppInstance) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Pause not implemented")
+}
+func (UnimplementedPackageManagerServer) Resume(context.Context, *AppInstance) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Resume not implemented")
 }
 func (UnimplementedPackageManagerServer) ClearCache(context.Context, *Appid) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ClearCache not implemented")
@@ -249,6 +281,42 @@ func _PackageManager_Uninstall_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PackageManagerServer).Uninstall(ctx, req.(*UninstallRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PackageManager_Pause_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppInstance)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).Pause(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.PackageManager/Pause",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).Pause(ctx, req.(*AppInstance))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PackageManager_Resume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppInstance)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).Resume(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.PackageManager/Resume",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).Resume(ctx, req.(*AppInstance))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -411,6 +479,14 @@ var PackageManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Uninstall",
 			Handler:    _PackageManager_Uninstall_Handler,
+		},
+		{
+			MethodName: "Pause",
+			Handler:    _PackageManager_Pause_Handler,
+		},
+		{
+			MethodName: "Resume",
+			Handler:    _PackageManager_Resume_Handler,
 		},
 		{
 			MethodName: "ClearCache",
