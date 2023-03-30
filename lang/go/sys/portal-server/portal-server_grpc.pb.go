@@ -67,11 +67,6 @@ type HPortalSysClient interface {
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	//校验用户密码是否正确
 	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 任意一方关闭此RPC，则所对应的Listen资源会被自动释放
-	// 但server_socket_path需要由调用者自行做删除等后续清理工作
-	//
-	// ListenReply可能会返回多个，比如默认网卡地址变动
-	RemoteListen(ctx context.Context, in *RemoteListenRequest, opts ...grpc.CallOption) (HPortalSys_RemoteListenClient, error)
 	RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error)
 }
 
@@ -286,38 +281,6 @@ func (c *hPortalSysClient) CheckPassword(ctx context.Context, in *CheckPasswordR
 	return out, nil
 }
 
-func (c *hPortalSysClient) RemoteListen(ctx context.Context, in *RemoteListenRequest, opts ...grpc.CallOption) (HPortalSys_RemoteListenClient, error) {
-	stream, err := c.cc.NewStream(ctx, &HPortalSys_ServiceDesc.Streams[1], "/cloud.lazycat.apis.sys.HPortalSys/RemoteListen", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &hPortalSysRemoteListenClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type HPortalSys_RemoteListenClient interface {
-	Recv() (*RemoteListenReply, error)
-	grpc.ClientStream
-}
-
-type hPortalSysRemoteListenClient struct {
-	grpc.ClientStream
-}
-
-func (x *hPortalSysRemoteListenClient) Recv() (*RemoteListenReply, error) {
-	m := new(RemoteListenReply)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 func (c *hPortalSysClient) RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error) {
 	out := new(RemoteSocksReply)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/RemoteSocks", in, out, opts...)
@@ -375,11 +338,6 @@ type HPortalSysServer interface {
 	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
 	//校验用户密码是否正确
 	CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error)
-	// 任意一方关闭此RPC，则所对应的Listen资源会被自动释放
-	// 但server_socket_path需要由调用者自行做删除等后续清理工作
-	//
-	// ListenReply可能会返回多个，比如默认网卡地址变动
-	RemoteListen(*RemoteListenRequest, HPortalSys_RemoteListenServer) error
 	RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
@@ -447,9 +405,6 @@ func (UnimplementedHPortalSysServer) Logout(context.Context, *LogoutRequest) (*e
 }
 func (UnimplementedHPortalSysServer) CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
-}
-func (UnimplementedHPortalSysServer) RemoteListen(*RemoteListenRequest, HPortalSys_RemoteListenServer) error {
-	return status.Errorf(codes.Unimplemented, "method RemoteListen not implemented")
 }
 func (UnimplementedHPortalSysServer) RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoteSocks not implemented")
@@ -830,27 +785,6 @@ func _HPortalSys_CheckPassword_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_RemoteListen_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(RemoteListenRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(HPortalSysServer).RemoteListen(m, &hPortalSysRemoteListenServer{stream})
-}
-
-type HPortalSys_RemoteListenServer interface {
-	Send(*RemoteListenReply) error
-	grpc.ServerStream
-}
-
-type hPortalSysRemoteListenServer struct {
-	grpc.ServerStream
-}
-
-func (x *hPortalSysRemoteListenServer) Send(m *RemoteListenReply) error {
-	return x.ServerStream.SendMsg(m)
-}
-
 func _HPortalSys_RemoteSocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RemoteSocksRequest)
 	if err := dec(in); err != nil {
@@ -961,11 +895,6 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "PairDevices",
 			Handler:       _HPortalSys_PairDevices_Handler,
-			ServerStreams: true,
-		},
-		{
-			StreamName:    "RemoteListen",
-			Handler:       _HPortalSys_RemoteListen_Handler,
 			ServerStreams: true,
 		},
 	},

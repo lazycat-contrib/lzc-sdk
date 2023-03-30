@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package cloud.lazycat.apis.sys;
 
-import "sys/portal-server/remote_socks.proto";
-
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
@@ -71,15 +69,29 @@ service HPortalSys {
   rpc CheckPassword(CheckPasswordRequest) returns (google.protobuf.Empty){}
 
 
-
-  // 任意一方关闭此RPC，则所对应的Listen资源会被自动释放
-  // 但server_socket_path需要由调用者自行做删除等后续清理工作
-  //
-  // ListenReply可能会返回多个，比如默认网卡地址变动
-  rpc RemoteListen(RemoteListenRequest) returns (stream RemoteListenReply) {}
-
   rpc RemoteSocks(RemoteSocksRequest) returns (RemoteSocksReply) {}
 }
+
+message RemoteSocksRequest {
+  enum LocationType {
+    Unkonwn = 0;
+
+    //在当前hserver所处的物理网络协议栈上提供socks服务
+    Local = 1;
+
+    //在指定的的hclient所处的物理网络协议栈上提供socks服务
+    Remote = 2;
+  }
+
+  LocationType location_type = 1;
+
+  string target = 2; //若Type为Remote则，填写节点的peer.ID
+}
+
+message RemoteSocksReply {
+  string server_url = 1; //返回的socks5服务器地址
+}
+
 
 message GenUserInvitationRequest {
   // 仅限注册此uid
