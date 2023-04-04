@@ -23,5 +23,15 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
+  },
+  "prettier": {
+    "bracketSameLine": true,
+    "printWidth": 180,
+    "jsxBracketSameLine": true,
+    "vueIndentScriptAndStyle": false,
+    "semi": false,
+    "arrowParens": "avoid",
+    "proseWrap": "preserve",
+    "htmlWhitespaceSensitivity": "ignore"
   }
 }
