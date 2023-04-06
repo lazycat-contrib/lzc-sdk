@@ -71,7 +71,7 @@ service HPortalSys {
 
   rpc RemoteSocks(RemoteSocksRequest) returns (RemoteSocksReply) {}
 
-  rpc TrustDevice(TrustDeviceRequest) returns (google.protobuf.Empty) {}
+  rpc TrustUserDevice(TrustUserDeviceRequest) returns (google.protobuf.Empty) {}
 }
 
 message RemoteSocksRequest {
@@ -344,7 +344,7 @@ message CheckPasswordRequest{
   string password = 2;
 }
 
-message TrustDeviceRequest{
+message TrustUserDeviceRequest{
   string udid = 1;
   string user = 2;
 }

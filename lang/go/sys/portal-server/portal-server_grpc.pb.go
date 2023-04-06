@@ -69,7 +69,7 @@ type HPortalSysClient interface {
 	// 校验用户密码是否正确
 	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error)
-	TrustDevice(ctx context.Context, in *TrustDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type hPortalSysClient struct {
@@ -292,9 +292,9 @@ func (c *hPortalSysClient) RemoteSocks(ctx context.Context, in *RemoteSocksReque
 	return out, nil
 }
 
-func (c *hPortalSysClient) TrustDevice(ctx context.Context, in *TrustDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *hPortalSysClient) TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/TrustDevice", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/TrustUserDevice", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -351,7 +351,7 @@ type HPortalSysServer interface {
 	// 校验用户密码是否正确
 	CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error)
 	RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error)
-	TrustDevice(context.Context, *TrustDeviceRequest) (*emptypb.Empty, error)
+	TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -422,8 +422,8 @@ func (UnimplementedHPortalSysServer) CheckPassword(context.Context, *CheckPasswo
 func (UnimplementedHPortalSysServer) RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoteSocks not implemented")
 }
-func (UnimplementedHPortalSysServer) TrustDevice(context.Context, *TrustDeviceRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TrustDevice not implemented")
+func (UnimplementedHPortalSysServer) TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TrustUserDevice not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -819,20 +819,20 @@ func _HPortalSys_RemoteSocks_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_TrustDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TrustDeviceRequest)
+func _HPortalSys_TrustUserDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TrustUserDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(HPortalSysServer).TrustDevice(ctx, in)
+		return srv.(HPortalSysServer).TrustUserDevice(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/TrustDevice",
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/TrustUserDevice",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).TrustDevice(ctx, req.(*TrustDeviceRequest))
+		return srv.(HPortalSysServer).TrustUserDevice(ctx, req.(*TrustUserDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -925,8 +925,8 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HPortalSys_RemoteSocks_Handler,
 		},
 		{
-			MethodName: "TrustDevice",
-			Handler:    _HPortalSys_TrustDevice_Handler,
+			MethodName: "TrustUserDevice",
+			Handler:    _HPortalSys_TrustUserDevice_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
