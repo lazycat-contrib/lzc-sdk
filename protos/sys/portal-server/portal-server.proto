@@ -70,6 +70,8 @@ service HPortalSys {
 
 
   rpc RemoteSocks(RemoteSocksRequest) returns (RemoteSocksReply) {}
+
+  rpc TrustDevice(TrustDeviceRequest) returns (google.protobuf.Empty) {}
 }
 
 message RemoteSocksRequest {
@@ -340,4 +342,9 @@ message LogoutRequest{
 message CheckPasswordRequest{
   string uid = 1;
   string password = 2;
+}
+
+message TrustDeviceRequest{
+  string udid = 1;
+  string user = 2;
 }
