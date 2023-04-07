@@ -15,13 +15,12 @@ require (
 )
 
 require (
+	cloud.google.com/go v0.81.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.0 // indirect
-	github.com/ipfs/go-log/v2 v2.5.1 // indirect
-	github.com/linakesi/lnksutils v0.0.0-20221010091242-8e3dc4dbf41e // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.11.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.19.0 // indirect
@@ -31,5 +30,6 @@ require (
 	golang.org/x/net v0.9.0 // indirect
 	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1 // indirect
 )
