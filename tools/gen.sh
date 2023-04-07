@@ -3,7 +3,7 @@ set -e
 
 PROTOC_ARGS=()
 
-if [[ -n "$PROTOC_GEN_GO" ]]; then
+if [[ "$PROTOC_GEN_GO" -eq 1 ]]; then
 	OUT_GO=$(pwd)/lang/go/
 	rm -rf $OUT_GO/{common,localdevice} || true
 
@@ -15,7 +15,7 @@ if [[ -n "$PROTOC_GEN_GO" ]]; then
 	)
 fi
 
-if [[ -n "$PROTOC_GEN_JS" ]]; then
+if [[ "$PROTOC_GEN_JS" -eq 1 ]]; then
 	JS_PLUGIN_PATH=$(pwd)/lang/js/node_modules/.bin/protoc-gen-ts_proto
 	if [[ ! -e $JS_PLUGIN_PATH ]]; then
 		pushd lang/js/
@@ -35,7 +35,7 @@ if [[ -n "$PROTOC_GEN_JS" ]]; then
 	)
 fi
 
-if [[ -n "$PROTOC_GEN_JAVA" ]]; then
+if [[ "$PROTOC_GEN_JAVA" -eq 1 ]]; then
 	OUT_JAVA=$(pwd)/lang/java/lib/src/main/java/
 	rm -rf $OUT_JAVA/ || true
 	mkdir -p $OUT_JAVA || true
@@ -64,13 +64,13 @@ protoc -I . "${PROTOC_ARGS[@]}"
 popd
 
 
-if [[ -n "$PROTOC_GEN_JS" ]]; then
+if [[ "$PROTOC_GEN_JS" -eq 1 ]]; then
 	pushd lang/js/
 	npm run build
 	popd
 fi
 
-if [[ -n "$PROTOC_GEN_JAVA" ]]; then
+if [[ "$PROTOC_GEN_JAVA" -eq 1 ]]; then
 	cp -r lang/java/lib/src java_api_workspace/
 
 	if [[ "$ENABLE_JAR" == "" ]]; then
