@@ -84,4 +84,8 @@ message RemoteMediaPlayer {
   string uuid = 1;
   string name = 2;
   string icon_data = 3;
+
+  //所处局域网信息，若为空表示处于盒子的局域网，
+  //否则为具体客户端peer id的局域网
+  string lan_region = 4;
 }
