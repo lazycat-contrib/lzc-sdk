@@ -201,7 +201,3 @@ async function dumpInfo(bo: BrowserOnlyProxy) {
 export function isWebShell() {
   return navigator.userAgent.indexOf("Lazycat") != -1
 }
-
-// Local Variables:
-// typescript-ts-mode-indent-offset: 4
-// End:
