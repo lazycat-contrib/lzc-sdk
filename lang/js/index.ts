@@ -103,9 +103,9 @@ export class lzcAPIGateway {
 
   // these fields are initialized by buildCurrentDevice
   public authToken: string
-  public currentDevice: Promise<EndDeviceProxy>
+  public currentDevice: EndDeviceProxy
 
-  public async buildCurrentDevice(): Promise<EndDeviceProxy> {
+  public async buildCurrentDevice() {
     async function currentDeviceApiHost(cc: lzcAPIGateway): Promise<string> {
       let session = await cc.session
       let uid = session.uid
@@ -141,7 +141,7 @@ export class lzcAPIGateway {
     metadata.set("lzc_dapi_auth_token", authToken)
 
     const rpc = new GrpcWebImpl(deviceApiUrl, { ...opt, ...{ metadata: metadata } })
-    return new EndDeviceProxy(rpc)
+    this.currentDevice = new EndDeviceProxy(rpc)
   }
 }
 
