@@ -1,15 +1,9 @@
 import { GrpcWebImpl } from "./grpcweb"
 
-import { Empty } from "./google/protobuf/empty"
-
-import { Observable, Subscriber } from "rxjs"
-
-import { EndDeviceServiceClientImpl, EndDeviceService, EndDevice } from "./common/end_device"
+import { EndDeviceServiceClientImpl, EndDeviceService} from "./common/end_device"
 import { UserManagerClientImpl, UserManager } from "./common/users"
 import { BoxService, BoxServiceClientImpl } from "./common/box"
 import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, SessionInfo, AppInfo } from "./common/browseronly"
-import { PermissionManager, PermissionManagerClientImpl, PermissionDesc, PermissionToken } from "./common/security_context"
-import { APIGateway, APIGatewayClientImpl } from "./common/gateway"
 import { PeripheralDeviceService, PeripheralDeviceServiceClientImpl } from "./common/peripheral_device"
 import { PackageManager, PackageManagerClientImpl } from "./sys/package_manager"
 import { NetworkManager as NM, NetworkManagerClientImpl as NMClientImpl } from "./sys/network_manager"
@@ -39,42 +33,6 @@ const opt = {
   // streamingTransport: grpc.WebsocketTransport(),
 }
 
-async function getApiUrl(cc: lzcAPIGateway): Promise<URL> {
-  let s = await cc.session
-  let uid = s.uid
-  let ds = await cc.devices.ListEndDevices({ uid })
-  let d = ds.devices.find(d => d.uniqueDeivceId == s.deviceId)
-  return new URL(d.deviceApiUrl)
-}
-
-async function getAuthToken(host: string, apiurl: string): Promise<string> {
-  const resp = await fetch(host + "/_lzc/auth_token", {
-    method: "POST",
-    body: apiurl,
-  })
-  if (!resp.ok) {
-    throw new Error(`${resp.status}: ${resp.statusText}`)
-  }
-  return (await resp.json())["Token"]
-}
-
-async function buildCurrentDevice(cc: lzcAPIGateway): Promise<EndDeviceProxy> {
-  const url = (await getApiUrl(cc)).toString().replace(/\/+$/, "")
-
-  const authToken = await getAuthToken(cc.host, url)
-  cc.authToken = authToken
-
-  const metadata = new grpc.Metadata()
-  try {
-    metadata.set("lzc_dapi_auth_token", authToken)
-  } catch (e) {
-    console.log(e)
-  }
-
-  const rpc = new GrpcWebImpl(url, { ...opt, ...{ metadata: metadata } })
-  return new EndDeviceProxy(rpc)
-}
-
 export class lzcAPIGateway {
   constructor(host: string = window.origin) {
     host = host.replace(/\/+$/, "")
@@ -87,10 +45,8 @@ export class lzcAPIGateway {
     this.bo = new BrowserOnlyProxyClientImpl(rpc)
     this.session = this.bo.QuerySessionInfo({})
     this.appinfo = this.bo.QueryAppInfo({})
-    this.gw = new APIGatewayClientImpl(rpc)
 
     this.nm = new NMClientImpl(rpc)
-    this.pm = new PermissionManagerClientImpl(rpc)
     this.pkgm = new PackageManagerClientImpl(rpc)
 
     this.pd = new PeripheralDeviceServiceClientImpl(rpc)
@@ -107,24 +63,15 @@ export class lzcAPIGateway {
 
     this.devopt = new DevOptServiceClientImpl(rpc)
 
-    this.currentDevice = buildCurrentDevice(this)
     this.bs = new BoxStatusServiceClientImpl(rpc)
     dumpInfo(this.bo)
   }
-  public host: string
+
   private bo: BrowserOnlyProxy
-  private gw: APIGateway
-  private pm: PermissionManager
+
+  public host: string
   public pd: PeripheralDeviceService
 
-  public async openDevices() {
-    return new Promise<void>((resolve, reject) => {
-      this.bo.PairAllDevices({}).subscribe({
-        error: err => reject(err),
-        complete: () => resolve(),
-      })
-    })
-  }
   public nm: NM // 盒子内部的NetworkManager
   public pkgm: PackageManager
   public users: UserManager
@@ -132,8 +79,6 @@ export class lzcAPIGateway {
   public ingress: IngressService
 
   public session: Promise<SessionInfo>
-
-  public currentDevice: Promise<EndDeviceProxy>
 
   public osUpgrader: OSUpgradeService
   public osSnapshot: OSSnapshotService
@@ -145,8 +90,59 @@ export class lzcAPIGateway {
   public rmp: RemoteMediaPlayerService
   public devices: EndDeviceService
 
-  public authToken: string
   public bs: BoxStatusServiceClientImpl
+
+  public async openDevices() {
+    return new Promise<void>((resolve, reject) => {
+      this.bo.PairAllDevices({}).subscribe({
+        error: err => reject(err),
+        complete: () => resolve(),
+      })
+    })
+  }
+
+  // these fields are initialized by buildCurrentDevice
+  public authToken: string
+  public currentDevice: Promise<EndDeviceProxy>
+
+  public async buildCurrentDevice(): Promise<EndDeviceProxy> {
+    async function currentDeviceApiHost(cc: lzcAPIGateway): Promise<string> {
+      let session = await cc.session
+      let uid = session.uid
+      let endDevices = await cc.devices.ListEndDevices({ uid })
+      let endDevice = endDevices.devices.find(d => d.uniqueDeivceId == session.deviceId)
+      return new URL(endDevice.deviceApiUrl).toString().replace(/\/+$/, "")
+    }
+
+    async function requestAuthToken(host: string, deviceApiUrl: string): Promise<string> {
+      const resp = await fetch(host + "/_lzc/auth_token", {
+        method: "POST",
+        body: deviceApiUrl,
+      })
+      if (!resp.ok) {
+        throw new Error(`${resp.status}: ${resp.statusText}`)
+      }
+      const respJson = await resp.json()
+      const token = respJson["Token"]
+      if (token === undefined) {
+        throw new Error(`Token not set: ${respJson}`)
+      }
+      return token
+    }
+
+    const deviceApiUrl = await currentDeviceApiHost(this)
+    const authToken = await requestAuthToken(this.host, deviceApiUrl)
+
+    // save authToken for other uses(eg. webdav auth)
+    this.authToken = authToken
+
+    // build grpc metadata for credentials
+    const metadata = new grpc.Metadata()
+    metadata.set("lzc_dapi_auth_token", authToken)
+
+    const rpc = new GrpcWebImpl(deviceApiUrl, { ...opt, ...{ metadata: metadata } })
+    return new EndDeviceProxy(rpc)
+  }
 }
 
 async function test() {
