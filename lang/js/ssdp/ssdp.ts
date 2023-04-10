@@ -39,22 +39,31 @@ export const SearchRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): SearchRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSearchRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag != 10) {
+            break;
+          }
+
           message.type = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag != 16) {
+            break;
+          }
+
           message.waitSeconds = reader.int32();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) == 4 || tag == 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -71,6 +80,10 @@ export const SearchRequest = {
     message.type !== undefined && (obj.type = message.type);
     message.waitSeconds !== undefined && (obj.waitSeconds = Math.round(message.waitSeconds));
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<SearchRequest>, I>>(base?: I): SearchRequest {
+    return SearchRequest.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<SearchRequest>, I>>(object: I): SearchRequest {
@@ -103,28 +116,45 @@ export const Service = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Service {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseService();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag != 10) {
+            break;
+          }
+
           message.type = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag != 18) {
+            break;
+          }
+
           message.USN = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag != 26) {
+            break;
+          }
+
           message.location = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag != 34) {
+            break;
+          }
+
           message.server = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) == 4 || tag == 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -145,6 +175,10 @@ export const Service = {
     message.location !== undefined && (obj.location = message.location);
     message.server !== undefined && (obj.server = message.server);
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Service>, I>>(base?: I): Service {
+    return Service.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<Service>, I>>(object: I): Service {
@@ -188,10 +222,11 @@ export const SSDPServiceSearchDesc: UnaryMethodDefinitionish = {
   } as any,
   responseType: {
     deserializeBinary(data: Uint8Array) {
+      const value = Service.decode(data);
       return {
-        ...Service.decode(data),
+        ...value,
         toObject() {
-          return this;
+          return value;
         },
       };
     },
@@ -260,7 +295,7 @@ export class GrpcWebImpl {
         debug: this.options.debug,
         onEnd: function (response) {
           if (response.status === grpc.Code.OK) {
-            resolve(response.message);
+            resolve(response.message!.toObject());
           } else {
             const err = new GrpcWebError(response.statusMessage, response.status, response.trailers);
             reject(err);
@@ -303,12 +338,35 @@ export class GrpcWebImpl {
             }
           },
         });
-        observer.add(() => client.close());
+        observer.add(() => {
+          if (!observer.closed) {
+            return client.close();
+          }
+        });
       });
       upStream();
     }).pipe(share());
   }
 }
+
+declare var self: any | undefined;
+declare var window: any | undefined;
+declare var global: any | undefined;
+var tsProtoGlobalThis: any = (() => {
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
+  throw "Unable to locate global object";
+})();
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
@@ -325,7 +383,7 @@ function isSet(value: any): boolean {
   return value !== null && value !== undefined;
 }
 
-export class GrpcWebError extends Error {
+export class GrpcWebError extends tsProtoGlobalThis.Error {
   constructor(message: string, public code: grpc.Code, public metadata: grpc.Metadata) {
     super(message);
   }
