@@ -1,6 +1,6 @@
 import { GrpcWebImpl } from "./grpcweb"
 
-import { EndDeviceServiceClientImpl, EndDeviceService} from "./common/end_device"
+import { EndDeviceServiceClientImpl, EndDeviceService } from "./common/end_device"
 import { UserManagerClientImpl, UserManager } from "./common/users"
 import { BoxService, BoxServiceClientImpl } from "./common/box"
 import { BrowserOnlyProxy, BrowserOnlyProxyClientImpl, SessionInfo, AppInfo } from "./common/browseronly"
@@ -68,7 +68,7 @@ export class lzcAPIGateway {
   }
 
   private bo: BrowserOnlyProxy
-
+  private _currentDevice: EndDeviceProxy
   public host: string
   public pd: PeripheralDeviceService
 
@@ -101,11 +101,10 @@ export class lzcAPIGateway {
     })
   }
 
-  // these fields are initialized by buildCurrentDevice
   public authToken: string
-  public currentDevice: EndDeviceProxy
+  public get currentDevice(): Promise<EndDeviceProxy> {
+    if (this._currentDevice) return new Promise(() => this._currentDevice)
 
-  public async buildCurrentDevice() {
     async function currentDeviceApiHost(cc: lzcAPIGateway): Promise<string> {
       let session = await cc.session
       let uid = session.uid
@@ -113,7 +112,6 @@ export class lzcAPIGateway {
       let endDevice = endDevices.devices.find(d => d.uniqueDeivceId == session.deviceId)
       return new URL(endDevice.deviceApiUrl).toString().replace(/\/+$/, "")
     }
-
     async function requestAuthToken(host: string, deviceApiUrl: string): Promise<string> {
       const resp = await fetch(host + "/_lzc/auth_token", {
         method: "POST",
@@ -129,19 +127,19 @@ export class lzcAPIGateway {
       }
       return token
     }
+    return new Promise(async () => {
+      const deviceApiUrl = await currentDeviceApiHost(this)
+      const authToken = await requestAuthToken(this.host, deviceApiUrl)
+      // save authToken for other uses(eg. webdav auth)
+      this.authToken = authToken
+      // build grpc metadata for credentials
+      const metadata = new grpc.Metadata()
+      metadata.set("lzc_dapi_auth_token", authToken)
 
-    const deviceApiUrl = await currentDeviceApiHost(this)
-    const authToken = await requestAuthToken(this.host, deviceApiUrl)
+      const rpc = new GrpcWebImpl(deviceApiUrl, { ...opt, ...{ metadata: metadata } })
 
-    // save authToken for other uses(eg. webdav auth)
-    this.authToken = authToken
-
-    // build grpc metadata for credentials
-    const metadata = new grpc.Metadata()
-    metadata.set("lzc_dapi_auth_token", authToken)
-
-    const rpc = new GrpcWebImpl(deviceApiUrl, { ...opt, ...{ metadata: metadata } })
-    this.currentDevice = new EndDeviceProxy(rpc)
+      return new EndDeviceProxy(rpc)
+    })
   }
 }
 
