@@ -103,7 +103,7 @@ export class lzcAPIGateway {
 
   public authToken: string
   public get currentDevice(): Promise<EndDeviceProxy> {
-    if (this._currentDevice) return new Promise(() => this._currentDevice)
+    if (this._currentDevice) return new Promise(res => res(this._currentDevice))
 
     async function currentDeviceApiHost(cc: lzcAPIGateway): Promise<string> {
       let session = await cc.session
@@ -127,7 +127,7 @@ export class lzcAPIGateway {
       }
       return token
     }
-    return new Promise(async () => {
+    return new Promise(async res => {
       const deviceApiUrl = await currentDeviceApiHost(this)
       const authToken = await requestAuthToken(this.host, deviceApiUrl)
       // save authToken for other uses(eg. webdav auth)
@@ -137,8 +137,8 @@ export class lzcAPIGateway {
       metadata.set("lzc_dapi_auth_token", authToken)
 
       const rpc = new GrpcWebImpl(deviceApiUrl, { ...opt, ...{ metadata: metadata } })
-
-      return new EndDeviceProxy(rpc)
+      this._currentDevice = new EndDeviceProxy(rpc)
+      res(this._currentDevice)
     })
   }
 }
