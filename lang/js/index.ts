@@ -64,6 +64,8 @@ export class lzcAPIGateway {
     this.devopt = new DevOptServiceClientImpl(rpc)
 
     this.bs = new BoxStatusServiceClientImpl(rpc)
+
+    this.message = new MessageServiceClientImpl(rpc)
     dumpInfo(this.bo)
   }
 
@@ -91,6 +93,8 @@ export class lzcAPIGateway {
   public devices: EndDeviceService
 
   public bs: BoxStatusServiceClientImpl
+
+  public message: MessageServiceClientImpl
 
   public async openDevices() {
     return new Promise<void>((resolve, reject) => {
@@ -173,6 +177,7 @@ export class EndDeviceProxy {
 
 import pkg from "./package.json"
 import { DevOptService, DevOptServiceClientImpl } from "./sys/devopt"
+import { MessageServiceClientImpl } from "./common/message"
 
 async function dumpInfo(bo: BrowserOnlyProxy) {
   function capsule(title, info) {
