@@ -113,7 +113,7 @@ export class lzcAPIGateway {
       return new URL(endDevice.deviceApiUrl).toString().replace(/\/+$/, "")
     }
     async function requestAuthToken(host: string, deviceApiUrl: string): Promise<string> {
-      const resp = await fetch(host + "/_lzc/auth_token", {
+      const resp = await fetch(host + "/_lzc/deviceapi_auth_token", {
         method: "POST",
         body: deviceApiUrl,
       })
