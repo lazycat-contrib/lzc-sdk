@@ -26,6 +26,7 @@ type APIGateway struct {
 	Ingress          sys.IngressServiceClient
 	Btrfs            sys.BtrfsUtilClient
 	DirMonitor       sys.DirMonitorClient
+	Message          common.MessageServiceClient
 
 	OSUpgrader sys.OSUpgradeServiceClient
 	OSSnapshot sys.OSSnapshotServiceClient
@@ -125,5 +126,6 @@ func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
 		Permisions:       common.NewPermissionManagerClient(conn),
 		PeripheralDevice: common.NewPeripheralDeviceServiceClient(conn),
 		FileTransfer:     common.NewFileTransferServiceClient(conn),
+		Message:          common.NewMessageServiceClient(conn),
 	}, nil
 }
