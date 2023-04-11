@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.21.1
-// source: common/appshell.proto
+// source: common/apk_shell.proto
 
 package common
 
@@ -18,94 +18,94 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// AppShellClient is the client API for AppShell service.
+// ApkShellClient is the client API for ApkShell service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type AppShellClient interface {
+type ApkShellClient interface {
 	// 基于模板，根据传入的参数构建 APK
 	// 同一时间最多只能有一个构建任务在执行，并发的请求会阻塞
 	// 此方法不负责缓存生成的 APK，每次请求都会重新构建
 	BuildApk(ctx context.Context, in *BuildApkRequest, opts ...grpc.CallOption) (*BuildApkResponse, error)
 }
 
-type appShellClient struct {
+type apkShellClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAppShellClient(cc grpc.ClientConnInterface) AppShellClient {
-	return &appShellClient{cc}
+func NewApkShellClient(cc grpc.ClientConnInterface) ApkShellClient {
+	return &apkShellClient{cc}
 }
 
-func (c *appShellClient) BuildApk(ctx context.Context, in *BuildApkRequest, opts ...grpc.CallOption) (*BuildApkResponse, error) {
+func (c *apkShellClient) BuildApk(ctx context.Context, in *BuildApkRequest, opts ...grpc.CallOption) (*BuildApkResponse, error) {
 	out := new(BuildApkResponse)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.AppShell/BuildApk", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.ApkShell/BuildApk", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AppShellServer is the server API for AppShell service.
-// All implementations must embed UnimplementedAppShellServer
+// ApkShellServer is the server API for ApkShell service.
+// All implementations must embed UnimplementedApkShellServer
 // for forward compatibility
-type AppShellServer interface {
+type ApkShellServer interface {
 	// 基于模板，根据传入的参数构建 APK
 	// 同一时间最多只能有一个构建任务在执行，并发的请求会阻塞
 	// 此方法不负责缓存生成的 APK，每次请求都会重新构建
 	BuildApk(context.Context, *BuildApkRequest) (*BuildApkResponse, error)
-	mustEmbedUnimplementedAppShellServer()
+	mustEmbedUnimplementedApkShellServer()
 }
 
-// UnimplementedAppShellServer must be embedded to have forward compatible implementations.
-type UnimplementedAppShellServer struct {
+// UnimplementedApkShellServer must be embedded to have forward compatible implementations.
+type UnimplementedApkShellServer struct {
 }
 
-func (UnimplementedAppShellServer) BuildApk(context.Context, *BuildApkRequest) (*BuildApkResponse, error) {
+func (UnimplementedApkShellServer) BuildApk(context.Context, *BuildApkRequest) (*BuildApkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildApk not implemented")
 }
-func (UnimplementedAppShellServer) mustEmbedUnimplementedAppShellServer() {}
+func (UnimplementedApkShellServer) mustEmbedUnimplementedApkShellServer() {}
 
-// UnsafeAppShellServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AppShellServer will
+// UnsafeApkShellServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ApkShellServer will
 // result in compilation errors.
-type UnsafeAppShellServer interface {
-	mustEmbedUnimplementedAppShellServer()
+type UnsafeApkShellServer interface {
+	mustEmbedUnimplementedApkShellServer()
 }
 
-func RegisterAppShellServer(s grpc.ServiceRegistrar, srv AppShellServer) {
-	s.RegisterService(&AppShell_ServiceDesc, srv)
+func RegisterApkShellServer(s grpc.ServiceRegistrar, srv ApkShellServer) {
+	s.RegisterService(&ApkShell_ServiceDesc, srv)
 }
 
-func _AppShell_BuildApk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ApkShell_BuildApk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BuildApkRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AppShellServer).BuildApk(ctx, in)
+		return srv.(ApkShellServer).BuildApk(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.AppShell/BuildApk",
+		FullMethod: "/cloud.lazycat.apis.common.ApkShell/BuildApk",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppShellServer).BuildApk(ctx, req.(*BuildApkRequest))
+		return srv.(ApkShellServer).BuildApk(ctx, req.(*BuildApkRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// AppShell_ServiceDesc is the grpc.ServiceDesc for AppShell service.
+// ApkShell_ServiceDesc is the grpc.ServiceDesc for ApkShell service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var AppShell_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cloud.lazycat.apis.common.AppShell",
-	HandlerType: (*AppShellServer)(nil),
+var ApkShell_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "cloud.lazycat.apis.common.ApkShell",
+	HandlerType: (*ApkShellServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "BuildApk",
-			Handler:    _AppShell_BuildApk_Handler,
+			Handler:    _ApkShell_BuildApk_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "common/appshell.proto",
+	Metadata: "common/apk_shell.proto",
 }
