@@ -31,31 +31,22 @@ export const ForwardRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): ForwardRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseForwardRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag != 10) {
-            break;
-          }
-
           message.serviceName = reader.string();
-          continue;
+          break;
         case 2:
-          if (tag != 16) {
-            break;
-          }
-
           message.port = reader.int32();
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) == 4 || tag == 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -72,10 +63,6 @@ export const ForwardRequest = {
     message.serviceName !== undefined && (obj.serviceName = message.serviceName);
     message.port !== undefined && (obj.port = Math.round(message.port));
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<ForwardRequest>, I>>(base?: I): ForwardRequest {
-    return ForwardRequest.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<ForwardRequest>, I>>(object: I): ForwardRequest {
@@ -99,24 +86,19 @@ export const ForwardResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): ForwardResponse {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseForwardResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 2:
-          if (tag != 18) {
-            break;
-          }
-
           message.proxyUrl = reader.string();
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) == 4 || tag == 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -129,10 +111,6 @@ export const ForwardResponse = {
     const obj: any = {};
     message.proxyUrl !== undefined && (obj.proxyUrl = message.proxyUrl);
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<ForwardResponse>, I>>(base?: I): ForwardResponse {
-    return ForwardResponse.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<ForwardResponse>, I>>(object: I): ForwardResponse {
@@ -179,11 +157,10 @@ export const LanForwardServiceForwardDesc: UnaryMethodDefinitionish = {
   } as any,
   responseType: {
     deserializeBinary(data: Uint8Array) {
-      const value = ForwardResponse.decode(data);
       return {
-        ...value,
+        ...ForwardResponse.decode(data),
         toObject() {
-          return value;
+          return this;
         },
       };
     },
@@ -252,7 +229,7 @@ export class GrpcWebImpl {
         debug: this.options.debug,
         onEnd: function (response) {
           if (response.status === grpc.Code.OK) {
-            resolve(response.message!.toObject());
+            resolve(response.message);
           } else {
             const err = new GrpcWebError(response.statusMessage, response.status, response.trailers);
             reject(err);
@@ -295,35 +272,12 @@ export class GrpcWebImpl {
             }
           },
         });
-        observer.add(() => {
-          if (!observer.closed) {
-            return client.close();
-          }
-        });
+        observer.add(() => client.close());
       });
       upStream();
     }).pipe(share());
   }
 }
-
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var tsProtoGlobalThis: any = (() => {
-  if (typeof globalThis !== "undefined") {
-    return globalThis;
-  }
-  if (typeof self !== "undefined") {
-    return self;
-  }
-  if (typeof window !== "undefined") {
-    return window;
-  }
-  if (typeof global !== "undefined") {
-    return global;
-  }
-  throw "Unable to locate global object";
-})();
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
@@ -340,7 +294,7 @@ function isSet(value: any): boolean {
   return value !== null && value !== undefined;
 }
 
-export class GrpcWebError extends tsProtoGlobalThis.Error {
+export class GrpcWebError extends Error {
   constructor(message: string, public code: grpc.Code, public metadata: grpc.Metadata) {
     super(message);
   }
