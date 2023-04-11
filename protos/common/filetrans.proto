@@ -134,10 +134,16 @@ message FileTaskQueueResp {
   repeated Task tasks = 3;
 }
 
+enum Order {
+  ASC = 0;
+  DESC = 1;
+}
 message TaskQueueQueryReq {
   TaskQueueID id = 1;
   repeated TaskStatus status = 2;
+  optional Order order = 3;
 }
+
 message TaskQueueStatisticsReq {
   repeated TaskQueueID id = 1;
 }
