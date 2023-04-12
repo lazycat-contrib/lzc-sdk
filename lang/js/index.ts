@@ -71,6 +71,7 @@ export class lzcAPIGateway {
 
   private bo: BrowserOnlyProxy
   private _currentDevice: EndDeviceProxy
+  private deviceApiTokenDeadline: number
   public host: string
   public pd: PeripheralDeviceService
 
@@ -107,7 +108,9 @@ export class lzcAPIGateway {
 
   public authToken: string
   public get currentDevice(): Promise<EndDeviceProxy> {
-    if (this._currentDevice) return new Promise(res => res(this._currentDevice))
+    if (this._currentDevice && Date.now() > this.deviceApiTokenDeadline) {
+      return new Promise(res => res(this._currentDevice))
+    }
 
     async function currentDeviceApiHost(cc: lzcAPIGateway): Promise<string> {
       let session = await cc.session
@@ -125,7 +128,11 @@ export class lzcAPIGateway {
         throw new Error(`${resp.status}: ${resp.statusText}`)
       }
       const respJson = await resp.json()
-      const token = respJson["Token"]
+      const token: string = respJson["Token"]
+      const deadline: string = respJson["Deadline"]
+
+      this.deviceApiTokenDeadline = Date.parse(deadline)
+
       if (token === undefined) {
         throw new Error(`Token not set: ${respJson}`)
       }
