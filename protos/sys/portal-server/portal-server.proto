@@ -41,8 +41,6 @@ service HPortalSys {
   // 释放虚拟IP
   rpc FreeVirtualExternalIP(FreeVEIPRequest)  returns (FreeVEIPReply) {}
 
-  rpc PairDevices(PairDevicesRequest) returns (stream google.protobuf.Empty) {}
-
   //  查询所有UID
   rpc ListUsers(google.protobuf.Empty) returns (ListUsersReply) {}
 
@@ -124,11 +122,6 @@ message UserInvitation {
 
 message ListUsersReply {
   repeated string uids = 1;
-}
-
-message PairDevicesRequest {
-  string src_id = 1;
-  repeated string other_ids = 2;
 }
 
 message AllocVEIPRequest {

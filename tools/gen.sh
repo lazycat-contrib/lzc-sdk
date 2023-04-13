@@ -53,8 +53,6 @@ PROTOC_ARGS+=(
 	./sys/*/*.proto
 	./sys/*.proto
 	./localdevice/*.proto
-	./ssdp/*.proto
-	./lanforward/*.proto
 	./dlna/*.proto
 	./common/*.proto
 )

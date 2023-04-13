@@ -46,7 +46,6 @@ type HPortalSysClient interface {
 	AllocVirtualExternalIP(ctx context.Context, in *AllocVEIPRequest, opts ...grpc.CallOption) (*AllocVEIPReply, error)
 	// 释放虚拟IP
 	FreeVirtualExternalIP(ctx context.Context, in *FreeVEIPRequest, opts ...grpc.CallOption) (*FreeVEIPReply, error)
-	PairDevices(ctx context.Context, in *PairDevicesRequest, opts ...grpc.CallOption) (HPortalSys_PairDevicesClient, error)
 	//  查询所有UID
 	ListUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListUsersReply, error)
 	//  根据用户uid查询用户信息
@@ -158,38 +157,6 @@ func (c *hPortalSysClient) FreeVirtualExternalIP(ctx context.Context, in *FreeVE
 		return nil, err
 	}
 	return out, nil
-}
-
-func (c *hPortalSysClient) PairDevices(ctx context.Context, in *PairDevicesRequest, opts ...grpc.CallOption) (HPortalSys_PairDevicesClient, error) {
-	stream, err := c.cc.NewStream(ctx, &HPortalSys_ServiceDesc.Streams[0], "/cloud.lazycat.apis.sys.HPortalSys/PairDevices", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &hPortalSysPairDevicesClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type HPortalSys_PairDevicesClient interface {
-	Recv() (*emptypb.Empty, error)
-	grpc.ClientStream
-}
-
-type hPortalSysPairDevicesClient struct {
-	grpc.ClientStream
-}
-
-func (x *hPortalSysPairDevicesClient) Recv() (*emptypb.Empty, error) {
-	m := new(emptypb.Empty)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 func (c *hPortalSysClient) ListUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListUsersReply, error) {
@@ -327,7 +294,6 @@ type HPortalSysServer interface {
 	AllocVirtualExternalIP(context.Context, *AllocVEIPRequest) (*AllocVEIPReply, error)
 	// 释放虚拟IP
 	FreeVirtualExternalIP(context.Context, *FreeVEIPRequest) (*FreeVEIPReply, error)
-	PairDevices(*PairDevicesRequest, HPortalSys_PairDevicesServer) error
 	//  查询所有UID
 	ListUsers(context.Context, *emptypb.Empty) (*ListUsersReply, error)
 	//  根据用户uid查询用户信息
@@ -383,9 +349,6 @@ func (UnimplementedHPortalSysServer) AllocVirtualExternalIP(context.Context, *Al
 }
 func (UnimplementedHPortalSysServer) FreeVirtualExternalIP(context.Context, *FreeVEIPRequest) (*FreeVEIPReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FreeVirtualExternalIP not implemented")
-}
-func (UnimplementedHPortalSysServer) PairDevices(*PairDevicesRequest, HPortalSys_PairDevicesServer) error {
-	return status.Errorf(codes.Unimplemented, "method PairDevices not implemented")
 }
 func (UnimplementedHPortalSysServer) ListUsers(context.Context, *emptypb.Empty) (*ListUsersReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUsers not implemented")
@@ -596,27 +559,6 @@ func _HPortalSys_FreeVirtualExternalIP_Handler(srv interface{}, ctx context.Cont
 		return srv.(HPortalSysServer).FreeVirtualExternalIP(ctx, req.(*FreeVEIPRequest))
 	}
 	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_PairDevices_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(PairDevicesRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(HPortalSysServer).PairDevices(m, &hPortalSysPairDevicesServer{stream})
-}
-
-type HPortalSys_PairDevicesServer interface {
-	Send(*emptypb.Empty) error
-	grpc.ServerStream
-}
-
-type hPortalSysPairDevicesServer struct {
-	grpc.ServerStream
-}
-
-func (x *hPortalSysPairDevicesServer) Send(m *emptypb.Empty) error {
-	return x.ServerStream.SendMsg(m)
 }
 
 func _HPortalSys_ListUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -927,12 +869,6 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HPortalSys_TrustUserDevice_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "PairDevices",
-			Handler:       _HPortalSys_PairDevices_Handler,
-			ServerStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "sys/portal-server/portal-server.proto",
 }
