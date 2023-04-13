@@ -43,7 +43,7 @@ export class lzcAPIGateway {
     this.users = new UserManagerClientImpl(rpc)
 
     this.bo = new BrowserOnlyProxyClientImpl(rpc)
-    this.session = this.bo.QuerySessionInfo({})
+    this._session = this.bo.QuerySessionInfo({})
     this.appinfo = this.bo.QueryAppInfo({})
 
     this.nm = new NMClientImpl(rpc)
@@ -72,6 +72,7 @@ export class lzcAPIGateway {
   private bo: BrowserOnlyProxy
   private _currentDevice: EndDeviceProxy
   private deviceApiTokenDeadline: number
+  private _session: Promise<SessionInfo>
   public host: string
   public pd: PeripheralDeviceService
 
@@ -80,8 +81,6 @@ export class lzcAPIGateway {
   public users: UserManager
   public box: BoxService
   public ingress: IngressService
-
-  public session: Promise<SessionInfo>
 
   public osUpgrader: OSUpgradeService
   public osSnapshot: OSSnapshotService
@@ -107,6 +106,12 @@ export class lzcAPIGateway {
   }
 
   public authToken: string
+  public get session(): Promise<SessionInfo> {
+    return new Promise<SessionInfo>(async res => {
+      this._session = this.bo.QuerySessionInfo({})
+      res(this._session)
+    })
+  }
   public get currentDevice(): Promise<EndDeviceProxy> {
     if (this._currentDevice && Date.now() > this.deviceApiTokenDeadline) {
       return new Promise(res => res(this._currentDevice))
