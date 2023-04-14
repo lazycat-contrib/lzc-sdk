@@ -124,8 +124,8 @@ export class lzcAPIGateway {
       let endDevice = endDevices.devices.find(d => d.uniqueDeivceId == session.deviceId)
       return new URL(endDevice.deviceApiUrl).toString().replace(/\/+$/, "")
     }
-    async function requestAuthToken(host: string, deviceApiUrl: string): Promise<string> {
-      const resp = await fetch(host + "/_lzc/deviceapi_auth_token", {
+    async function requestAuthToken(cc: lzcAPIGateway, deviceApiUrl: string): Promise<string> {
+      const resp = await fetch(cc.host + "/_lzc/deviceapi_auth_token", {
         method: "POST",
         body: deviceApiUrl,
       })
@@ -136,7 +136,7 @@ export class lzcAPIGateway {
       const token: string = respJson["Token"]
       const deadline: string = respJson["Deadline"]
 
-      this.deviceApiTokenDeadline = Date.parse(deadline)
+      cc.deviceApiTokenDeadline = Date.parse(deadline)
 
       if (token === undefined) {
         throw new Error(`Token not set: ${respJson}`)
@@ -145,7 +145,7 @@ export class lzcAPIGateway {
     }
     return new Promise(async res => {
       const deviceApiUrl = await currentDeviceApiHost(this)
-      const authToken = await requestAuthToken(this.host, deviceApiUrl)
+      const authToken = await requestAuthToken(this, deviceApiUrl)
       // save authToken for other uses(eg. webdav auth)
       this.authToken = authToken
       // build grpc metadata for credentials
