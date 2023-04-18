@@ -346,9 +346,9 @@ message TrustUserDeviceRequest{
 
 message UpdateBoxStatusRequest{
   // 盒子是否启动完毕
-  bool start_up = 1;
+  optional bool start_up = 1;
   // 盒子数据盘状态是否OK
-  bool data_partition = 2;
+  optional bool data_partition = 2;
 }
 message UpdateBoxStatusResponse{
 }
