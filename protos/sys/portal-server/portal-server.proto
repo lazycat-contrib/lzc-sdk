@@ -70,6 +70,8 @@ service HPortalSys {
   rpc RemoteSocks(RemoteSocksRequest) returns (RemoteSocksReply) {}
 
   rpc TrustUserDevice(TrustUserDeviceRequest) returns (google.protobuf.Empty) {}
+
+  rpc UpdateBoxStatus(UpdateBoxStatusRequest) returns (UpdateBoxStatusResponse) {}
 }
 
 message RemoteSocksRequest {
@@ -340,4 +342,13 @@ message CheckPasswordRequest{
 message TrustUserDeviceRequest{
   string udid = 1;
   string user = 2;
+}
+
+message UpdateBoxStatusRequest{
+  // 盒子是否启动完毕
+  bool start_up = 1;
+  // 盒子数据盘状态是否OK
+  bool data_partition = 2;
+}
+message UpdateBoxStatusResponse{
 }

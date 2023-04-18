@@ -68,6 +68,7 @@ type HPortalSysClient interface {
 	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error)
 	TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UpdateBoxStatus(ctx context.Context, in *UpdateBoxStatusRequest, opts ...grpc.CallOption) (*UpdateBoxStatusResponse, error)
 }
 
 type hPortalSysClient struct {
@@ -267,6 +268,15 @@ func (c *hPortalSysClient) TrustUserDevice(ctx context.Context, in *TrustUserDev
 	return out, nil
 }
 
+func (c *hPortalSysClient) UpdateBoxStatus(ctx context.Context, in *UpdateBoxStatusRequest, opts ...grpc.CallOption) (*UpdateBoxStatusResponse, error) {
+	out := new(UpdateBoxStatusResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/UpdateBoxStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HPortalSysServer is the server API for HPortalSys service.
 // All implementations must embed UnimplementedHPortalSysServer
 // for forward compatibility
@@ -316,6 +326,7 @@ type HPortalSysServer interface {
 	CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error)
 	RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error)
 	TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error)
+	UpdateBoxStatus(context.Context, *UpdateBoxStatusRequest) (*UpdateBoxStatusResponse, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -385,6 +396,9 @@ func (UnimplementedHPortalSysServer) RemoteSocks(context.Context, *RemoteSocksRe
 }
 func (UnimplementedHPortalSysServer) TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TrustUserDevice not implemented")
+}
+func (UnimplementedHPortalSysServer) UpdateBoxStatus(context.Context, *UpdateBoxStatusRequest) (*UpdateBoxStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBoxStatus not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -777,6 +791,24 @@ func _HPortalSys_TrustUserDevice_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_UpdateBoxStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBoxStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).UpdateBoxStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/UpdateBoxStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).UpdateBoxStatus(ctx, req.(*UpdateBoxStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HPortalSys_ServiceDesc is the grpc.ServiceDesc for HPortalSys service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -867,6 +899,10 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TrustUserDevice",
 			Handler:    _HPortalSys_TrustUserDevice_Handler,
+		},
+		{
+			MethodName: "UpdateBoxStatus",
+			Handler:    _HPortalSys_UpdateBoxStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
