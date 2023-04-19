@@ -394,7 +394,7 @@ type AppInfo struct {
 	Version     *string   `protobuf:"bytes,3,opt,name=version,proto3,oneof" json:"version,omitempty"`
 	Title       *string   `protobuf:"bytes,4,opt,name=title,proto3,oneof" json:"title,omitempty"`
 	Description *string   `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	// 应用图标所在的 url，如 https://apis.$boxdomain/icons/$appid.png
+	// 应用图标所在的 url，如 https://$boxdomain/sys/icons/$appid.png
 	// 若应用无图标，则为空
 	Icon *string `protobuf:"bytes,6,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
 	// 应用所在的域名，如 app.box.heiyu.space
