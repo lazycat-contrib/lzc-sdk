@@ -13,6 +13,8 @@ service BtrfsUtil {
     rpc SubvolInfo(BtrfsSubvolInfoRequest) returns (BtrfsSubvolInfoResponse) {}
 
     rpc SubvolFindNew(BtrfsSubvolFindNewRequest) returns (BtrfsSubvolFindNewResponse) {}
+
+    rpc Rename(BtrfsRenameRequest) returns (google.protobuf.Empty) {}
 }
 
 message BtrfsSubvolCreateRequest {
@@ -37,4 +39,13 @@ message BtrfsSubvolFindNewRequest {
 message BtrfsSubvolFindNewResponse {
     repeated string files = 1;
     uint64 gen = 2;
+}
+
+message BtrfsRenameRequest {
+    string src_path = 1;
+    // src and dest path must reside in same subvolume
+    // otherwise rename/reflink will fail
+    string dest_path = 2;
+    // reflink instead of rename
+    bool reflink = 3;
 }

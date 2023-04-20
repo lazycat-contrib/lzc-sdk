@@ -26,6 +26,7 @@ type BtrfsUtilClient interface {
 	SubvolCreate(ctx context.Context, in *BtrfsSubvolCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SubvolInfo(ctx context.Context, in *BtrfsSubvolInfoRequest, opts ...grpc.CallOption) (*BtrfsSubvolInfoResponse, error)
 	SubvolFindNew(ctx context.Context, in *BtrfsSubvolFindNewRequest, opts ...grpc.CallOption) (*BtrfsSubvolFindNewResponse, error)
+	Rename(ctx context.Context, in *BtrfsRenameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type btrfsUtilClient struct {
@@ -63,6 +64,15 @@ func (c *btrfsUtilClient) SubvolFindNew(ctx context.Context, in *BtrfsSubvolFind
 	return out, nil
 }
 
+func (c *btrfsUtilClient) Rename(ctx context.Context, in *BtrfsRenameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.BtrfsUtil/Rename", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BtrfsUtilServer is the server API for BtrfsUtil service.
 // All implementations must embed UnimplementedBtrfsUtilServer
 // for forward compatibility
@@ -70,6 +80,7 @@ type BtrfsUtilServer interface {
 	SubvolCreate(context.Context, *BtrfsSubvolCreateRequest) (*emptypb.Empty, error)
 	SubvolInfo(context.Context, *BtrfsSubvolInfoRequest) (*BtrfsSubvolInfoResponse, error)
 	SubvolFindNew(context.Context, *BtrfsSubvolFindNewRequest) (*BtrfsSubvolFindNewResponse, error)
+	Rename(context.Context, *BtrfsRenameRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedBtrfsUtilServer()
 }
 
@@ -85,6 +96,9 @@ func (UnimplementedBtrfsUtilServer) SubvolInfo(context.Context, *BtrfsSubvolInfo
 }
 func (UnimplementedBtrfsUtilServer) SubvolFindNew(context.Context, *BtrfsSubvolFindNewRequest) (*BtrfsSubvolFindNewResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubvolFindNew not implemented")
+}
+func (UnimplementedBtrfsUtilServer) Rename(context.Context, *BtrfsRenameRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Rename not implemented")
 }
 func (UnimplementedBtrfsUtilServer) mustEmbedUnimplementedBtrfsUtilServer() {}
 
@@ -153,6 +167,24 @@ func _BtrfsUtil_SubvolFindNew_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BtrfsUtil_Rename_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BtrfsRenameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BtrfsUtilServer).Rename(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.BtrfsUtil/Rename",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BtrfsUtilServer).Rename(ctx, req.(*BtrfsRenameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BtrfsUtil_ServiceDesc is the grpc.ServiceDesc for BtrfsUtil service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -171,6 +203,10 @@ var BtrfsUtil_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SubvolFindNew",
 			Handler:    _BtrfsUtil_SubvolFindNew_Handler,
+		},
+		{
+			MethodName: "Rename",
+			Handler:    _BtrfsUtil_Rename_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
