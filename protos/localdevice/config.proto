@@ -5,16 +5,16 @@ package cloud.lazycat.apis.localdevice;
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
 
 service UserConfig {
-    rpc GetUserConfig(GetUserConfigRequest) returns (GetUserConfigResponse) {}
+  rpc GetUserConfig(GetUserConfigRequest) returns (GetUserConfigResponse) {}
 }
 
 message GetUserConfigRequest {
-    string boxId = 1;
-    string userId = 2;
-    string appId = 4;
-    string configKey = 3;
+  string boxId = 1;
+  string userId = 2;
+  string appId = 4;
+  string configKey = 3;
 }
 
 message GetUserConfigResponse {
-    string configValue = 1;
+  string configValue = 1;
 }
