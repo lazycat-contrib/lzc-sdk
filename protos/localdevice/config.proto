@@ -6,6 +6,18 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
 
 service UserConfig {
   rpc GetUserConfig(GetUserConfigRequest) returns (GetUserConfigResponse) {}
+  rpc SetUserConfig(SetUserConfigRequest) returns (SetUserConfigResponse) {}
+}
+
+message SetUserConfigRequest {
+  string boxId = 1;
+  string userId = 2;
+  string appId = 5;
+  string configKey = 3;
+  string configValue = 4;
+}
+
+message SetUserConfigResponse {
 }
 
 message GetUserConfigRequest {
