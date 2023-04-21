@@ -43,6 +43,14 @@ import { AppCommon } from '@lazycatcloud/sdk/dist/extentions';
 AppCommon.LaunchApp("https://pbkbin.zmide.com", "com.zmide.bin");
 ```
 
+## stream类型调用
+grpc有client stream、server stream两种方向的流式接口，client stream依赖websocket。
+
+server stream通过封装成[Observable](https://rxjs.dev/guide/observable)提供给调用者。
+如果要主动关闭server stream需要调用`Observable.subscribe(recv)`返回结果的`unsubscribe()`函数。
+
+一般浏览器对同一域名下的长连接(server stream就是基于此)的并发数量是有限制的，如果不及时关闭，会导致后续所有正常请求
+也无法发送出去。
 
 ## 更多文档
 
