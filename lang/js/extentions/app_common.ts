@@ -2,6 +2,19 @@ import LzcAppSdk, { LzcAppPlatformType, LzcAppSdkManage, native } from './base';
 
 class AppCommon extends LzcAppSdkManage {
 
+    /**
+     * @description: 打开链接工具函数为了兼容 Safari 浏览器默认打开阻止弹出式窗口问题
+     * @param {string} url
+     * @return {*}
+     */
+    private static _linkOpen(url: string): void {
+        const item = document.createElement('a');
+        item.href = url;
+        item.target = '_blank';
+        item.click();
+        item.remove();
+    }
+
     @native(LzcAppPlatformType.IOS)
     /**
      * @description: IOS 测试函数
@@ -32,7 +45,8 @@ class AppCommon extends LzcAppSdkManage {
     public static async LaunchApp(url: string, appid: string): Promise<void> {
         // 判断是否在浏览器中
         if (!LzcAppSdk.isInApplication()) {
-            window.open(url, '_blank')
+            // window.open(url, '_blank')
+            AppCommon._linkOpen(url)
             return
         }
 
