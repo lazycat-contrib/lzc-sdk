@@ -44,8 +44,6 @@ service UserManager {
     option (cloud.lazycat.apis.common.scontext).require_user_class = ADMIN_USER;
   }
 
-  rpc GenUserInvitation(cloud.lazycat.apis.sys.GenUserInvitationRequest) returns (cloud.lazycat.apis.sys.UserInvitation) {}
-
   // 检测用户密码有效性（是否能够登录）
   rpc CheckPassword(cloud.lazycat.apis.sys.CheckPasswordRequest) returns(google.protobuf.Empty){
     option(cloud.lazycat.apis.common.scontext).require_user_class = TARGET_USER;

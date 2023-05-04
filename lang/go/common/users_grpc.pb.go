@@ -40,7 +40,6 @@ type UserManagerClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 强制重置用户密码（管理员角色允许调用)
 	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GenUserInvitation(ctx context.Context, in *portal_server.GenUserInvitationRequest, opts ...grpc.CallOption) (*portal_server.UserInvitation, error)
 	// 检测用户密码有效性（是否能够登录）
 	CheckPassword(ctx context.Context, in *portal_server.CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -125,15 +124,6 @@ func (c *userManagerClient) ForceResetPassword(ctx context.Context, in *ForceRes
 	return out, nil
 }
 
-func (c *userManagerClient) GenUserInvitation(ctx context.Context, in *portal_server.GenUserInvitationRequest, opts ...grpc.CallOption) (*portal_server.UserInvitation, error) {
-	out := new(portal_server.UserInvitation)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.UserManager/GenUserInvitation", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *userManagerClient) CheckPassword(ctx context.Context, in *portal_server.CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.UserManager/CheckPassword", in, out, opts...)
@@ -163,7 +153,6 @@ type UserManagerServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*emptypb.Empty, error)
 	// 强制重置用户密码（管理员角色允许调用)
 	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
-	GenUserInvitation(context.Context, *portal_server.GenUserInvitationRequest) (*portal_server.UserInvitation, error)
 	// 检测用户密码有效性（是否能够登录）
 	CheckPassword(context.Context, *portal_server.CheckPasswordRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUserManagerServer()
@@ -196,9 +185,6 @@ func (UnimplementedUserManagerServer) CreateUser(context.Context, *CreateUserReq
 }
 func (UnimplementedUserManagerServer) ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ForceResetPassword not implemented")
-}
-func (UnimplementedUserManagerServer) GenUserInvitation(context.Context, *portal_server.GenUserInvitationRequest) (*portal_server.UserInvitation, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenUserInvitation not implemented")
 }
 func (UnimplementedUserManagerServer) CheckPassword(context.Context, *portal_server.CheckPasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
@@ -360,24 +346,6 @@ func _UserManager_ForceResetPassword_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserManager_GenUserInvitation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(portal_server.GenUserInvitationRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserManagerServer).GenUserInvitation(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.common.UserManager/GenUserInvitation",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserManagerServer).GenUserInvitation(ctx, req.(*portal_server.GenUserInvitationRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _UserManager_CheckPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(portal_server.CheckPasswordRequest)
 	if err := dec(in); err != nil {
@@ -434,10 +402,6 @@ var UserManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ForceResetPassword",
 			Handler:    _UserManager_ForceResetPassword_Handler,
-		},
-		{
-			MethodName: "GenUserInvitation",
-			Handler:    _UserManager_GenUserInvitation_Handler,
 		},
 		{
 			MethodName: "CheckPassword",

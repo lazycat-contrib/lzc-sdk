@@ -14,7 +14,6 @@ service HPortalSys {
   // 根据UID返回所有的设备列表
   rpc ListDevices(ListDeviceRequest) returns (ListDeviceReply) {}
 
-
   rpc QueryDeviceByID(DeviceID) returns (Device) {}
 
   rpc QueryBoxInfo(google.protobuf.Empty) returns (BoxInfo) {}
@@ -46,26 +45,27 @@ service HPortalSys {
 
   //  根据用户uid查询用户信息
   rpc QueryRole(UserID) returns (QueryRoleReply) {}
+
   //  修改指定uid的用户角色
   rpc ChangeRole(ChangeRoleReqeust) returns(google.protobuf.Empty){}
+
   //  通过验证旧密码修改新的密码
   rpc ResetPassword(ResetPasswordRequest) returns(google.protobuf.Empty){}
+
   //  删除用户信息
   rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty){}
+
   //  创建用户信息
   rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty){}
+
   //  强制重置用户密码
   rpc ForceResetPassword(ForceResetPasswordRequest) returns (google.protobuf.Empty){}
 
-  // 生成用户注册token,以便上层实现各类用户注册机制
-  rpc GenUserInvitation(GenUserInvitationRequest) returns (UserInvitation) {}
-
-  // 注销当前用户指定设备，同时将连接断开
+  // 强制注销当前用户指定设备
   rpc Logout(LogoutRequest)returns(google.protobuf.Empty){}
 
   //校验用户密码是否正确
   rpc CheckPassword(CheckPasswordRequest) returns (google.protobuf.Empty){}
-
 
   rpc RemoteSocks(RemoteSocksRequest) returns (RemoteSocksReply) {}
 
@@ -92,34 +92,6 @@ message RemoteSocksRequest {
 
 message RemoteSocksReply {
   string server_url = 1; //返回的socks5服务器地址
-}
-
-
-message GenUserInvitationRequest {
-  // 仅限注册此uid
-  optional string limit_uid = 1;
-
-  // 在此时间前有效
-  optional google.protobuf.Timestamp not_after = 2;
-
-  // 此邀请最多使用多少次
-  optional int32 limit_usage_count = 3;
-
-  // 自动设置role为此字段，默认为NORMAL
-  optional Role limit_role = 4;
-
-  // 是否允许新用户安装应用
-  optional bool allow_install_app = 5;
-
-  // 是否启用应用白名单
-  optional bool enable_allow_list = 7;
-
-  // 对新用户可见的应用列表(appid)
-  repeated string app_allow_list = 6;
-}
-
-message UserInvitation {
-  string token = 1;
 }
 
 message ListUsersReply {
@@ -235,7 +207,6 @@ message BoxInfo {
   // 证书管理器已经就续
   bool cert_ready = 6;
 
-
   // PEM格式的盒子证书, 作为盒子系统其他app cert的CA证书。
   string box_cert = 7;
 }
@@ -323,14 +294,17 @@ message ForceResetPasswordRequest{
 
 message LogoutRequest{
   string uid = 1;
+
   // 设备唯一id
-  string udid = 2;
+  string udid = 2; //若为空，表示uid下的所有设备
+
   // 注销原因
   Reason reason = 3;
 
   enum Reason {
-    LogoutByDeleting = 0;
-    LogoutByUser = 1;
+    LogoutAndDeleteEndDevice = 0; //从受信任列表中，删除udid对应的设备
+
+    LogoutByUser = 1; //仅强制注销udid对应的设备
   }
 }
 

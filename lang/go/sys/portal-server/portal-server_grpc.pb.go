@@ -60,9 +60,7 @@ type HPortalSysClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	//  强制重置用户密码
 	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 生成用户注册token,以便上层实现各类用户注册机制
-	GenUserInvitation(ctx context.Context, in *GenUserInvitationRequest, opts ...grpc.CallOption) (*UserInvitation, error)
-	// 注销当前用户指定设备，同时将连接断开
+	// 强制注销当前用户指定设备
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	//校验用户密码是否正确
 	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -223,15 +221,6 @@ func (c *hPortalSysClient) ForceResetPassword(ctx context.Context, in *ForceRese
 	return out, nil
 }
 
-func (c *hPortalSysClient) GenUserInvitation(ctx context.Context, in *GenUserInvitationRequest, opts ...grpc.CallOption) (*UserInvitation, error) {
-	out := new(UserInvitation)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/GenUserInvitation", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *hPortalSysClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/Logout", in, out, opts...)
@@ -318,9 +307,7 @@ type HPortalSysServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*emptypb.Empty, error)
 	//  强制重置用户密码
 	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
-	// 生成用户注册token,以便上层实现各类用户注册机制
-	GenUserInvitation(context.Context, *GenUserInvitationRequest) (*UserInvitation, error)
-	// 注销当前用户指定设备，同时将连接断开
+	// 强制注销当前用户指定设备
 	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
 	//校验用户密码是否正确
 	CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error)
@@ -381,9 +368,6 @@ func (UnimplementedHPortalSysServer) CreateUser(context.Context, *CreateUserRequ
 }
 func (UnimplementedHPortalSysServer) ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ForceResetPassword not implemented")
-}
-func (UnimplementedHPortalSysServer) GenUserInvitation(context.Context, *GenUserInvitationRequest) (*UserInvitation, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenUserInvitation not implemented")
 }
 func (UnimplementedHPortalSysServer) Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
@@ -701,24 +685,6 @@ func _HPortalSys_ForceResetPassword_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_GenUserInvitation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenUserInvitationRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).GenUserInvitation(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/GenUserInvitation",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).GenUserInvitation(ctx, req.(*GenUserInvitationRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _HPortalSys_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LogoutRequest)
 	if err := dec(in); err != nil {
@@ -879,10 +845,6 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ForceResetPassword",
 			Handler:    _HPortalSys_ForceResetPassword_Handler,
-		},
-		{
-			MethodName: "GenUserInvitation",
-			Handler:    _HPortalSys_GenUserInvitation_Handler,
 		},
 		{
 			MethodName: "Logout",
