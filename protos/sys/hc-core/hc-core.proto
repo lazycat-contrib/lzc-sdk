@@ -16,6 +16,7 @@ service CoreSystem {
   rpc Apply(RawData) returns (google.protobuf.Empty) {}
 
   rpc Apply2(cloud.lazycat.apis.sys.PkgURL) returns (google.protobuf.Empty) {}
+  rpc Apply3(cloud.lazycat.apis.sys.PkgURL) returns (google.protobuf.Empty) {}
 
   // Remove 移除一个 app
   rpc Remove(DeleteRequest) returns (google.protobuf.Empty) {}
