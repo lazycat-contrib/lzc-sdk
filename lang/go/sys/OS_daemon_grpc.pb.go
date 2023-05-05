@@ -25,6 +25,7 @@ const _ = grpc.SupportPackageIsVersion7
 type OsDaemonServiceClient interface {
 	GetOption(ctx context.Context, in *OptionKey, opts ...grpc.CallOption) (*OptionValue, error)
 	SetOption(ctx context.Context, in *OptionKeyValue, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UploadLog(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UploadLogId, error)
 }
 
 type osDaemonServiceClient struct {
@@ -53,12 +54,22 @@ func (c *osDaemonServiceClient) SetOption(ctx context.Context, in *OptionKeyValu
 	return out, nil
 }
 
+func (c *osDaemonServiceClient) UploadLog(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UploadLogId, error) {
+	out := new(UploadLogId)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OsDaemonService/UploadLog", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OsDaemonServiceServer is the server API for OsDaemonService service.
 // All implementations must embed UnimplementedOsDaemonServiceServer
 // for forward compatibility
 type OsDaemonServiceServer interface {
 	GetOption(context.Context, *OptionKey) (*OptionValue, error)
 	SetOption(context.Context, *OptionKeyValue) (*emptypb.Empty, error)
+	UploadLog(context.Context, *emptypb.Empty) (*UploadLogId, error)
 	mustEmbedUnimplementedOsDaemonServiceServer()
 }
 
@@ -71,6 +82,9 @@ func (UnimplementedOsDaemonServiceServer) GetOption(context.Context, *OptionKey)
 }
 func (UnimplementedOsDaemonServiceServer) SetOption(context.Context, *OptionKeyValue) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetOption not implemented")
+}
+func (UnimplementedOsDaemonServiceServer) UploadLog(context.Context, *emptypb.Empty) (*UploadLogId, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadLog not implemented")
 }
 func (UnimplementedOsDaemonServiceServer) mustEmbedUnimplementedOsDaemonServiceServer() {}
 
@@ -121,6 +135,24 @@ func _OsDaemonService_SetOption_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OsDaemonService_UploadLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OsDaemonServiceServer).UploadLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OsDaemonService/UploadLog",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OsDaemonServiceServer).UploadLog(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OsDaemonService_ServiceDesc is the grpc.ServiceDesc for OsDaemonService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -135,6 +167,10 @@ var OsDaemonService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetOption",
 			Handler:    _OsDaemonService_SetOption_Handler,
+		},
+		{
+			MethodName: "UploadLog",
+			Handler:    _OsDaemonService_UploadLog_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -9,6 +9,8 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 service OsDaemonService {
   rpc GetOption(OptionKey) returns (OptionValue) {}
   rpc SetOption(OptionKeyValue) returns (google.protobuf.Empty) {}
+
+  rpc UploadLog(google.protobuf.Empty) returns (UploadLogId) {}
 }
 
 message OptionKey {
@@ -22,4 +24,8 @@ message OptionValue {
 message OptionKeyValue {
   string key = 1;
   string value = 2;
+}
+
+message UploadLogId {
+  int64 id = 1;
 }
