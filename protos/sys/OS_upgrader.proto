@@ -12,6 +12,9 @@ service OSUpgradeService {
   // 获取远程系统的版本状态
   rpc Remote(google.protobuf.Empty) returns (RemoteSystemVersionInfo) {}
 
+  // 获取远程系统的版本的信息
+  rpc GetRemote(SystemVersion) returns (SystemVersionInfo) {}
+
   // 选择远程某个版本，获取到大小准备下载
   rpc Select(SystemVersion) returns (google.protobuf.Empty) {}
 
@@ -47,10 +50,18 @@ message LocalSystemVersionInfo {
   repeated string versions = 3;
 }
 
+message SystemVersionInfo {
+  // 系统版本
+  string version = 1;
+
+  // ChangeLog
+  string changelog = 2;
+}
+
 message RemoteSystemVersionInfo {
   // 最新版本
   //     需要对比该字段与当前运行的版本是否一致来确定当前系统是否是最新的
-  string latestVersion = 1;
+  SystemVersionInfo latestVersion = 1;
 
   // 线上可下载的所有版本列表，按顺序最新版本在前（由于产品设计上只下载最新版本，该字段仅暂时保留）
   repeated string versions = 3;

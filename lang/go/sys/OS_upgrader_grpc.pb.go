@@ -27,6 +27,8 @@ type OSUpgradeServiceClient interface {
 	Local(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LocalSystemVersionInfo, error)
 	// 获取远程系统的版本状态
 	Remote(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RemoteSystemVersionInfo, error)
+	// 获取远程系统的版本的信息
+	GetRemote(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*SystemVersionInfo, error)
 	// 选择远程某个版本，获取到大小准备下载
 	Select(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 开始下载
@@ -65,6 +67,15 @@ func (c *oSUpgradeServiceClient) Local(ctx context.Context, in *emptypb.Empty, o
 func (c *oSUpgradeServiceClient) Remote(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RemoteSystemVersionInfo, error) {
 	out := new(RemoteSystemVersionInfo)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/Remote", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oSUpgradeServiceClient) GetRemote(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*SystemVersionInfo, error) {
+	out := new(SystemVersionInfo)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.OSUpgradeService/GetRemote", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -151,6 +162,8 @@ type OSUpgradeServiceServer interface {
 	Local(context.Context, *emptypb.Empty) (*LocalSystemVersionInfo, error)
 	// 获取远程系统的版本状态
 	Remote(context.Context, *emptypb.Empty) (*RemoteSystemVersionInfo, error)
+	// 获取远程系统的版本的信息
+	GetRemote(context.Context, *SystemVersion) (*SystemVersionInfo, error)
 	// 选择远程某个版本，获取到大小准备下载
 	Select(context.Context, *SystemVersion) (*emptypb.Empty, error)
 	// 开始下载
@@ -179,6 +192,9 @@ func (UnimplementedOSUpgradeServiceServer) Local(context.Context, *emptypb.Empty
 }
 func (UnimplementedOSUpgradeServiceServer) Remote(context.Context, *emptypb.Empty) (*RemoteSystemVersionInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Remote not implemented")
+}
+func (UnimplementedOSUpgradeServiceServer) GetRemote(context.Context, *SystemVersion) (*SystemVersionInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRemote not implemented")
 }
 func (UnimplementedOSUpgradeServiceServer) Select(context.Context, *SystemVersion) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Select not implemented")
@@ -249,6 +265,24 @@ func _OSUpgradeService_Remote_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OSUpgradeServiceServer).Remote(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OSUpgradeService_GetRemote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SystemVersion)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OSUpgradeServiceServer).GetRemote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.OSUpgradeService/GetRemote",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OSUpgradeServiceServer).GetRemote(ctx, req.(*SystemVersion))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -411,6 +445,10 @@ var OSUpgradeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Remote",
 			Handler:    _OSUpgradeService_Remote_Handler,
+		},
+		{
+			MethodName: "GetRemote",
+			Handler:    _OSUpgradeService_GetRemote_Handler,
 		},
 		{
 			MethodName: "Select",
