@@ -3,8 +3,8 @@
  * @Date: 2023-03-06
  * @FilePath: /lzc-sdk/lang/js/docs/extentions/AppCommon.md
 -->
-# 懒猫云应用通用能力开发文档
 
+# 懒猫云应用通用能力开发文档
 
 ## 打开应用能力接口文档
 
@@ -13,18 +13,20 @@
 ### 使用步骤
 
 1. 引入 SDK, 支持使用 CMD 标准模块加载方法加载
+
 ```
 import { AppCommon } from '@lazycatcloud/sdk/dist/extentions';
 ```
 
 2. 调用 `AppCommon.LaunchApp` 函数
+
 ```
 AppCommon.LaunchApp("http://settings.pbkbin.heiyu.space/?path=/users/bin/download/", "pbkbin.heiyu.space");
 ```
 
 ### 调用参数
 
-| 名称 | 必填 | 默认值 | 备注 |
-| --- | --- | --- | --- |
-| url | 是 | | 懒猫云应用 URL，可通过 URL Parameter 方式携带参数
-| appid | 是 | | 懒猫云应用 appid 
+| 名称  | 必填 | 默认值 | 备注                                              |
+| ----- | ---- | ------ | ------------------------------------------------- |
+| url   | 是   |        | 懒猫云应用 URL，可通过 URL Parameter 方式携带参数 |
+| appid | 是   |        | 懒猫云应用 appid                                  |

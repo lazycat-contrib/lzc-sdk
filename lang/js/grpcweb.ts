@@ -1,52 +1,47 @@
-import { of, Observable } from "rxjs";
-import Long from "long";
-import { grpc } from "@improbable-eng/grpc-web";
-import { BrowserHeaders } from "browser-headers";
-import { share } from "rxjs/operators";
+import { of, Observable } from "rxjs"
+import Long from "long"
+import { grpc } from "@improbable-eng/grpc-web"
+import { BrowserHeaders } from "browser-headers"
+import { share } from "rxjs/operators"
 
-interface UnaryMethodDefinitionishR
-  extends grpc.UnaryMethodDefinition<any, any> {
-  requestStream: any;
-  responseStream: any;
+interface UnaryMethodDefinitionishR extends grpc.UnaryMethodDefinition<any, any> {
+  requestStream: any
+  responseStream: any
 }
 
-type UnaryMethodDefinitionish = UnaryMethodDefinitionishR;
+type UnaryMethodDefinitionish = UnaryMethodDefinitionishR
 
 export class GrpcWebImpl {
-  private host: string;
+  private host: string
   private options: {
-    transport?: grpc.TransportFactory;
-    streamingTransport?: grpc.TransportFactory;
-    debug?: boolean;
-    metadata?: grpc.Metadata;
-  };
+    transport?: grpc.TransportFactory
+    streamingTransport?: grpc.TransportFactory
+    debug?: boolean
+    metadata?: grpc.Metadata
+  }
 
   constructor(
     host: string,
     options: {
-      transport?: grpc.TransportFactory;
-      streamingTransport?: grpc.TransportFactory;
-      debug?: boolean;
-      metadata?: grpc.Metadata;
+      transport?: grpc.TransportFactory
+      streamingTransport?: grpc.TransportFactory
+      debug?: boolean
+      metadata?: grpc.Metadata
     }
   ) {
-    this.host = host;
-    this.options = options;
+    this.host = host
+    this.options = options
   }
 
-  unary<T extends UnaryMethodDefinitionish>(
-    methodDesc: T,
-    _request: any,
-    metadata: grpc.Metadata | undefined
-  ): Promise<any> {
-    const request = { ..._request, ...methodDesc.requestType };
+  unary<T extends UnaryMethodDefinitionish>(methodDesc: T, _request: any, metadata: grpc.Metadata | undefined): Promise<any> {
+    const request = { ..._request, ...methodDesc.requestType }
     const maybeCombinedMetadata =
       metadata && this.options.metadata
         ? new BrowserHeaders({
             ...this.options?.metadata.headersMap,
             ...metadata?.headersMap,
           })
-        : metadata || this.options.metadata;
+        : metadata || this.options.metadata
     return new Promise((resolve, reject) => {
       grpc.unary(methodDesc, {
         request,
@@ -56,32 +51,28 @@ export class GrpcWebImpl {
         debug: this.options.debug,
         onEnd: function (response) {
           if (response.status === grpc.Code.OK) {
-            resolve(response.message);
+            resolve(response.message)
           } else {
-            const err = new Error(response.statusMessage) as any;
-            err.code = response.status;
-            err.metadata = response.trailers;
-            reject(err);
+            const err = new Error(response.statusMessage) as any
+            err.code = response.status
+            err.metadata = response.trailers
+            reject(err)
           }
         },
-      });
-    });
+      })
+    })
   }
 
-  invoke<T extends UnaryMethodDefinitionish>(
-    methodDesc: T,
-    _request: any,
-    metadata: grpc.Metadata | undefined
-  ): Observable<any> {
-    const request = { ..._request, ...methodDesc.requestType };
+  invoke<T extends UnaryMethodDefinitionish>(methodDesc: T, _request: any, metadata: grpc.Metadata | undefined): Observable<any> {
+    const request = { ..._request, ...methodDesc.requestType }
     const maybeCombinedMetadata =
       metadata && this.options.metadata
         ? new BrowserHeaders({
             ...this.options?.metadata.headersMap,
             ...metadata?.headersMap,
           })
-        : metadata || this.options.metadata;
-    return new Observable((observer) => {
+        : metadata || this.options.metadata
+    return new Observable(observer => {
       const upStream = () => {
         const client = grpc.invoke(methodDesc, {
           host: this.host,
@@ -89,18 +80,18 @@ export class GrpcWebImpl {
           transport: this.options.streamingTransport || this.options.transport,
           metadata: maybeCombinedMetadata,
           debug: this.options.debug,
-          onMessage: (next) => observer.next(next),
+          onMessage: next => observer.next(next),
           onEnd: (code: grpc.Code, message: string) => {
             if (code === 0) {
-              observer.complete();
+              observer.complete()
             } else {
-              observer.error(new Error(`Error ${code} ${message}`));
+              observer.error(new Error(`Error ${code} ${message}`))
             }
           },
-        });
-        observer.add(() => client.close());
-      };
-      upStream();
-    }).pipe(share());
+        })
+        observer.add(() => client.close())
+      }
+      upStream()
+    }).pipe(share())
   }
 }
