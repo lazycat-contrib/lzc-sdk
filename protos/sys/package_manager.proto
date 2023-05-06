@@ -90,6 +90,8 @@ message InstallRequest {
   string sha256 = 3;
 
   optional string subdomain = 4;
+
+  optional bool no_resume = 5;
 }
 
 message UninstallRequest {
