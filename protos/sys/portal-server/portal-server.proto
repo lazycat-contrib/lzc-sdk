@@ -22,9 +22,6 @@ service HPortalSys {
   // 注意不是所有ACME服务器都支持泛域名。
   rpc GetDomainCert(DomainCertRequest) returns (DomainCertReply) {}
 
-  rpc GetDomainSelfCert(DomainCertRequest) returns (DomainCertReply) {}
-
-
   // 在部署具体app前，调用此接口获取app证书
   // APP证书格式为:
   //   Issuer: O = $BOX.ORIGIN, CN = $BOX.DOMAIN, serialNumber = $BOX.ID
@@ -64,14 +61,23 @@ service HPortalSys {
   // 强制注销当前用户指定设备
   rpc Logout(LogoutRequest)returns(google.protobuf.Empty){}
 
-  //校验用户密码是否正确
-  rpc CheckPassword(CheckPasswordRequest) returns (google.protobuf.Empty){}
+  // 校验用户密码是否正确
+  rpc CheckPassword(CheckPasswordRequest) returns (google.protobuf.Empty) {}
 
+  // 获取remotesocks服务器地址
   rpc RemoteSocks(RemoteSocksRequest) returns (RemoteSocksReply) {}
 
+  // 强制将特定设备加到受信任列表中
   rpc TrustUserDevice(TrustUserDeviceRequest) returns (google.protobuf.Empty) {}
 
-  rpc UpdateBoxStatus(UpdateBoxStatusRequest) returns (UpdateBoxStatusResponse) {}
+  // hserver重启后默认设置BoxSystem为booting状态
+  // 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
+  rpc UpdateBoxSystemStatus(UpdateBoxSystemStatusRequest) returns (UpdateBoxSystemStatusResponse) {}
+
+
+  // 准备废弃的接口
+  rpc GetDomainSelfCert(DomainCertRequest) returns (DomainCertReply) {option deprecated=true;}
+  rpc UpdateBoxStatus(UpdateBoxStatusRequest) returns (UpdateBoxStatusResponse) {option deprecated=true;}
 }
 
 message RemoteSocksRequest {
@@ -318,11 +324,44 @@ message TrustUserDeviceRequest{
   string user = 2;
 }
 
+
+// 此message的字段需要和hportal/apis/boxapi/common.proto中的BoxSystemStatus保持同步
+message UpdateBoxSystemStatusRequest {
+  enum SysStatus {
+    // 系统正在启动中
+    Booting = 0;
+
+    // 处于正常可用状态
+    Normal = 1;
+
+    // 处于异常状态，具体原因可读取ExceptionReason
+    Exception = 2;
+  }
+
+  enum ExceptionReason {
+    // 其他原因
+    Unknown = 0;
+
+    // 等待加密数据盘被解密
+    WaitDataDiskDecryption = 1;
+  }
+
+  SysStatus status = 1;
+
+  string service_url = 2;
+
+  optional ExceptionReason exception_reason = 3;
+}
+
+message UpdateBoxSystemStatusResponse{}
+
 message UpdateBoxStatusRequest{
+  option deprecated = true;
   // 盒子是否启动完毕
   optional bool start_up = 1;
   // 盒子数据盘状态是否OK
   optional bool data_partition = 2;
 }
 message UpdateBoxStatusResponse{
+  option deprecated = true;
 }

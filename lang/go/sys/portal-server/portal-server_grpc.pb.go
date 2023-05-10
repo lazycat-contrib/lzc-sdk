@@ -32,7 +32,6 @@ type HPortalSysClient interface {
 	// 获取盒子所属域名下或下一级域名的https证书。
 	// 注意不是所有ACME服务器都支持泛域名。
 	GetDomainCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
-	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
 	// 在部署具体app前，调用此接口获取app证书
 	// APP证书格式为:
 	//   Issuer: O = $BOX.ORIGIN, CN = $BOX.DOMAIN, serialNumber = $BOX.ID
@@ -62,10 +61,19 @@ type HPortalSysClient interface {
 	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 强制注销当前用户指定设备
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	//校验用户密码是否正确
+	// 校验用户密码是否正确
 	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取remotesocks服务器地址
 	RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error)
+	// 强制将特定设备加到受信任列表中
 	TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// hserver重启后默认设置BoxSystem为booting状态
+	// 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
+	UpdateBoxSystemStatus(ctx context.Context, in *UpdateBoxSystemStatusRequest, opts ...grpc.CallOption) (*UpdateBoxSystemStatusResponse, error)
+	// Deprecated: Do not use.
+	// 准备废弃的接口
+	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
+	// Deprecated: Do not use.
 	UpdateBoxStatus(ctx context.Context, in *UpdateBoxStatusRequest, opts ...grpc.CallOption) (*UpdateBoxStatusResponse, error)
 }
 
@@ -116,15 +124,6 @@ func (c *hPortalSysClient) QueryBoxInfo(ctx context.Context, in *emptypb.Empty, 
 func (c *hPortalSysClient) GetDomainCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error) {
 	out := new(DomainCertReply)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/GetDomainCert", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hPortalSysClient) GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error) {
-	out := new(DomainCertReply)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -257,6 +256,26 @@ func (c *hPortalSysClient) TrustUserDevice(ctx context.Context, in *TrustUserDev
 	return out, nil
 }
 
+func (c *hPortalSysClient) UpdateBoxSystemStatus(ctx context.Context, in *UpdateBoxSystemStatusRequest, opts ...grpc.CallOption) (*UpdateBoxSystemStatusResponse, error) {
+	out := new(UpdateBoxSystemStatusResponse)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/UpdateBoxSystemStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Deprecated: Do not use.
+func (c *hPortalSysClient) GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error) {
+	out := new(DomainCertReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Deprecated: Do not use.
 func (c *hPortalSysClient) UpdateBoxStatus(ctx context.Context, in *UpdateBoxStatusRequest, opts ...grpc.CallOption) (*UpdateBoxStatusResponse, error) {
 	out := new(UpdateBoxStatusResponse)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/UpdateBoxStatus", in, out, opts...)
@@ -279,7 +298,6 @@ type HPortalSysServer interface {
 	// 获取盒子所属域名下或下一级域名的https证书。
 	// 注意不是所有ACME服务器都支持泛域名。
 	GetDomainCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
-	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
 	// 在部署具体app前，调用此接口获取app证书
 	// APP证书格式为:
 	//   Issuer: O = $BOX.ORIGIN, CN = $BOX.DOMAIN, serialNumber = $BOX.ID
@@ -309,10 +327,19 @@ type HPortalSysServer interface {
 	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
 	// 强制注销当前用户指定设备
 	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
-	//校验用户密码是否正确
+	// 校验用户密码是否正确
 	CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error)
+	// 获取remotesocks服务器地址
 	RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error)
+	// 强制将特定设备加到受信任列表中
 	TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error)
+	// hserver重启后默认设置BoxSystem为booting状态
+	// 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
+	UpdateBoxSystemStatus(context.Context, *UpdateBoxSystemStatusRequest) (*UpdateBoxSystemStatusResponse, error)
+	// Deprecated: Do not use.
+	// 准备废弃的接口
+	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
+	// Deprecated: Do not use.
 	UpdateBoxStatus(context.Context, *UpdateBoxStatusRequest) (*UpdateBoxStatusResponse, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
@@ -335,9 +362,6 @@ func (UnimplementedHPortalSysServer) QueryBoxInfo(context.Context, *emptypb.Empt
 }
 func (UnimplementedHPortalSysServer) GetDomainCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDomainCert not implemented")
-}
-func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDomainSelfCert not implemented")
 }
 func (UnimplementedHPortalSysServer) GetAppCert(context.Context, *AppCertRequest) (*AppCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAppCert not implemented")
@@ -380,6 +404,12 @@ func (UnimplementedHPortalSysServer) RemoteSocks(context.Context, *RemoteSocksRe
 }
 func (UnimplementedHPortalSysServer) TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TrustUserDevice not implemented")
+}
+func (UnimplementedHPortalSysServer) UpdateBoxSystemStatus(context.Context, *UpdateBoxSystemStatusRequest) (*UpdateBoxSystemStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBoxSystemStatus not implemented")
+}
+func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDomainSelfCert not implemented")
 }
 func (UnimplementedHPortalSysServer) UpdateBoxStatus(context.Context, *UpdateBoxStatusRequest) (*UpdateBoxStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBoxStatus not implemented")
@@ -483,24 +513,6 @@ func _HPortalSys_GetDomainCert_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HPortalSysServer).GetDomainCert(ctx, req.(*DomainCertRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_GetDomainSelfCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DomainCertRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).GetDomainSelfCert(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).GetDomainSelfCert(ctx, req.(*DomainCertRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -757,6 +769,42 @@ func _HPortalSys_TrustUserDevice_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_UpdateBoxSystemStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBoxSystemStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).UpdateBoxSystemStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/UpdateBoxSystemStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).UpdateBoxSystemStatus(ctx, req.(*UpdateBoxSystemStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_GetDomainSelfCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DomainCertRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).GetDomainSelfCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).GetDomainSelfCert(ctx, req.(*DomainCertRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _HPortalSys_UpdateBoxStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateBoxStatusRequest)
 	if err := dec(in); err != nil {
@@ -801,10 +849,6 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDomainCert",
 			Handler:    _HPortalSys_GetDomainCert_Handler,
-		},
-		{
-			MethodName: "GetDomainSelfCert",
-			Handler:    _HPortalSys_GetDomainSelfCert_Handler,
 		},
 		{
 			MethodName: "GetAppCert",
@@ -861,6 +905,14 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TrustUserDevice",
 			Handler:    _HPortalSys_TrustUserDevice_Handler,
+		},
+		{
+			MethodName: "UpdateBoxSystemStatus",
+			Handler:    _HPortalSys_UpdateBoxSystemStatus_Handler,
+		},
+		{
+			MethodName: "GetDomainSelfCert",
+			Handler:    _HPortalSys_GetDomainSelfCert_Handler,
 		},
 		{
 			MethodName: "UpdateBoxStatus",
