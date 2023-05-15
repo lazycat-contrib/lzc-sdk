@@ -332,9 +332,13 @@ message UpdateBoxSystemStatusRequest {
     Booting = 0;
 
     // 处于正常可用状态
+    // 一般此状态下service_url应该设置为https://$boxdomain
+    // proxy_the_service_url和only_admin_can_access_service_url都设置为false
     Normal = 1;
 
     // 处于异常状态，具体原因可读取ExceptionReason
+    // 一般此状态下service_url需要特殊设置且
+    // proxy_the_service_url和only_admin_can_access_service_url都设置为true
     Exception = 2;
   }
 
@@ -351,6 +355,14 @@ message UpdateBoxSystemStatusRequest {
   string service_url = 2;
 
   optional ExceptionReason exception_reason = 3;
+
+  // 若为true, 在hclient侧生成一个临时的[fc03:1136:3800::1]:$x地址提供给客户端访问.
+  // 具体会体现在shellapi.proto:BoxInfo.BoxHomeUrl上
+  bool proxy_the_service_url = 4;
+
+  // 在proxy_the_service_url=true时，支持设置是否仅管理员用户可以访问service_url
+  // 此处的权限管控仅是网络传输层面,service_url本身需要做基本的网络隔离，比如使用unix socket协议
+  bool only_admin_can_access_service_url = 5;
 }
 
 message UpdateBoxSystemStatusResponse{}
