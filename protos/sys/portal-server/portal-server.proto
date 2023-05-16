@@ -132,7 +132,7 @@ message AuthToken {
   // 若token_type = HTTPBasicAuth
   // 则必须包含此字段，以便hportal可以分析出正确的登陆设备
   // 若仅仅是为了验证帐号密码是否正确，直接调用CheckPassword接口
-  optional string access_ip = 3 [deprecated=true];
+  string access_ip = 3;
 
   enum TokenType {
     Raw = 0;       // token return by hportal-server login method
