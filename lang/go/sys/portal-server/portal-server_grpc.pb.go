@@ -25,13 +25,57 @@ const _ = grpc.SupportPackageIsVersion7
 type HPortalSysClient interface {
 	// 用auth-token反向查询登陆的设备以及UID
 	QueryLogin(ctx context.Context, in *AuthToken, opts ...grpc.CallOption) (*LoginInfo, error)
-	// 根据UID返回所有的设备列表
-	ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error)
-	QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error)
 	QueryBoxInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxInfo, error)
 	// 获取盒子所属域名下或下一级域名的https证书。
 	// 注意不是所有ACME服务器都支持泛域名。
 	GetDomainCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
+	// 申请额外的外部可访问的IP,并配置对应访问域名
+	AllocVirtualExternalIP(ctx context.Context, in *AllocVEIPRequest, opts ...grpc.CallOption) (*AllocVEIPReply, error)
+	// 释放虚拟IP
+	FreeVirtualExternalIP(ctx context.Context, in *FreeVEIPRequest, opts ...grpc.CallOption) (*FreeVEIPReply, error)
+	//  查询所有UID
+	ListUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListUsersReply, error)
+	//  创建用户信息
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  删除用户信息
+	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  修改新的密码
+	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  校验用户密码是否正确
+	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  根据用户uid查询用户信息
+	QueryRole(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*QueryRoleReply, error)
+	//  修改指定uid的用户角色
+	ChangeRole(ctx context.Context, in *ChangeRoleReqeust, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  添加或删除受信任设备
+	ChangeTrustEndDevice(ctx context.Context, in *ChangeTrustEndDeviceRequest, opts ...grpc.CallOption) (*ChangeTrustEndDeviceReply, error)
+	// 根据UID返回所有的设备列表
+	ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error)
+	QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error)
+	// 删除登陆的会话状态
+	ClearLoginSession(ctx context.Context, in *ClearLoginSessionRequest, opts ...grpc.CallOption) (*ClearLoginSessionReply, error)
+	// 获取remotesocks服务器地址
+	RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error)
+	// hserver重启后默认设置BoxSystem为booting状态
+	// 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
+	UpdateBoxSystemStatus(ctx context.Context, in *UpdateBoxSystemStatusRequest, opts ...grpc.CallOption) (*UpdateBoxSystemStatusResponse, error)
+	// Deprecated: Do not use.
+	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
+	// Deprecated: Do not use.
+	UpdateBoxStatus(ctx context.Context, in *UpdateBoxStatusRequest, opts ...grpc.CallOption) (*UpdateBoxStatusResponse, error)
+	// Deprecated: Do not use.
+	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Deprecated: Do not use.
+	// 强制注销当前用户指定设备.
+	// 1. 删除设备应该通过ChangeTrustEndDevice来处理
+	// 2. 强制断开会话应该由ClearSession接口完成
+	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Deprecated: Do not use.
+	// 以下接口要改名字
+	// 强制将特定设备加到受信任列表中
+	TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Deprecated: Do not use.
+	// hportal不应该处理app cert相关逻辑，上层逻辑应该通过GetDomainCert获取到crt和key后自行处理
 	// 在部署具体app前，调用此接口获取app证书
 	// APP证书格式为:
 	//   Issuer: O = $BOX.ORIGIN, CN = $BOX.DOMAIN, serialNumber = $BOX.ID
@@ -41,40 +85,6 @@ type HPortalSysClient interface {
 	// 盒子内部组件可以直接通过QueryBoxInfo来验证信任链是否合法，盒子外部系统需要通过其他机制比如libp2p.identify去验证box.crt的合法性。
 	//
 	GetAppCert(ctx context.Context, in *AppCertRequest, opts ...grpc.CallOption) (*AppCertReply, error)
-	// 申请额外的外部可访问的IP,并配置对应访问域名
-	AllocVirtualExternalIP(ctx context.Context, in *AllocVEIPRequest, opts ...grpc.CallOption) (*AllocVEIPReply, error)
-	// 释放虚拟IP
-	FreeVirtualExternalIP(ctx context.Context, in *FreeVEIPRequest, opts ...grpc.CallOption) (*FreeVEIPReply, error)
-	//  查询所有UID
-	ListUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListUsersReply, error)
-	//  根据用户uid查询用户信息
-	QueryRole(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*QueryRoleReply, error)
-	//  修改指定uid的用户角色
-	ChangeRole(ctx context.Context, in *ChangeRoleReqeust, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	//  通过验证旧密码修改新的密码
-	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	//  删除用户信息
-	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	//  创建用户信息
-	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	//  强制重置用户密码
-	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 强制注销当前用户指定设备
-	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 校验用户密码是否正确
-	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 获取remotesocks服务器地址
-	RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error)
-	// 强制将特定设备加到受信任列表中
-	TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// hserver重启后默认设置BoxSystem为booting状态
-	// 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
-	UpdateBoxSystemStatus(ctx context.Context, in *UpdateBoxSystemStatusRequest, opts ...grpc.CallOption) (*UpdateBoxSystemStatusResponse, error)
-	// Deprecated: Do not use.
-	// 准备废弃的接口
-	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
-	// Deprecated: Do not use.
-	UpdateBoxStatus(ctx context.Context, in *UpdateBoxStatusRequest, opts ...grpc.CallOption) (*UpdateBoxStatusResponse, error)
 }
 
 type hPortalSysClient struct {
@@ -94,24 +104,6 @@ func (c *hPortalSysClient) QueryLogin(ctx context.Context, in *AuthToken, opts .
 	return out, nil
 }
 
-func (c *hPortalSysClient) ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error) {
-	out := new(ListDeviceReply)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ListDevices", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hPortalSysClient) QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error) {
-	out := new(Device)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/QueryDeviceByID", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *hPortalSysClient) QueryBoxInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxInfo, error) {
 	out := new(BoxInfo)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/QueryBoxInfo", in, out, opts...)
@@ -124,15 +116,6 @@ func (c *hPortalSysClient) QueryBoxInfo(ctx context.Context, in *emptypb.Empty, 
 func (c *hPortalSysClient) GetDomainCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error) {
 	out := new(DomainCertReply)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/GetDomainCert", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hPortalSysClient) GetAppCert(ctx context.Context, in *AppCertRequest, opts ...grpc.CallOption) (*AppCertReply, error) {
-	out := new(AppCertReply)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/GetAppCert", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -166,6 +149,42 @@ func (c *hPortalSysClient) ListUsers(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
+func (c *hPortalSysClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/CreateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/DeleteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ResetPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/CheckPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *hPortalSysClient) QueryRole(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*QueryRoleReply, error) {
 	out := new(QueryRoleReply)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/QueryRole", in, out, opts...)
@@ -184,54 +203,36 @@ func (c *hPortalSysClient) ChangeRole(ctx context.Context, in *ChangeRoleReqeust
 	return out, nil
 }
 
-func (c *hPortalSysClient) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ResetPassword", in, out, opts...)
+func (c *hPortalSysClient) ChangeTrustEndDevice(ctx context.Context, in *ChangeTrustEndDeviceRequest, opts ...grpc.CallOption) (*ChangeTrustEndDeviceReply, error) {
+	out := new(ChangeTrustEndDeviceReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ChangeTrustEndDevice", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *hPortalSysClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/DeleteUser", in, out, opts...)
+func (c *hPortalSysClient) ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error) {
+	out := new(ListDeviceReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ListDevices", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *hPortalSysClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/CreateUser", in, out, opts...)
+func (c *hPortalSysClient) QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error) {
+	out := new(Device)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/QueryDeviceByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *hPortalSysClient) ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ForceResetPassword", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hPortalSysClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/Logout", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hPortalSysClient) CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/CheckPassword", in, out, opts...)
+func (c *hPortalSysClient) ClearLoginSession(ctx context.Context, in *ClearLoginSessionRequest, opts ...grpc.CallOption) (*ClearLoginSessionReply, error) {
+	out := new(ClearLoginSessionReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -241,15 +242,6 @@ func (c *hPortalSysClient) CheckPassword(ctx context.Context, in *CheckPasswordR
 func (c *hPortalSysClient) RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error) {
 	out := new(RemoteSocksReply)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/RemoteSocks", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hPortalSysClient) TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/TrustUserDevice", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -285,19 +277,103 @@ func (c *hPortalSysClient) UpdateBoxStatus(ctx context.Context, in *UpdateBoxSta
 	return out, nil
 }
 
+// Deprecated: Do not use.
+func (c *hPortalSysClient) ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ForceResetPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Deprecated: Do not use.
+func (c *hPortalSysClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/Logout", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Deprecated: Do not use.
+func (c *hPortalSysClient) TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/TrustUserDevice", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Deprecated: Do not use.
+func (c *hPortalSysClient) GetAppCert(ctx context.Context, in *AppCertRequest, opts ...grpc.CallOption) (*AppCertReply, error) {
+	out := new(AppCertReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/GetAppCert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HPortalSysServer is the server API for HPortalSys service.
 // All implementations must embed UnimplementedHPortalSysServer
 // for forward compatibility
 type HPortalSysServer interface {
 	// 用auth-token反向查询登陆的设备以及UID
 	QueryLogin(context.Context, *AuthToken) (*LoginInfo, error)
-	// 根据UID返回所有的设备列表
-	ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error)
-	QueryDeviceByID(context.Context, *DeviceID) (*Device, error)
 	QueryBoxInfo(context.Context, *emptypb.Empty) (*BoxInfo, error)
 	// 获取盒子所属域名下或下一级域名的https证书。
 	// 注意不是所有ACME服务器都支持泛域名。
 	GetDomainCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
+	// 申请额外的外部可访问的IP,并配置对应访问域名
+	AllocVirtualExternalIP(context.Context, *AllocVEIPRequest) (*AllocVEIPReply, error)
+	// 释放虚拟IP
+	FreeVirtualExternalIP(context.Context, *FreeVEIPRequest) (*FreeVEIPReply, error)
+	//  查询所有UID
+	ListUsers(context.Context, *emptypb.Empty) (*ListUsersReply, error)
+	//  创建用户信息
+	CreateUser(context.Context, *CreateUserRequest) (*emptypb.Empty, error)
+	//  删除用户信息
+	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
+	//  修改新的密码
+	ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error)
+	//  校验用户密码是否正确
+	CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error)
+	//  根据用户uid查询用户信息
+	QueryRole(context.Context, *UserID) (*QueryRoleReply, error)
+	//  修改指定uid的用户角色
+	ChangeRole(context.Context, *ChangeRoleReqeust) (*emptypb.Empty, error)
+	//  添加或删除受信任设备
+	ChangeTrustEndDevice(context.Context, *ChangeTrustEndDeviceRequest) (*ChangeTrustEndDeviceReply, error)
+	// 根据UID返回所有的设备列表
+	ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error)
+	QueryDeviceByID(context.Context, *DeviceID) (*Device, error)
+	// 删除登陆的会话状态
+	ClearLoginSession(context.Context, *ClearLoginSessionRequest) (*ClearLoginSessionReply, error)
+	// 获取remotesocks服务器地址
+	RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error)
+	// hserver重启后默认设置BoxSystem为booting状态
+	// 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
+	UpdateBoxSystemStatus(context.Context, *UpdateBoxSystemStatusRequest) (*UpdateBoxSystemStatusResponse, error)
+	// Deprecated: Do not use.
+	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
+	// Deprecated: Do not use.
+	UpdateBoxStatus(context.Context, *UpdateBoxStatusRequest) (*UpdateBoxStatusResponse, error)
+	// Deprecated: Do not use.
+	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
+	// Deprecated: Do not use.
+	// 强制注销当前用户指定设备.
+	// 1. 删除设备应该通过ChangeTrustEndDevice来处理
+	// 2. 强制断开会话应该由ClearSession接口完成
+	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
+	// Deprecated: Do not use.
+	// 以下接口要改名字
+	// 强制将特定设备加到受信任列表中
+	TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error)
+	// Deprecated: Do not use.
+	// hportal不应该处理app cert相关逻辑，上层逻辑应该通过GetDomainCert获取到crt和key后自行处理
 	// 在部署具体app前，调用此接口获取app证书
 	// APP证书格式为:
 	//   Issuer: O = $BOX.ORIGIN, CN = $BOX.DOMAIN, serialNumber = $BOX.ID
@@ -307,40 +383,6 @@ type HPortalSysServer interface {
 	// 盒子内部组件可以直接通过QueryBoxInfo来验证信任链是否合法，盒子外部系统需要通过其他机制比如libp2p.identify去验证box.crt的合法性。
 	//
 	GetAppCert(context.Context, *AppCertRequest) (*AppCertReply, error)
-	// 申请额外的外部可访问的IP,并配置对应访问域名
-	AllocVirtualExternalIP(context.Context, *AllocVEIPRequest) (*AllocVEIPReply, error)
-	// 释放虚拟IP
-	FreeVirtualExternalIP(context.Context, *FreeVEIPRequest) (*FreeVEIPReply, error)
-	//  查询所有UID
-	ListUsers(context.Context, *emptypb.Empty) (*ListUsersReply, error)
-	//  根据用户uid查询用户信息
-	QueryRole(context.Context, *UserID) (*QueryRoleReply, error)
-	//  修改指定uid的用户角色
-	ChangeRole(context.Context, *ChangeRoleReqeust) (*emptypb.Empty, error)
-	//  通过验证旧密码修改新的密码
-	ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error)
-	//  删除用户信息
-	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
-	//  创建用户信息
-	CreateUser(context.Context, *CreateUserRequest) (*emptypb.Empty, error)
-	//  强制重置用户密码
-	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
-	// 强制注销当前用户指定设备
-	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
-	// 校验用户密码是否正确
-	CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error)
-	// 获取remotesocks服务器地址
-	RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error)
-	// 强制将特定设备加到受信任列表中
-	TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error)
-	// hserver重启后默认设置BoxSystem为booting状态
-	// 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
-	UpdateBoxSystemStatus(context.Context, *UpdateBoxSystemStatusRequest) (*UpdateBoxSystemStatusResponse, error)
-	// Deprecated: Do not use.
-	// 准备废弃的接口
-	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
-	// Deprecated: Do not use.
-	UpdateBoxStatus(context.Context, *UpdateBoxStatusRequest) (*UpdateBoxStatusResponse, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -351,20 +393,11 @@ type UnimplementedHPortalSysServer struct {
 func (UnimplementedHPortalSysServer) QueryLogin(context.Context, *AuthToken) (*LoginInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryLogin not implemented")
 }
-func (UnimplementedHPortalSysServer) ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListDevices not implemented")
-}
-func (UnimplementedHPortalSysServer) QueryDeviceByID(context.Context, *DeviceID) (*Device, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryDeviceByID not implemented")
-}
 func (UnimplementedHPortalSysServer) QueryBoxInfo(context.Context, *emptypb.Empty) (*BoxInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryBoxInfo not implemented")
 }
 func (UnimplementedHPortalSysServer) GetDomainCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDomainCert not implemented")
-}
-func (UnimplementedHPortalSysServer) GetAppCert(context.Context, *AppCertRequest) (*AppCertReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAppCert not implemented")
 }
 func (UnimplementedHPortalSysServer) AllocVirtualExternalIP(context.Context, *AllocVEIPRequest) (*AllocVEIPReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllocVirtualExternalIP not implemented")
@@ -375,35 +408,38 @@ func (UnimplementedHPortalSysServer) FreeVirtualExternalIP(context.Context, *Fre
 func (UnimplementedHPortalSysServer) ListUsers(context.Context, *emptypb.Empty) (*ListUsersReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUsers not implemented")
 }
+func (UnimplementedHPortalSysServer) CreateUser(context.Context, *CreateUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedHPortalSysServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedHPortalSysServer) ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
+}
+func (UnimplementedHPortalSysServer) CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
+}
 func (UnimplementedHPortalSysServer) QueryRole(context.Context, *UserID) (*QueryRoleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryRole not implemented")
 }
 func (UnimplementedHPortalSysServer) ChangeRole(context.Context, *ChangeRoleReqeust) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeRole not implemented")
 }
-func (UnimplementedHPortalSysServer) ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
+func (UnimplementedHPortalSysServer) ChangeTrustEndDevice(context.Context, *ChangeTrustEndDeviceRequest) (*ChangeTrustEndDeviceReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeTrustEndDevice not implemented")
 }
-func (UnimplementedHPortalSysServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+func (UnimplementedHPortalSysServer) ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListDevices not implemented")
 }
-func (UnimplementedHPortalSysServer) CreateUser(context.Context, *CreateUserRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+func (UnimplementedHPortalSysServer) QueryDeviceByID(context.Context, *DeviceID) (*Device, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryDeviceByID not implemented")
 }
-func (UnimplementedHPortalSysServer) ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ForceResetPassword not implemented")
-}
-func (UnimplementedHPortalSysServer) Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
-}
-func (UnimplementedHPortalSysServer) CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
+func (UnimplementedHPortalSysServer) ClearLoginSession(context.Context, *ClearLoginSessionRequest) (*ClearLoginSessionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ClearLoginSession not implemented")
 }
 func (UnimplementedHPortalSysServer) RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoteSocks not implemented")
-}
-func (UnimplementedHPortalSysServer) TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TrustUserDevice not implemented")
 }
 func (UnimplementedHPortalSysServer) UpdateBoxSystemStatus(context.Context, *UpdateBoxSystemStatusRequest) (*UpdateBoxSystemStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBoxSystemStatus not implemented")
@@ -413,6 +449,18 @@ func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainC
 }
 func (UnimplementedHPortalSysServer) UpdateBoxStatus(context.Context, *UpdateBoxStatusRequest) (*UpdateBoxStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBoxStatus not implemented")
+}
+func (UnimplementedHPortalSysServer) ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ForceResetPassword not implemented")
+}
+func (UnimplementedHPortalSysServer) Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedHPortalSysServer) TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TrustUserDevice not implemented")
+}
+func (UnimplementedHPortalSysServer) GetAppCert(context.Context, *AppCertRequest) (*AppCertReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppCert not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -441,42 +489,6 @@ func _HPortalSys_QueryLogin_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HPortalSysServer).QueryLogin(ctx, req.(*AuthToken))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_ListDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListDeviceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).ListDevices(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ListDevices",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).ListDevices(ctx, req.(*ListDeviceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_QueryDeviceByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeviceID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).QueryDeviceByID(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/QueryDeviceByID",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).QueryDeviceByID(ctx, req.(*DeviceID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -513,24 +525,6 @@ func _HPortalSys_GetDomainCert_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HPortalSysServer).GetDomainCert(ctx, req.(*DomainCertRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_GetAppCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppCertRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).GetAppCert(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/GetAppCert",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).GetAppCert(ctx, req.(*AppCertRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -589,6 +583,78 @@ func _HPortalSys_ListUsers_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/CreateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).CreateUser(ctx, req.(*CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/DeleteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).ResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ResetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).ResetPassword(ctx, req.(*ResetPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_CheckPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).CheckPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/CheckPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).CheckPassword(ctx, req.(*CheckPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _HPortalSys_QueryRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserID)
 	if err := dec(in); err != nil {
@@ -625,110 +691,74 @@ func _HPortalSys_ChangeRole_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ResetPasswordRequest)
+func _HPortalSys_ChangeTrustEndDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeTrustEndDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(HPortalSysServer).ResetPassword(ctx, in)
+		return srv.(HPortalSysServer).ChangeTrustEndDevice(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ResetPassword",
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ChangeTrustEndDevice",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).ResetPassword(ctx, req.(*ResetPasswordRequest))
+		return srv.(HPortalSysServer).ChangeTrustEndDevice(ctx, req.(*ChangeTrustEndDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUserRequest)
+func _HPortalSys_ListDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(HPortalSysServer).DeleteUser(ctx, in)
+		return srv.(HPortalSysServer).ListDevices(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/DeleteUser",
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ListDevices",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+		return srv.(HPortalSysServer).ListDevices(ctx, req.(*ListDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateUserRequest)
+func _HPortalSys_QueryDeviceByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeviceID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(HPortalSysServer).CreateUser(ctx, in)
+		return srv.(HPortalSysServer).QueryDeviceByID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/CreateUser",
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/QueryDeviceByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).CreateUser(ctx, req.(*CreateUserRequest))
+		return srv.(HPortalSysServer).QueryDeviceByID(ctx, req.(*DeviceID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_ForceResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ForceResetPasswordRequest)
+func _HPortalSys_ClearLoginSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClearLoginSessionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(HPortalSysServer).ForceResetPassword(ctx, in)
+		return srv.(HPortalSysServer).ClearLoginSession(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ForceResetPassword",
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).ForceResetPassword(ctx, req.(*ForceResetPasswordRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LogoutRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).Logout(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/Logout",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).Logout(ctx, req.(*LogoutRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_CheckPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckPasswordRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).CheckPassword(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/CheckPassword",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).CheckPassword(ctx, req.(*CheckPasswordRequest))
+		return srv.(HPortalSysServer).ClearLoginSession(ctx, req.(*ClearLoginSessionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -747,24 +777,6 @@ func _HPortalSys_RemoteSocks_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HPortalSysServer).RemoteSocks(ctx, req.(*RemoteSocksRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_TrustUserDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TrustUserDeviceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).TrustUserDevice(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/TrustUserDevice",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).TrustUserDevice(ctx, req.(*TrustUserDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -823,6 +835,78 @@ func _HPortalSys_UpdateBoxStatus_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_ForceResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForceResetPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).ForceResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ForceResetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).ForceResetPassword(ctx, req.(*ForceResetPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/Logout",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).Logout(ctx, req.(*LogoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_TrustUserDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TrustUserDeviceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).TrustUserDevice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/TrustUserDevice",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).TrustUserDevice(ctx, req.(*TrustUserDeviceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_GetAppCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppCertRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).GetAppCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/GetAppCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).GetAppCert(ctx, req.(*AppCertRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HPortalSys_ServiceDesc is the grpc.ServiceDesc for HPortalSys service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -835,24 +919,12 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HPortalSys_QueryLogin_Handler,
 		},
 		{
-			MethodName: "ListDevices",
-			Handler:    _HPortalSys_ListDevices_Handler,
-		},
-		{
-			MethodName: "QueryDeviceByID",
-			Handler:    _HPortalSys_QueryDeviceByID_Handler,
-		},
-		{
 			MethodName: "QueryBoxInfo",
 			Handler:    _HPortalSys_QueryBoxInfo_Handler,
 		},
 		{
 			MethodName: "GetDomainCert",
 			Handler:    _HPortalSys_GetDomainCert_Handler,
-		},
-		{
-			MethodName: "GetAppCert",
-			Handler:    _HPortalSys_GetAppCert_Handler,
 		},
 		{
 			MethodName: "AllocVirtualExternalIP",
@@ -867,6 +939,22 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HPortalSys_ListUsers_Handler,
 		},
 		{
+			MethodName: "CreateUser",
+			Handler:    _HPortalSys_CreateUser_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _HPortalSys_DeleteUser_Handler,
+		},
+		{
+			MethodName: "ResetPassword",
+			Handler:    _HPortalSys_ResetPassword_Handler,
+		},
+		{
+			MethodName: "CheckPassword",
+			Handler:    _HPortalSys_CheckPassword_Handler,
+		},
+		{
 			MethodName: "QueryRole",
 			Handler:    _HPortalSys_QueryRole_Handler,
 		},
@@ -875,36 +963,24 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HPortalSys_ChangeRole_Handler,
 		},
 		{
-			MethodName: "ResetPassword",
-			Handler:    _HPortalSys_ResetPassword_Handler,
+			MethodName: "ChangeTrustEndDevice",
+			Handler:    _HPortalSys_ChangeTrustEndDevice_Handler,
 		},
 		{
-			MethodName: "DeleteUser",
-			Handler:    _HPortalSys_DeleteUser_Handler,
+			MethodName: "ListDevices",
+			Handler:    _HPortalSys_ListDevices_Handler,
 		},
 		{
-			MethodName: "CreateUser",
-			Handler:    _HPortalSys_CreateUser_Handler,
+			MethodName: "QueryDeviceByID",
+			Handler:    _HPortalSys_QueryDeviceByID_Handler,
 		},
 		{
-			MethodName: "ForceResetPassword",
-			Handler:    _HPortalSys_ForceResetPassword_Handler,
-		},
-		{
-			MethodName: "Logout",
-			Handler:    _HPortalSys_Logout_Handler,
-		},
-		{
-			MethodName: "CheckPassword",
-			Handler:    _HPortalSys_CheckPassword_Handler,
+			MethodName: "ClearLoginSession",
+			Handler:    _HPortalSys_ClearLoginSession_Handler,
 		},
 		{
 			MethodName: "RemoteSocks",
 			Handler:    _HPortalSys_RemoteSocks_Handler,
-		},
-		{
-			MethodName: "TrustUserDevice",
-			Handler:    _HPortalSys_TrustUserDevice_Handler,
 		},
 		{
 			MethodName: "UpdateBoxSystemStatus",
@@ -917,6 +993,22 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateBoxStatus",
 			Handler:    _HPortalSys_UpdateBoxStatus_Handler,
+		},
+		{
+			MethodName: "ForceResetPassword",
+			Handler:    _HPortalSys_ForceResetPassword_Handler,
+		},
+		{
+			MethodName: "Logout",
+			Handler:    _HPortalSys_Logout_Handler,
+		},
+		{
+			MethodName: "TrustUserDevice",
+			Handler:    _HPortalSys_TrustUserDevice_Handler,
+		},
+		{
+			MethodName: "GetAppCert",
+			Handler:    _HPortalSys_GetAppCert_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
