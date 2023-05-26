@@ -25,6 +25,9 @@ application:
 
   workdir: /lzcapp/pkg/content/ #设置lzcinit以及后续子进程的WORKDIR,若不设置或目录不存在则保持使用container的WORKDIR信息
 
+  no_cors_path:
+    - /api/xxx #默认情况下所有路径都会添加CORS Header，no_cors_path下的路径不会添加CORS Header
+
   public_path:
      - /api/public  #默认情况下所有路径都需要登陆后才能访问，public_path之下的路径允许非登陆情况下访问
 
