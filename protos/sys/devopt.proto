@@ -20,4 +20,6 @@ message DeveloperOptions {
   bool DebugSshd = 3;
   // 开启 open telemetry
   bool OpenTelemetry = 4;
+  // 禁用 upnp
+  bool DisableUPnP = 5;
 }
