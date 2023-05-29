@@ -24,7 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BoxStatusServiceClient interface {
 	GetAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxStatus, error)
-	Format(ctx context.Context, in *Disks, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DataFormat(ctx context.Context, in *DataDiskFormat, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DataDecrypt(ctx context.Context, in *DataDiskDecrypt, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type boxStatusServiceClient struct {
@@ -44,9 +45,18 @@ func (c *boxStatusServiceClient) GetAll(ctx context.Context, in *emptypb.Empty, 
 	return out, nil
 }
 
-func (c *boxStatusServiceClient) Format(ctx context.Context, in *Disks, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *boxStatusServiceClient) DataFormat(ctx context.Context, in *DataDiskFormat, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.BoxStatusService/Format", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.BoxStatusService/DataFormat", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *boxStatusServiceClient) DataDecrypt(ctx context.Context, in *DataDiskDecrypt, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.BoxStatusService/DataDecrypt", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +68,8 @@ func (c *boxStatusServiceClient) Format(ctx context.Context, in *Disks, opts ...
 // for forward compatibility
 type BoxStatusServiceServer interface {
 	GetAll(context.Context, *emptypb.Empty) (*BoxStatus, error)
-	Format(context.Context, *Disks) (*emptypb.Empty, error)
+	DataFormat(context.Context, *DataDiskFormat) (*emptypb.Empty, error)
+	DataDecrypt(context.Context, *DataDiskDecrypt) (*emptypb.Empty, error)
 	mustEmbedUnimplementedBoxStatusServiceServer()
 }
 
@@ -69,8 +80,11 @@ type UnimplementedBoxStatusServiceServer struct {
 func (UnimplementedBoxStatusServiceServer) GetAll(context.Context, *emptypb.Empty) (*BoxStatus, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
 }
-func (UnimplementedBoxStatusServiceServer) Format(context.Context, *Disks) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Format not implemented")
+func (UnimplementedBoxStatusServiceServer) DataFormat(context.Context, *DataDiskFormat) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DataFormat not implemented")
+}
+func (UnimplementedBoxStatusServiceServer) DataDecrypt(context.Context, *DataDiskDecrypt) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DataDecrypt not implemented")
 }
 func (UnimplementedBoxStatusServiceServer) mustEmbedUnimplementedBoxStatusServiceServer() {}
 
@@ -103,20 +117,38 @@ func _BoxStatusService_GetAll_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BoxStatusService_Format_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Disks)
+func _BoxStatusService_DataFormat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DataDiskFormat)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BoxStatusServiceServer).Format(ctx, in)
+		return srv.(BoxStatusServiceServer).DataFormat(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.BoxStatusService/Format",
+		FullMethod: "/cloud.lazycat.apis.sys.BoxStatusService/DataFormat",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BoxStatusServiceServer).Format(ctx, req.(*Disks))
+		return srv.(BoxStatusServiceServer).DataFormat(ctx, req.(*DataDiskFormat))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BoxStatusService_DataDecrypt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DataDiskDecrypt)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxStatusServiceServer).DataDecrypt(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.BoxStatusService/DataDecrypt",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxStatusServiceServer).DataDecrypt(ctx, req.(*DataDiskDecrypt))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -133,8 +165,12 @@ var BoxStatusService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BoxStatusService_GetAll_Handler,
 		},
 		{
-			MethodName: "Format",
-			Handler:    _BoxStatusService_Format_Handler,
+			MethodName: "DataFormat",
+			Handler:    _BoxStatusService_DataFormat_Handler,
+		},
+		{
+			MethodName: "DataDecrypt",
+			Handler:    _BoxStatusService_DataDecrypt_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

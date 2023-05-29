@@ -8,7 +8,8 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 
 service BoxStatusService {
   rpc GetAll (google.protobuf.Empty) returns (BoxStatus);
-  rpc Format (Disks) returns (google.protobuf.Empty);
+  rpc DataFormat (DataDiskFormat) returns (google.protobuf.Empty);
+  rpc DataDecrypt (DataDiskDecrypt) returns (google.protobuf.Empty);
 }
 
 enum DataPartitionStatusType {
@@ -63,8 +64,16 @@ message DataPartitionStatus {
   repeated DiskDetail details = 5;
 }
 
-message Disks {
+message DataDiskFormat {
+  // 用于数据盘的磁盘（例如 /dev/vdb。如果留空，则自动扫描并使用所有的空盘）
   repeated string disks = 1;
+
+  // 数据盘的密码（如果留空，则不加密）
+  string password = 2;
+}
+
+message DataDiskDecrypt {
+  string password = 1;
 }
 
 enum StartupStatusType {
