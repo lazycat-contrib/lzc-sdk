@@ -32,14 +32,17 @@ enum DataPartitionStatusType {
 enum DataPartitionExceptionType {
   DATA_PARTITION_EXCEPTION_OK = 0;
 
+  // 不支持的系统环境
+  DATA_PARTITION_EXCEPTION_NO_SUPPORTED = 1;
+
   // 执行 lsblk 出错
-  DATA_PARTITION_EXCEPTION_LSBLK = 1;
+  DATA_PARTITION_EXCEPTION_LSBLK = 2;
 
   // 数据盘已被异常拔出（未找到数据盘挂载点对应的设备）
-  DATA_PARTITION_EXCEPTION_EJECTED = 2;
+  DATA_PARTITION_EXCEPTION_EJECTED = 3;
 
   // 数据盘已初始化但未挂载
-  DATA_PARTITION_EXCEPTION_NOT_MOUNTED = 3;
+  DATA_PARTITION_EXCEPTION_NOT_MOUNTED = 4;
 }
 
 message DiskSmartInfo {
