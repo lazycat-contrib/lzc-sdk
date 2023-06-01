@@ -26,6 +26,7 @@ type BoxServiceClient interface {
 	QueryInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxInfo, error)
 	ChangeDisplayName(ctx context.Context, in *ChangeDisplayNameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Shutdown(ctx context.Context, in *ShutdownRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	QueryDisksInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DisksInfo, error)
 }
 
 type boxServiceClient struct {
@@ -63,6 +64,15 @@ func (c *boxServiceClient) Shutdown(ctx context.Context, in *ShutdownRequest, op
 	return out, nil
 }
 
+func (c *boxServiceClient) QueryDisksInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DisksInfo, error) {
+	out := new(DisksInfo)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.common.BoxService/QueryDisksInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BoxServiceServer is the server API for BoxService service.
 // All implementations must embed UnimplementedBoxServiceServer
 // for forward compatibility
@@ -70,6 +80,7 @@ type BoxServiceServer interface {
 	QueryInfo(context.Context, *emptypb.Empty) (*BoxInfo, error)
 	ChangeDisplayName(context.Context, *ChangeDisplayNameRequest) (*emptypb.Empty, error)
 	Shutdown(context.Context, *ShutdownRequest) (*emptypb.Empty, error)
+	QueryDisksInfo(context.Context, *emptypb.Empty) (*DisksInfo, error)
 	mustEmbedUnimplementedBoxServiceServer()
 }
 
@@ -85,6 +96,9 @@ func (UnimplementedBoxServiceServer) ChangeDisplayName(context.Context, *ChangeD
 }
 func (UnimplementedBoxServiceServer) Shutdown(context.Context, *ShutdownRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Shutdown not implemented")
+}
+func (UnimplementedBoxServiceServer) QueryDisksInfo(context.Context, *emptypb.Empty) (*DisksInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryDisksInfo not implemented")
 }
 func (UnimplementedBoxServiceServer) mustEmbedUnimplementedBoxServiceServer() {}
 
@@ -153,6 +167,24 @@ func _BoxService_Shutdown_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BoxService_QueryDisksInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxServiceServer).QueryDisksInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.common.BoxService/QueryDisksInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxServiceServer).QueryDisksInfo(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BoxService_ServiceDesc is the grpc.ServiceDesc for BoxService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -171,6 +203,10 @@ var BoxService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Shutdown",
 			Handler:    _BoxService_Shutdown_Handler,
+		},
+		{
+			MethodName: "QueryDisksInfo",
+			Handler:    _BoxService_QueryDisksInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

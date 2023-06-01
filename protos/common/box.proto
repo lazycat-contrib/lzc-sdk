@@ -12,6 +12,8 @@ service BoxService {
   rpc ChangeDisplayName(ChangeDisplayNameRequest) returns (google.protobuf.Empty) {}
 
   rpc Shutdown(ShutdownRequest) returns (google.protobuf.Empty) {}
+
+  rpc QueryDisksInfo(google.protobuf.Empty) returns (DisksInfo) {}
 }
 
 message BoxInfo {
@@ -53,4 +55,40 @@ message ShutdownRequest {
   Action action = 1;
 
   string reasone = 2;
+}
+
+message DiskInfo {
+  enum DiskType {
+    Unknown = 0;
+    System = 1;
+    Data = 2;
+  }
+
+  // 磁盘类型
+  DiskType type = 1;
+
+  // 磁盘容量（字节）
+  int64 size = 2;
+
+  // 剩余空间（字节）
+  int64 free = 3;
+
+  // 温度
+  int32 temperature = 4;
+
+  // 运行时间（小时）
+  int32 power_on_hours = 5;
+
+  // 健康状态
+  bool healthy = 6;
+
+  // IO错误数
+  int32 io_errors = 7;
+
+  // 数据损坏数
+  int32 corruptions = 8;
+}
+
+message DisksInfo {
+  repeated DiskInfo disks = 1;
 }
