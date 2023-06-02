@@ -49,7 +49,7 @@ application:
 
   routes:
     - /api/=exec://8000,/lzcapp/pkg/content/bin/backend     #格式与/usr/bin/lzcinit -up参数一致
-    - /api/=http://$uid.service.appid.lzcapp:8000            #多实例应用需要在route里加上"$uid"，请求时lzcinit会自动替换成真正请求的用户
+    - /api/=http://service.appid.lzcapp:8000            #多实例应用会自动在route里加上uid
     - /=file:///lzcapp/pkg/content/dist/
 
   handlers:
