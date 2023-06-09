@@ -11,6 +11,19 @@ enum PlatformType {
   Browser,
 }
 
+export enum LzcUserAgent {
+  // Android客户端 webview内
+  AndroidWebShell = "Lazycat_101",
+  // 桌面客户端 webview内
+  DesktopWebShell = "LazyCatClientDesktop",
+  // IOS客户端 webview内
+  IOSWebShell = "Lazycat_103",
+  // control webview内
+  ControlView = "Lazycat_ControlView",
+  // content webview内
+  ContentView = "Lazycat_ContentView",
+}
+
 declare global {
   interface Window {
     ipcRenderer: any
@@ -302,6 +315,7 @@ class LzcAppSdk {
   }
 
   /**
+   * @deprecated
    * @description: 判断是否属于 webshell 环境
    * @return {boolean}
    */
@@ -310,11 +324,17 @@ class LzcAppSdk {
   }
 
   /**
+   * @description: 处于任意一个客户端的webview内
+   */
+  public isClientWebShell(): boolean {
+    return this.isAndroidWebShell() || this.isPCWebShell() || this.isIosWebShell()
+  }
+  /**
    * @description: 是否是android webshell 环境
    * @return {boolean}
    */
   public isAndroidWebShell(): boolean {
-    return navigator.userAgent.indexOf("Lazycat_101") != -1
+    return navigator.userAgent.indexOf(LzcUserAgent.AndroidWebShell) != -1
   }
 
   /**
@@ -322,7 +342,7 @@ class LzcAppSdk {
    * @return {boolean}
    */
   public isPCWebShell(): boolean {
-    return !!window.ipcRenderer
+    return navigator.userAgent.indexOf(LzcUserAgent.DesktopWebShell) != -1
   }
 
   /**
@@ -330,7 +350,7 @@ class LzcAppSdk {
    * @return {boolean}
    */
   public isIosWebShell(): boolean {
-    return navigator.userAgent.indexOf("Lazycat_103") != -1
+    return navigator.userAgent.indexOf(LzcUserAgent.IOSWebShell) != -1
   }
 
   /**
@@ -338,7 +358,7 @@ class LzcAppSdk {
    * @return {boolean}
    */
   public isControlView(): boolean {
-    return navigator.userAgent.indexOf("Lazycat_ControlView") != -1
+    return this.isClientWebShell() && navigator.userAgent.indexOf(LzcUserAgent.ControlView) != -1
   }
 
   /**
@@ -346,10 +366,11 @@ class LzcAppSdk {
    * @return {boolean}
    */
   public isContentView(): boolean {
-    return navigator.userAgent.indexOf("Lazycat_ContentView") != -1
+    return this.isClientWebShell() && navigator.userAgent.indexOf(LzcUserAgent.ContentView) != -1
   }
 
   /**
+   * @deprecated
    * @description: 是否在客户端内
    * @return {boolean}
    */
