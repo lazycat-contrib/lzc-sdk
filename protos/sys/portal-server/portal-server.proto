@@ -166,6 +166,9 @@ message LoginInfo {
 
   // 当前登陆设备的版本信息
   string device_version = 5;
+
+  // 登陆时服务器返回的token
+  string token = 6;
 }
 
 
