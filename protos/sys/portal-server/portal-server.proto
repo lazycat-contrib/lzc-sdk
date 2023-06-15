@@ -334,6 +334,9 @@ message UpdateBoxSystemStatusRequest {
 
     // 等待加密数据盘被解密
     WaitDataDiskDecryption = 1;
+
+    // 磁盘未初始化
+    DataDiskNotInit = 2;
   }
 
   SysStatus status = 1;
