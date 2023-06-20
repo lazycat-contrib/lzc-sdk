@@ -59,6 +59,8 @@ type HPortalSysClient interface {
 	// hserver重启后默认设置BoxSystem为booting状态
 	// 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
 	UpdateBoxSystemStatus(ctx context.Context, in *UpdateBoxSystemStatusRequest, opts ...grpc.CallOption) (*UpdateBoxSystemStatusResponse, error)
+	// 仅在盒子未初始化时，可以被调用。
+	SetupHServer(ctx context.Context, in *SetupHServerRequest, opts ...grpc.CallOption) (*SetupHServerReply, error)
 	// Deprecated: Do not use.
 	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
 	// Deprecated: Do not use.
@@ -257,6 +259,15 @@ func (c *hPortalSysClient) UpdateBoxSystemStatus(ctx context.Context, in *Update
 	return out, nil
 }
 
+func (c *hPortalSysClient) SetupHServer(ctx context.Context, in *SetupHServerRequest, opts ...grpc.CallOption) (*SetupHServerReply, error) {
+	out := new(SetupHServerReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/SetupHServer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Deprecated: Do not use.
 func (c *hPortalSysClient) GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error) {
 	out := new(DomainCertReply)
@@ -357,6 +368,8 @@ type HPortalSysServer interface {
 	// hserver重启后默认设置BoxSystem为booting状态
 	// 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
 	UpdateBoxSystemStatus(context.Context, *UpdateBoxSystemStatusRequest) (*UpdateBoxSystemStatusResponse, error)
+	// 仅在盒子未初始化时，可以被调用。
+	SetupHServer(context.Context, *SetupHServerRequest) (*SetupHServerReply, error)
 	// Deprecated: Do not use.
 	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
 	// Deprecated: Do not use.
@@ -443,6 +456,9 @@ func (UnimplementedHPortalSysServer) RemoteSocks(context.Context, *RemoteSocksRe
 }
 func (UnimplementedHPortalSysServer) UpdateBoxSystemStatus(context.Context, *UpdateBoxSystemStatusRequest) (*UpdateBoxSystemStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBoxSystemStatus not implemented")
+}
+func (UnimplementedHPortalSysServer) SetupHServer(context.Context, *SetupHServerRequest) (*SetupHServerReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetupHServer not implemented")
 }
 func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDomainSelfCert not implemented")
@@ -799,6 +815,24 @@ func _HPortalSys_UpdateBoxSystemStatus_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_SetupHServer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetupHServerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).SetupHServer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/SetupHServer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).SetupHServer(ctx, req.(*SetupHServerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _HPortalSys_GetDomainSelfCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DomainCertRequest)
 	if err := dec(in); err != nil {
@@ -985,6 +1019,10 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateBoxSystemStatus",
 			Handler:    _HPortalSys_UpdateBoxSystemStatus_Handler,
+		},
+		{
+			MethodName: "SetupHServer",
+			Handler:    _HPortalSys_SetupHServer_Handler,
 		},
 		{
 			MethodName: "GetDomainSelfCert",
