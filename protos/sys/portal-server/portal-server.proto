@@ -52,6 +52,9 @@ service HPortalSys {
   // 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
   rpc UpdateBoxSystemStatus(UpdateBoxSystemStatusRequest) returns (UpdateBoxSystemStatusResponse) {}
 
+  // 仅在盒子未初始化时，可以被调用。
+  rpc SetupHServer(SetupHServerRequest) returns (SetupHServerReply);
+
   // ----------------------------- 以下为准备废弃的接口 --------------------------------------
 
   rpc GetDomainSelfCert(DomainCertRequest) returns (DomainCertReply) {option deprecated=true;}
@@ -418,4 +421,15 @@ message AppCertReply {
   // 盒子证书，同一盒子内所有app的box_cert都是相同的，
   // 可以作为CA证书的角色来使用
   string box_cert = 3;
+}
+
+message SetupHServerRequest {
+  string origin_server = 1;
+  string box_name = 2;
+  string username = 3;
+  string password = 4;
+}
+message SetupHServerReply {
+  bool ok = 1;
+  string reason = 2;
 }
