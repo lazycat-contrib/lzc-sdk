@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.sys;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
+
+service InstallerService {
+  // 初始化微服
+  rpc BoxSetup(BoxSetupRequest) returns(stream BoxSetupReply);
+  // 微服是否有互联网
+  rpc HasInternet(google.protobuf.Empty) returns(HasInternetResponse);
+}
+
+message BoxSetupRequest {
+  string origin_server = 1;
+  string box_name = 2;
+
+  message UserInfo {
+    string username = 1;
+    string password = 2;
+  }
+  UserInfo user_info = 3;
+
+  message WifiInfo {
+    string ssid = 1;
+    string psk = 2;
+  }
+  optional WifiInfo wifi_info = 4;
+}
+
+message BoxSetupReply {
+  enum Status {
+    // 等待按钮点击
+    PendingButtonClick = 0;
+    // 按钮已点击
+    ButtonClicked = 1;
+    // 初始化中，进行申请证书/域名等操作
+    Initializing = 2;
+    // 失败
+    Failed = 3;
+    // 成功
+    Success = 4;
+  }
+  Status status = 1;
+
+  enum FailedStatus {
+    // 等待点击按钮超时
+    WaitButtonTimeout = 0;
+
+    // 初始化失败
+    InitializeFailed = 1;
+
+    // Wi-Fi密码错误
+    WifiAuthFailed = 2;
+  }
+  optional FailedStatus failed_status = 2;
+  // 如果是InitializeFailed，那么可能有如下失败原因
+  // 微服名被别人注册了
+  // 微服名不符合规范
+  // 账号密码不符合规范
+  // 其他的失败就直接用其字面意思就行
+  optional string failed_reason = 3;
+}
+
+message HasInternetResponse {
+  bool result = 1;
+}
