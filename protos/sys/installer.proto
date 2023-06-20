@@ -34,14 +34,12 @@ message BoxSetupReply {
   enum Status {
     // 等待按钮点击
     PendingButtonClick = 0;
-    // 按钮已点击
-    ButtonClicked = 1;
     // 初始化中，进行申请证书/域名等操作
-    Initializing = 2;
+    Initializing = 1;
     // 失败
-    Failed = 3;
+    Failed = 2;
     // 成功
-    Success = 4;
+    Success = 3;
   }
   Status status = 1;
 
