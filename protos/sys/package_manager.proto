@@ -20,7 +20,7 @@ service PackageManager {
   }
 
   // 上传 Lpk 安装应用
-  rpc Install2(Install2Request) returns (google.protobuf.Empty) {
+  rpc Install2(stream Install2Request) returns (google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_permissions = INSTALL_PACKAGE;
   }
 
@@ -100,7 +100,8 @@ message InstallRequest {
 }
 
 message Install2Request {
-  bytes lpk_data = 1;
+  bytes data_block = 1;
+  bool end_of_file = 2;
 }
 
 message UninstallRequest {
