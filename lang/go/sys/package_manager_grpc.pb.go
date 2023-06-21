@@ -25,6 +25,8 @@ const _ = grpc.SupportPackageIsVersion7
 type PackageManagerClient interface {
 	// 根据 URL 和 校验码（可选），安装应用
 	Install(ctx context.Context, in *InstallRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 上传 Lpk 安装应用
+	Install2(ctx context.Context, in *Install2Request, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据 AppId 卸载应用
 	Uninstall(ctx context.Context, in *UninstallRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 休眠应用
@@ -60,6 +62,15 @@ func NewPackageManagerClient(cc grpc.ClientConnInterface) PackageManagerClient {
 func (c *packageManagerClient) Install(ctx context.Context, in *InstallRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.PackageManager/Install", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *packageManagerClient) Install2(ctx context.Context, in *Install2Request, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.PackageManager/Install2", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -171,6 +182,8 @@ func (c *packageManagerClient) ListFileHandler(ctx context.Context, in *ListFile
 type PackageManagerServer interface {
 	// 根据 URL 和 校验码（可选），安装应用
 	Install(context.Context, *InstallRequest) (*emptypb.Empty, error)
+	// 上传 Lpk 安装应用
+	Install2(context.Context, *Install2Request) (*emptypb.Empty, error)
 	// 根据 AppId 卸载应用
 	Uninstall(context.Context, *UninstallRequest) (*emptypb.Empty, error)
 	// 休眠应用
@@ -202,6 +215,9 @@ type UnimplementedPackageManagerServer struct {
 
 func (UnimplementedPackageManagerServer) Install(context.Context, *InstallRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Install not implemented")
+}
+func (UnimplementedPackageManagerServer) Install2(context.Context, *Install2Request) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Install2 not implemented")
 }
 func (UnimplementedPackageManagerServer) Uninstall(context.Context, *UninstallRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Uninstall not implemented")
@@ -263,6 +279,24 @@ func _PackageManager_Install_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PackageManagerServer).Install(ctx, req.(*InstallRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PackageManager_Install2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Install2Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).Install2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.PackageManager/Install2",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).Install2(ctx, req.(*Install2Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -475,6 +509,10 @@ var PackageManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Install",
 			Handler:    _PackageManager_Install_Handler,
+		},
+		{
+			MethodName: "Install2",
+			Handler:    _PackageManager_Install2_Handler,
 		},
 		{
 			MethodName: "Uninstall",
