@@ -79,7 +79,7 @@ func (c *packageManagerClient) Install2(ctx context.Context, opts ...grpc.CallOp
 
 type PackageManager_Install2Client interface {
 	Send(*Install2Request) error
-	CloseAndRecv() (*emptypb.Empty, error)
+	CloseAndRecv() (*Install2Response, error)
 	grpc.ClientStream
 }
 
@@ -91,11 +91,11 @@ func (x *packageManagerInstall2Client) Send(m *Install2Request) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *packageManagerInstall2Client) CloseAndRecv() (*emptypb.Empty, error) {
+func (x *packageManagerInstall2Client) CloseAndRecv() (*Install2Response, error) {
 	if err := x.ClientStream.CloseSend(); err != nil {
 		return nil, err
 	}
-	m := new(emptypb.Empty)
+	m := new(Install2Response)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -313,7 +313,7 @@ func _PackageManager_Install2_Handler(srv interface{}, stream grpc.ServerStream)
 }
 
 type PackageManager_Install2Server interface {
-	SendAndClose(*emptypb.Empty) error
+	SendAndClose(*Install2Response) error
 	Recv() (*Install2Request, error)
 	grpc.ServerStream
 }
@@ -322,7 +322,7 @@ type packageManagerInstall2Server struct {
 	grpc.ServerStream
 }
 
-func (x *packageManagerInstall2Server) SendAndClose(m *emptypb.Empty) error {
+func (x *packageManagerInstall2Server) SendAndClose(m *Install2Response) error {
 	return x.ServerStream.SendMsg(m)
 }
 
