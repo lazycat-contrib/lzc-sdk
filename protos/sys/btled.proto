@@ -11,13 +11,13 @@ service ButtonLedSessionService {
 
 message ButtonLedSessionInfo {
   // 事务描述，仅用于调试
-  string description = 1;
+  string Description = 1;
 
   // 事务是否可以被抢占
-  bool preemptable = 2;
+  bool Preemptable = 2;
 
   // 是否需要使用功能按钮（若不使用功能按钮，请不要设置以便节约资源)
-  bool useButton = 3;
+  bool UseButton = 3;
 }
 
 message LedStream {
@@ -62,4 +62,9 @@ message ButtonStream {
 
   // 按钮事件
   ButtonEvent Event = 1;
+
+  // 该事务是否已经结束
+  //   客户端应该随时检查此消息，如果此值为 true，则说明事务已经被抢占，该事务不再会接收到按钮事件，也不能再发送LED事件
+  //   客户端此时唯一的选择是关闭连接，以便释放服务器资源
+  bool Eof = 2;
 }
