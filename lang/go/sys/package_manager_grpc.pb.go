@@ -25,8 +25,6 @@ const _ = grpc.SupportPackageIsVersion7
 type PackageManagerClient interface {
 	// 根据 URL 和 校验码（可选），安装应用
 	Install(ctx context.Context, in *InstallRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 上传 Lpk 安装应用
-	Install2(ctx context.Context, opts ...grpc.CallOption) (PackageManager_Install2Client, error)
 	// 根据 AppId 卸载应用
 	Uninstall(ctx context.Context, in *UninstallRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 休眠应用
@@ -66,40 +64,6 @@ func (c *packageManagerClient) Install(ctx context.Context, in *InstallRequest, 
 		return nil, err
 	}
 	return out, nil
-}
-
-func (c *packageManagerClient) Install2(ctx context.Context, opts ...grpc.CallOption) (PackageManager_Install2Client, error) {
-	stream, err := c.cc.NewStream(ctx, &PackageManager_ServiceDesc.Streams[0], "/cloud.lazycat.apis.sys.PackageManager/Install2", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &packageManagerInstall2Client{stream}
-	return x, nil
-}
-
-type PackageManager_Install2Client interface {
-	Send(*Install2Request) error
-	CloseAndRecv() (*Install2Response, error)
-	grpc.ClientStream
-}
-
-type packageManagerInstall2Client struct {
-	grpc.ClientStream
-}
-
-func (x *packageManagerInstall2Client) Send(m *Install2Request) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *packageManagerInstall2Client) CloseAndRecv() (*Install2Response, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	m := new(Install2Response)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 func (c *packageManagerClient) Uninstall(ctx context.Context, in *UninstallRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
@@ -207,8 +171,6 @@ func (c *packageManagerClient) ListFileHandler(ctx context.Context, in *ListFile
 type PackageManagerServer interface {
 	// 根据 URL 和 校验码（可选），安装应用
 	Install(context.Context, *InstallRequest) (*emptypb.Empty, error)
-	// 上传 Lpk 安装应用
-	Install2(PackageManager_Install2Server) error
 	// 根据 AppId 卸载应用
 	Uninstall(context.Context, *UninstallRequest) (*emptypb.Empty, error)
 	// 休眠应用
@@ -240,9 +202,6 @@ type UnimplementedPackageManagerServer struct {
 
 func (UnimplementedPackageManagerServer) Install(context.Context, *InstallRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Install not implemented")
-}
-func (UnimplementedPackageManagerServer) Install2(PackageManager_Install2Server) error {
-	return status.Errorf(codes.Unimplemented, "method Install2 not implemented")
 }
 func (UnimplementedPackageManagerServer) Uninstall(context.Context, *UninstallRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Uninstall not implemented")
@@ -306,32 +265,6 @@ func _PackageManager_Install_Handler(srv interface{}, ctx context.Context, dec f
 		return srv.(PackageManagerServer).Install(ctx, req.(*InstallRequest))
 	}
 	return interceptor(ctx, in, info, handler)
-}
-
-func _PackageManager_Install2_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(PackageManagerServer).Install2(&packageManagerInstall2Server{stream})
-}
-
-type PackageManager_Install2Server interface {
-	SendAndClose(*Install2Response) error
-	Recv() (*Install2Request, error)
-	grpc.ServerStream
-}
-
-type packageManagerInstall2Server struct {
-	grpc.ServerStream
-}
-
-func (x *packageManagerInstall2Server) SendAndClose(m *Install2Response) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *packageManagerInstall2Server) Recv() (*Install2Request, error) {
-	m := new(Install2Request)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 func _PackageManager_Uninstall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -588,12 +521,6 @@ var PackageManager_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PackageManager_ListFileHandler_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "Install2",
-			Handler:       _PackageManager_Install2_Handler,
-			ClientStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "sys/package_manager.proto",
 }

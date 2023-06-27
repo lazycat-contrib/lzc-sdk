@@ -19,11 +19,6 @@ service PackageManager {
     option (cloud.lazycat.apis.common.scontext).require_permissions = INSTALL_PACKAGE;
   }
 
-  // 上传 Lpk 安装应用
-  rpc Install2(stream Install2Request) returns (Install2Response) {
-    option (cloud.lazycat.apis.common.scontext).require_permissions = INSTALL_PACKAGE;
-  }
-
   // 根据 AppId 卸载应用
   rpc Uninstall(UninstallRequest) returns (google.protobuf.Empty) {
     option (cloud.lazycat.apis.common.scontext).require_permissions = INSTALL_PACKAGE;
@@ -97,15 +92,6 @@ message InstallRequest {
   optional string subdomain = 4;
 
   optional bool no_resume = 5;
-}
-
-message Install2Request {
-  bytes data_block = 1;
-  bool end_of_file = 2;
-}
-
-message Install2Response {
-  string appid = 1;
 }
 
 message UninstallRequest {
