@@ -80,9 +80,6 @@ message PkgURL {
 }
 
 message InstallRequest {
-  // 应用的 appid
-  string appid = 1;
-
   // 内部地址
   //     http://pkgm.api-server.lzcapp/tmp/xxxx-0.2.1.lpk
   // 或外网地址
@@ -93,6 +90,9 @@ message InstallRequest {
   // 1. 本地有对应包的缓存，则会直接使用缓存
   // 2. 本地若没有缓存，则会从 url 下载包，并校验包的 sha256 值
   string sha256 = 3;
+
+  // 应用的 appid，若不指定则无下载中的状态
+  optional string appid = 1;
 
   optional string subdomain = 4;
 
