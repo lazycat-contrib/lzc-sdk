@@ -23,6 +23,7 @@ message BoxSetupRequest {
   message UserInfo {
     string username = 1;
     string password = 2;
+    optional string phonenumber = 3;
   }
   UserInfo user_info = 3;
 
