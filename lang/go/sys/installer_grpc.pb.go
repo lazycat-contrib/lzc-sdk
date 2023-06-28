@@ -27,6 +27,12 @@ type InstallerServiceClient interface {
 	BoxSetup(ctx context.Context, in *BoxSetupRequest, opts ...grpc.CallOption) (InstallerService_BoxSetupClient, error)
 	// 微服是否有互联网
 	HasInternet(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*HasInternetResponse, error)
+	// 列出内部缓存中的 Wi-Fi 列表， 如果没有则会扫描后返回
+	WifiList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AccessPointInfoList, error)
+	// 连接一个Wi-Fi
+	WifiConnect(ctx context.Context, in *WifiConnectInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
+	// 手动链接一个Wi-Fi（用于连接隐藏网络）
+	WifiConfigAdd(ctx context.Context, in *WifiConnectInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
 }
 
 type installerServiceClient struct {
@@ -78,6 +84,33 @@ func (c *installerServiceClient) HasInternet(ctx context.Context, in *emptypb.Em
 	return out, nil
 }
 
+func (c *installerServiceClient) WifiList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AccessPointInfoList, error) {
+	out := new(AccessPointInfoList)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.InstallerService/WifiList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *installerServiceClient) WifiConnect(ctx context.Context, in *WifiConnectInfo, opts ...grpc.CallOption) (*WifiConnectReply, error) {
+	out := new(WifiConnectReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.InstallerService/WifiConnect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *installerServiceClient) WifiConfigAdd(ctx context.Context, in *WifiConnectInfo, opts ...grpc.CallOption) (*WifiConnectReply, error) {
+	out := new(WifiConnectReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.InstallerService/WifiConfigAdd", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InstallerServiceServer is the server API for InstallerService service.
 // All implementations must embed UnimplementedInstallerServiceServer
 // for forward compatibility
@@ -86,6 +119,12 @@ type InstallerServiceServer interface {
 	BoxSetup(*BoxSetupRequest, InstallerService_BoxSetupServer) error
 	// 微服是否有互联网
 	HasInternet(context.Context, *emptypb.Empty) (*HasInternetResponse, error)
+	// 列出内部缓存中的 Wi-Fi 列表， 如果没有则会扫描后返回
+	WifiList(context.Context, *emptypb.Empty) (*AccessPointInfoList, error)
+	// 连接一个Wi-Fi
+	WifiConnect(context.Context, *WifiConnectInfo) (*WifiConnectReply, error)
+	// 手动链接一个Wi-Fi（用于连接隐藏网络）
+	WifiConfigAdd(context.Context, *WifiConnectInfo) (*WifiConnectReply, error)
 	mustEmbedUnimplementedInstallerServiceServer()
 }
 
@@ -98,6 +137,15 @@ func (UnimplementedInstallerServiceServer) BoxSetup(*BoxSetupRequest, InstallerS
 }
 func (UnimplementedInstallerServiceServer) HasInternet(context.Context, *emptypb.Empty) (*HasInternetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HasInternet not implemented")
+}
+func (UnimplementedInstallerServiceServer) WifiList(context.Context, *emptypb.Empty) (*AccessPointInfoList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WifiList not implemented")
+}
+func (UnimplementedInstallerServiceServer) WifiConnect(context.Context, *WifiConnectInfo) (*WifiConnectReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WifiConnect not implemented")
+}
+func (UnimplementedInstallerServiceServer) WifiConfigAdd(context.Context, *WifiConnectInfo) (*WifiConnectReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WifiConfigAdd not implemented")
 }
 func (UnimplementedInstallerServiceServer) mustEmbedUnimplementedInstallerServiceServer() {}
 
@@ -151,6 +199,60 @@ func _InstallerService_HasInternet_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InstallerService_WifiList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InstallerServiceServer).WifiList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.InstallerService/WifiList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InstallerServiceServer).WifiList(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InstallerService_WifiConnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WifiConnectInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InstallerServiceServer).WifiConnect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.InstallerService/WifiConnect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InstallerServiceServer).WifiConnect(ctx, req.(*WifiConnectInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InstallerService_WifiConfigAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WifiConnectInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InstallerServiceServer).WifiConfigAdd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.InstallerService/WifiConfigAdd",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InstallerServiceServer).WifiConfigAdd(ctx, req.(*WifiConnectInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InstallerService_ServiceDesc is the grpc.ServiceDesc for InstallerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -161,6 +263,18 @@ var InstallerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HasInternet",
 			Handler:    _InstallerService_HasInternet_Handler,
+		},
+		{
+			MethodName: "WifiList",
+			Handler:    _InstallerService_WifiList_Handler,
+		},
+		{
+			MethodName: "WifiConnect",
+			Handler:    _InstallerService_WifiConnect_Handler,
+		},
+		{
+			MethodName: "WifiConfigAdd",
+			Handler:    _InstallerService_WifiConfigAdd_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

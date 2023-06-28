@@ -3,6 +3,7 @@ syntax = "proto3";
 package cloud.lazycat.apis.sys;
 
 import "google/protobuf/empty.proto";
+import "sys/network_manager.proto";
 
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 
@@ -11,6 +12,12 @@ service InstallerService {
   rpc BoxSetup(BoxSetupRequest) returns(stream BoxSetupReply);
   // 微服是否有互联网
   rpc HasInternet(google.protobuf.Empty) returns(HasInternetResponse);
+  // 列出内部缓存中的 Wi-Fi 列表， 如果没有则会扫描后返回
+  rpc WifiList(google.protobuf.Empty) returns(AccessPointInfoList);
+  // 连接一个Wi-Fi
+  rpc WifiConnect(WifiConnectInfo) returns(WifiConnectReply);
+  // 手动链接一个Wi-Fi（用于连接隐藏网络）
+  rpc WifiConfigAdd(WifiConnectInfo) returns(WifiConnectReply);
 }
 
 message BoxSetupRequest {
