@@ -14,10 +14,6 @@ service InstallerService {
   rpc HasInternet(google.protobuf.Empty) returns(HasInternetResponse);
   // 列出内部缓存中的 Wi-Fi 列表， 如果没有则会扫描后返回
   rpc WifiList(google.protobuf.Empty) returns(AccessPointInfoList);
-  // 连接一个Wi-Fi
-  rpc WifiConnect(WifiConnectInfo) returns(WifiConnectReply);
-  // 手动链接一个Wi-Fi（用于连接隐藏网络）
-  rpc WifiConfigAdd(WifiConnectInfo) returns(WifiConnectReply);
 }
 
 message BoxSetupRequest {
@@ -30,11 +26,7 @@ message BoxSetupRequest {
   }
   UserInfo user_info = 3;
 
-  message WifiInfo {
-    string ssid = 1;
-    string psk = 2;
-  }
-  optional WifiInfo wifi_info = 4;
+  optional WifiConnectInfo wifi_info = 4;
 }
 
 message BoxSetupReply {

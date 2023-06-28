@@ -82,6 +82,7 @@ message WifiConnectInfo {
   string ssid = 2;
 
   string password = 3;
+  optional KeyMgmt key_mgmt = 4;
 }
 
 enum KeyMgmt {
