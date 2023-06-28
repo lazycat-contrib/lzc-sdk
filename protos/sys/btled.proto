@@ -5,7 +5,9 @@ package cloud.lazycat.apis.sys;
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 
 service ButtonLedSessionService {
-  // 抢占一个按钮 LED 事务
+  // 抢占一个按钮 LED 事务。
+  //    连接失败说明事务已经其它组件占用并且不可抢占
+  //    如果连接成功后来被异常断开，大概率说明事务被其它组件抢占（所以如果有必要，需要设置 Preemptable = false 来实现该事务不可抢占）
   rpc Connect(stream LedStream) returns (stream ButtonStream);
 }
 
@@ -62,9 +64,4 @@ message ButtonStream {
 
   // 按钮事件
   ButtonEvent Event = 1;
-
-  // 该事务是否已经结束
-  //   客户端应该随时检查此消息，如果此值为 true，则说明事务已经被抢占，该事务不再会接收到按钮事件，也不能再发送LED事件
-  //   客户端此时唯一的选择是关闭连接，以便释放服务器资源
-  bool Eof = 2;
 }
