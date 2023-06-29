@@ -20,6 +20,16 @@ service InstallerService {
   rpc WifiScan(google.protobuf.Empty) returns (google.protobuf.Empty);
   // 当前连接的Wi-Fi
   rpc WifiGetConnected(google.protobuf.Empty) returns(AccessPointInfo);
+  // 获取网络设备的状态信息
+  rpc NetworkDeviceStatusInfo(google.protobuf.Empty) returns(NetworkDeviceStatusInfoRespone);
+}
+
+message NetworkDeviceStatusInfoRespone{
+  // 有线连接状态（已假设只有一块有线网卡）
+  NetworkDeviceStatus WiredDevice = 2;
+
+  // 无线设备状态（已假设只有一块无线网卡）
+  NetworkDeviceStatus WirelessDevice = 3;
 }
 
 message BoxSetupRequest {

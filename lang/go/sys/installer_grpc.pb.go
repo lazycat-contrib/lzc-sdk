@@ -35,6 +35,8 @@ type InstallerServiceClient interface {
 	WifiScan(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 当前连接的Wi-Fi
 	WifiGetConnected(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AccessPointInfo, error)
+	// 获取网络设备的状态信息
+	NetworkDeviceStatusInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*NetworkDeviceStatusInfoRespone, error)
 }
 
 type installerServiceClient struct {
@@ -122,6 +124,15 @@ func (c *installerServiceClient) WifiGetConnected(ctx context.Context, in *empty
 	return out, nil
 }
 
+func (c *installerServiceClient) NetworkDeviceStatusInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*NetworkDeviceStatusInfoRespone, error) {
+	out := new(NetworkDeviceStatusInfoRespone)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.InstallerService/NetworkDeviceStatusInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InstallerServiceServer is the server API for InstallerService service.
 // All implementations must embed UnimplementedInstallerServiceServer
 // for forward compatibility
@@ -138,6 +149,8 @@ type InstallerServiceServer interface {
 	WifiScan(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 当前连接的Wi-Fi
 	WifiGetConnected(context.Context, *emptypb.Empty) (*AccessPointInfo, error)
+	// 获取网络设备的状态信息
+	NetworkDeviceStatusInfo(context.Context, *emptypb.Empty) (*NetworkDeviceStatusInfoRespone, error)
 	mustEmbedUnimplementedInstallerServiceServer()
 }
 
@@ -162,6 +175,9 @@ func (UnimplementedInstallerServiceServer) WifiScan(context.Context, *emptypb.Em
 }
 func (UnimplementedInstallerServiceServer) WifiGetConnected(context.Context, *emptypb.Empty) (*AccessPointInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WifiGetConnected not implemented")
+}
+func (UnimplementedInstallerServiceServer) NetworkDeviceStatusInfo(context.Context, *emptypb.Empty) (*NetworkDeviceStatusInfoRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NetworkDeviceStatusInfo not implemented")
 }
 func (UnimplementedInstallerServiceServer) mustEmbedUnimplementedInstallerServiceServer() {}
 
@@ -287,6 +303,24 @@ func _InstallerService_WifiGetConnected_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InstallerService_NetworkDeviceStatusInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InstallerServiceServer).NetworkDeviceStatusInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.InstallerService/NetworkDeviceStatusInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InstallerServiceServer).NetworkDeviceStatusInfo(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InstallerService_ServiceDesc is the grpc.ServiceDesc for InstallerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -313,6 +347,10 @@ var InstallerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "WifiGetConnected",
 			Handler:    _InstallerService_WifiGetConnected_Handler,
+		},
+		{
+			MethodName: "NetworkDeviceStatusInfo",
+			Handler:    _InstallerService_NetworkDeviceStatusInfo_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
