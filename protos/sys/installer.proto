@@ -18,6 +18,8 @@ service InstallerService {
   rpc WifiConnect(WifiConnectInfo) returns (WifiConnectReply);
   // Scan 扫描盒子附近Wi-Fi热点信息，扫描结果在内部缓存里（阻塞，可能耗费数秒）
   rpc WifiScan(google.protobuf.Empty) returns (google.protobuf.Empty);
+  // 当前连接的Wi-Fi
+  rpc WifiGetConnected(google.protobuf.Empty) returns(AccessPointInfo);
 }
 
 message BoxSetupRequest {

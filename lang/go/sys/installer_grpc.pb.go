@@ -33,6 +33,8 @@ type InstallerServiceClient interface {
 	WifiConnect(ctx context.Context, in *WifiConnectInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
 	// Scan 扫描盒子附近Wi-Fi热点信息，扫描结果在内部缓存里（阻塞，可能耗费数秒）
 	WifiScan(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 当前连接的Wi-Fi
+	WifiGetConnected(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AccessPointInfo, error)
 }
 
 type installerServiceClient struct {
@@ -111,6 +113,15 @@ func (c *installerServiceClient) WifiScan(ctx context.Context, in *emptypb.Empty
 	return out, nil
 }
 
+func (c *installerServiceClient) WifiGetConnected(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AccessPointInfo, error) {
+	out := new(AccessPointInfo)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.InstallerService/WifiGetConnected", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InstallerServiceServer is the server API for InstallerService service.
 // All implementations must embed UnimplementedInstallerServiceServer
 // for forward compatibility
@@ -125,6 +136,8 @@ type InstallerServiceServer interface {
 	WifiConnect(context.Context, *WifiConnectInfo) (*WifiConnectReply, error)
 	// Scan 扫描盒子附近Wi-Fi热点信息，扫描结果在内部缓存里（阻塞，可能耗费数秒）
 	WifiScan(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 当前连接的Wi-Fi
+	WifiGetConnected(context.Context, *emptypb.Empty) (*AccessPointInfo, error)
 	mustEmbedUnimplementedInstallerServiceServer()
 }
 
@@ -146,6 +159,9 @@ func (UnimplementedInstallerServiceServer) WifiConnect(context.Context, *WifiCon
 }
 func (UnimplementedInstallerServiceServer) WifiScan(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WifiScan not implemented")
+}
+func (UnimplementedInstallerServiceServer) WifiGetConnected(context.Context, *emptypb.Empty) (*AccessPointInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WifiGetConnected not implemented")
 }
 func (UnimplementedInstallerServiceServer) mustEmbedUnimplementedInstallerServiceServer() {}
 
@@ -253,6 +269,24 @@ func _InstallerService_WifiScan_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InstallerService_WifiGetConnected_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InstallerServiceServer).WifiGetConnected(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.InstallerService/WifiGetConnected",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InstallerServiceServer).WifiGetConnected(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InstallerService_ServiceDesc is the grpc.ServiceDesc for InstallerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -275,6 +309,10 @@ var InstallerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "WifiScan",
 			Handler:    _InstallerService_WifiScan_Handler,
+		},
+		{
+			MethodName: "WifiGetConnected",
+			Handler:    _InstallerService_WifiGetConnected_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
