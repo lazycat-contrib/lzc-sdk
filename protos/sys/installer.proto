@@ -14,6 +14,10 @@ service InstallerService {
   rpc HasInternet(google.protobuf.Empty) returns(HasInternetResponse);
   // 列出内部缓存中的 Wi-Fi 列表， 如果没有则会扫描后返回
   rpc WifiList(google.protobuf.Empty) returns(AccessPointInfoList);
+  // 连接Wi-Fi
+  rpc WifiConnect(WifiConnectInfo) returns (WifiConnectReply);
+  // Scan 扫描盒子附近Wi-Fi热点信息，扫描结果在内部缓存里（阻塞，可能耗费数秒）
+  rpc WifiScan(google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
 message BoxSetupRequest {
@@ -26,8 +30,6 @@ message BoxSetupRequest {
     optional string phonenumber = 3;
   }
   UserInfo user_info = 3;
-
-  optional WifiConnectInfo wifi_info = 4;
 }
 
 message BoxSetupReply {

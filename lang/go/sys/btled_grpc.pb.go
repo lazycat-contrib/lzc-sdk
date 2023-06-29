@@ -22,7 +22,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ButtonLedSessionServiceClient interface {
-	// 抢占一个按钮 LED 事务
+	// 抢占一个按钮 LED 事务。
+	//    连接失败说明事务已经其它组件占用并且不可抢占
+	//    如果连接成功后来被异常断开，大概率说明事务被其它组件抢占（所以如果有必要，需要设置 Preemptable = false 来实现该事务不可抢占）
 	Connect(ctx context.Context, opts ...grpc.CallOption) (ButtonLedSessionService_ConnectClient, error)
 }
 
@@ -69,7 +71,9 @@ func (x *buttonLedSessionServiceConnectClient) Recv() (*ButtonStream, error) {
 // All implementations must embed UnimplementedButtonLedSessionServiceServer
 // for forward compatibility
 type ButtonLedSessionServiceServer interface {
-	// 抢占一个按钮 LED 事务
+	// 抢占一个按钮 LED 事务。
+	//    连接失败说明事务已经其它组件占用并且不可抢占
+	//    如果连接成功后来被异常断开，大概率说明事务被其它组件抢占（所以如果有必要，需要设置 Preemptable = false 来实现该事务不可抢占）
 	Connect(ButtonLedSessionService_ConnectServer) error
 	mustEmbedUnimplementedButtonLedSessionServiceServer()
 }
