@@ -51,9 +51,6 @@ message BoxSetupReply {
 
     // 初始化失败
     InitializeFailed = 1;
-
-    // Wi-Fi密码错误
-    WifiAuthFailed = 2;
   }
   optional FailedStatus failed_status = 2;
   // 如果是InitializeFailed，那么可能有如下失败原因
