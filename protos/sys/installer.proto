@@ -25,9 +25,10 @@ service InstallerService {
 }
 
 message NetworkDeviceStatusInfoRespone{
+  // 是否有互联网
+  bool hasInternet = 1;
   // 有线连接状态（已假设只有一块有线网卡）
   NetworkDeviceStatus WiredDevice = 2;
-
   // 无线设备状态（已假设只有一块无线网卡）
   NetworkDeviceStatus WirelessDevice = 3;
 }
