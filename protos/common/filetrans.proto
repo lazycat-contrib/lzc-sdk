@@ -102,6 +102,7 @@ message Task {
   optional google.protobuf.Timestamp created_at = 9;
   optional google.protobuf.Timestamp updated_at = 10;
   optional MetaInfo  meta_info = 11;
+  optional string uid = 12; // 给相册后端用的
 }
 
 /*
