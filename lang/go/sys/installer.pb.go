@@ -21,6 +21,61 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type NetworkDeviceStatusInfoRespone_Status int32
+
+const (
+	NetworkDeviceStatusInfoRespone_Disconnected  NetworkDeviceStatusInfoRespone_Status = 0
+	NetworkDeviceStatusInfoRespone_Connecting    NetworkDeviceStatusInfoRespone_Status = 1
+	NetworkDeviceStatusInfoRespone_Connected     NetworkDeviceStatusInfoRespone_Status = 2
+	NetworkDeviceStatusInfoRespone_Disconnecting NetworkDeviceStatusInfoRespone_Status = 3
+	NetworkDeviceStatusInfoRespone_Disabled      NetworkDeviceStatusInfoRespone_Status = 4
+)
+
+// Enum value maps for NetworkDeviceStatusInfoRespone_Status.
+var (
+	NetworkDeviceStatusInfoRespone_Status_name = map[int32]string{
+		0: "Disconnected",
+		1: "Connecting",
+		2: "Connected",
+		3: "Disconnecting",
+		4: "Disabled",
+	}
+	NetworkDeviceStatusInfoRespone_Status_value = map[string]int32{
+		"Disconnected":  0,
+		"Connecting":    1,
+		"Connected":     2,
+		"Disconnecting": 3,
+		"Disabled":      4,
+	}
+)
+
+func (x NetworkDeviceStatusInfoRespone_Status) Enum() *NetworkDeviceStatusInfoRespone_Status {
+	p := new(NetworkDeviceStatusInfoRespone_Status)
+	*p = x
+	return p
+}
+
+func (x NetworkDeviceStatusInfoRespone_Status) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (NetworkDeviceStatusInfoRespone_Status) Descriptor() protoreflect.EnumDescriptor {
+	return file_sys_installer_proto_enumTypes[0].Descriptor()
+}
+
+func (NetworkDeviceStatusInfoRespone_Status) Type() protoreflect.EnumType {
+	return &file_sys_installer_proto_enumTypes[0]
+}
+
+func (x NetworkDeviceStatusInfoRespone_Status) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use NetworkDeviceStatusInfoRespone_Status.Descriptor instead.
+func (NetworkDeviceStatusInfoRespone_Status) EnumDescriptor() ([]byte, []int) {
+	return file_sys_installer_proto_rawDescGZIP(), []int{0, 0}
+}
+
 type BoxSetupReply_Status int32
 
 const (
@@ -61,11 +116,11 @@ func (x BoxSetupReply_Status) String() string {
 }
 
 func (BoxSetupReply_Status) Descriptor() protoreflect.EnumDescriptor {
-	return file_sys_installer_proto_enumTypes[0].Descriptor()
+	return file_sys_installer_proto_enumTypes[1].Descriptor()
 }
 
 func (BoxSetupReply_Status) Type() protoreflect.EnumType {
-	return &file_sys_installer_proto_enumTypes[0]
+	return &file_sys_installer_proto_enumTypes[1]
 }
 
 func (x BoxSetupReply_Status) Number() protoreflect.EnumNumber {
@@ -109,11 +164,11 @@ func (x BoxSetupReply_FailedStatus) String() string {
 }
 
 func (BoxSetupReply_FailedStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_sys_installer_proto_enumTypes[1].Descriptor()
+	return file_sys_installer_proto_enumTypes[2].Descriptor()
 }
 
 func (BoxSetupReply_FailedStatus) Type() protoreflect.EnumType {
-	return &file_sys_installer_proto_enumTypes[1]
+	return &file_sys_installer_proto_enumTypes[2]
 }
 
 func (x BoxSetupReply_FailedStatus) Number() protoreflect.EnumNumber {
@@ -133,9 +188,9 @@ type NetworkDeviceStatusInfoRespone struct {
 	// 是否有互联网
 	HasInternet bool `protobuf:"varint,1,opt,name=hasInternet,proto3" json:"hasInternet,omitempty"`
 	// 有线连接状态（已假设只有一块有线网卡）
-	WiredDevice NetworkDeviceStatus `protobuf:"varint,2,opt,name=WiredDevice,proto3,enum=cloud.lazycat.apis.sys.NetworkDeviceStatus" json:"WiredDevice,omitempty"`
+	WiredDevice NetworkDeviceStatusInfoRespone_Status `protobuf:"varint,2,opt,name=WiredDevice,proto3,enum=cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone_Status" json:"WiredDevice,omitempty"`
 	// 无线设备状态（已假设只有一块无线网卡）
-	WirelessDevice NetworkDeviceStatus `protobuf:"varint,3,opt,name=WirelessDevice,proto3,enum=cloud.lazycat.apis.sys.NetworkDeviceStatus" json:"WirelessDevice,omitempty"`
+	WirelessDevice NetworkDeviceStatusInfoRespone_Status `protobuf:"varint,3,opt,name=WirelessDevice,proto3,enum=cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone_Status" json:"WirelessDevice,omitempty"`
 }
 
 func (x *NetworkDeviceStatusInfoRespone) Reset() {
@@ -177,18 +232,18 @@ func (x *NetworkDeviceStatusInfoRespone) GetHasInternet() bool {
 	return false
 }
 
-func (x *NetworkDeviceStatusInfoRespone) GetWiredDevice() NetworkDeviceStatus {
+func (x *NetworkDeviceStatusInfoRespone) GetWiredDevice() NetworkDeviceStatusInfoRespone_Status {
 	if x != nil {
 		return x.WiredDevice
 	}
-	return NetworkDeviceStatus_NetworkDeviceStatusUnavailable
+	return NetworkDeviceStatusInfoRespone_Disconnected
 }
 
-func (x *NetworkDeviceStatusInfoRespone) GetWirelessDevice() NetworkDeviceStatus {
+func (x *NetworkDeviceStatusInfoRespone) GetWirelessDevice() NetworkDeviceStatusInfoRespone_Status {
 	if x != nil {
 		return x.WirelessDevice
 	}
-	return NetworkDeviceStatus_NetworkDeviceStatusUnavailable
+	return NetworkDeviceStatusInfoRespone_Disconnected
 }
 
 type BoxSetupRequest struct {
@@ -441,21 +496,29 @@ var file_sys_installer_proto_rawDesc = []byte{
 	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x65,
 	0x6d, 0x70, 0x74, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x19, 0x73, 0x79, 0x73, 0x2f,
 	0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x5f, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xe6, 0x01, 0x0a, 0x1e, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xe6, 0x02, 0x0a, 0x1e, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72,
 	0x6b, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x49, 0x6e, 0x66,
 	0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x68, 0x61, 0x73, 0x49,
 	0x6e, 0x74, 0x65, 0x72, 0x6e, 0x65, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0b, 0x68,
-	0x61, 0x73, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x65, 0x74, 0x12, 0x4d, 0x0a, 0x0b, 0x57, 0x69,
+	0x61, 0x73, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x65, 0x74, 0x12, 0x5f, 0x0a, 0x0b, 0x57, 0x69,
 	0x72, 0x65, 0x64, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32,
-	0x2b, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e,
+	0x3d, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e,
 	0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b,
-	0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x0b, 0x57, 0x69,
-	0x72, 0x65, 0x64, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x12, 0x53, 0x0a, 0x0e, 0x57, 0x69, 0x72,
-	0x65, 0x6c, 0x65, 0x73, 0x73, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28,
-	0x0e, 0x32, 0x2b, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61,
-	0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x4e, 0x65, 0x74, 0x77, 0x6f,
-	0x72, 0x6b, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x0e,
-	0x57, 0x69, 0x72, 0x65, 0x6c, 0x65, 0x73, 0x73, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x22, 0x9b,
+	0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x49, 0x6e, 0x66, 0x6f,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x65, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x0b,
+	0x57, 0x69, 0x72, 0x65, 0x64, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x12, 0x65, 0x0a, 0x0e, 0x57,
+	0x69, 0x72, 0x65, 0x6c, 0x65, 0x73, 0x73, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x0e, 0x32, 0x3d, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79,
+	0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x4e, 0x65, 0x74,
+	0x77, 0x6f, 0x72, 0x6b, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x65, 0x2e, 0x53, 0x74, 0x61, 0x74,
+	0x75, 0x73, 0x52, 0x0e, 0x57, 0x69, 0x72, 0x65, 0x6c, 0x65, 0x73, 0x73, 0x44, 0x65, 0x76, 0x69,
+	0x63, 0x65, 0x22, 0x5a, 0x0a, 0x06, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x10, 0x0a, 0x0c,
+	0x44, 0x69, 0x73, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x65, 0x64, 0x10, 0x00, 0x12, 0x0e,
+	0x0a, 0x0a, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6e, 0x67, 0x10, 0x01, 0x12, 0x0d,
+	0x0a, 0x09, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x65, 0x64, 0x10, 0x02, 0x12, 0x11, 0x0a,
+	0x0d, 0x44, 0x69, 0x73, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6e, 0x67, 0x10, 0x03,
+	0x12, 0x0c, 0x0a, 0x08, 0x44, 0x69, 0x73, 0x61, 0x62, 0x6c, 0x65, 0x64, 0x10, 0x04, 0x22, 0x9b,
 	0x02, 0x0a, 0x0f, 0x42, 0x6f, 0x78, 0x53, 0x65, 0x74, 0x75, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65,
 	0x73, 0x74, 0x12, 0x23, 0x0a, 0x0d, 0x6f, 0x72, 0x69, 0x67, 0x69, 0x6e, 0x5f, 0x73, 0x65, 0x72,
 	0x76, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x6f, 0x72, 0x69, 0x67, 0x69,
@@ -559,43 +622,43 @@ func file_sys_installer_proto_rawDescGZIP() []byte {
 	return file_sys_installer_proto_rawDescData
 }
 
-var file_sys_installer_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_sys_installer_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_sys_installer_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_sys_installer_proto_goTypes = []interface{}{
-	(BoxSetupReply_Status)(0),              // 0: cloud.lazycat.apis.sys.BoxSetupReply.Status
-	(BoxSetupReply_FailedStatus)(0),        // 1: cloud.lazycat.apis.sys.BoxSetupReply.FailedStatus
-	(*NetworkDeviceStatusInfoRespone)(nil), // 2: cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone
-	(*BoxSetupRequest)(nil),                // 3: cloud.lazycat.apis.sys.BoxSetupRequest
-	(*BoxSetupReply)(nil),                  // 4: cloud.lazycat.apis.sys.BoxSetupReply
-	(*HasInternetResponse)(nil),            // 5: cloud.lazycat.apis.sys.HasInternetResponse
-	(*BoxSetupRequest_UserInfo)(nil),       // 6: cloud.lazycat.apis.sys.BoxSetupRequest.UserInfo
-	(NetworkDeviceStatus)(0),               // 7: cloud.lazycat.apis.sys.NetworkDeviceStatus
-	(*emptypb.Empty)(nil),                  // 8: google.protobuf.Empty
-	(*WifiConnectInfo)(nil),                // 9: cloud.lazycat.apis.sys.WifiConnectInfo
-	(*AccessPointInfoList)(nil),            // 10: cloud.lazycat.apis.sys.AccessPointInfoList
-	(*WifiConnectReply)(nil),               // 11: cloud.lazycat.apis.sys.WifiConnectReply
-	(*AccessPointInfo)(nil),                // 12: cloud.lazycat.apis.sys.AccessPointInfo
+	(NetworkDeviceStatusInfoRespone_Status)(0), // 0: cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone.Status
+	(BoxSetupReply_Status)(0),                  // 1: cloud.lazycat.apis.sys.BoxSetupReply.Status
+	(BoxSetupReply_FailedStatus)(0),            // 2: cloud.lazycat.apis.sys.BoxSetupReply.FailedStatus
+	(*NetworkDeviceStatusInfoRespone)(nil),     // 3: cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone
+	(*BoxSetupRequest)(nil),                    // 4: cloud.lazycat.apis.sys.BoxSetupRequest
+	(*BoxSetupReply)(nil),                      // 5: cloud.lazycat.apis.sys.BoxSetupReply
+	(*HasInternetResponse)(nil),                // 6: cloud.lazycat.apis.sys.HasInternetResponse
+	(*BoxSetupRequest_UserInfo)(nil),           // 7: cloud.lazycat.apis.sys.BoxSetupRequest.UserInfo
+	(*emptypb.Empty)(nil),                      // 8: google.protobuf.Empty
+	(*WifiConnectInfo)(nil),                    // 9: cloud.lazycat.apis.sys.WifiConnectInfo
+	(*AccessPointInfoList)(nil),                // 10: cloud.lazycat.apis.sys.AccessPointInfoList
+	(*WifiConnectReply)(nil),                   // 11: cloud.lazycat.apis.sys.WifiConnectReply
+	(*AccessPointInfo)(nil),                    // 12: cloud.lazycat.apis.sys.AccessPointInfo
 }
 var file_sys_installer_proto_depIdxs = []int32{
-	7,  // 0: cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone.WiredDevice:type_name -> cloud.lazycat.apis.sys.NetworkDeviceStatus
-	7,  // 1: cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone.WirelessDevice:type_name -> cloud.lazycat.apis.sys.NetworkDeviceStatus
-	6,  // 2: cloud.lazycat.apis.sys.BoxSetupRequest.user_info:type_name -> cloud.lazycat.apis.sys.BoxSetupRequest.UserInfo
-	0,  // 3: cloud.lazycat.apis.sys.BoxSetupReply.status:type_name -> cloud.lazycat.apis.sys.BoxSetupReply.Status
-	1,  // 4: cloud.lazycat.apis.sys.BoxSetupReply.failed_status:type_name -> cloud.lazycat.apis.sys.BoxSetupReply.FailedStatus
-	3,  // 5: cloud.lazycat.apis.sys.InstallerService.BoxSetup:input_type -> cloud.lazycat.apis.sys.BoxSetupRequest
+	0,  // 0: cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone.WiredDevice:type_name -> cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone.Status
+	0,  // 1: cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone.WirelessDevice:type_name -> cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone.Status
+	7,  // 2: cloud.lazycat.apis.sys.BoxSetupRequest.user_info:type_name -> cloud.lazycat.apis.sys.BoxSetupRequest.UserInfo
+	1,  // 3: cloud.lazycat.apis.sys.BoxSetupReply.status:type_name -> cloud.lazycat.apis.sys.BoxSetupReply.Status
+	2,  // 4: cloud.lazycat.apis.sys.BoxSetupReply.failed_status:type_name -> cloud.lazycat.apis.sys.BoxSetupReply.FailedStatus
+	4,  // 5: cloud.lazycat.apis.sys.InstallerService.BoxSetup:input_type -> cloud.lazycat.apis.sys.BoxSetupRequest
 	8,  // 6: cloud.lazycat.apis.sys.InstallerService.HasInternet:input_type -> google.protobuf.Empty
 	8,  // 7: cloud.lazycat.apis.sys.InstallerService.WifiList:input_type -> google.protobuf.Empty
 	9,  // 8: cloud.lazycat.apis.sys.InstallerService.WifiConnect:input_type -> cloud.lazycat.apis.sys.WifiConnectInfo
 	8,  // 9: cloud.lazycat.apis.sys.InstallerService.WifiScan:input_type -> google.protobuf.Empty
 	8,  // 10: cloud.lazycat.apis.sys.InstallerService.WifiGetConnected:input_type -> google.protobuf.Empty
 	8,  // 11: cloud.lazycat.apis.sys.InstallerService.NetworkDeviceStatusInfo:input_type -> google.protobuf.Empty
-	4,  // 12: cloud.lazycat.apis.sys.InstallerService.BoxSetup:output_type -> cloud.lazycat.apis.sys.BoxSetupReply
-	5,  // 13: cloud.lazycat.apis.sys.InstallerService.HasInternet:output_type -> cloud.lazycat.apis.sys.HasInternetResponse
+	5,  // 12: cloud.lazycat.apis.sys.InstallerService.BoxSetup:output_type -> cloud.lazycat.apis.sys.BoxSetupReply
+	6,  // 13: cloud.lazycat.apis.sys.InstallerService.HasInternet:output_type -> cloud.lazycat.apis.sys.HasInternetResponse
 	10, // 14: cloud.lazycat.apis.sys.InstallerService.WifiList:output_type -> cloud.lazycat.apis.sys.AccessPointInfoList
 	11, // 15: cloud.lazycat.apis.sys.InstallerService.WifiConnect:output_type -> cloud.lazycat.apis.sys.WifiConnectReply
 	8,  // 16: cloud.lazycat.apis.sys.InstallerService.WifiScan:output_type -> google.protobuf.Empty
 	12, // 17: cloud.lazycat.apis.sys.InstallerService.WifiGetConnected:output_type -> cloud.lazycat.apis.sys.AccessPointInfo
-	2,  // 18: cloud.lazycat.apis.sys.InstallerService.NetworkDeviceStatusInfo:output_type -> cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone
+	3,  // 18: cloud.lazycat.apis.sys.InstallerService.NetworkDeviceStatusInfo:output_type -> cloud.lazycat.apis.sys.NetworkDeviceStatusInfoRespone
 	12, // [12:19] is the sub-list for method output_type
 	5,  // [5:12] is the sub-list for method input_type
 	5,  // [5:5] is the sub-list for extension type_name
@@ -678,7 +741,7 @@ func file_sys_installer_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_sys_installer_proto_rawDesc,
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,

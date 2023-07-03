@@ -25,12 +25,19 @@ service InstallerService {
 }
 
 message NetworkDeviceStatusInfoRespone{
+  enum Status {
+    Disconnected = 0;
+    Connecting = 1;
+    Connected = 2;
+    Disconnecting = 3;
+    Disabled =4;
+  }
   // 是否有互联网
   bool hasInternet = 1;
   // 有线连接状态（已假设只有一块有线网卡）
-  NetworkDeviceStatus WiredDevice = 2;
+  Status WiredDevice = 2;
   // 无线设备状态（已假设只有一块无线网卡）
-  NetworkDeviceStatus WirelessDevice = 3;
+  Status WirelessDevice = 3;
 }
 
 message BoxSetupRequest {
