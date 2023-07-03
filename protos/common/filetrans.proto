@@ -73,7 +73,8 @@ message TaskCreateRequest {
   TaskQueueID queue_id = 4;
 
   optional TaskStatus status = 5;
-  optional MetaInfo  meta_info = 6;
+  optional MetaInfo meta_info = 6;
+  optional string uid = 7; // 给相册后端用的, 用来告知transfer
 }
 message TaskCreateRequests {
   repeated TaskCreateRequest Requests = 1;
@@ -102,7 +103,6 @@ message Task {
   optional google.protobuf.Timestamp created_at = 9;
   optional google.protobuf.Timestamp updated_at = 10;
   optional MetaInfo  meta_info = 11;
-  optional string uid = 12; // 给相册后端用的
 }
 
 /*
