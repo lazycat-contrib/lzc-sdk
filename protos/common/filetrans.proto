@@ -114,7 +114,10 @@ message TaskQueueConfig {
   int64 max_rate_per_file = 2;
   int64 max_rate = 3;
 }
-message TaskQueueID { string id = 1; }
+message TaskQueueID {
+  string id = 1; 
+  optional string uid = 2;
+}
 message TaskQueueConfigReq {
   TaskQueueID id = 1;
   TaskQueueConfig config = 2;
