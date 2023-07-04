@@ -74,7 +74,8 @@ message TaskCreateRequest {
 
   optional TaskStatus status = 5;
   optional MetaInfo meta_info = 6;
-  optional string uid = 7; // 给相册后端用的, 用来告知transfer
+  optional string uid = 7; // 给相册后端用的, 用来告知transfer, 请求者的uid。这两个uid在用户下载被分享的相册的图片时有用。
+  optional string uid_src = 8; // 给相册后端用的, 用来告知transfer, src(一定为本地路径，且为相对路径)的所属uid。
 }
 message TaskCreateRequests {
   repeated TaskCreateRequest Requests = 1;
