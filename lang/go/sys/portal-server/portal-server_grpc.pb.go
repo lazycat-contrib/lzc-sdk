@@ -23,8 +23,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HPortalSysClient interface {
-	// 用auth-token反向查询登陆的设备以及UID
-	QueryLogin(ctx context.Context, in *AuthToken, opts ...grpc.CallOption) (*LoginInfo, error)
 	QueryBoxInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxInfo, error)
 	// 获取盒子所属域名下或下一级域名的https证书。
 	// 注意不是所有ACME服务器都支持泛域名。
@@ -52,8 +50,6 @@ type HPortalSysClient interface {
 	// 根据UID返回所有的设备列表
 	ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error)
 	QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error)
-	// 删除登陆的会话状态
-	ClearLoginSession(ctx context.Context, in *ClearLoginSessionRequest, opts ...grpc.CallOption) (*ClearLoginSessionReply, error)
 	// 获取remotesocks服务器地址
 	RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error)
 	// hserver重启后默认设置BoxSystem为booting状态
@@ -66,6 +62,10 @@ type HPortalSysClient interface {
 	// 2. 清除本地的box.name
 	// 3. 进入为初始化状态
 	ResetHServer(ctx context.Context, in *ResetHServerRequest, opts ...grpc.CallOption) (*ResetHServerReply, error)
+	// 注册盒子服务
+	// 任何原因导致此调用结束时，都会使此服务注销。(比如hportal重启)
+	// 调用者需要自行重新注册
+	RegisterBoxService(ctx context.Context, in *RegisterBoxServiceRequest, opts ...grpc.CallOption) (HPortalSys_RegisterBoxServiceClient, error)
 	// Deprecated: Do not use.
 	// ----------------------------- 以下为准备废弃的接口 --------------------------------------
 	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
@@ -73,6 +73,12 @@ type HPortalSysClient interface {
 	// 以下接口要改名字
 	// 强制将特定设备加到受信任列表中
 	TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 会话相关接口应该由lzc-runtime/userm自行处理
+	//
+	// 删除登陆的会话状态
+	ClearLoginSession(ctx context.Context, in *ClearLoginSessionRequest, opts ...grpc.CallOption) (*ClearLoginSessionReply, error)
+	// 用auth-token反向查询登陆的设备以及UID
+	QueryLogin(ctx context.Context, in *AuthToken, opts ...grpc.CallOption) (*LoginInfo, error)
 }
 
 type hPortalSysClient struct {
@@ -81,15 +87,6 @@ type hPortalSysClient struct {
 
 func NewHPortalSysClient(cc grpc.ClientConnInterface) HPortalSysClient {
 	return &hPortalSysClient{cc}
-}
-
-func (c *hPortalSysClient) QueryLogin(ctx context.Context, in *AuthToken, opts ...grpc.CallOption) (*LoginInfo, error) {
-	out := new(LoginInfo)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/QueryLogin", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *hPortalSysClient) QueryBoxInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxInfo, error) {
@@ -218,15 +215,6 @@ func (c *hPortalSysClient) QueryDeviceByID(ctx context.Context, in *DeviceID, op
 	return out, nil
 }
 
-func (c *hPortalSysClient) ClearLoginSession(ctx context.Context, in *ClearLoginSessionRequest, opts ...grpc.CallOption) (*ClearLoginSessionReply, error) {
-	out := new(ClearLoginSessionReply)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *hPortalSysClient) RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error) {
 	out := new(RemoteSocksReply)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/RemoteSocks", in, out, opts...)
@@ -263,6 +251,38 @@ func (c *hPortalSysClient) ResetHServer(ctx context.Context, in *ResetHServerReq
 	return out, nil
 }
 
+func (c *hPortalSysClient) RegisterBoxService(ctx context.Context, in *RegisterBoxServiceRequest, opts ...grpc.CallOption) (HPortalSys_RegisterBoxServiceClient, error) {
+	stream, err := c.cc.NewStream(ctx, &HPortalSys_ServiceDesc.Streams[0], "/cloud.lazycat.apis.sys.HPortalSys/RegisterBoxService", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &hPortalSysRegisterBoxServiceClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type HPortalSys_RegisterBoxServiceClient interface {
+	Recv() (*RegisterBoxServiceReply, error)
+	grpc.ClientStream
+}
+
+type hPortalSysRegisterBoxServiceClient struct {
+	grpc.ClientStream
+}
+
+func (x *hPortalSysRegisterBoxServiceClient) Recv() (*RegisterBoxServiceReply, error) {
+	m := new(RegisterBoxServiceReply)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // Deprecated: Do not use.
 func (c *hPortalSysClient) GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error) {
 	out := new(DomainCertReply)
@@ -283,12 +303,28 @@ func (c *hPortalSysClient) TrustUserDevice(ctx context.Context, in *TrustUserDev
 	return out, nil
 }
 
+func (c *hPortalSysClient) ClearLoginSession(ctx context.Context, in *ClearLoginSessionRequest, opts ...grpc.CallOption) (*ClearLoginSessionReply, error) {
+	out := new(ClearLoginSessionReply)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) QueryLogin(ctx context.Context, in *AuthToken, opts ...grpc.CallOption) (*LoginInfo, error) {
+	out := new(LoginInfo)
+	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/QueryLogin", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HPortalSysServer is the server API for HPortalSys service.
 // All implementations must embed UnimplementedHPortalSysServer
 // for forward compatibility
 type HPortalSysServer interface {
-	// 用auth-token反向查询登陆的设备以及UID
-	QueryLogin(context.Context, *AuthToken) (*LoginInfo, error)
 	QueryBoxInfo(context.Context, *emptypb.Empty) (*BoxInfo, error)
 	// 获取盒子所属域名下或下一级域名的https证书。
 	// 注意不是所有ACME服务器都支持泛域名。
@@ -316,8 +352,6 @@ type HPortalSysServer interface {
 	// 根据UID返回所有的设备列表
 	ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error)
 	QueryDeviceByID(context.Context, *DeviceID) (*Device, error)
-	// 删除登陆的会话状态
-	ClearLoginSession(context.Context, *ClearLoginSessionRequest) (*ClearLoginSessionReply, error)
 	// 获取remotesocks服务器地址
 	RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error)
 	// hserver重启后默认设置BoxSystem为booting状态
@@ -330,6 +364,10 @@ type HPortalSysServer interface {
 	// 2. 清除本地的box.name
 	// 3. 进入为初始化状态
 	ResetHServer(context.Context, *ResetHServerRequest) (*ResetHServerReply, error)
+	// 注册盒子服务
+	// 任何原因导致此调用结束时，都会使此服务注销。(比如hportal重启)
+	// 调用者需要自行重新注册
+	RegisterBoxService(*RegisterBoxServiceRequest, HPortalSys_RegisterBoxServiceServer) error
 	// Deprecated: Do not use.
 	// ----------------------------- 以下为准备废弃的接口 --------------------------------------
 	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
@@ -337,6 +375,12 @@ type HPortalSysServer interface {
 	// 以下接口要改名字
 	// 强制将特定设备加到受信任列表中
 	TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error)
+	// 会话相关接口应该由lzc-runtime/userm自行处理
+	//
+	// 删除登陆的会话状态
+	ClearLoginSession(context.Context, *ClearLoginSessionRequest) (*ClearLoginSessionReply, error)
+	// 用auth-token反向查询登陆的设备以及UID
+	QueryLogin(context.Context, *AuthToken) (*LoginInfo, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -344,9 +388,6 @@ type HPortalSysServer interface {
 type UnimplementedHPortalSysServer struct {
 }
 
-func (UnimplementedHPortalSysServer) QueryLogin(context.Context, *AuthToken) (*LoginInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryLogin not implemented")
-}
 func (UnimplementedHPortalSysServer) QueryBoxInfo(context.Context, *emptypb.Empty) (*BoxInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryBoxInfo not implemented")
 }
@@ -389,9 +430,6 @@ func (UnimplementedHPortalSysServer) ListDevices(context.Context, *ListDeviceReq
 func (UnimplementedHPortalSysServer) QueryDeviceByID(context.Context, *DeviceID) (*Device, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryDeviceByID not implemented")
 }
-func (UnimplementedHPortalSysServer) ClearLoginSession(context.Context, *ClearLoginSessionRequest) (*ClearLoginSessionReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ClearLoginSession not implemented")
-}
 func (UnimplementedHPortalSysServer) RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoteSocks not implemented")
 }
@@ -404,11 +442,20 @@ func (UnimplementedHPortalSysServer) SetupHServer(context.Context, *SetupHServer
 func (UnimplementedHPortalSysServer) ResetHServer(context.Context, *ResetHServerRequest) (*ResetHServerReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetHServer not implemented")
 }
+func (UnimplementedHPortalSysServer) RegisterBoxService(*RegisterBoxServiceRequest, HPortalSys_RegisterBoxServiceServer) error {
+	return status.Errorf(codes.Unimplemented, "method RegisterBoxService not implemented")
+}
 func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDomainSelfCert not implemented")
 }
 func (UnimplementedHPortalSysServer) TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TrustUserDevice not implemented")
+}
+func (UnimplementedHPortalSysServer) ClearLoginSession(context.Context, *ClearLoginSessionRequest) (*ClearLoginSessionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ClearLoginSession not implemented")
+}
+func (UnimplementedHPortalSysServer) QueryLogin(context.Context, *AuthToken) (*LoginInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryLogin not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -421,24 +468,6 @@ type UnsafeHPortalSysServer interface {
 
 func RegisterHPortalSysServer(s grpc.ServiceRegistrar, srv HPortalSysServer) {
 	s.RegisterService(&HPortalSys_ServiceDesc, srv)
-}
-
-func _HPortalSys_QueryLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AuthToken)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).QueryLogin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/QueryLogin",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).QueryLogin(ctx, req.(*AuthToken))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _HPortalSys_QueryBoxInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -693,24 +722,6 @@ func _HPortalSys_QueryDeviceByID_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_ClearLoginSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ClearLoginSessionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).ClearLoginSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).ClearLoginSession(ctx, req.(*ClearLoginSessionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _HPortalSys_RemoteSocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RemoteSocksRequest)
 	if err := dec(in); err != nil {
@@ -783,6 +794,27 @@ func _HPortalSys_ResetHServer_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_RegisterBoxService_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(RegisterBoxServiceRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(HPortalSysServer).RegisterBoxService(m, &hPortalSysRegisterBoxServiceServer{stream})
+}
+
+type HPortalSys_RegisterBoxServiceServer interface {
+	Send(*RegisterBoxServiceReply) error
+	grpc.ServerStream
+}
+
+type hPortalSysRegisterBoxServiceServer struct {
+	grpc.ServerStream
+}
+
+func (x *hPortalSysRegisterBoxServiceServer) Send(m *RegisterBoxServiceReply) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 func _HPortalSys_GetDomainSelfCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DomainCertRequest)
 	if err := dec(in); err != nil {
@@ -819,6 +851,42 @@ func _HPortalSys_TrustUserDevice_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_ClearLoginSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClearLoginSessionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).ClearLoginSession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).ClearLoginSession(ctx, req.(*ClearLoginSessionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_QueryLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthToken)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).QueryLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/QueryLogin",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).QueryLogin(ctx, req.(*AuthToken))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HPortalSys_ServiceDesc is the grpc.ServiceDesc for HPortalSys service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -826,10 +894,6 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "cloud.lazycat.apis.sys.HPortalSys",
 	HandlerType: (*HPortalSysServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "QueryLogin",
-			Handler:    _HPortalSys_QueryLogin_Handler,
-		},
 		{
 			MethodName: "QueryBoxInfo",
 			Handler:    _HPortalSys_QueryBoxInfo_Handler,
@@ -887,10 +951,6 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HPortalSys_QueryDeviceByID_Handler,
 		},
 		{
-			MethodName: "ClearLoginSession",
-			Handler:    _HPortalSys_ClearLoginSession_Handler,
-		},
-		{
 			MethodName: "RemoteSocks",
 			Handler:    _HPortalSys_RemoteSocks_Handler,
 		},
@@ -914,7 +974,21 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "TrustUserDevice",
 			Handler:    _HPortalSys_TrustUserDevice_Handler,
 		},
+		{
+			MethodName: "ClearLoginSession",
+			Handler:    _HPortalSys_ClearLoginSession_Handler,
+		},
+		{
+			MethodName: "QueryLogin",
+			Handler:    _HPortalSys_QueryLogin_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "RegisterBoxService",
+			Handler:       _HPortalSys_RegisterBoxService_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "sys/portal-server/portal-server.proto",
 }

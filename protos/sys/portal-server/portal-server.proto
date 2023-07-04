@@ -8,9 +8,6 @@ import "google/protobuf/empty.proto";
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys/portal-server";
 
 service HPortalSys {
-  // 用auth-token反向查询登陆的设备以及UID
-  rpc QueryLogin(AuthToken) returns (LoginInfo) {}
-
   rpc QueryBoxInfo(google.protobuf.Empty) returns (BoxInfo) {}
 
   // 获取盒子所属域名下或下一级域名的https证书。
@@ -42,9 +39,6 @@ service HPortalSys {
   rpc ListDevices(ListDeviceRequest) returns (ListDeviceReply) {}
   rpc QueryDeviceByID(DeviceID) returns (Device) {}
 
-  // 删除登陆的会话状态
-  rpc ClearLoginSession(ClearLoginSessionRequest) returns (ClearLoginSessionReply) {}
-
   // 获取remotesocks服务器地址
   rpc RemoteSocks(RemoteSocksRequest) returns (RemoteSocksReply) {}
 
@@ -61,13 +55,46 @@ service HPortalSys {
   // 3. 进入为初始化状态
   rpc ResetHServer(ResetHServerRequest) returns (ResetHServerReply);
 
+  // 注册盒子服务
+  // 任何原因导致此调用结束时，都会使此服务注销。(比如hportal重启)
+  // 调用者需要自行重新注册
+  rpc RegisterBoxService(RegisterBoxServiceRequest) returns (stream RegisterBoxServiceReply);
+
   // ----------------------------- 以下为准备废弃的接口 --------------------------------------
   rpc GetDomainSelfCert(DomainCertRequest) returns (DomainCertReply) {option deprecated=true;}
 
   // 以下接口要改名字
   // 强制将特定设备加到受信任列表中
   rpc TrustUserDevice(TrustUserDeviceRequest) returns (google.protobuf.Empty) {option deprecated=true;}
+
+
+  // 会话相关接口应该由lzc-runtime/userm自行处理
+  //
+  // 删除登陆的会话状态
+  rpc ClearLoginSession(ClearLoginSessionRequest) returns (ClearLoginSessionReply) {}
+  // 用auth-token反向查询登陆的设备以及UID
+  rpc QueryLogin(AuthToken) returns (LoginInfo) {}
+
 }
+
+message RegisterBoxServiceRequest {
+  // 服务名称，建议使用 xx.yy.zz.nn 这种形式
+  // 如果此服务处于注册中，则后续请求会直接失败结束
+  string service_name = 1;
+
+  string service_network = 2; //tcp、udp
+  string service_address = 3; // $ip:$port
+
+  // 是否需要客户端登陆
+  bool login_require = 4;
+  // 是否需要登陆的用户为管理员
+  bool admin_require = 5;
+
+  // 服务提供的额外信息，此信息会原封不动的传递给hclient端，
+  // service可以基于此机制进行进一步的安全认证等作用
+  string extra_info = 6;
+}
+message RegisterBoxServiceReply {}
 
 message RemoteSocksRequest {
   enum LocationType {
