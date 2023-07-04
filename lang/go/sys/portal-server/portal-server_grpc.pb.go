@@ -67,31 +67,12 @@ type HPortalSysClient interface {
 	// 3. 进入为初始化状态
 	ResetHServer(ctx context.Context, in *ResetHServerRequest, opts ...grpc.CallOption) (*ResetHServerReply, error)
 	// Deprecated: Do not use.
+	// ----------------------------- 以下为准备废弃的接口 --------------------------------------
 	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
-	// Deprecated: Do not use.
-	UpdateBoxStatus(ctx context.Context, in *UpdateBoxStatusRequest, opts ...grpc.CallOption) (*UpdateBoxStatusResponse, error)
-	// Deprecated: Do not use.
-	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Deprecated: Do not use.
-	// 强制注销当前用户指定设备.
-	// 1. 删除设备应该通过ChangeTrustEndDevice来处理
-	// 2. 强制断开会话应该由ClearSession接口完成
-	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Deprecated: Do not use.
 	// 以下接口要改名字
 	// 强制将特定设备加到受信任列表中
 	TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Deprecated: Do not use.
-	// hportal不应该处理app cert相关逻辑，上层逻辑应该通过GetDomainCert获取到crt和key后自行处理
-	// 在部署具体app前，调用此接口获取app证书
-	// APP证书格式为:
-	//   Issuer: O = $BOX.ORIGIN, CN = $BOX.DOMAIN, serialNumber = $BOX.ID
-	//   Subject: O = $BOX.ORIGIN, CN = $APP.DOMAIN, serialNumber = '$UID@$APP.ID || $APP.ID'
-	// Issuer为box.crt，通过QueryBoxInfo查询到BoxInfo.BoxCrt。并且box.crt的公钥与box.id是一一对应关系。
-	//
-	// 盒子内部组件可以直接通过QueryBoxInfo来验证信任链是否合法，盒子外部系统需要通过其他机制比如libp2p.identify去验证box.crt的合法性。
-	//
-	GetAppCert(ctx context.Context, in *AppCertRequest, opts ...grpc.CallOption) (*AppCertReply, error)
 }
 
 type hPortalSysClient struct {
@@ -293,49 +274,9 @@ func (c *hPortalSysClient) GetDomainSelfCert(ctx context.Context, in *DomainCert
 }
 
 // Deprecated: Do not use.
-func (c *hPortalSysClient) UpdateBoxStatus(ctx context.Context, in *UpdateBoxStatusRequest, opts ...grpc.CallOption) (*UpdateBoxStatusResponse, error) {
-	out := new(UpdateBoxStatusResponse)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/UpdateBoxStatus", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
-func (c *hPortalSysClient) ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/ForceResetPassword", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
-func (c *hPortalSysClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/Logout", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
 func (c *hPortalSysClient) TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/TrustUserDevice", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
-func (c *hPortalSysClient) GetAppCert(ctx context.Context, in *AppCertRequest, opts ...grpc.CallOption) (*AppCertReply, error) {
-	out := new(AppCertReply)
-	err := c.cc.Invoke(ctx, "/cloud.lazycat.apis.sys.HPortalSys/GetAppCert", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -390,31 +331,12 @@ type HPortalSysServer interface {
 	// 3. 进入为初始化状态
 	ResetHServer(context.Context, *ResetHServerRequest) (*ResetHServerReply, error)
 	// Deprecated: Do not use.
+	// ----------------------------- 以下为准备废弃的接口 --------------------------------------
 	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
-	// Deprecated: Do not use.
-	UpdateBoxStatus(context.Context, *UpdateBoxStatusRequest) (*UpdateBoxStatusResponse, error)
-	// Deprecated: Do not use.
-	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
-	// Deprecated: Do not use.
-	// 强制注销当前用户指定设备.
-	// 1. 删除设备应该通过ChangeTrustEndDevice来处理
-	// 2. 强制断开会话应该由ClearSession接口完成
-	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
 	// Deprecated: Do not use.
 	// 以下接口要改名字
 	// 强制将特定设备加到受信任列表中
 	TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error)
-	// Deprecated: Do not use.
-	// hportal不应该处理app cert相关逻辑，上层逻辑应该通过GetDomainCert获取到crt和key后自行处理
-	// 在部署具体app前，调用此接口获取app证书
-	// APP证书格式为:
-	//   Issuer: O = $BOX.ORIGIN, CN = $BOX.DOMAIN, serialNumber = $BOX.ID
-	//   Subject: O = $BOX.ORIGIN, CN = $APP.DOMAIN, serialNumber = '$UID@$APP.ID || $APP.ID'
-	// Issuer为box.crt，通过QueryBoxInfo查询到BoxInfo.BoxCrt。并且box.crt的公钥与box.id是一一对应关系。
-	//
-	// 盒子内部组件可以直接通过QueryBoxInfo来验证信任链是否合法，盒子外部系统需要通过其他机制比如libp2p.identify去验证box.crt的合法性。
-	//
-	GetAppCert(context.Context, *AppCertRequest) (*AppCertReply, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -485,20 +407,8 @@ func (UnimplementedHPortalSysServer) ResetHServer(context.Context, *ResetHServer
 func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDomainSelfCert not implemented")
 }
-func (UnimplementedHPortalSysServer) UpdateBoxStatus(context.Context, *UpdateBoxStatusRequest) (*UpdateBoxStatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateBoxStatus not implemented")
-}
-func (UnimplementedHPortalSysServer) ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ForceResetPassword not implemented")
-}
-func (UnimplementedHPortalSysServer) Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
-}
 func (UnimplementedHPortalSysServer) TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TrustUserDevice not implemented")
-}
-func (UnimplementedHPortalSysServer) GetAppCert(context.Context, *AppCertRequest) (*AppCertReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAppCert not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -891,60 +801,6 @@ func _HPortalSys_GetDomainSelfCert_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_UpdateBoxStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateBoxStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).UpdateBoxStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/UpdateBoxStatus",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).UpdateBoxStatus(ctx, req.(*UpdateBoxStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_ForceResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ForceResetPasswordRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).ForceResetPassword(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/ForceResetPassword",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).ForceResetPassword(ctx, req.(*ForceResetPasswordRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LogoutRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).Logout(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/Logout",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).Logout(ctx, req.(*LogoutRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _HPortalSys_TrustUserDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TrustUserDeviceRequest)
 	if err := dec(in); err != nil {
@@ -959,24 +815,6 @@ func _HPortalSys_TrustUserDevice_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HPortalSysServer).TrustUserDevice(ctx, req.(*TrustUserDeviceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_GetAppCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppCertRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).GetAppCert(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cloud.lazycat.apis.sys.HPortalSys/GetAppCert",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).GetAppCert(ctx, req.(*AppCertRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1073,24 +911,8 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HPortalSys_GetDomainSelfCert_Handler,
 		},
 		{
-			MethodName: "UpdateBoxStatus",
-			Handler:    _HPortalSys_UpdateBoxStatus_Handler,
-		},
-		{
-			MethodName: "ForceResetPassword",
-			Handler:    _HPortalSys_ForceResetPassword_Handler,
-		},
-		{
-			MethodName: "Logout",
-			Handler:    _HPortalSys_Logout_Handler,
-		},
-		{
 			MethodName: "TrustUserDevice",
 			Handler:    _HPortalSys_TrustUserDevice_Handler,
-		},
-		{
-			MethodName: "GetAppCert",
-			Handler:    _HPortalSys_GetAppCert_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
