@@ -9,9 +9,7 @@ import { PackageManager, PackageManagerClientImpl } from "./sys/package_manager"
 import { NetworkManager as NM, NetworkManagerClientImpl as NMClientImpl } from "./sys/network_manager"
 
 import { OSSnapshotService, OSSnapshotServiceClientImpl } from "./sys/OS_snapshot"
-import { OSUpgradeService, OSUpgradeServiceClientImpl } from "./sys/OS_upgrader"
 import { IngressService, IngressServiceClientImpl } from "./sys/ingress"
-import { OsDaemonService, OsDaemonServiceClientImpl } from "./sys/OS_daemon"
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog"
 import { UserConfig, UserConfigClientImpl } from "./localdevice/config"
@@ -25,7 +23,6 @@ import { FileTransferServiceClientImpl, FileTransferService } from "./common/fil
 import { LocalLaunchService, LocalLaunchServiceClientImpl } from "./localdevice/local-launch"
 import { RemoteMediaPlayerService, RemoteMediaPlayerServiceClientImpl } from "./dlna/dlna"
 import { grpc } from "@improbable-eng/grpc-web"
-import { BoxStatusServiceClientImpl } from "./sys/box-status"
 
 const opt = {
   debug: true,
@@ -46,24 +43,19 @@ export class lzcAPIGateway {
     this._session = this.bo.QuerySessionInfo({})
     this.appinfo = this.bo.QueryAppInfo({})
 
-    this.nm = new NMClientImpl(rpc)
     this.pkgm = new PackageManagerClientImpl(rpc)
 
     this.pd = new PeripheralDeviceServiceClientImpl(rpc)
     this.ingress = new IngressServiceClientImpl(rpc)
     this.box = new BoxServiceClientImpl(rpc)
 
-    this.osUpgrader = new OSUpgradeServiceClientImpl(rpc)
     this.osSnapshot = new OSSnapshotServiceClientImpl(rpc)
-    this.osDaemon = new OsDaemonServiceClientImpl(rpc)
 
     this.rmp = new RemoteMediaPlayerServiceClientImpl(rpc)
 
     this.fileTransfer = new FileTransferServiceClientImpl(rpc)
 
     this.devopt = new DevOptServiceClientImpl(rpc)
-
-    this.bs = new BoxStatusServiceClientImpl(rpc)
 
     this.message = new MessageServiceClientImpl(rpc)
     dumpInfo(this.bo)
@@ -82,17 +74,13 @@ export class lzcAPIGateway {
   public box: BoxService
   public ingress: IngressService
 
-  public osUpgrader: OSUpgradeService
   public osSnapshot: OSSnapshotService
-  public osDaemon: OsDaemonService
 
   public appinfo: Promise<AppInfo>
   public fileTransfer: FileTransferService
   public devopt: DevOptService
   public rmp: RemoteMediaPlayerService
   public devices: EndDeviceService
-
-  public bs: BoxStatusServiceClientImpl
 
   public message: MessageServiceClientImpl
 

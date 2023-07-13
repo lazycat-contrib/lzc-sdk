@@ -28,7 +28,6 @@ type APIGateway struct {
 	DirMonitor       sys.DirMonitorClient
 	Message          common.MessageServiceClient
 
-	OSUpgrader sys.OSUpgradeServiceClient
 	OSSnapshot sys.OSSnapshotServiceClient
 }
 
@@ -113,7 +112,6 @@ func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
 		cred: cred,
 		conn: conn,
 
-		OSUpgrader: sys.NewOSUpgradeServiceClient(conn),
 		OSSnapshot: sys.NewOSSnapshotServiceClient(conn),
 		PkgManager: sys.NewPackageManagerClient(conn),
 		Ingress:    sys.NewIngressServiceClient(conn),

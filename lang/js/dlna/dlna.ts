@@ -200,6 +200,10 @@ export const GetPositionInfoRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetPositionInfoRequest>, I>>(base?: I): GetPositionInfoRequest {
+    return GetPositionInfoRequest.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<GetPositionInfoRequest>, I>>(object: I): GetPositionInfoRequest {
     const message = createBaseGetPositionInfoRequest();
     message.playerUuid = object.playerUuid ?? "";
@@ -314,6 +318,10 @@ export const GetPositionInfoResponse = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetPositionInfoResponse>, I>>(base?: I): GetPositionInfoResponse {
+    return GetPositionInfoResponse.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<GetPositionInfoResponse>, I>>(object: I): GetPositionInfoResponse {
     const message = createBaseGetPositionInfoResponse();
     message.track = object.track ?? "";
@@ -402,6 +410,10 @@ export const DoActionRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<DoActionRequest>, I>>(base?: I): DoActionRequest {
+    return DoActionRequest.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<DoActionRequest>, I>>(object: I): DoActionRequest {
     const message = createBaseDoActionRequest();
     message.playerUuid = object.playerUuid ?? "";
@@ -451,6 +463,10 @@ export const RMPStatus = {
     const obj: any = {};
     message.status !== undefined && (obj.status = rMPStatus_StatusToJSON(message.status));
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<RMPStatus>, I>>(base?: I): RMPStatus {
+    return RMPStatus.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<RMPStatus>, I>>(object: I): RMPStatus {
@@ -508,6 +524,10 @@ export const ScanRMPResponse = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<ScanRMPResponse>, I>>(base?: I): ScanRMPResponse {
+    return ScanRMPResponse.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<ScanRMPResponse>, I>>(object: I): ScanRMPResponse {
     const message = createBaseScanRMPResponse();
     message.remoteMediaPlayers = object.remoteMediaPlayers?.map((e) => RemoteMediaPlayer.fromPartial(e)) || [];
@@ -553,6 +573,10 @@ export const SubscribeRequest = {
     const obj: any = {};
     message.playerUuid !== undefined && (obj.playerUuid = message.playerUuid);
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<SubscribeRequest>, I>>(base?: I): SubscribeRequest {
+    return SubscribeRequest.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<SubscribeRequest>, I>>(object: I): SubscribeRequest {
@@ -628,6 +652,10 @@ export const RemoteMediaPlayer = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RemoteMediaPlayer>, I>>(base?: I): RemoteMediaPlayer {
+    return RemoteMediaPlayer.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<RemoteMediaPlayer>, I>>(object: I): RemoteMediaPlayer {
     const message = createBaseRemoteMediaPlayer();
     message.uuid = object.uuid ?? "";
@@ -699,10 +727,11 @@ export const RemoteMediaPlayerServiceScanRMPDesc: UnaryMethodDefinitionish = {
   } as any,
   responseType: {
     deserializeBinary(data: Uint8Array) {
+      const value = ScanRMPResponse.decode(data);
       return {
-        ...ScanRMPResponse.decode(data),
+        ...value,
         toObject() {
-          return this;
+          return value;
         },
       };
     },
@@ -721,10 +750,11 @@ export const RemoteMediaPlayerServiceSubscribeDesc: UnaryMethodDefinitionish = {
   } as any,
   responseType: {
     deserializeBinary(data: Uint8Array) {
+      const value = RMPStatus.decode(data);
       return {
-        ...RMPStatus.decode(data),
+        ...value,
         toObject() {
-          return this;
+          return value;
         },
       };
     },
@@ -743,10 +773,11 @@ export const RemoteMediaPlayerServiceDoActionDesc: UnaryMethodDefinitionish = {
   } as any,
   responseType: {
     deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
       return {
-        ...Empty.decode(data),
+        ...value,
         toObject() {
-          return this;
+          return value;
         },
       };
     },
@@ -765,10 +796,11 @@ export const RemoteMediaPlayerServiceGetPositionInfoDesc: UnaryMethodDefinitioni
   } as any,
   responseType: {
     deserializeBinary(data: Uint8Array) {
+      const value = GetPositionInfoResponse.decode(data);
       return {
-        ...GetPositionInfoResponse.decode(data),
+        ...value,
         toObject() {
-          return this;
+          return value;
         },
       };
     },
@@ -837,7 +869,7 @@ export class GrpcWebImpl {
         debug: this.options.debug,
         onEnd: function (response) {
           if (response.status === grpc.Code.OK) {
-            resolve(response.message);
+            resolve(response.message!.toObject());
           } else {
             const err = new GrpcWebError(response.statusMessage, response.status, response.trailers);
             reject(err);
@@ -887,6 +919,25 @@ export class GrpcWebImpl {
   }
 }
 
+declare var self: any | undefined;
+declare var window: any | undefined;
+declare var global: any | undefined;
+var tsProtoGlobalThis: any = (() => {
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
+  throw "Unable to locate global object";
+})();
+
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
@@ -902,7 +953,7 @@ function isSet(value: any): boolean {
   return value !== null && value !== undefined;
 }
 
-export class GrpcWebError extends Error {
+export class GrpcWebError extends tsProtoGlobalThis.Error {
   constructor(message: string, public code: grpc.Code, public metadata: grpc.Metadata) {
     super(message);
   }
