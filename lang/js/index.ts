@@ -48,7 +48,7 @@ export class lzcAPIGateway {
     this.pd = new PeripheralDeviceServiceClientImpl(rpc)
     this.ingress = new IngressServiceClientImpl(rpc)
     this.box = new BoxServiceClientImpl(rpc)
-
+    this.nm = new NMClientImpl(rpc)
     this.osSnapshot = new OSSnapshotServiceClientImpl(rpc)
 
     this.rmp = new RemoteMediaPlayerServiceClientImpl(rpc)
