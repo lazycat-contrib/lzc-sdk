@@ -113,4 +113,5 @@ services: #传统docker镜像启动方式，如果需要数据库等配套容器
       - /lzcapp/pkg/content/entrypoint.sh:/entrypoint.sh # 挂载lpk包内的文件
     entrypoint: /bin/sh -c
     command: "/usr/bin/nextcloud"
+    restart: on-failure # 用法同docker-compose.yml
     #depends_on:
