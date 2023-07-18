@@ -90,6 +90,10 @@ application:
 
   user_app: true # 是否启用多实例
 
+  health_check:
+    test_url: http://backend.appid.lzcapp:8080 # 进行健康检查的url，如果返回不是200则健康检查失败
+    start_period: 90s # 应用启动超时（如果应用容器启动后过了指定时间段后，健康检查仍然无法通过，则视为应用启动失败）
+
 
 services: #传统docker镜像启动方式，如果需要数据库等配套容器一起运行则可以在这里申明。传统app如nextcloud、aria2c也可以使用这种方式进行兼容运行
   db: #目前只支持以下参数，network,ipc之类的配置字段(故意)不支持
