@@ -99,8 +99,7 @@ message RegisterBoxServiceRequest {
 message RegisterBoxServiceReply {}
 
 message LookupBoxServiceDialerRequest {
-  string remote_ip = 1;
-  string remote_port = 2;
+  string remote_addr = 1;
 }
 message LookupBoxServiceDialerResponse {
   string uid = 1;
