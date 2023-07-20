@@ -39,6 +39,7 @@ const (
 	HPortalSys_SetupHServer_FullMethodName           = "/cloud.lazycat.apis.sys.HPortalSys/SetupHServer"
 	HPortalSys_ResetHServer_FullMethodName           = "/cloud.lazycat.apis.sys.HPortalSys/ResetHServer"
 	HPortalSys_RegisterBoxService_FullMethodName     = "/cloud.lazycat.apis.sys.HPortalSys/RegisterBoxService"
+	HPortalSys_LookupBoxServiceDialer_FullMethodName = "/cloud.lazycat.apis.sys.HPortalSys/LookupBoxServiceDialer"
 	HPortalSys_GetDomainSelfCert_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert"
 	HPortalSys_TrustUserDevice_FullMethodName        = "/cloud.lazycat.apis.sys.HPortalSys/TrustUserDevice"
 	HPortalSys_ClearLoginSession_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession"
@@ -92,6 +93,7 @@ type HPortalSysClient interface {
 	// 任何原因导致此调用结束时，都会使此服务注销。(比如hportal重启)
 	// 调用者需要自行重新注册
 	RegisterBoxService(ctx context.Context, in *RegisterBoxServiceRequest, opts ...grpc.CallOption) (HPortalSys_RegisterBoxServiceClient, error)
+	LookupBoxServiceDialer(ctx context.Context, in *LookupBoxServiceDialerRequest, opts ...grpc.CallOption) (*LookupBoxServiceDialerResponse, error)
 	// Deprecated: Do not use.
 	// ----------------------------- 以下为准备废弃的接口 --------------------------------------
 	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
@@ -309,6 +311,15 @@ func (x *hPortalSysRegisterBoxServiceClient) Recv() (*RegisterBoxServiceReply, e
 	return m, nil
 }
 
+func (c *hPortalSysClient) LookupBoxServiceDialer(ctx context.Context, in *LookupBoxServiceDialerRequest, opts ...grpc.CallOption) (*LookupBoxServiceDialerResponse, error) {
+	out := new(LookupBoxServiceDialerResponse)
+	err := c.cc.Invoke(ctx, HPortalSys_LookupBoxServiceDialer_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Deprecated: Do not use.
 func (c *hPortalSysClient) GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error) {
 	out := new(DomainCertReply)
@@ -394,6 +405,7 @@ type HPortalSysServer interface {
 	// 任何原因导致此调用结束时，都会使此服务注销。(比如hportal重启)
 	// 调用者需要自行重新注册
 	RegisterBoxService(*RegisterBoxServiceRequest, HPortalSys_RegisterBoxServiceServer) error
+	LookupBoxServiceDialer(context.Context, *LookupBoxServiceDialerRequest) (*LookupBoxServiceDialerResponse, error)
 	// Deprecated: Do not use.
 	// ----------------------------- 以下为准备废弃的接口 --------------------------------------
 	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
@@ -470,6 +482,9 @@ func (UnimplementedHPortalSysServer) ResetHServer(context.Context, *ResetHServer
 }
 func (UnimplementedHPortalSysServer) RegisterBoxService(*RegisterBoxServiceRequest, HPortalSys_RegisterBoxServiceServer) error {
 	return status.Errorf(codes.Unimplemented, "method RegisterBoxService not implemented")
+}
+func (UnimplementedHPortalSysServer) LookupBoxServiceDialer(context.Context, *LookupBoxServiceDialerRequest) (*LookupBoxServiceDialerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LookupBoxServiceDialer not implemented")
 }
 func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDomainSelfCert not implemented")
@@ -841,6 +856,24 @@ func (x *hPortalSysRegisterBoxServiceServer) Send(m *RegisterBoxServiceReply) er
 	return x.ServerStream.SendMsg(m)
 }
 
+func _HPortalSys_LookupBoxServiceDialer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LookupBoxServiceDialerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).LookupBoxServiceDialer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HPortalSys_LookupBoxServiceDialer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).LookupBoxServiceDialer(ctx, req.(*LookupBoxServiceDialerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _HPortalSys_GetDomainSelfCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DomainCertRequest)
 	if err := dec(in); err != nil {
@@ -991,6 +1024,10 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResetHServer",
 			Handler:    _HPortalSys_ResetHServer_Handler,
+		},
+		{
+			MethodName: "LookupBoxServiceDialer",
+			Handler:    _HPortalSys_LookupBoxServiceDialer_Handler,
 		},
 		{
 			MethodName: "GetDomainSelfCert",

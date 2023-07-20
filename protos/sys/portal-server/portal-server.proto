@@ -60,6 +60,8 @@ service HPortalSys {
   // 调用者需要自行重新注册
   rpc RegisterBoxService(RegisterBoxServiceRequest) returns (stream RegisterBoxServiceReply);
 
+  rpc LookupBoxServiceDialer(LookupBoxServiceDialerRequest) returns (LookupBoxServiceDialerResponse);
+
   // ----------------------------- 以下为准备废弃的接口 --------------------------------------
   rpc GetDomainSelfCert(DomainCertRequest) returns (DomainCertReply) {option deprecated=true;}
 
@@ -95,6 +97,17 @@ message RegisterBoxServiceRequest {
   string extra_info = 6;
 }
 message RegisterBoxServiceReply {}
+
+message LookupBoxServiceDialerRequest {
+  string remote_ip = 1;
+  string remote_port = 2;
+}
+message LookupBoxServiceDialerResponse {
+  string uid = 1;
+  string device_id = 2;
+  string device_version = 3;
+  string virtual_ip = 4;
+}
 
 message RemoteSocksRequest {
   enum LocationType {
