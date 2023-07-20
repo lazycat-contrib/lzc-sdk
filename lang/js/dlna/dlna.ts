@@ -201,7 +201,9 @@ export const GetPositionInfoRequest = {
 
   toJSON(message: GetPositionInfoRequest): unknown {
     const obj: any = {};
-    message.playerUuid !== undefined && (obj.playerUuid = message.playerUuid);
+    if (message.playerUuid !== "") {
+      obj.playerUuid = message.playerUuid;
+    }
     return obj;
   },
 
@@ -345,14 +347,30 @@ export const GetPositionInfoResponse = {
 
   toJSON(message: GetPositionInfoResponse): unknown {
     const obj: any = {};
-    message.track !== undefined && (obj.track = message.track);
-    message.trackDuration !== undefined && (obj.trackDuration = message.trackDuration);
-    message.trackMetadata !== undefined && (obj.trackMetadata = message.trackMetadata);
-    message.trackUri !== undefined && (obj.trackUri = message.trackUri);
-    message.relTime !== undefined && (obj.relTime = message.relTime);
-    message.absTime !== undefined && (obj.absTime = message.absTime);
-    message.relCount !== undefined && (obj.relCount = Math.round(message.relCount));
-    message.absCount !== undefined && (obj.absCount = Math.round(message.absCount));
+    if (message.track !== "") {
+      obj.track = message.track;
+    }
+    if (message.trackDuration !== "") {
+      obj.trackDuration = message.trackDuration;
+    }
+    if (message.trackMetadata !== "") {
+      obj.trackMetadata = message.trackMetadata;
+    }
+    if (message.trackUri !== "") {
+      obj.trackUri = message.trackUri;
+    }
+    if (message.relTime !== "") {
+      obj.relTime = message.relTime;
+    }
+    if (message.absTime !== "") {
+      obj.absTime = message.absTime;
+    }
+    if (message.relCount !== 0) {
+      obj.relCount = Math.round(message.relCount);
+    }
+    if (message.absCount !== 0) {
+      obj.absCount = Math.round(message.absCount);
+    }
     return obj;
   },
 
@@ -461,11 +479,21 @@ export const DoActionRequest = {
 
   toJSON(message: DoActionRequest): unknown {
     const obj: any = {};
-    message.playerUuid !== undefined && (obj.playerUuid = message.playerUuid);
-    message.action !== undefined && (obj.action = doActionRequest_ActionToJSON(message.action));
-    message.mediaFile !== undefined && (obj.mediaFile = message.mediaFile);
-    message.mediaSubtitle !== undefined && (obj.mediaSubtitle = message.mediaSubtitle);
-    message.seekTarget !== undefined && (obj.seekTarget = message.seekTarget);
+    if (message.playerUuid !== "") {
+      obj.playerUuid = message.playerUuid;
+    }
+    if (message.action !== 0) {
+      obj.action = doActionRequest_ActionToJSON(message.action);
+    }
+    if (message.mediaFile !== undefined) {
+      obj.mediaFile = message.mediaFile;
+    }
+    if (message.mediaSubtitle !== undefined) {
+      obj.mediaSubtitle = message.mediaSubtitle;
+    }
+    if (message.seekTarget !== undefined) {
+      obj.seekTarget = message.seekTarget;
+    }
     return obj;
   },
 
@@ -525,7 +553,9 @@ export const RMPStatus = {
 
   toJSON(message: RMPStatus): unknown {
     const obj: any = {};
-    message.status !== undefined && (obj.status = rMPStatus_StatusToJSON(message.status));
+    if (message.status !== 0) {
+      obj.status = rMPStatus_StatusToJSON(message.status);
+    }
     return obj;
   },
 
@@ -585,10 +615,8 @@ export const ScanRMPResponse = {
 
   toJSON(message: ScanRMPResponse): unknown {
     const obj: any = {};
-    if (message.remoteMediaPlayers) {
-      obj.remoteMediaPlayers = message.remoteMediaPlayers.map((e) => e ? RemoteMediaPlayer.toJSON(e) : undefined);
-    } else {
-      obj.remoteMediaPlayers = [];
+    if (message.remoteMediaPlayers?.length) {
+      obj.remoteMediaPlayers = message.remoteMediaPlayers.map((e) => RemoteMediaPlayer.toJSON(e));
     }
     return obj;
   },
@@ -645,7 +673,9 @@ export const SubscribeRequest = {
 
   toJSON(message: SubscribeRequest): unknown {
     const obj: any = {};
-    message.playerUuid !== undefined && (obj.playerUuid = message.playerUuid);
+    if (message.playerUuid !== "") {
+      obj.playerUuid = message.playerUuid;
+    }
     return obj;
   },
 
@@ -736,10 +766,18 @@ export const RemoteMediaPlayer = {
 
   toJSON(message: RemoteMediaPlayer): unknown {
     const obj: any = {};
-    message.uuid !== undefined && (obj.uuid = message.uuid);
-    message.name !== undefined && (obj.name = message.name);
-    message.iconData !== undefined && (obj.iconData = message.iconData);
-    message.lanRegion !== undefined && (obj.lanRegion = message.lanRegion);
+    if (message.uuid !== "") {
+      obj.uuid = message.uuid;
+    }
+    if (message.name !== "") {
+      obj.name = message.name;
+    }
+    if (message.iconData !== "") {
+      obj.iconData = message.iconData;
+    }
+    if (message.lanRegion !== "") {
+      obj.lanRegion = message.lanRegion;
+    }
     return obj;
   },
 
