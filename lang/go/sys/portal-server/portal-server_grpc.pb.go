@@ -41,7 +41,6 @@ const (
 	HPortalSys_RegisterBoxService_FullMethodName     = "/cloud.lazycat.apis.sys.HPortalSys/RegisterBoxService"
 	HPortalSys_LookupBoxServiceDialer_FullMethodName = "/cloud.lazycat.apis.sys.HPortalSys/LookupBoxServiceDialer"
 	HPortalSys_GetDomainSelfCert_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert"
-	HPortalSys_TrustUserDevice_FullMethodName        = "/cloud.lazycat.apis.sys.HPortalSys/TrustUserDevice"
 	HPortalSys_ClearLoginSession_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession"
 	HPortalSys_QueryLogin_FullMethodName             = "/cloud.lazycat.apis.sys.HPortalSys/QueryLogin"
 )
@@ -97,10 +96,6 @@ type HPortalSysClient interface {
 	// Deprecated: Do not use.
 	// ----------------------------- 以下为准备废弃的接口 --------------------------------------
 	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
-	// Deprecated: Do not use.
-	// 以下接口要改名字
-	// 强制将特定设备加到受信任列表中
-	TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 会话相关接口应该由lzc-runtime/userm自行处理
 	//
 	// 删除登陆的会话状态
@@ -330,16 +325,6 @@ func (c *hPortalSysClient) GetDomainSelfCert(ctx context.Context, in *DomainCert
 	return out, nil
 }
 
-// Deprecated: Do not use.
-func (c *hPortalSysClient) TrustUserDevice(ctx context.Context, in *TrustUserDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, HPortalSys_TrustUserDevice_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *hPortalSysClient) ClearLoginSession(ctx context.Context, in *ClearLoginSessionRequest, opts ...grpc.CallOption) (*ClearLoginSessionReply, error) {
 	out := new(ClearLoginSessionReply)
 	err := c.cc.Invoke(ctx, HPortalSys_ClearLoginSession_FullMethodName, in, out, opts...)
@@ -409,10 +394,6 @@ type HPortalSysServer interface {
 	// Deprecated: Do not use.
 	// ----------------------------- 以下为准备废弃的接口 --------------------------------------
 	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
-	// Deprecated: Do not use.
-	// 以下接口要改名字
-	// 强制将特定设备加到受信任列表中
-	TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error)
 	// 会话相关接口应该由lzc-runtime/userm自行处理
 	//
 	// 删除登陆的会话状态
@@ -488,9 +469,6 @@ func (UnimplementedHPortalSysServer) LookupBoxServiceDialer(context.Context, *Lo
 }
 func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDomainSelfCert not implemented")
-}
-func (UnimplementedHPortalSysServer) TrustUserDevice(context.Context, *TrustUserDeviceRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TrustUserDevice not implemented")
 }
 func (UnimplementedHPortalSysServer) ClearLoginSession(context.Context, *ClearLoginSessionRequest) (*ClearLoginSessionReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ClearLoginSession not implemented")
@@ -892,24 +870,6 @@ func _HPortalSys_GetDomainSelfCert_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_TrustUserDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TrustUserDeviceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).TrustUserDevice(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_TrustUserDevice_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).TrustUserDevice(ctx, req.(*TrustUserDeviceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _HPortalSys_ClearLoginSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ClearLoginSessionRequest)
 	if err := dec(in); err != nil {
@@ -1032,10 +992,6 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDomainSelfCert",
 			Handler:    _HPortalSys_GetDomainSelfCert_Handler,
-		},
-		{
-			MethodName: "TrustUserDevice",
-			Handler:    _HPortalSys_TrustUserDevice_Handler,
 		},
 		{
 			MethodName: "ClearLoginSession",

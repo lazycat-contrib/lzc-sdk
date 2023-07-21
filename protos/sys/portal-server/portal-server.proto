@@ -65,11 +65,6 @@ service HPortalSys {
   // ----------------------------- 以下为准备废弃的接口 --------------------------------------
   rpc GetDomainSelfCert(DomainCertRequest) returns (DomainCertReply) {option deprecated=true;}
 
-  // 以下接口要改名字
-  // 强制将特定设备加到受信任列表中
-  rpc TrustUserDevice(TrustUserDeviceRequest) returns (google.protobuf.Empty) {option deprecated=true;}
-
-
   // 会话相关接口应该由lzc-runtime/userm自行处理
   //
   // 删除登陆的会话状态
@@ -401,14 +396,4 @@ message ResetHServerRequest {
   string origin_server = 1;
 }
 message ResetHServerReply {
-}
-
-
-
-// 以下接口废弃-------------------------
-message TrustUserDeviceRequest{
-  option deprecated = true;
-
-  string udid = 1;
-  string user = 2;
 }
