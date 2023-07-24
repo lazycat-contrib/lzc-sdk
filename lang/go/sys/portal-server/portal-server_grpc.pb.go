@@ -42,7 +42,6 @@ const (
 	HPortalSys_LookupBoxServiceDialer_FullMethodName = "/cloud.lazycat.apis.sys.HPortalSys/LookupBoxServiceDialer"
 	HPortalSys_GetDomainSelfCert_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert"
 	HPortalSys_ClearLoginSession_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession"
-	HPortalSys_QueryLogin_FullMethodName             = "/cloud.lazycat.apis.sys.HPortalSys/QueryLogin"
 )
 
 // HPortalSysClient is the client API for HPortalSys service.
@@ -100,8 +99,6 @@ type HPortalSysClient interface {
 	//
 	// 删除登陆的会话状态
 	ClearLoginSession(ctx context.Context, in *ClearLoginSessionRequest, opts ...grpc.CallOption) (*ClearLoginSessionReply, error)
-	// 用auth-token反向查询登陆的设备以及UID
-	QueryLogin(ctx context.Context, in *AuthToken, opts ...grpc.CallOption) (*LoginInfo, error)
 }
 
 type hPortalSysClient struct {
@@ -334,15 +331,6 @@ func (c *hPortalSysClient) ClearLoginSession(ctx context.Context, in *ClearLogin
 	return out, nil
 }
 
-func (c *hPortalSysClient) QueryLogin(ctx context.Context, in *AuthToken, opts ...grpc.CallOption) (*LoginInfo, error) {
-	out := new(LoginInfo)
-	err := c.cc.Invoke(ctx, HPortalSys_QueryLogin_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // HPortalSysServer is the server API for HPortalSys service.
 // All implementations must embed UnimplementedHPortalSysServer
 // for forward compatibility
@@ -398,8 +386,6 @@ type HPortalSysServer interface {
 	//
 	// 删除登陆的会话状态
 	ClearLoginSession(context.Context, *ClearLoginSessionRequest) (*ClearLoginSessionReply, error)
-	// 用auth-token反向查询登陆的设备以及UID
-	QueryLogin(context.Context, *AuthToken) (*LoginInfo, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -472,9 +458,6 @@ func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainC
 }
 func (UnimplementedHPortalSysServer) ClearLoginSession(context.Context, *ClearLoginSessionRequest) (*ClearLoginSessionReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ClearLoginSession not implemented")
-}
-func (UnimplementedHPortalSysServer) QueryLogin(context.Context, *AuthToken) (*LoginInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryLogin not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -888,24 +871,6 @@ func _HPortalSys_ClearLoginSession_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_QueryLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AuthToken)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).QueryLogin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_QueryLogin_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).QueryLogin(ctx, req.(*AuthToken))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // HPortalSys_ServiceDesc is the grpc.ServiceDesc for HPortalSys service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -996,10 +961,6 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ClearLoginSession",
 			Handler:    _HPortalSys_ClearLoginSession_Handler,
-		},
-		{
-			MethodName: "QueryLogin",
-			Handler:    _HPortalSys_QueryLogin_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

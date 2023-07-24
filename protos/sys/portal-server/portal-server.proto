@@ -69,9 +69,6 @@ service HPortalSys {
   //
   // 删除登陆的会话状态
   rpc ClearLoginSession(ClearLoginSessionRequest) returns (ClearLoginSessionReply) {}
-  // 用auth-token反向查询登陆的设备以及UID
-  rpc QueryLogin(AuthToken) returns (LoginInfo) {}
-
 }
 
 message RegisterBoxServiceRequest {

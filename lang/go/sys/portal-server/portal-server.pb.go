@@ -2764,7 +2764,7 @@ var file_sys_portal_server_portal_server_proto_rawDesc = []byte{
 	0x65, 0x72, 0x76, 0x65, 0x72, 0x22, 0x13, 0x0a, 0x11, 0x52, 0x65, 0x73, 0x65, 0x74, 0x48, 0x53,
 	0x65, 0x72, 0x76, 0x65, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x2a, 0x1d, 0x0a, 0x04, 0x52, 0x6f,
 	0x6c, 0x65, 0x12, 0x0a, 0x0a, 0x06, 0x4e, 0x4f, 0x52, 0x4d, 0x41, 0x4c, 0x10, 0x00, 0x12, 0x09,
-	0x0a, 0x05, 0x41, 0x44, 0x4d, 0x49, 0x4e, 0x10, 0x01, 0x32, 0xaa, 0x12, 0x0a, 0x0a, 0x48, 0x50,
+	0x0a, 0x05, 0x41, 0x44, 0x4d, 0x49, 0x4e, 0x10, 0x01, 0x32, 0xd4, 0x11, 0x0a, 0x0a, 0x48, 0x50,
 	0x6f, 0x72, 0x74, 0x61, 0x6c, 0x53, 0x79, 0x73, 0x12, 0x49, 0x0a, 0x0c, 0x51, 0x75, 0x65, 0x72,
 	0x79, 0x42, 0x6f, 0x78, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
 	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79,
@@ -2906,16 +2906,10 @@ var file_sys_portal_server_portal_server_proto_rawDesc = []byte{
 	0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61,
 	0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x43, 0x6c, 0x65, 0x61, 0x72, 0x4c, 0x6f, 0x67,
 	0x69, 0x6e, 0x53, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00,
-	0x12, 0x54, 0x0a, 0x0a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x21,
-	0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61,
-	0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x41, 0x75, 0x74, 0x68, 0x54, 0x6f, 0x6b, 0x65,
-	0x6e, 0x1a, 0x21, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61,
-	0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e,
-	0x49, 0x6e, 0x66, 0x6f, 0x22, 0x00, 0x42, 0x36, 0x5a, 0x34, 0x67, 0x69, 0x74, 0x65, 0x65, 0x2e,
-	0x63, 0x6f, 0x6d, 0x2f, 0x6c, 0x69, 0x6e, 0x61, 0x6b, 0x65, 0x73, 0x69, 0x2f, 0x6c, 0x7a, 0x63,
-	0x2d, 0x73, 0x64, 0x6b, 0x2f, 0x6c, 0x61, 0x6e, 0x67, 0x2f, 0x67, 0x6f, 0x2f, 0x73, 0x79, 0x73,
-	0x2f, 0x70, 0x6f, 0x72, 0x74, 0x61, 0x6c, 0x2d, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x42, 0x36, 0x5a, 0x34, 0x67, 0x69, 0x74, 0x65, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6c, 0x69,
+	0x6e, 0x61, 0x6b, 0x65, 0x73, 0x69, 0x2f, 0x6c, 0x7a, 0x63, 0x2d, 0x73, 0x64, 0x6b, 0x2f, 0x6c,
+	0x61, 0x6e, 0x67, 0x2f, 0x67, 0x6f, 0x2f, 0x73, 0x79, 0x73, 0x2f, 0x70, 0x6f, 0x72, 0x74, 0x61,
+	0x6c, 0x2d, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -3013,32 +3007,30 @@ var file_sys_portal_server_portal_server_proto_depIdxs = []int32{
 	8,  // 30: cloud.lazycat.apis.sys.HPortalSys.LookupBoxServiceDialer:input_type -> cloud.lazycat.apis.sys.LookupBoxServiceDialerRequest
 	21, // 31: cloud.lazycat.apis.sys.HPortalSys.GetDomainSelfCert:input_type -> cloud.lazycat.apis.sys.DomainCertRequest
 	33, // 32: cloud.lazycat.apis.sys.HPortalSys.ClearLoginSession:input_type -> cloud.lazycat.apis.sys.ClearLoginSessionRequest
-	17, // 33: cloud.lazycat.apis.sys.HPortalSys.QueryLogin:input_type -> cloud.lazycat.apis.sys.AuthToken
-	20, // 34: cloud.lazycat.apis.sys.HPortalSys.QueryBoxInfo:output_type -> cloud.lazycat.apis.sys.BoxInfo
-	22, // 35: cloud.lazycat.apis.sys.HPortalSys.GetDomainCert:output_type -> cloud.lazycat.apis.sys.DomainCertReply
-	14, // 36: cloud.lazycat.apis.sys.HPortalSys.AllocVirtualExternalIP:output_type -> cloud.lazycat.apis.sys.AllocVEIPReply
-	16, // 37: cloud.lazycat.apis.sys.HPortalSys.FreeVirtualExternalIP:output_type -> cloud.lazycat.apis.sys.FreeVEIPReply
-	12, // 38: cloud.lazycat.apis.sys.HPortalSys.ListUsers:output_type -> cloud.lazycat.apis.sys.ListUsersReply
-	44, // 39: cloud.lazycat.apis.sys.HPortalSys.CreateUser:output_type -> google.protobuf.Empty
-	44, // 40: cloud.lazycat.apis.sys.HPortalSys.DeleteUser:output_type -> google.protobuf.Empty
-	44, // 41: cloud.lazycat.apis.sys.HPortalSys.ResetPassword:output_type -> google.protobuf.Empty
-	44, // 42: cloud.lazycat.apis.sys.HPortalSys.CheckPassword:output_type -> google.protobuf.Empty
-	28, // 43: cloud.lazycat.apis.sys.HPortalSys.QueryRole:output_type -> cloud.lazycat.apis.sys.QueryRoleReply
-	44, // 44: cloud.lazycat.apis.sys.HPortalSys.ChangeRole:output_type -> google.protobuf.Empty
-	36, // 45: cloud.lazycat.apis.sys.HPortalSys.ChangeTrustEndDevice:output_type -> cloud.lazycat.apis.sys.ChangeTrustEndDeviceReply
-	25, // 46: cloud.lazycat.apis.sys.HPortalSys.ListDevices:output_type -> cloud.lazycat.apis.sys.ListDeviceReply
-	23, // 47: cloud.lazycat.apis.sys.HPortalSys.QueryDeviceByID:output_type -> cloud.lazycat.apis.sys.Device
-	11, // 48: cloud.lazycat.apis.sys.HPortalSys.RemoteSocks:output_type -> cloud.lazycat.apis.sys.RemoteSocksReply
-	38, // 49: cloud.lazycat.apis.sys.HPortalSys.UpdateBoxSystemStatus:output_type -> cloud.lazycat.apis.sys.UpdateBoxSystemStatusResponse
-	40, // 50: cloud.lazycat.apis.sys.HPortalSys.SetupHServer:output_type -> cloud.lazycat.apis.sys.SetupHServerReply
-	42, // 51: cloud.lazycat.apis.sys.HPortalSys.ResetHServer:output_type -> cloud.lazycat.apis.sys.ResetHServerReply
-	7,  // 52: cloud.lazycat.apis.sys.HPortalSys.RegisterBoxService:output_type -> cloud.lazycat.apis.sys.RegisterBoxServiceReply
-	9,  // 53: cloud.lazycat.apis.sys.HPortalSys.LookupBoxServiceDialer:output_type -> cloud.lazycat.apis.sys.LookupBoxServiceDialerResponse
-	22, // 54: cloud.lazycat.apis.sys.HPortalSys.GetDomainSelfCert:output_type -> cloud.lazycat.apis.sys.DomainCertReply
-	34, // 55: cloud.lazycat.apis.sys.HPortalSys.ClearLoginSession:output_type -> cloud.lazycat.apis.sys.ClearLoginSessionReply
-	18, // 56: cloud.lazycat.apis.sys.HPortalSys.QueryLogin:output_type -> cloud.lazycat.apis.sys.LoginInfo
-	34, // [34:57] is the sub-list for method output_type
-	11, // [11:34] is the sub-list for method input_type
+	20, // 33: cloud.lazycat.apis.sys.HPortalSys.QueryBoxInfo:output_type -> cloud.lazycat.apis.sys.BoxInfo
+	22, // 34: cloud.lazycat.apis.sys.HPortalSys.GetDomainCert:output_type -> cloud.lazycat.apis.sys.DomainCertReply
+	14, // 35: cloud.lazycat.apis.sys.HPortalSys.AllocVirtualExternalIP:output_type -> cloud.lazycat.apis.sys.AllocVEIPReply
+	16, // 36: cloud.lazycat.apis.sys.HPortalSys.FreeVirtualExternalIP:output_type -> cloud.lazycat.apis.sys.FreeVEIPReply
+	12, // 37: cloud.lazycat.apis.sys.HPortalSys.ListUsers:output_type -> cloud.lazycat.apis.sys.ListUsersReply
+	44, // 38: cloud.lazycat.apis.sys.HPortalSys.CreateUser:output_type -> google.protobuf.Empty
+	44, // 39: cloud.lazycat.apis.sys.HPortalSys.DeleteUser:output_type -> google.protobuf.Empty
+	44, // 40: cloud.lazycat.apis.sys.HPortalSys.ResetPassword:output_type -> google.protobuf.Empty
+	44, // 41: cloud.lazycat.apis.sys.HPortalSys.CheckPassword:output_type -> google.protobuf.Empty
+	28, // 42: cloud.lazycat.apis.sys.HPortalSys.QueryRole:output_type -> cloud.lazycat.apis.sys.QueryRoleReply
+	44, // 43: cloud.lazycat.apis.sys.HPortalSys.ChangeRole:output_type -> google.protobuf.Empty
+	36, // 44: cloud.lazycat.apis.sys.HPortalSys.ChangeTrustEndDevice:output_type -> cloud.lazycat.apis.sys.ChangeTrustEndDeviceReply
+	25, // 45: cloud.lazycat.apis.sys.HPortalSys.ListDevices:output_type -> cloud.lazycat.apis.sys.ListDeviceReply
+	23, // 46: cloud.lazycat.apis.sys.HPortalSys.QueryDeviceByID:output_type -> cloud.lazycat.apis.sys.Device
+	11, // 47: cloud.lazycat.apis.sys.HPortalSys.RemoteSocks:output_type -> cloud.lazycat.apis.sys.RemoteSocksReply
+	38, // 48: cloud.lazycat.apis.sys.HPortalSys.UpdateBoxSystemStatus:output_type -> cloud.lazycat.apis.sys.UpdateBoxSystemStatusResponse
+	40, // 49: cloud.lazycat.apis.sys.HPortalSys.SetupHServer:output_type -> cloud.lazycat.apis.sys.SetupHServerReply
+	42, // 50: cloud.lazycat.apis.sys.HPortalSys.ResetHServer:output_type -> cloud.lazycat.apis.sys.ResetHServerReply
+	7,  // 51: cloud.lazycat.apis.sys.HPortalSys.RegisterBoxService:output_type -> cloud.lazycat.apis.sys.RegisterBoxServiceReply
+	9,  // 52: cloud.lazycat.apis.sys.HPortalSys.LookupBoxServiceDialer:output_type -> cloud.lazycat.apis.sys.LookupBoxServiceDialerResponse
+	22, // 53: cloud.lazycat.apis.sys.HPortalSys.GetDomainSelfCert:output_type -> cloud.lazycat.apis.sys.DomainCertReply
+	34, // 54: cloud.lazycat.apis.sys.HPortalSys.ClearLoginSession:output_type -> cloud.lazycat.apis.sys.ClearLoginSessionReply
+	33, // [33:55] is the sub-list for method output_type
+	11, // [11:33] is the sub-list for method input_type
 	11, // [11:11] is the sub-list for extension type_name
 	11, // [11:11] is the sub-list for extension extendee
 	0,  // [0:11] is the sub-list for field type_name
