@@ -100,6 +100,7 @@ message LookupBoxServiceDialerResponse {
   string device_id = 2;
   string device_version = 3;
   string virtual_ip = 4;
+  string peer_id = 5;
 }
 
 message RemoteSocksRequest {
