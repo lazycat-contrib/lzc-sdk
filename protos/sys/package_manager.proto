@@ -90,8 +90,6 @@ message InstallRequest {
   optional string appid = 1;
 
   optional string subdomain = 4;
-
-  optional bool no_resume = 5;
 }
 
 message UninstallRequest {
