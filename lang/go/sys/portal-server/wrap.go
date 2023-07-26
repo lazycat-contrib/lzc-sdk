@@ -3,6 +3,7 @@ package portal_server
 import (
 	"net"
 	"os"
+	"path"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	grpc "google.golang.org/grpc"
@@ -23,6 +24,10 @@ func Serve(srv HPortalSysServer) error {
 
 	RegisterHPortalSysServer(s, srv)
 
+	err := os.MkdirAll(path.Dir(SocketPath), 0755)
+	if err != nil {
+		return err
+	}
 	os.Remove(SocketPath)
 
 	lis, err := net.Listen("unix", SocketPath)
