@@ -114,7 +114,7 @@ message LookupBoxServiceDialerResponse {
   string virtual_ip = 4;
   string peer_id = 5;
   BoxServiceSecurityLevel security_level = 6;
-  bool require_trust_dev = 7;
+  bool is_trust_dev = 7;
 }
 
 message RemoteSocksRequest {
