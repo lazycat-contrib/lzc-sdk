@@ -60,6 +60,8 @@ service HPortalSys {
   // 调用者需要自行重新注册
   rpc RegisterBoxService(RegisterBoxServiceRequest) returns (stream RegisterBoxServiceReply);
 
+  rpc BoxServiceChanged(BoxServiceChangedRequest) returns (google.protobuf.Empty);
+
   rpc LookupBoxServiceDialer(LookupBoxServiceDialerRequest) returns (LookupBoxServiceDialerResponse);
 
   // ----------------------------- 以下为准备废弃的接口 --------------------------------------
@@ -101,6 +103,11 @@ message RegisterBoxServiceRequest {
   bool admin_require = 5 [deprecated=true];
 }
 message RegisterBoxServiceReply {}
+
+message BoxServiceChangedRequest {
+  string service_name = 1;
+  string extra_info = 2;
+}
 
 message LookupBoxServiceDialerRequest {
   string remote_addr = 1;
