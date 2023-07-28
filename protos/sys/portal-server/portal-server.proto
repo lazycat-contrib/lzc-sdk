@@ -113,7 +113,7 @@ message LookupBoxServiceDialerResponse {
   string device_version = 3;
   string virtual_ip = 4;
   string peer_id = 5;
-  DialerRole security_level = 6;
+  DialerRole dialer_role = 6;
   bool is_trust_dev = 7;
 }
 
