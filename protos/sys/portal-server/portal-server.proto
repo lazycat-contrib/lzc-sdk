@@ -71,7 +71,7 @@ service HPortalSys {
   rpc ClearLoginSession(ClearLoginSessionRequest) returns (ClearLoginSessionReply) {}
 }
 
-enum BoxServiceSecurityLevel {
+enum DialerRole {
   GUEST_USER = 0; // 未登录也可以调用
   NORMAL_USER = 1; // 登录的普通用户可以调用
   ADMIN_USER = 2; // 登录的管理员可以调用
@@ -89,8 +89,8 @@ message RegisterBoxServiceRequest {
   // service可以基于此机制进行进一步的安全认证等作用
   string extra_info = 6;
 
-  // 盒子服务安全等级
-  BoxServiceSecurityLevel security_level = 7;
+  // 需要调用者的身份
+  DialerRole require_dialer_role = 7;
 
   // 只有客户端是受信任设备时可以调用
   bool require_trust_dev = 8;
@@ -113,7 +113,7 @@ message LookupBoxServiceDialerResponse {
   string device_version = 3;
   string virtual_ip = 4;
   string peer_id = 5;
-  BoxServiceSecurityLevel security_level = 6;
+  DialerRole security_level = 6;
   bool is_trust_dev = 7;
 }
 
