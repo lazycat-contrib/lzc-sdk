@@ -53,6 +53,13 @@ export class GrpcWebImpl {
           console.table(response)
           if (response.status === grpc.Code.OK) {
             resolve(response.message)
+            // auto handle 401 error
+          } else if (response.status == grpc.Code.Unauthenticated) {
+            window.location.replace(`${window.location.protocol}//${window.location.host}/sys/login?redirect${encodeURIComponent(window.location.href)}`)
+            const err = new Error(response.statusMessage) as any
+            err.code = response.status
+            err.metadata = response.trailers
+            reject(err)
           } else {
             const err = new Error(response.statusMessage) as any
             err.code = response.status
