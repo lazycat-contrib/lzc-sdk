@@ -108,14 +108,13 @@ message LookupBoxServiceDialerRequest {
   string protocol = 3;
 }
 message LookupBoxServiceDialerResponse {
-  // 用户登录的UID
-  string login_uid = 1;
+  // 若客户端未登录，则是SRP认证的UID，否则是登录的UID
+  string uid = 1;
   string device_id = 2;
   string device_version = 3;
   string virtual_ip = 4;
   string peer_id = 5;
-  // DialBoxService里Auth对应的UID
-  string dialer_uid = 6;
+  bool is_logined = 6;
   bool is_trust_dev = 7;
 }
 
