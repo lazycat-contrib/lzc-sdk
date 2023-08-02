@@ -15,7 +15,7 @@ message DeveloperOptions {
   // 禁用自动休眠长时间未使用的应用
   bool DisableHibernation = 1;
   // 开启 debug bridge
-  bool DebugBridge = 2;
+  bool DebugBridge = 2 [deprecated=true];
   // 开启 sshd 服务
   bool DebugSshd = 3;
   // 开启 open telemetry
