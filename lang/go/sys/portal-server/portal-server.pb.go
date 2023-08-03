@@ -735,7 +735,7 @@ type RemoteSocksRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	LocationType RemoteSocksRequest_LocationType `protobuf:"varint,1,opt,name=location_type,json=locationType,proto3,enum=cloud.lazycat.apis.sys.RemoteSocksRequest_LocationType" json:"location_type,omitempty"`
-	Target       string                          `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"` //若Type为Remote则，填写节点的peer.ID
+	Target       string                          `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"` //若Type为Remote则，填写节点的设备ID (一般通过x-hc-device-id获取到)
 }
 
 func (x *RemoteSocksRequest) Reset() {

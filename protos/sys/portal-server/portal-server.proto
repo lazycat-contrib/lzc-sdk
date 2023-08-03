@@ -137,7 +137,7 @@ message RemoteSocksRequest {
 
   LocationType location_type = 1;
 
-  string target = 2; //若Type为Remote则，填写节点的peer.ID
+  string target = 2; //若Type为Remote则，填写节点的设备ID (一般通过x-hc-device-id获取到)
 }
 
 message RemoteSocksReply {
