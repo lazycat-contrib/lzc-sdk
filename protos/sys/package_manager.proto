@@ -142,6 +142,8 @@ message AppInfo {
 
   // 如果应用状态为安装失败，失败的原因（如果状态不是失败则为空）
   optional string error_reason = 10;
+
+  repeated string unsupported_platforms = 11;
 }
 
 message QueryApplicationRequest {
