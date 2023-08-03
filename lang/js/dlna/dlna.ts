@@ -173,24 +173,19 @@ export const GetPositionInfoRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetPositionInfoRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetPositionInfoRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.playerUuid = reader.string();
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -259,73 +254,40 @@ export const GetPositionInfoResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetPositionInfoResponse {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetPositionInfoResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.track = reader.string();
-          continue;
+          break;
         case 2:
-          if (tag !== 18) {
-            break;
-          }
-
           message.trackDuration = reader.string();
-          continue;
+          break;
         case 3:
-          if (tag !== 26) {
-            break;
-          }
-
           message.trackMetadata = reader.string();
-          continue;
+          break;
         case 4:
-          if (tag !== 34) {
-            break;
-          }
-
           message.trackUri = reader.string();
-          continue;
+          break;
         case 5:
-          if (tag !== 42) {
-            break;
-          }
-
           message.relTime = reader.string();
-          continue;
+          break;
         case 6:
-          if (tag !== 50) {
-            break;
-          }
-
           message.absTime = reader.string();
-          continue;
+          break;
         case 7:
-          if (tag !== 56) {
-            break;
-          }
-
           message.relCount = reader.int32();
-          continue;
+          break;
         case 8:
-          if (tag !== 64) {
-            break;
-          }
-
           message.absCount = reader.int32();
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -399,52 +361,31 @@ export const DoActionRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DoActionRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDoActionRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.playerUuid = reader.string();
-          continue;
+          break;
         case 2:
-          if (tag !== 16) {
-            break;
-          }
-
           message.action = reader.int32() as any;
-          continue;
+          break;
         case 3:
-          if (tag !== 26) {
-            break;
-          }
-
           message.mediaFile = reader.string();
-          continue;
+          break;
         case 4:
-          if (tag !== 34) {
-            break;
-          }
-
           message.mediaSubtitle = reader.string();
-          continue;
+          break;
         case 5:
-          if (tag !== 42) {
-            break;
-          }
-
           message.seekTarget = reader.string();
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -497,24 +438,19 @@ export const RMPStatus = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RMPStatus {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRMPStatus();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 8) {
-            break;
-          }
-
           message.status = reader.int32() as any;
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -553,24 +489,19 @@ export const ScanRMPResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): ScanRMPResponse {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseScanRMPResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.remoteMediaPlayers.push(RemoteMediaPlayer.decode(reader, reader.uint32()));
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -617,24 +548,19 @@ export const SubscribeRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): SubscribeRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSubscribeRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.playerUuid = reader.string();
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -682,45 +608,28 @@ export const RemoteMediaPlayer = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RemoteMediaPlayer {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRemoteMediaPlayer();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.uuid = reader.string();
-          continue;
+          break;
         case 2:
-          if (tag !== 18) {
-            break;
-          }
-
           message.name = reader.string();
-          continue;
+          break;
         case 3:
-          if (tag !== 26) {
-            break;
-          }
-
           message.iconData = reader.string();
-          continue;
+          break;
         case 4:
-          if (tag !== 34) {
-            break;
-          }
-
           message.lanRegion = reader.string();
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -950,14 +859,14 @@ export class GrpcWebImpl {
     const request = { ..._request, ...methodDesc.requestType };
     const maybeCombinedMetadata = metadata && this.options.metadata
       ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
-      : metadata ?? this.options.metadata;
+      : metadata || this.options.metadata;
     return new Promise((resolve, reject) => {
       grpc.unary(methodDesc, {
         request,
         host: this.host,
-        metadata: maybeCombinedMetadata ?? {},
-        ...(this.options.transport !== undefined ? { transport: this.options.transport } : {}),
-        debug: this.options.debug ?? false,
+        metadata: maybeCombinedMetadata,
+        transport: this.options.transport,
+        debug: this.options.debug,
         onEnd: function (response) {
           if (response.status === grpc.Code.OK) {
             resolve(response.message!.toObject());
@@ -975,21 +884,20 @@ export class GrpcWebImpl {
     _request: any,
     metadata: grpc.Metadata | undefined,
   ): Observable<any> {
-    const upStreamCodes = this.options.upStreamRetryCodes ?? [];
+    const upStreamCodes = this.options.upStreamRetryCodes || [];
     const DEFAULT_TIMEOUT_TIME: number = 3_000;
     const request = { ..._request, ...methodDesc.requestType };
-    const transport = this.options.streamingTransport ?? this.options.transport;
     const maybeCombinedMetadata = metadata && this.options.metadata
       ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
-      : metadata ?? this.options.metadata;
+      : metadata || this.options.metadata;
     return new Observable((observer) => {
       const upStream = (() => {
         const client = grpc.invoke(methodDesc, {
           host: this.host,
           request,
-          ...(transport !== undefined ? { transport } : {}),
-          metadata: maybeCombinedMetadata ?? {},
-          debug: this.options.debug ?? false,
+          transport: this.options.streamingTransport || this.options.transport,
+          metadata: maybeCombinedMetadata,
+          debug: this.options.debug,
           onMessage: (next) => observer.next(next),
           onEnd: (code: grpc.Code, message: string, trailers: grpc.Metadata) => {
             if (code === 0) {
@@ -1004,19 +912,17 @@ export class GrpcWebImpl {
             }
           },
         });
-        observer.add(() => {
-          return client.close();
-        });
+        observer.add(() => client.close());
       });
       upStream();
     }).pipe(share());
   }
 }
 
-declare const self: any | undefined;
-declare const window: any | undefined;
-declare const global: any | undefined;
-const tsProtoGlobalThis: any = (() => {
+declare var self: any | undefined;
+declare var window: any | undefined;
+declare var global: any | undefined;
+var tsProtoGlobalThis: any = (() => {
   if (typeof globalThis !== "undefined") {
     return globalThis;
   }
