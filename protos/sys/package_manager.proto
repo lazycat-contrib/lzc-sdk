@@ -100,12 +100,12 @@ message UninstallRequest {
 }
 
 enum AppStatus {
-  NotInstalled = 0;
-  Downloading = 1;
-  Paused = 2;
-  Installing = 3;
-  Installed = 4;
-  Failed = 5;
+  NotInstalled = 0; // 应用未安装
+  Downloading = 1; // 应用下载中
+  Paused = 2; // 应用下载被暂停
+  Installing = 3; // 应用安装中
+  Installed = 4; // 应用已安装
+  Failed = 5; // 应用安装失败
 }
 
 message AppDownloadProgress {

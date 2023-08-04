@@ -25,12 +25,12 @@ const (
 type AppStatus int32
 
 const (
-	AppStatus_NotInstalled AppStatus = 0
-	AppStatus_Downloading  AppStatus = 1
-	AppStatus_Paused       AppStatus = 2
-	AppStatus_Installing   AppStatus = 3
-	AppStatus_Installed    AppStatus = 4
-	AppStatus_Failed       AppStatus = 5
+	AppStatus_NotInstalled AppStatus = 0 // 应用未安装
+	AppStatus_Downloading  AppStatus = 1 // 应用下载中
+	AppStatus_Paused       AppStatus = 2 // 应用下载被暂停
+	AppStatus_Installing   AppStatus = 3 // 应用安装中
+	AppStatus_Installed    AppStatus = 4 // 应用已安装
+	AppStatus_Failed       AppStatus = 5 // 应用安装失败
 )
 
 // Enum value maps for AppStatus.
