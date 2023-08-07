@@ -37,7 +37,6 @@ service HPortalSys {
   rpc ChangeTrustEndDevice(ChangeTrustEndDeviceRequest) returns (ChangeTrustEndDeviceReply) {}
   // 根据UID返回所有的设备列表
   rpc ListDevices(ListDeviceRequest) returns (ListDeviceReply) {}
-  rpc QueryDeviceByID(DeviceID) returns (Device) {}
 
   // 获取remotesocks服务器地址
   rpc RemoteSocks(RemoteSocksRequest) returns (RemoteSocksReply) {}
@@ -65,6 +64,8 @@ service HPortalSys {
   rpc LookupBoxServiceDialer(LookupBoxServiceDialerRequest) returns (LookupBoxServiceDialerResponse);
 
   // ----------------------------- 以下为准备废弃的接口 --------------------------------------
+  rpc QueryDeviceByID(DeviceID) returns (Device) {option deprecated=true;}
+
   rpc GetDomainSelfCert(DomainCertRequest) returns (DomainCertReply) {option deprecated=true;}
 
   // 会话相关接口应该由lzc-runtime/userm自行处理
@@ -116,12 +117,13 @@ message LookupBoxServiceDialerRequest {
 message LookupBoxServiceDialerResponse {
   // 若客户端未登录，则是SRP认证的UID，否则是登录的UID
   string uid = 1;
-  string device_id = 2;
-  string device_version = 3;
   string virtual_ip = 4;
   string peer_id = 5;
   bool is_logined = 6;
   bool is_trust_dev = 7;
+
+  string device_id = 2 [deprecated=true];
+  string device_version = 3 [deprecated=true];
 }
 
 message RemoteSocksRequest {
@@ -195,27 +197,6 @@ message AuthToken {
   string autologin_redirect_url = 4 [deprecated=true];
 }
 
-message LoginInfo {
-  string uid = 1;
-
-  string device_id = 2;
-
-  // 最近登陆时间，因为针对弱网优化因此不一定等于本次登陆时间
-  // 只有hserver重启或调用了ClearLoginSession后，才会真属于退出状态
-  google.protobuf.Timestamp when = 3;
-
-  // 若uid为空, ingress应该返回此html内容给浏览器进行自动登陆。
-  // 此html片段会尝试与hclient通讯获取auth-token后post到AuthToken.autologin_token_post_url上
-  string autologin_token_request_content = 4 [deprecated=true];
-
-  // 当前登陆设备的版本信息
-  string device_version = 5;
-
-  // 登陆时服务器返回的token
-  string token = 6;
-}
-
-
 message DeviceID {
   string id = 1;
 }
@@ -255,27 +236,25 @@ message DomainCertReply {
 
 
 message Device {
-  // 设备的唯一ID
-  string udid = 7;
+  string peer_id = 1;
 
   // 此设备当前是否连接到盒子
   bool is_online = 2;
 
   // 因为device api的监听端口可能会变化，所以此url有效性不会太长
-  string device_api_url = 3;
+  string device_api_url = 3 [deprecated=true];
 
   // 设备名称
-  string name = 4;
+  string name = 4 [deprecated=true];
 
   // 设备型号
-  string model = 5;
+  string model = 5 [deprecated=true];
 
   // 设备绑定时间
-  google.protobuf.Timestamp binding_time = 6;
+  google.protobuf.Timestamp binding_time = 6 [deprecated=true];
 
-
-  // TODO 待删除, 上层不应该感知peer_id
-  string peer_id = 1 [deprecated=true];
+  // 设备的唯一ID
+  string device_id = 7 [deprecated=true];
 
   // 设备是否是移动平台
   // 此字段应该由上层代码自行分析

@@ -33,7 +33,6 @@ const (
 	HPortalSys_ChangeRole_FullMethodName             = "/cloud.lazycat.apis.sys.HPortalSys/ChangeRole"
 	HPortalSys_ChangeTrustEndDevice_FullMethodName   = "/cloud.lazycat.apis.sys.HPortalSys/ChangeTrustEndDevice"
 	HPortalSys_ListDevices_FullMethodName            = "/cloud.lazycat.apis.sys.HPortalSys/ListDevices"
-	HPortalSys_QueryDeviceByID_FullMethodName        = "/cloud.lazycat.apis.sys.HPortalSys/QueryDeviceByID"
 	HPortalSys_RemoteSocks_FullMethodName            = "/cloud.lazycat.apis.sys.HPortalSys/RemoteSocks"
 	HPortalSys_UpdateBoxSystemStatus_FullMethodName  = "/cloud.lazycat.apis.sys.HPortalSys/UpdateBoxSystemStatus"
 	HPortalSys_SetupHServer_FullMethodName           = "/cloud.lazycat.apis.sys.HPortalSys/SetupHServer"
@@ -41,6 +40,7 @@ const (
 	HPortalSys_RegisterBoxService_FullMethodName     = "/cloud.lazycat.apis.sys.HPortalSys/RegisterBoxService"
 	HPortalSys_BoxServiceChanged_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/BoxServiceChanged"
 	HPortalSys_LookupBoxServiceDialer_FullMethodName = "/cloud.lazycat.apis.sys.HPortalSys/LookupBoxServiceDialer"
+	HPortalSys_QueryDeviceByID_FullMethodName        = "/cloud.lazycat.apis.sys.HPortalSys/QueryDeviceByID"
 	HPortalSys_GetDomainSelfCert_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert"
 	HPortalSys_ClearLoginSession_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession"
 )
@@ -75,7 +75,6 @@ type HPortalSysClient interface {
 	ChangeTrustEndDevice(ctx context.Context, in *ChangeTrustEndDeviceRequest, opts ...grpc.CallOption) (*ChangeTrustEndDeviceReply, error)
 	// 根据UID返回所有的设备列表
 	ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error)
-	QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error)
 	// 获取remotesocks服务器地址
 	RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error)
 	// hserver重启后默认设置BoxSystem为booting状态
@@ -96,6 +95,8 @@ type HPortalSysClient interface {
 	LookupBoxServiceDialer(ctx context.Context, in *LookupBoxServiceDialerRequest, opts ...grpc.CallOption) (*LookupBoxServiceDialerResponse, error)
 	// Deprecated: Do not use.
 	// ----------------------------- 以下为准备废弃的接口 --------------------------------------
+	QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error)
+	// Deprecated: Do not use.
 	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
 	// 会话相关接口应该由lzc-runtime/userm自行处理
 	//
@@ -228,15 +229,6 @@ func (c *hPortalSysClient) ListDevices(ctx context.Context, in *ListDeviceReques
 	return out, nil
 }
 
-func (c *hPortalSysClient) QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error) {
-	out := new(Device)
-	err := c.cc.Invoke(ctx, HPortalSys_QueryDeviceByID_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *hPortalSysClient) RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error) {
 	out := new(RemoteSocksReply)
 	err := c.cc.Invoke(ctx, HPortalSys_RemoteSocks_FullMethodName, in, out, opts...)
@@ -324,6 +316,16 @@ func (c *hPortalSysClient) LookupBoxServiceDialer(ctx context.Context, in *Looku
 }
 
 // Deprecated: Do not use.
+func (c *hPortalSysClient) QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error) {
+	out := new(Device)
+	err := c.cc.Invoke(ctx, HPortalSys_QueryDeviceByID_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Deprecated: Do not use.
 func (c *hPortalSysClient) GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error) {
 	out := new(DomainCertReply)
 	err := c.cc.Invoke(ctx, HPortalSys_GetDomainSelfCert_FullMethodName, in, out, opts...)
@@ -372,7 +374,6 @@ type HPortalSysServer interface {
 	ChangeTrustEndDevice(context.Context, *ChangeTrustEndDeviceRequest) (*ChangeTrustEndDeviceReply, error)
 	// 根据UID返回所有的设备列表
 	ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error)
-	QueryDeviceByID(context.Context, *DeviceID) (*Device, error)
 	// 获取remotesocks服务器地址
 	RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error)
 	// hserver重启后默认设置BoxSystem为booting状态
@@ -393,6 +394,8 @@ type HPortalSysServer interface {
 	LookupBoxServiceDialer(context.Context, *LookupBoxServiceDialerRequest) (*LookupBoxServiceDialerResponse, error)
 	// Deprecated: Do not use.
 	// ----------------------------- 以下为准备废弃的接口 --------------------------------------
+	QueryDeviceByID(context.Context, *DeviceID) (*Device, error)
+	// Deprecated: Do not use.
 	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
 	// 会话相关接口应该由lzc-runtime/userm自行处理
 	//
@@ -444,9 +447,6 @@ func (UnimplementedHPortalSysServer) ChangeTrustEndDevice(context.Context, *Chan
 func (UnimplementedHPortalSysServer) ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDevices not implemented")
 }
-func (UnimplementedHPortalSysServer) QueryDeviceByID(context.Context, *DeviceID) (*Device, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryDeviceByID not implemented")
-}
 func (UnimplementedHPortalSysServer) RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoteSocks not implemented")
 }
@@ -467,6 +467,9 @@ func (UnimplementedHPortalSysServer) BoxServiceChanged(context.Context, *BoxServ
 }
 func (UnimplementedHPortalSysServer) LookupBoxServiceDialer(context.Context, *LookupBoxServiceDialerRequest) (*LookupBoxServiceDialerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LookupBoxServiceDialer not implemented")
+}
+func (UnimplementedHPortalSysServer) QueryDeviceByID(context.Context, *DeviceID) (*Device, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryDeviceByID not implemented")
 }
 func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDomainSelfCert not implemented")
@@ -721,24 +724,6 @@ func _HPortalSys_ListDevices_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_QueryDeviceByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeviceID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).QueryDeviceByID(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_QueryDeviceByID_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).QueryDeviceByID(ctx, req.(*DeviceID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _HPortalSys_RemoteSocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RemoteSocksRequest)
 	if err := dec(in); err != nil {
@@ -868,6 +853,24 @@ func _HPortalSys_LookupBoxServiceDialer_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_QueryDeviceByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeviceID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).QueryDeviceByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HPortalSys_QueryDeviceByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).QueryDeviceByID(ctx, req.(*DeviceID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _HPortalSys_GetDomainSelfCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DomainCertRequest)
 	if err := dec(in); err != nil {
@@ -964,10 +967,6 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HPortalSys_ListDevices_Handler,
 		},
 		{
-			MethodName: "QueryDeviceByID",
-			Handler:    _HPortalSys_QueryDeviceByID_Handler,
-		},
-		{
 			MethodName: "RemoteSocks",
 			Handler:    _HPortalSys_RemoteSocks_Handler,
 		},
@@ -990,6 +989,10 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LookupBoxServiceDialer",
 			Handler:    _HPortalSys_LookupBoxServiceDialer_Handler,
+		},
+		{
+			MethodName: "QueryDeviceByID",
+			Handler:    _HPortalSys_QueryDeviceByID_Handler,
 		},
 		{
 			MethodName: "GetDomainSelfCert",
