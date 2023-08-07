@@ -241,6 +241,9 @@ message Device {
   // 此设备当前是否连接到盒子
   bool is_online = 2;
 
+  // 设备绑定时间
+  google.protobuf.Timestamp binding_time = 6;
+
   // 因为device api的监听端口可能会变化，所以此url有效性不会太长
   string device_api_url = 3 [deprecated=true];
 
@@ -249,9 +252,6 @@ message Device {
 
   // 设备型号
   string model = 5 [deprecated=true];
-
-  // 设备绑定时间
-  google.protobuf.Timestamp binding_time = 6 [deprecated=true];
 
   // 设备的唯一ID
   string udid = 7 [deprecated=true];
