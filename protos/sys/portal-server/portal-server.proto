@@ -254,7 +254,7 @@ message Device {
   google.protobuf.Timestamp binding_time = 6 [deprecated=true];
 
   // 设备的唯一ID
-  string device_id = 7 [deprecated=true];
+  string udid = 7 [deprecated=true];
 
   // 设备是否是移动平台
   // 此字段应该由上层代码自行分析
