@@ -117,13 +117,13 @@ message LookupBoxServiceDialerRequest {
 message LookupBoxServiceDialerResponse {
   // 若客户端未登录，则是SRP认证的UID，否则是登录的UID
   string uid = 1;
+  string device_version = 3;
   string virtual_ip = 4;
   string peer_id = 5;
   bool is_logined = 6;
   bool is_trust_dev = 7;
 
   string device_id = 2 [deprecated=true];
-  string device_version = 3 [deprecated=true];
 }
 
 message RemoteSocksRequest {
