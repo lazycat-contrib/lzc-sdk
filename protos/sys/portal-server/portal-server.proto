@@ -139,7 +139,7 @@ message RemoteSocksRequest {
 
   LocationType location_type = 1;
 
-  string target = 2; //若Type为Remote则，填写节点的设备ID (一般通过x-hc-device-id获取到)
+  string target = 2; // peer ID
 }
 
 message RemoteSocksReply {
@@ -323,7 +323,7 @@ message ClearLoginSessionReply {}
 message ChangeTrustEndDeviceRequest{
   string uid = 1;
 
-  string cid = 2; //如果是Add,则此字段内容应该为合法的PeerID，若为Del则应该是device_id
+  string cid = 2; // peer ID
 
   enum Action {
     Add = 0;

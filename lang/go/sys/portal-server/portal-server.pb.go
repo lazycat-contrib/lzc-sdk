@@ -737,7 +737,7 @@ type RemoteSocksRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	LocationType RemoteSocksRequest_LocationType `protobuf:"varint,1,opt,name=location_type,json=locationType,proto3,enum=cloud.lazycat.apis.sys.RemoteSocksRequest_LocationType" json:"location_type,omitempty"`
-	Target       string                          `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"` //若Type为Remote则，填写节点的设备ID (一般通过x-hc-device-id获取到)
+	Target       string                          `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"` // peer ID
 }
 
 func (x *RemoteSocksRequest) Reset() {
@@ -2131,7 +2131,7 @@ type ChangeTrustEndDeviceRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	Uid    string                             `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	Cid    string                             `protobuf:"bytes,2,opt,name=cid,proto3" json:"cid,omitempty"` //如果是Add,则此字段内容应该为合法的PeerID，若为Del则应该是device_id
+	Cid    string                             `protobuf:"bytes,2,opt,name=cid,proto3" json:"cid,omitempty"` // peer ID
 	Action ChangeTrustEndDeviceRequest_Action `protobuf:"varint,3,opt,name=action,proto3,enum=cloud.lazycat.apis.sys.ChangeTrustEndDeviceRequest_Action" json:"action,omitempty"`
 }
 
