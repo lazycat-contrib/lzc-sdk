@@ -55,6 +55,7 @@ export class GrpcWebImpl {
             resolve(response.message)
             // auto handle 401 error
           } else if (response.status === grpc.Code.Unauthenticated) {
+            console.log("sdk 401 auto handle")
             window.location.replace(`${window.location.protocol}//${window.location.host}/sys/login?redirect=${encodeURIComponent(window.location.href)}`)
             const err = new Error(response.statusMessage) as any
             err.code = response.status

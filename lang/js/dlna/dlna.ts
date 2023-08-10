@@ -208,9 +208,8 @@ export const GetPositionInfoRequest = {
   },
 
   create<I extends Exact<DeepPartial<GetPositionInfoRequest>, I>>(base?: I): GetPositionInfoRequest {
-    return GetPositionInfoRequest.fromPartial(base ?? {});
+    return GetPositionInfoRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<GetPositionInfoRequest>, I>>(object: I): GetPositionInfoRequest {
     const message = createBaseGetPositionInfoRequest();
     message.playerUuid = object.playerUuid ?? "";
@@ -375,9 +374,8 @@ export const GetPositionInfoResponse = {
   },
 
   create<I extends Exact<DeepPartial<GetPositionInfoResponse>, I>>(base?: I): GetPositionInfoResponse {
-    return GetPositionInfoResponse.fromPartial(base ?? {});
+    return GetPositionInfoResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<GetPositionInfoResponse>, I>>(object: I): GetPositionInfoResponse {
     const message = createBaseGetPositionInfoResponse();
     message.track = object.track ?? "";
@@ -498,9 +496,8 @@ export const DoActionRequest = {
   },
 
   create<I extends Exact<DeepPartial<DoActionRequest>, I>>(base?: I): DoActionRequest {
-    return DoActionRequest.fromPartial(base ?? {});
+    return DoActionRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<DoActionRequest>, I>>(object: I): DoActionRequest {
     const message = createBaseDoActionRequest();
     message.playerUuid = object.playerUuid ?? "";
@@ -560,9 +557,8 @@ export const RMPStatus = {
   },
 
   create<I extends Exact<DeepPartial<RMPStatus>, I>>(base?: I): RMPStatus {
-    return RMPStatus.fromPartial(base ?? {});
+    return RMPStatus.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<RMPStatus>, I>>(object: I): RMPStatus {
     const message = createBaseRMPStatus();
     message.status = object.status ?? 0;
@@ -622,9 +618,8 @@ export const ScanRMPResponse = {
   },
 
   create<I extends Exact<DeepPartial<ScanRMPResponse>, I>>(base?: I): ScanRMPResponse {
-    return ScanRMPResponse.fromPartial(base ?? {});
+    return ScanRMPResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<ScanRMPResponse>, I>>(object: I): ScanRMPResponse {
     const message = createBaseScanRMPResponse();
     message.remoteMediaPlayers = object.remoteMediaPlayers?.map((e) => RemoteMediaPlayer.fromPartial(e)) || [];
@@ -680,9 +675,8 @@ export const SubscribeRequest = {
   },
 
   create<I extends Exact<DeepPartial<SubscribeRequest>, I>>(base?: I): SubscribeRequest {
-    return SubscribeRequest.fromPartial(base ?? {});
+    return SubscribeRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<SubscribeRequest>, I>>(object: I): SubscribeRequest {
     const message = createBaseSubscribeRequest();
     message.playerUuid = object.playerUuid ?? "";
@@ -782,9 +776,8 @@ export const RemoteMediaPlayer = {
   },
 
   create<I extends Exact<DeepPartial<RemoteMediaPlayer>, I>>(base?: I): RemoteMediaPlayer {
-    return RemoteMediaPlayer.fromPartial(base ?? {});
+    return RemoteMediaPlayer.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<RemoteMediaPlayer>, I>>(object: I): RemoteMediaPlayer {
     const message = createBaseRemoteMediaPlayer();
     message.uuid = object.uuid ?? "";

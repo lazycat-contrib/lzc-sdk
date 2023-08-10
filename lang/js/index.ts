@@ -23,18 +23,17 @@ import { FileTransferServiceClientImpl, FileTransferService } from "./common/fil
 import { LocalLaunchService, LocalLaunchServiceClientImpl } from "./localdevice/local-launch"
 import { RemoteMediaPlayerService, RemoteMediaPlayerServiceClientImpl } from "./dlna/dlna"
 import { grpc } from "@improbable-eng/grpc-web"
-
 const opt = {
-  debug: true,
   transport: grpc.CrossBrowserHttpTransport({ withCredentials: true }),
-  // streamingTransport: grpc.WebsocketTransport(),
+  debug: true,
 }
 
 export class lzcAPIGateway {
-  constructor(host: string = window.origin) {
+  constructor(host: string = window.origin, debug = true) {
     host = host.replace(/\/+$/, "")
     this.host = host
 
+    opt.debug = debug
     const rpc = new GrpcWebImpl(host, opt)
     this.devices = new EndDeviceServiceClientImpl(rpc)
     this.users = new UserManagerClientImpl(rpc)
