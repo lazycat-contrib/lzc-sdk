@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	BoxService_QueryInfo_FullMethodName         = "/cloud.lazycat.apis.common.BoxService/QueryInfo"
 	BoxService_ChangeDisplayName_FullMethodName = "/cloud.lazycat.apis.common.BoxService/ChangeDisplayName"
+	BoxService_SetBootOption_FullMethodName     = "/cloud.lazycat.apis.common.BoxService/SetBootOption"
 	BoxService_Shutdown_FullMethodName          = "/cloud.lazycat.apis.common.BoxService/Shutdown"
 	BoxService_QueryDisksInfo_FullMethodName    = "/cloud.lazycat.apis.common.BoxService/QueryDisksInfo"
 )
@@ -32,6 +33,7 @@ const (
 type BoxServiceClient interface {
 	QueryInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxInfo, error)
 	ChangeDisplayName(ctx context.Context, in *ChangeDisplayNameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SetBootOption(ctx context.Context, in *BootOption, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Shutdown(ctx context.Context, in *ShutdownRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	QueryDisksInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DisksInfo, error)
 }
@@ -62,6 +64,15 @@ func (c *boxServiceClient) ChangeDisplayName(ctx context.Context, in *ChangeDisp
 	return out, nil
 }
 
+func (c *boxServiceClient) SetBootOption(ctx context.Context, in *BootOption, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, BoxService_SetBootOption_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *boxServiceClient) Shutdown(ctx context.Context, in *ShutdownRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, BoxService_Shutdown_FullMethodName, in, out, opts...)
@@ -86,6 +97,7 @@ func (c *boxServiceClient) QueryDisksInfo(ctx context.Context, in *emptypb.Empty
 type BoxServiceServer interface {
 	QueryInfo(context.Context, *emptypb.Empty) (*BoxInfo, error)
 	ChangeDisplayName(context.Context, *ChangeDisplayNameRequest) (*emptypb.Empty, error)
+	SetBootOption(context.Context, *BootOption) (*emptypb.Empty, error)
 	Shutdown(context.Context, *ShutdownRequest) (*emptypb.Empty, error)
 	QueryDisksInfo(context.Context, *emptypb.Empty) (*DisksInfo, error)
 	mustEmbedUnimplementedBoxServiceServer()
@@ -100,6 +112,9 @@ func (UnimplementedBoxServiceServer) QueryInfo(context.Context, *emptypb.Empty) 
 }
 func (UnimplementedBoxServiceServer) ChangeDisplayName(context.Context, *ChangeDisplayNameRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeDisplayName not implemented")
+}
+func (UnimplementedBoxServiceServer) SetBootOption(context.Context, *BootOption) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetBootOption not implemented")
 }
 func (UnimplementedBoxServiceServer) Shutdown(context.Context, *ShutdownRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Shutdown not implemented")
@@ -156,6 +171,24 @@ func _BoxService_ChangeDisplayName_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BoxService_SetBootOption_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BootOption)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxServiceServer).SetBootOption(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BoxService_SetBootOption_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxServiceServer).SetBootOption(ctx, req.(*BootOption))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BoxService_Shutdown_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ShutdownRequest)
 	if err := dec(in); err != nil {
@@ -206,6 +239,10 @@ var BoxService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangeDisplayName",
 			Handler:    _BoxService_ChangeDisplayName_Handler,
+		},
+		{
+			MethodName: "SetBootOption",
+			Handler:    _BoxService_SetBootOption_Handler,
 		},
 		{
 			MethodName: "Shutdown",

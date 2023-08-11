@@ -11,6 +11,8 @@ service BoxService {
 
   rpc ChangeDisplayName(ChangeDisplayNameRequest) returns (google.protobuf.Empty) {}
 
+  rpc SetBootOption(BootOption) returns (google.protobuf.Empty) {}
+
   rpc Shutdown(ShutdownRequest) returns (google.protobuf.Empty) {}
 
   rpc QueryDisksInfo(google.protobuf.Empty) returns (DisksInfo) {}
@@ -43,19 +45,37 @@ message ChangeDisplayNameRequest {
 
 message ShutdownRequest {
   enum Action {
+    // 关机
     Poweroff = 0;
 
-    Halt = 1;
+    // 重启
+    Reboot = 1;
 
-    Reboot = 2;
-
-    HybridSleep = 3;
+    // 软重启（仅重启 lzc-os 容器，不关闭 lzc-base-os）
+    //    通常用于系统更新、故障修复等场景
+    SoftReboot = 2;
   }
 
   Action action = 1;
-
-  string reasone = 2;
 }
+
+message BootOption {
+  enum BootOptionType {
+    // 无操作（清空所有已设置的操作）
+    BOOT_OPTION_NONE = 0;
+
+    // 回滚到上一个版本
+    BOOT_OPTION_ROLLBACK = 1;
+
+    // 重置系统（清空系统的 var 数据）
+    BOOT_OPTION_RESET = 2;
+
+    // 恢复出厂设置（清空用户信息、系统的 var 数据和用户数据）
+    BOOT_OPTION_FACTORY_RESET = 3;
+  }
+  BootOptionType type = 1;
+}
+
 
 message DiskInfo {
   enum DiskType {
