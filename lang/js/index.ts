@@ -25,11 +25,11 @@ import { RemoteMediaPlayerService, RemoteMediaPlayerServiceClientImpl } from "./
 import { grpc } from "@improbable-eng/grpc-web"
 const opt = {
   transport: grpc.CrossBrowserHttpTransport({ withCredentials: true }),
-  debug: true,
+  debug: false,
 }
 
 export class lzcAPIGateway {
-  constructor(host: string = window.origin, debug = true) {
+  constructor(host: string = window.origin, debug = false) {
     host = host.replace(/\/+$/, "")
     this.host = host
 

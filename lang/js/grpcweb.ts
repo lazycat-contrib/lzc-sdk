@@ -50,7 +50,7 @@ export class GrpcWebImpl {
         transport: this.options.transport,
         debug: this.options.debug,
         onEnd: function (response) {
-          console.table(response)
+          if (this.options.debug) console.table(response)
           if (response.status === grpc.Code.OK) {
             resolve(response.message)
             // auto handle 401 error
