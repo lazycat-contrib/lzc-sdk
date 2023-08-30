@@ -37,6 +37,8 @@ message BoxInfo {
     int64 free = 2;
   }
   DiskSpace disk_space = 5;
+
+  bool no_space = 6;
 }
 
 message ChangeDisplayNameRequest {
