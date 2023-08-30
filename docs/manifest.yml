@@ -21,6 +21,10 @@ runtime_dependencies: # 程序运行时依赖，目前支持系统版本和客�
 
 unsupported_platforms: # 不支持的平台
   - linux
+  - macos
+  - windows
+  - android
+  - ios
 
 #application作为一个特殊的container运行，对应的service名称为固定的`app`，其他service可以通过此名称与app进行通讯
 application:
