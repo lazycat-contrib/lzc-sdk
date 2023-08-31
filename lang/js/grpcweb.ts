@@ -43,6 +43,7 @@ export class GrpcWebImpl {
           })
         : metadata || this.options.metadata
     return new Promise((resolve, reject) => {
+      let that = this
       grpc.unary(methodDesc, {
         request,
         host: this.host,
@@ -50,7 +51,7 @@ export class GrpcWebImpl {
         transport: this.options.transport,
         debug: this.options.debug,
         onEnd: function (response) {
-          if (this.options.debug) console.table(response)
+          if (that.options.debug) console.table(response)
           if (response.status === grpc.Code.OK) {
             resolve(response.message)
             // auto handle 401 error
