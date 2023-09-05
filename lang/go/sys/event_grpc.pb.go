@@ -20,10 +20,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	EventService_Subscribe_FullMethodName         = "/cloud.lazycat.apis.sys.EventService/Subscribe"
-	EventService_Send_FullMethodName              = "/cloud.lazycat.apis.sys.EventService/Send"
-	EventService_GenPendingSending_FullMethodName = "/cloud.lazycat.apis.sys.EventService/GenPendingSending"
-	EventService_SolvePending_FullMethodName      = "/cloud.lazycat.apis.sys.EventService/SolvePending"
+	EventService_Subscribe_FullMethodName = "/cloud.lazycat.apis.sys.EventService/Subscribe"
+	EventService_Send_FullMethodName      = "/cloud.lazycat.apis.sys.EventService/Send"
 )
 
 // EventServiceClient is the client API for EventService service.
@@ -33,15 +31,6 @@ type EventServiceClient interface {
 	// 正常的事件订阅发送接口
 	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (EventService_SubscribeClient, error)
 	Send(ctx context.Context, in *SendRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 特殊的代理发送机制，少量特殊应用(box-settings在“找回密码"，"邀请用户")场景需要在未登陆盒子之前就行交互
-	// 之前是出现一个操作就从lzcapp->lzc-runtime->hportal->hclient全部增加一层代理接口，维护性和灵活性都非常
-	// 差。因此改成由特定lzcapp生产一个悬而未决的特殊PendingEvent. 此PendingEvent的内容主体由lzcapp创建，但
-	// 少量内容由hclient根据用户交互等方式获取并提供给EventService进行合并。(比如uid/password字段)
-	// 最后把一个PendingEvent转换为一个合法的Event后发送出去。
-	GenPendingSending(ctx context.Context, in *GenPendingSendingRequest, opts ...grpc.CallOption) (*Uuid, error)
-	// 这里再返回一个奇怪的Event是为了处理调用者无法感知事件产生的结果。
-	// 比如用来由hclient代理创建用户时，会导致如果出现UID已经占用的情况无法传播给hclient
-	SolvePending(ctx context.Context, in *SolvePendingRequest, opts ...grpc.CallOption) (*Event, error)
 }
 
 type eventServiceClient struct {
@@ -93,24 +82,6 @@ func (c *eventServiceClient) Send(ctx context.Context, in *SendRequest, opts ...
 	return out, nil
 }
 
-func (c *eventServiceClient) GenPendingSending(ctx context.Context, in *GenPendingSendingRequest, opts ...grpc.CallOption) (*Uuid, error) {
-	out := new(Uuid)
-	err := c.cc.Invoke(ctx, EventService_GenPendingSending_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *eventServiceClient) SolvePending(ctx context.Context, in *SolvePendingRequest, opts ...grpc.CallOption) (*Event, error) {
-	out := new(Event)
-	err := c.cc.Invoke(ctx, EventService_SolvePending_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // EventServiceServer is the server API for EventService service.
 // All implementations must embed UnimplementedEventServiceServer
 // for forward compatibility
@@ -118,15 +89,6 @@ type EventServiceServer interface {
 	// 正常的事件订阅发送接口
 	Subscribe(*SubscribeRequest, EventService_SubscribeServer) error
 	Send(context.Context, *SendRequest) (*emptypb.Empty, error)
-	// 特殊的代理发送机制，少量特殊应用(box-settings在“找回密码"，"邀请用户")场景需要在未登陆盒子之前就行交互
-	// 之前是出现一个操作就从lzcapp->lzc-runtime->hportal->hclient全部增加一层代理接口，维护性和灵活性都非常
-	// 差。因此改成由特定lzcapp生产一个悬而未决的特殊PendingEvent. 此PendingEvent的内容主体由lzcapp创建，但
-	// 少量内容由hclient根据用户交互等方式获取并提供给EventService进行合并。(比如uid/password字段)
-	// 最后把一个PendingEvent转换为一个合法的Event后发送出去。
-	GenPendingSending(context.Context, *GenPendingSendingRequest) (*Uuid, error)
-	// 这里再返回一个奇怪的Event是为了处理调用者无法感知事件产生的结果。
-	// 比如用来由hclient代理创建用户时，会导致如果出现UID已经占用的情况无法传播给hclient
-	SolvePending(context.Context, *SolvePendingRequest) (*Event, error)
 	mustEmbedUnimplementedEventServiceServer()
 }
 
@@ -139,12 +101,6 @@ func (UnimplementedEventServiceServer) Subscribe(*SubscribeRequest, EventService
 }
 func (UnimplementedEventServiceServer) Send(context.Context, *SendRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Send not implemented")
-}
-func (UnimplementedEventServiceServer) GenPendingSending(context.Context, *GenPendingSendingRequest) (*Uuid, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenPendingSending not implemented")
-}
-func (UnimplementedEventServiceServer) SolvePending(context.Context, *SolvePendingRequest) (*Event, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SolvePending not implemented")
 }
 func (UnimplementedEventServiceServer) mustEmbedUnimplementedEventServiceServer() {}
 
@@ -198,42 +154,6 @@ func _EventService_Send_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EventService_GenPendingSending_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenPendingSendingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EventServiceServer).GenPendingSending(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: EventService_GenPendingSending_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventServiceServer).GenPendingSending(ctx, req.(*GenPendingSendingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _EventService_SolvePending_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SolvePendingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EventServiceServer).SolvePending(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: EventService_SolvePending_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventServiceServer).SolvePending(ctx, req.(*SolvePendingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // EventService_ServiceDesc is the grpc.ServiceDesc for EventService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -244,14 +164,6 @@ var EventService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Send",
 			Handler:    _EventService_Send_Handler,
-		},
-		{
-			MethodName: "GenPendingSending",
-			Handler:    _EventService_GenPendingSending_Handler,
-		},
-		{
-			MethodName: "SolvePending",
-			Handler:    _EventService_SolvePending_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

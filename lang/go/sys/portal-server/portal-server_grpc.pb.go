@@ -34,7 +34,6 @@ const (
 	HPortalSys_ChangeTrustEndDevice_FullMethodName    = "/cloud.lazycat.apis.sys.HPortalSys/ChangeTrustEndDevice"
 	HPortalSys_ListEndDevices_FullMethodName          = "/cloud.lazycat.apis.sys.HPortalSys/ListEndDevices"
 	HPortalSys_RemoteSocks_FullMethodName             = "/cloud.lazycat.apis.sys.HPortalSys/RemoteSocks"
-	HPortalSys_UpdateBoxSystemStatus_FullMethodName   = "/cloud.lazycat.apis.sys.HPortalSys/UpdateBoxSystemStatus"
 	HPortalSys_SetupHServer_FullMethodName            = "/cloud.lazycat.apis.sys.HPortalSys/SetupHServer"
 	HPortalSys_ResetHServer_FullMethodName            = "/cloud.lazycat.apis.sys.HPortalSys/ResetHServer"
 	HPortalSys_RegisterBoxService_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/RegisterBoxService"
@@ -45,7 +44,6 @@ const (
 	HPortalSys_LookupBoxServiceDialer_FullMethodName  = "/cloud.lazycat.apis.sys.HPortalSys/LookupBoxServiceDialer"
 	HPortalSys_QueryDeviceByID_FullMethodName         = "/cloud.lazycat.apis.sys.HPortalSys/QueryDeviceByID"
 	HPortalSys_GetDomainSelfCert_FullMethodName       = "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert"
-	HPortalSys_ClearLoginSession_FullMethodName       = "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession"
 )
 
 // HPortalSysClient is the client API for HPortalSys service.
@@ -80,9 +78,6 @@ type HPortalSysClient interface {
 	ListEndDevices(ctx context.Context, in *ListEndDeviceRequest, opts ...grpc.CallOption) (*ListEndDeviceReply, error)
 	// 获取remotesocks服务器地址
 	RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error)
-	// hserver重启后默认设置BoxSystem为booting状态
-	// 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
-	UpdateBoxSystemStatus(ctx context.Context, in *UpdateBoxSystemStatusRequest, opts ...grpc.CallOption) (*UpdateBoxSystemStatusResponse, error)
 	// 仅在盒子未初始化时，可以被调用。
 	SetupHServer(ctx context.Context, in *SetupHServerRequest, opts ...grpc.CallOption) (*SetupHServerReply, error)
 	// 重置盒子
@@ -108,10 +103,6 @@ type HPortalSysClient interface {
 	QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error)
 	// Deprecated: Do not use.
 	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
-	// 会话相关接口应该由lzc-runtime/userm自行处理
-	//
-	// 删除登陆的会话状态
-	ClearLoginSession(ctx context.Context, in *ClearLoginSessionRequest, opts ...grpc.CallOption) (*ClearLoginSessionReply, error)
 }
 
 type hPortalSysClient struct {
@@ -248,15 +239,6 @@ func (c *hPortalSysClient) RemoteSocks(ctx context.Context, in *RemoteSocksReque
 	return out, nil
 }
 
-func (c *hPortalSysClient) UpdateBoxSystemStatus(ctx context.Context, in *UpdateBoxSystemStatusRequest, opts ...grpc.CallOption) (*UpdateBoxSystemStatusResponse, error) {
-	out := new(UpdateBoxSystemStatusResponse)
-	err := c.cc.Invoke(ctx, HPortalSys_UpdateBoxSystemStatus_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *hPortalSysClient) SetupHServer(ctx context.Context, in *SetupHServerRequest, opts ...grpc.CallOption) (*SetupHServerReply, error) {
 	out := new(SetupHServerReply)
 	err := c.cc.Invoke(ctx, HPortalSys_SetupHServer_FullMethodName, in, out, opts...)
@@ -375,15 +357,6 @@ func (c *hPortalSysClient) GetDomainSelfCert(ctx context.Context, in *DomainCert
 	return out, nil
 }
 
-func (c *hPortalSysClient) ClearLoginSession(ctx context.Context, in *ClearLoginSessionRequest, opts ...grpc.CallOption) (*ClearLoginSessionReply, error) {
-	out := new(ClearLoginSessionReply)
-	err := c.cc.Invoke(ctx, HPortalSys_ClearLoginSession_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // HPortalSysServer is the server API for HPortalSys service.
 // All implementations must embed UnimplementedHPortalSysServer
 // for forward compatibility
@@ -416,9 +389,6 @@ type HPortalSysServer interface {
 	ListEndDevices(context.Context, *ListEndDeviceRequest) (*ListEndDeviceReply, error)
 	// 获取remotesocks服务器地址
 	RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error)
-	// hserver重启后默认设置BoxSystem为booting状态
-	// 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
-	UpdateBoxSystemStatus(context.Context, *UpdateBoxSystemStatusRequest) (*UpdateBoxSystemStatusResponse, error)
 	// 仅在盒子未初始化时，可以被调用。
 	SetupHServer(context.Context, *SetupHServerRequest) (*SetupHServerReply, error)
 	// 重置盒子
@@ -444,10 +414,6 @@ type HPortalSysServer interface {
 	QueryDeviceByID(context.Context, *DeviceID) (*Device, error)
 	// Deprecated: Do not use.
 	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
-	// 会话相关接口应该由lzc-runtime/userm自行处理
-	//
-	// 删除登陆的会话状态
-	ClearLoginSession(context.Context, *ClearLoginSessionRequest) (*ClearLoginSessionReply, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -497,9 +463,6 @@ func (UnimplementedHPortalSysServer) ListEndDevices(context.Context, *ListEndDev
 func (UnimplementedHPortalSysServer) RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoteSocks not implemented")
 }
-func (UnimplementedHPortalSysServer) UpdateBoxSystemStatus(context.Context, *UpdateBoxSystemStatusRequest) (*UpdateBoxSystemStatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateBoxSystemStatus not implemented")
-}
 func (UnimplementedHPortalSysServer) SetupHServer(context.Context, *SetupHServerRequest) (*SetupHServerReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetupHServer not implemented")
 }
@@ -529,9 +492,6 @@ func (UnimplementedHPortalSysServer) QueryDeviceByID(context.Context, *DeviceID)
 }
 func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDomainSelfCert not implemented")
-}
-func (UnimplementedHPortalSysServer) ClearLoginSession(context.Context, *ClearLoginSessionRequest) (*ClearLoginSessionReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ClearLoginSession not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -798,24 +758,6 @@ func _HPortalSys_RemoteSocks_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_UpdateBoxSystemStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateBoxSystemStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).UpdateBoxSystemStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_UpdateBoxSystemStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).UpdateBoxSystemStatus(ctx, req.(*UpdateBoxSystemStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _HPortalSys_SetupHServer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetupHServerRequest)
 	if err := dec(in); err != nil {
@@ -999,24 +941,6 @@ func _HPortalSys_GetDomainSelfCert_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_ClearLoginSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ClearLoginSessionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).ClearLoginSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_ClearLoginSession_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).ClearLoginSession(ctx, req.(*ClearLoginSessionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // HPortalSys_ServiceDesc is the grpc.ServiceDesc for HPortalSys service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1081,10 +1005,6 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HPortalSys_RemoteSocks_Handler,
 		},
 		{
-			MethodName: "UpdateBoxSystemStatus",
-			Handler:    _HPortalSys_UpdateBoxSystemStatus_Handler,
-		},
-		{
 			MethodName: "SetupHServer",
 			Handler:    _HPortalSys_SetupHServer_Handler,
 		},
@@ -1119,10 +1039,6 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDomainSelfCert",
 			Handler:    _HPortalSys_GetDomainSelfCert_Handler,
-		},
-		{
-			MethodName: "ClearLoginSession",
-			Handler:    _HPortalSys_ClearLoginSession_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

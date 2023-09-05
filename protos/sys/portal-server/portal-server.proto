@@ -41,10 +41,6 @@ service HPortalSys {
   // 获取remotesocks服务器地址
   rpc RemoteSocks(RemoteSocksRequest) returns (RemoteSocksReply) {}
 
-  // hserver重启后默认设置BoxSystem为booting状态
-  // 实际的BoxSystem需要定期(建议两到三秒)设置其实际状态，避免hserver被手动或自动重启后设置的盒子系统状态错误
-  rpc UpdateBoxSystemStatus(UpdateBoxSystemStatusRequest) returns (UpdateBoxSystemStatusResponse) {}
-
   // 仅在盒子未初始化时，可以被调用。
   rpc SetupHServer(SetupHServerRequest) returns (SetupHServerReply);
 
@@ -74,11 +70,6 @@ service HPortalSys {
   rpc QueryDeviceByID(DeviceID) returns (Device) {option deprecated=true;}
 
   rpc GetDomainSelfCert(DomainCertRequest) returns (DomainCertReply) {option deprecated=true;}
-
-  // 会话相关接口应该由lzc-runtime/userm自行处理
-  //
-  // 删除登陆的会话状态
-  rpc ClearLoginSession(ClearLoginSessionRequest) returns (ClearLoginSessionReply) {}
 }
 
 enum DialerRole {
