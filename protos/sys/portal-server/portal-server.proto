@@ -36,7 +36,7 @@ service HPortalSys {
   //  添加或删除受信任设备
   rpc ChangeTrustEndDevice(ChangeTrustEndDeviceRequest) returns (ChangeTrustEndDeviceReply) {}
   // 根据UID返回所有的设备列表
-  rpc ListDevices(ListDeviceRequest) returns (ListDeviceReply) {}
+  rpc ListEndDevices(ListEndDeviceRequest) returns (ListEndDeviceReply) {}
 
   // 获取remotesocks服务器地址
   rpc RemoteSocks(RemoteSocksRequest) returns (RemoteSocksReply) {}
@@ -59,11 +59,18 @@ service HPortalSys {
   // 调用者需要自行重新注册
   rpc RegisterBoxService(RegisterBoxServiceRequest) returns (stream RegisterBoxServiceReply);
 
-  rpc BoxServiceChanged(BoxServiceChangedRequest) returns (google.protobuf.Empty);
+  rpc EmitBoxServiceChanged(EmitBoxServiceChangedRequest) returns (google.protobuf.Empty);
 
-  rpc LookupBoxServiceDialer(LookupBoxServiceDialerRequest) returns (LookupBoxServiceDialerResponse);
+  rpc QueryBoxServicePeerCred(QueryBoxServicePeerCredRequest) returns (QueryBoxServicePeerCredResponse);
 
   // ----------------------------- 以下为准备废弃的接口 --------------------------------------
+  // 根据UID返回所有的设备列表
+  rpc ListDevices(ListDeviceRequest) returns (ListDeviceReply) {option deprecated=true;}
+
+  rpc BoxServiceChanged(BoxServiceChangedRequest) returns (google.protobuf.Empty) {option deprecated=true;}
+
+  rpc LookupBoxServiceDialer(LookupBoxServiceDialerRequest) returns (LookupBoxServiceDialerResponse) {option deprecated=true;}
+
   rpc QueryDeviceByID(DeviceID) returns (Device) {option deprecated=true;}
 
   rpc GetDomainSelfCert(DomainCertRequest) returns (DomainCertReply) {option deprecated=true;}
@@ -109,12 +116,33 @@ message BoxServiceChangedRequest {
   string service_name = 1;
 }
 
+message EmitBoxServiceChangedRequest {
+  string service_name = 1;
+}
+
 message LookupBoxServiceDialerRequest {
   string remote_addr = 1;
   string local_addr = 2;
   string protocol = 3;
 }
 message LookupBoxServiceDialerResponse {
+  // 若客户端未登录，则是SRP认证的UID，否则是登录的UID
+  string uid = 1;
+  string device_version = 3;
+  string virtual_ip = 4;
+  string peer_id = 5;
+  bool is_logined = 6;
+  bool is_trust_dev = 7;
+
+  string device_id = 2 [deprecated=true];
+}
+
+message QueryBoxServicePeerCredRequest {
+  string remote_addr = 1;
+  string local_addr = 2;
+  string protocol = 3;
+}
+message QueryBoxServicePeerCredResponse {
   // 若客户端未登录，则是SRP认证的UID，否则是登录的UID
   string uid = 1;
   string device_version = 3;
@@ -266,6 +294,14 @@ message ListDeviceRequest {
 }
 
 message ListDeviceReply {
+  repeated Device devices = 1;
+}
+
+message ListEndDeviceRequest {
+  string uid = 1;
+}
+
+message ListEndDeviceReply {
   repeated Device devices = 1;
 }
 

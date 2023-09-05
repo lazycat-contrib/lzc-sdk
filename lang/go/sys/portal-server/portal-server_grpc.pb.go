@@ -20,29 +20,32 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	HPortalSys_QueryBoxInfo_FullMethodName           = "/cloud.lazycat.apis.sys.HPortalSys/QueryBoxInfo"
-	HPortalSys_GetDomainCert_FullMethodName          = "/cloud.lazycat.apis.sys.HPortalSys/GetDomainCert"
-	HPortalSys_AllocVirtualExternalIP_FullMethodName = "/cloud.lazycat.apis.sys.HPortalSys/AllocVirtualExternalIP"
-	HPortalSys_FreeVirtualExternalIP_FullMethodName  = "/cloud.lazycat.apis.sys.HPortalSys/FreeVirtualExternalIP"
-	HPortalSys_ListUsers_FullMethodName              = "/cloud.lazycat.apis.sys.HPortalSys/ListUsers"
-	HPortalSys_CreateUser_FullMethodName             = "/cloud.lazycat.apis.sys.HPortalSys/CreateUser"
-	HPortalSys_DeleteUser_FullMethodName             = "/cloud.lazycat.apis.sys.HPortalSys/DeleteUser"
-	HPortalSys_ResetPassword_FullMethodName          = "/cloud.lazycat.apis.sys.HPortalSys/ResetPassword"
-	HPortalSys_CheckPassword_FullMethodName          = "/cloud.lazycat.apis.sys.HPortalSys/CheckPassword"
-	HPortalSys_QueryRole_FullMethodName              = "/cloud.lazycat.apis.sys.HPortalSys/QueryRole"
-	HPortalSys_ChangeRole_FullMethodName             = "/cloud.lazycat.apis.sys.HPortalSys/ChangeRole"
-	HPortalSys_ChangeTrustEndDevice_FullMethodName   = "/cloud.lazycat.apis.sys.HPortalSys/ChangeTrustEndDevice"
-	HPortalSys_ListDevices_FullMethodName            = "/cloud.lazycat.apis.sys.HPortalSys/ListDevices"
-	HPortalSys_RemoteSocks_FullMethodName            = "/cloud.lazycat.apis.sys.HPortalSys/RemoteSocks"
-	HPortalSys_UpdateBoxSystemStatus_FullMethodName  = "/cloud.lazycat.apis.sys.HPortalSys/UpdateBoxSystemStatus"
-	HPortalSys_SetupHServer_FullMethodName           = "/cloud.lazycat.apis.sys.HPortalSys/SetupHServer"
-	HPortalSys_ResetHServer_FullMethodName           = "/cloud.lazycat.apis.sys.HPortalSys/ResetHServer"
-	HPortalSys_RegisterBoxService_FullMethodName     = "/cloud.lazycat.apis.sys.HPortalSys/RegisterBoxService"
-	HPortalSys_BoxServiceChanged_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/BoxServiceChanged"
-	HPortalSys_LookupBoxServiceDialer_FullMethodName = "/cloud.lazycat.apis.sys.HPortalSys/LookupBoxServiceDialer"
-	HPortalSys_QueryDeviceByID_FullMethodName        = "/cloud.lazycat.apis.sys.HPortalSys/QueryDeviceByID"
-	HPortalSys_GetDomainSelfCert_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert"
-	HPortalSys_ClearLoginSession_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession"
+	HPortalSys_QueryBoxInfo_FullMethodName            = "/cloud.lazycat.apis.sys.HPortalSys/QueryBoxInfo"
+	HPortalSys_GetDomainCert_FullMethodName           = "/cloud.lazycat.apis.sys.HPortalSys/GetDomainCert"
+	HPortalSys_AllocVirtualExternalIP_FullMethodName  = "/cloud.lazycat.apis.sys.HPortalSys/AllocVirtualExternalIP"
+	HPortalSys_FreeVirtualExternalIP_FullMethodName   = "/cloud.lazycat.apis.sys.HPortalSys/FreeVirtualExternalIP"
+	HPortalSys_ListUsers_FullMethodName               = "/cloud.lazycat.apis.sys.HPortalSys/ListUsers"
+	HPortalSys_CreateUser_FullMethodName              = "/cloud.lazycat.apis.sys.HPortalSys/CreateUser"
+	HPortalSys_DeleteUser_FullMethodName              = "/cloud.lazycat.apis.sys.HPortalSys/DeleteUser"
+	HPortalSys_ResetPassword_FullMethodName           = "/cloud.lazycat.apis.sys.HPortalSys/ResetPassword"
+	HPortalSys_CheckPassword_FullMethodName           = "/cloud.lazycat.apis.sys.HPortalSys/CheckPassword"
+	HPortalSys_QueryRole_FullMethodName               = "/cloud.lazycat.apis.sys.HPortalSys/QueryRole"
+	HPortalSys_ChangeRole_FullMethodName              = "/cloud.lazycat.apis.sys.HPortalSys/ChangeRole"
+	HPortalSys_ChangeTrustEndDevice_FullMethodName    = "/cloud.lazycat.apis.sys.HPortalSys/ChangeTrustEndDevice"
+	HPortalSys_ListEndDevices_FullMethodName          = "/cloud.lazycat.apis.sys.HPortalSys/ListEndDevices"
+	HPortalSys_RemoteSocks_FullMethodName             = "/cloud.lazycat.apis.sys.HPortalSys/RemoteSocks"
+	HPortalSys_UpdateBoxSystemStatus_FullMethodName   = "/cloud.lazycat.apis.sys.HPortalSys/UpdateBoxSystemStatus"
+	HPortalSys_SetupHServer_FullMethodName            = "/cloud.lazycat.apis.sys.HPortalSys/SetupHServer"
+	HPortalSys_ResetHServer_FullMethodName            = "/cloud.lazycat.apis.sys.HPortalSys/ResetHServer"
+	HPortalSys_RegisterBoxService_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/RegisterBoxService"
+	HPortalSys_EmitBoxServiceChanged_FullMethodName   = "/cloud.lazycat.apis.sys.HPortalSys/EmitBoxServiceChanged"
+	HPortalSys_QueryBoxServicePeerCred_FullMethodName = "/cloud.lazycat.apis.sys.HPortalSys/QueryBoxServicePeerCred"
+	HPortalSys_ListDevices_FullMethodName             = "/cloud.lazycat.apis.sys.HPortalSys/ListDevices"
+	HPortalSys_BoxServiceChanged_FullMethodName       = "/cloud.lazycat.apis.sys.HPortalSys/BoxServiceChanged"
+	HPortalSys_LookupBoxServiceDialer_FullMethodName  = "/cloud.lazycat.apis.sys.HPortalSys/LookupBoxServiceDialer"
+	HPortalSys_QueryDeviceByID_FullMethodName         = "/cloud.lazycat.apis.sys.HPortalSys/QueryDeviceByID"
+	HPortalSys_GetDomainSelfCert_FullMethodName       = "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert"
+	HPortalSys_ClearLoginSession_FullMethodName       = "/cloud.lazycat.apis.sys.HPortalSys/ClearLoginSession"
 )
 
 // HPortalSysClient is the client API for HPortalSys service.
@@ -74,7 +77,7 @@ type HPortalSysClient interface {
 	// 添加或删除受信任设备
 	ChangeTrustEndDevice(ctx context.Context, in *ChangeTrustEndDeviceRequest, opts ...grpc.CallOption) (*ChangeTrustEndDeviceReply, error)
 	// 根据UID返回所有的设备列表
-	ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error)
+	ListEndDevices(ctx context.Context, in *ListEndDeviceRequest, opts ...grpc.CallOption) (*ListEndDeviceReply, error)
 	// 获取remotesocks服务器地址
 	RemoteSocks(ctx context.Context, in *RemoteSocksRequest, opts ...grpc.CallOption) (*RemoteSocksReply, error)
 	// hserver重启后默认设置BoxSystem为booting状态
@@ -91,10 +94,17 @@ type HPortalSysClient interface {
 	// 任何原因导致此调用结束时，都会使此服务注销。(比如hportal重启)
 	// 调用者需要自行重新注册
 	RegisterBoxService(ctx context.Context, in *RegisterBoxServiceRequest, opts ...grpc.CallOption) (HPortalSys_RegisterBoxServiceClient, error)
-	BoxServiceChanged(ctx context.Context, in *BoxServiceChangedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	LookupBoxServiceDialer(ctx context.Context, in *LookupBoxServiceDialerRequest, opts ...grpc.CallOption) (*LookupBoxServiceDialerResponse, error)
+	EmitBoxServiceChanged(ctx context.Context, in *EmitBoxServiceChangedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	QueryBoxServicePeerCred(ctx context.Context, in *QueryBoxServicePeerCredRequest, opts ...grpc.CallOption) (*QueryBoxServicePeerCredResponse, error)
 	// Deprecated: Do not use.
 	// ----------------------------- 以下为准备废弃的接口 --------------------------------------
+	// 根据UID返回所有的设备列表
+	ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error)
+	// Deprecated: Do not use.
+	BoxServiceChanged(ctx context.Context, in *BoxServiceChangedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Deprecated: Do not use.
+	LookupBoxServiceDialer(ctx context.Context, in *LookupBoxServiceDialerRequest, opts ...grpc.CallOption) (*LookupBoxServiceDialerResponse, error)
+	// Deprecated: Do not use.
 	QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error)
 	// Deprecated: Do not use.
 	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
@@ -220,9 +230,9 @@ func (c *hPortalSysClient) ChangeTrustEndDevice(ctx context.Context, in *ChangeT
 	return out, nil
 }
 
-func (c *hPortalSysClient) ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error) {
-	out := new(ListDeviceReply)
-	err := c.cc.Invoke(ctx, HPortalSys_ListDevices_FullMethodName, in, out, opts...)
+func (c *hPortalSysClient) ListEndDevices(ctx context.Context, in *ListEndDeviceRequest, opts ...grpc.CallOption) (*ListEndDeviceReply, error) {
+	out := new(ListEndDeviceReply)
+	err := c.cc.Invoke(ctx, HPortalSys_ListEndDevices_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -297,6 +307,35 @@ func (x *hPortalSysRegisterBoxServiceClient) Recv() (*RegisterBoxServiceReply, e
 	return m, nil
 }
 
+func (c *hPortalSysClient) EmitBoxServiceChanged(ctx context.Context, in *EmitBoxServiceChangedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, HPortalSys_EmitBoxServiceChanged_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) QueryBoxServicePeerCred(ctx context.Context, in *QueryBoxServicePeerCredRequest, opts ...grpc.CallOption) (*QueryBoxServicePeerCredResponse, error) {
+	out := new(QueryBoxServicePeerCredResponse)
+	err := c.cc.Invoke(ctx, HPortalSys_QueryBoxServicePeerCred_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Deprecated: Do not use.
+func (c *hPortalSysClient) ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error) {
+	out := new(ListDeviceReply)
+	err := c.cc.Invoke(ctx, HPortalSys_ListDevices_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Deprecated: Do not use.
 func (c *hPortalSysClient) BoxServiceChanged(ctx context.Context, in *BoxServiceChangedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, HPortalSys_BoxServiceChanged_FullMethodName, in, out, opts...)
@@ -306,6 +345,7 @@ func (c *hPortalSysClient) BoxServiceChanged(ctx context.Context, in *BoxService
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *hPortalSysClient) LookupBoxServiceDialer(ctx context.Context, in *LookupBoxServiceDialerRequest, opts ...grpc.CallOption) (*LookupBoxServiceDialerResponse, error) {
 	out := new(LookupBoxServiceDialerResponse)
 	err := c.cc.Invoke(ctx, HPortalSys_LookupBoxServiceDialer_FullMethodName, in, out, opts...)
@@ -373,7 +413,7 @@ type HPortalSysServer interface {
 	// 添加或删除受信任设备
 	ChangeTrustEndDevice(context.Context, *ChangeTrustEndDeviceRequest) (*ChangeTrustEndDeviceReply, error)
 	// 根据UID返回所有的设备列表
-	ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error)
+	ListEndDevices(context.Context, *ListEndDeviceRequest) (*ListEndDeviceReply, error)
 	// 获取remotesocks服务器地址
 	RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error)
 	// hserver重启后默认设置BoxSystem为booting状态
@@ -390,10 +430,17 @@ type HPortalSysServer interface {
 	// 任何原因导致此调用结束时，都会使此服务注销。(比如hportal重启)
 	// 调用者需要自行重新注册
 	RegisterBoxService(*RegisterBoxServiceRequest, HPortalSys_RegisterBoxServiceServer) error
-	BoxServiceChanged(context.Context, *BoxServiceChangedRequest) (*emptypb.Empty, error)
-	LookupBoxServiceDialer(context.Context, *LookupBoxServiceDialerRequest) (*LookupBoxServiceDialerResponse, error)
+	EmitBoxServiceChanged(context.Context, *EmitBoxServiceChangedRequest) (*emptypb.Empty, error)
+	QueryBoxServicePeerCred(context.Context, *QueryBoxServicePeerCredRequest) (*QueryBoxServicePeerCredResponse, error)
 	// Deprecated: Do not use.
 	// ----------------------------- 以下为准备废弃的接口 --------------------------------------
+	// 根据UID返回所有的设备列表
+	ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error)
+	// Deprecated: Do not use.
+	BoxServiceChanged(context.Context, *BoxServiceChangedRequest) (*emptypb.Empty, error)
+	// Deprecated: Do not use.
+	LookupBoxServiceDialer(context.Context, *LookupBoxServiceDialerRequest) (*LookupBoxServiceDialerResponse, error)
+	// Deprecated: Do not use.
 	QueryDeviceByID(context.Context, *DeviceID) (*Device, error)
 	// Deprecated: Do not use.
 	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
@@ -444,8 +491,8 @@ func (UnimplementedHPortalSysServer) ChangeRole(context.Context, *ChangeRoleReqe
 func (UnimplementedHPortalSysServer) ChangeTrustEndDevice(context.Context, *ChangeTrustEndDeviceRequest) (*ChangeTrustEndDeviceReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeTrustEndDevice not implemented")
 }
-func (UnimplementedHPortalSysServer) ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListDevices not implemented")
+func (UnimplementedHPortalSysServer) ListEndDevices(context.Context, *ListEndDeviceRequest) (*ListEndDeviceReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListEndDevices not implemented")
 }
 func (UnimplementedHPortalSysServer) RemoteSocks(context.Context, *RemoteSocksRequest) (*RemoteSocksReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoteSocks not implemented")
@@ -461,6 +508,15 @@ func (UnimplementedHPortalSysServer) ResetHServer(context.Context, *ResetHServer
 }
 func (UnimplementedHPortalSysServer) RegisterBoxService(*RegisterBoxServiceRequest, HPortalSys_RegisterBoxServiceServer) error {
 	return status.Errorf(codes.Unimplemented, "method RegisterBoxService not implemented")
+}
+func (UnimplementedHPortalSysServer) EmitBoxServiceChanged(context.Context, *EmitBoxServiceChangedRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EmitBoxServiceChanged not implemented")
+}
+func (UnimplementedHPortalSysServer) QueryBoxServicePeerCred(context.Context, *QueryBoxServicePeerCredRequest) (*QueryBoxServicePeerCredResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryBoxServicePeerCred not implemented")
+}
+func (UnimplementedHPortalSysServer) ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListDevices not implemented")
 }
 func (UnimplementedHPortalSysServer) BoxServiceChanged(context.Context, *BoxServiceChangedRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BoxServiceChanged not implemented")
@@ -706,20 +762,20 @@ func _HPortalSys_ChangeTrustEndDevice_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_ListDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListDeviceRequest)
+func _HPortalSys_ListEndDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEndDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(HPortalSysServer).ListDevices(ctx, in)
+		return srv.(HPortalSysServer).ListEndDevices(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: HPortalSys_ListDevices_FullMethodName,
+		FullMethod: HPortalSys_ListEndDevices_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).ListDevices(ctx, req.(*ListDeviceRequest))
+		return srv.(HPortalSysServer).ListEndDevices(ctx, req.(*ListEndDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -815,6 +871,60 @@ type hPortalSysRegisterBoxServiceServer struct {
 
 func (x *hPortalSysRegisterBoxServiceServer) Send(m *RegisterBoxServiceReply) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func _HPortalSys_EmitBoxServiceChanged_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmitBoxServiceChangedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).EmitBoxServiceChanged(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HPortalSys_EmitBoxServiceChanged_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).EmitBoxServiceChanged(ctx, req.(*EmitBoxServiceChangedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_QueryBoxServicePeerCred_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryBoxServicePeerCredRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).QueryBoxServicePeerCred(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HPortalSys_QueryBoxServicePeerCred_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).QueryBoxServicePeerCred(ctx, req.(*QueryBoxServicePeerCredRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_ListDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListDeviceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).ListDevices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HPortalSys_ListDevices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).ListDevices(ctx, req.(*ListDeviceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _HPortalSys_BoxServiceChanged_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -963,8 +1073,8 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HPortalSys_ChangeTrustEndDevice_Handler,
 		},
 		{
-			MethodName: "ListDevices",
-			Handler:    _HPortalSys_ListDevices_Handler,
+			MethodName: "ListEndDevices",
+			Handler:    _HPortalSys_ListEndDevices_Handler,
 		},
 		{
 			MethodName: "RemoteSocks",
@@ -981,6 +1091,18 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResetHServer",
 			Handler:    _HPortalSys_ResetHServer_Handler,
+		},
+		{
+			MethodName: "EmitBoxServiceChanged",
+			Handler:    _HPortalSys_EmitBoxServiceChanged_Handler,
+		},
+		{
+			MethodName: "QueryBoxServicePeerCred",
+			Handler:    _HPortalSys_QueryBoxServicePeerCred_Handler,
+		},
+		{
+			MethodName: "ListDevices",
+			Handler:    _HPortalSys_ListDevices_Handler,
 		},
 		{
 			MethodName: "BoxServiceChanged",
