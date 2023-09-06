@@ -6,10 +6,44 @@ import "google/protobuf/empty.proto";
 
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 
-// 这里 Access Control 的逻辑是：
-// 1. 默认用户可以访问所有 app
-// 2. 如果调用了 AllowAdd ，则该用户进入白名单模式，只有被管理员允许访问的应用才可以访问
+
+service AccessControlerService {
+  rpc SetAppAccessPolicy(AppAccessPolicyRequest) returns (google.protobuf.Empty);
+  rpc QueryAppAccessPolicy(AppAccessPolicyRequest) returns (AppAccessPolicy);
+
+  rpc GetAppLastAccessTime(IngressAppLastAccessTimeRequest) returns (IngressAppLastAccessTimeResponse) {}
+}
+
+message AppAccessPolicyRequest {
+  string uid = 1; //若为空则从context中获取实际UID
+
+  AppAccessPolicy policy = 2;
+}
+
+message AppAccessPolicy {
+  // 是否允许访问所有应用。
+  // 此字段如果出现，则allow_access_apps字段会被忽略，即旧值不会有任何调整变化。
+  //
+  // 当目标用户有安装应用的权限时，无法设置no_limit=false。其他情况no_limit的值无任何限制。
+  optional bool no_limit = 1;
+
+  // 允许访问的appid列表
+  repeated string allow_access_appids = 2;
+}
+
+message IngressAppLastAccessTimeRequest {
+    string AppId = 1;
+}
+
+message IngressAppLastAccessTimeResponse {
+    int64 UnixTime = 1;
+}
+
+
+// 此接口废弃，新代码请调用AccessControlerService
 service IngressService {
+    option deprecated = true;
+
     // 允许一个用户对指定 app 的访问
     rpc AllowAdd(IngressAllowRequest)  returns (google.protobuf.Empty) {}
 
@@ -59,14 +93,6 @@ message IngressAllowGetRequest {
 
 message IngressAllowGetResponse {
     bool IsAllowed = 1;
-}
-
-message IngressAppLastAccessTimeRequest {
-    string AppId = 1;
-}
-
-message IngressAppLastAccessTimeResponse {
-    int64 UnixTime = 1;
 }
 
 message IngressAllowManageRequest {

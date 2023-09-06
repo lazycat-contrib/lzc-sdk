@@ -20,6 +20,171 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
+	AccessControlerService_SetAppAccessPolicy_FullMethodName   = "/cloud.lazycat.apis.sys.AccessControlerService/SetAppAccessPolicy"
+	AccessControlerService_QueryAppAccessPolicy_FullMethodName = "/cloud.lazycat.apis.sys.AccessControlerService/QueryAppAccessPolicy"
+	AccessControlerService_GetAppLastAccessTime_FullMethodName = "/cloud.lazycat.apis.sys.AccessControlerService/GetAppLastAccessTime"
+)
+
+// AccessControlerServiceClient is the client API for AccessControlerService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type AccessControlerServiceClient interface {
+	SetAppAccessPolicy(ctx context.Context, in *AppAccessPolicyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	QueryAppAccessPolicy(ctx context.Context, in *AppAccessPolicyRequest, opts ...grpc.CallOption) (*AppAccessPolicy, error)
+	GetAppLastAccessTime(ctx context.Context, in *IngressAppLastAccessTimeRequest, opts ...grpc.CallOption) (*IngressAppLastAccessTimeResponse, error)
+}
+
+type accessControlerServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAccessControlerServiceClient(cc grpc.ClientConnInterface) AccessControlerServiceClient {
+	return &accessControlerServiceClient{cc}
+}
+
+func (c *accessControlerServiceClient) SetAppAccessPolicy(ctx context.Context, in *AppAccessPolicyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AccessControlerService_SetAppAccessPolicy_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accessControlerServiceClient) QueryAppAccessPolicy(ctx context.Context, in *AppAccessPolicyRequest, opts ...grpc.CallOption) (*AppAccessPolicy, error) {
+	out := new(AppAccessPolicy)
+	err := c.cc.Invoke(ctx, AccessControlerService_QueryAppAccessPolicy_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accessControlerServiceClient) GetAppLastAccessTime(ctx context.Context, in *IngressAppLastAccessTimeRequest, opts ...grpc.CallOption) (*IngressAppLastAccessTimeResponse, error) {
+	out := new(IngressAppLastAccessTimeResponse)
+	err := c.cc.Invoke(ctx, AccessControlerService_GetAppLastAccessTime_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AccessControlerServiceServer is the server API for AccessControlerService service.
+// All implementations must embed UnimplementedAccessControlerServiceServer
+// for forward compatibility
+type AccessControlerServiceServer interface {
+	SetAppAccessPolicy(context.Context, *AppAccessPolicyRequest) (*emptypb.Empty, error)
+	QueryAppAccessPolicy(context.Context, *AppAccessPolicyRequest) (*AppAccessPolicy, error)
+	GetAppLastAccessTime(context.Context, *IngressAppLastAccessTimeRequest) (*IngressAppLastAccessTimeResponse, error)
+	mustEmbedUnimplementedAccessControlerServiceServer()
+}
+
+// UnimplementedAccessControlerServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedAccessControlerServiceServer struct {
+}
+
+func (UnimplementedAccessControlerServiceServer) SetAppAccessPolicy(context.Context, *AppAccessPolicyRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetAppAccessPolicy not implemented")
+}
+func (UnimplementedAccessControlerServiceServer) QueryAppAccessPolicy(context.Context, *AppAccessPolicyRequest) (*AppAccessPolicy, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryAppAccessPolicy not implemented")
+}
+func (UnimplementedAccessControlerServiceServer) GetAppLastAccessTime(context.Context, *IngressAppLastAccessTimeRequest) (*IngressAppLastAccessTimeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppLastAccessTime not implemented")
+}
+func (UnimplementedAccessControlerServiceServer) mustEmbedUnimplementedAccessControlerServiceServer() {
+}
+
+// UnsafeAccessControlerServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AccessControlerServiceServer will
+// result in compilation errors.
+type UnsafeAccessControlerServiceServer interface {
+	mustEmbedUnimplementedAccessControlerServiceServer()
+}
+
+func RegisterAccessControlerServiceServer(s grpc.ServiceRegistrar, srv AccessControlerServiceServer) {
+	s.RegisterService(&AccessControlerService_ServiceDesc, srv)
+}
+
+func _AccessControlerService_SetAppAccessPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppAccessPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccessControlerServiceServer).SetAppAccessPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccessControlerService_SetAppAccessPolicy_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccessControlerServiceServer).SetAppAccessPolicy(ctx, req.(*AppAccessPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccessControlerService_QueryAppAccessPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppAccessPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccessControlerServiceServer).QueryAppAccessPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccessControlerService_QueryAppAccessPolicy_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccessControlerServiceServer).QueryAppAccessPolicy(ctx, req.(*AppAccessPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccessControlerService_GetAppLastAccessTime_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IngressAppLastAccessTimeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccessControlerServiceServer).GetAppLastAccessTime(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccessControlerService_GetAppLastAccessTime_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccessControlerServiceServer).GetAppLastAccessTime(ctx, req.(*IngressAppLastAccessTimeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// AccessControlerService_ServiceDesc is the grpc.ServiceDesc for AccessControlerService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var AccessControlerService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "cloud.lazycat.apis.sys.AccessControlerService",
+	HandlerType: (*AccessControlerServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SetAppAccessPolicy",
+			Handler:    _AccessControlerService_SetAppAccessPolicy_Handler,
+		},
+		{
+			MethodName: "QueryAppAccessPolicy",
+			Handler:    _AccessControlerService_QueryAppAccessPolicy_Handler,
+		},
+		{
+			MethodName: "GetAppLastAccessTime",
+			Handler:    _AccessControlerService_GetAppLastAccessTime_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "sys/ingress.proto",
+}
+
+const (
 	IngressService_AllowAdd_FullMethodName             = "/cloud.lazycat.apis.sys.IngressService/AllowAdd"
 	IngressService_AllowDel_FullMethodName             = "/cloud.lazycat.apis.sys.IngressService/AllowDel"
 	IngressService_AllowDelAll_FullMethodName          = "/cloud.lazycat.apis.sys.IngressService/AllowDelAll"
@@ -33,6 +198,8 @@ const (
 // IngressServiceClient is the client API for IngressService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Deprecated: Do not use.
 type IngressServiceClient interface {
 	// 允许一个用户对指定 app 的访问
 	AllowAdd(ctx context.Context, in *IngressAllowRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -56,6 +223,7 @@ type ingressServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
+// Deprecated: Do not use.
 func NewIngressServiceClient(cc grpc.ClientConnInterface) IngressServiceClient {
 	return &ingressServiceClient{cc}
 }
@@ -135,6 +303,8 @@ func (c *ingressServiceClient) GetAppLastAccessTime(ctx context.Context, in *Ing
 // IngressServiceServer is the server API for IngressService service.
 // All implementations must embed UnimplementedIngressServiceServer
 // for forward compatibility
+//
+// Deprecated: Do not use.
 type IngressServiceServer interface {
 	// 允许一个用户对指定 app 的访问
 	AllowAdd(context.Context, *IngressAllowRequest) (*emptypb.Empty, error)
@@ -192,6 +362,7 @@ type UnsafeIngressServiceServer interface {
 	mustEmbedUnimplementedIngressServiceServer()
 }
 
+// Deprecated: Do not use.
 func RegisterIngressServiceServer(s grpc.ServiceRegistrar, srv IngressServiceServer) {
 	s.RegisterService(&IngressService_ServiceDesc, srv)
 }
