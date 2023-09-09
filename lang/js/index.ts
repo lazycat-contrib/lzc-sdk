@@ -9,7 +9,7 @@ import { PackageManager, PackageManagerClientImpl } from "./sys/package_manager"
 import { NetworkManager as NM, NetworkManagerClientImpl as NMClientImpl } from "./sys/network_manager"
 
 import { OSSnapshotService, OSSnapshotServiceClientImpl } from "./sys/OS_snapshot"
-import { IngressService, IngressServiceClientImpl } from "./sys/ingress"
+import { IngressService, IngressServiceClientImpl, AccessControlerService, AccessControlerServiceClientImpl } from "./sys/ingress"
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog"
 import { UserConfig, UserConfigClientImpl } from "./localdevice/config"
@@ -46,6 +46,7 @@ export class lzcAPIGateway {
 
     this.pd = new PeripheralDeviceServiceClientImpl(rpc)
     this.ingress = new IngressServiceClientImpl(rpc)
+    this.ac = new AccessControlerServiceClientImpl(rpc)
     this.box = new BoxServiceClientImpl(rpc)
     this.nm = new NMClientImpl(rpc)
     this.osSnapshot = new OSSnapshotServiceClientImpl(rpc)
@@ -71,8 +72,13 @@ export class lzcAPIGateway {
   public pkgm: PackageManager
   public users: UserManager
   public box: BoxService
+
+  /**
+   * @deprecated 此接口废弃，新接口请调用 ac
+   */
   public ingress: IngressService
 
+  public ac: AccessControlerService
   public osSnapshot: OSSnapshotService
 
   public appinfo: Promise<AppInfo>
