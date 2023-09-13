@@ -19,7 +19,7 @@ message DeveloperOptions {
   // 开启 sshd 服务
   bool DebugSshd = 3;
   // 开启 open telemetry
-  bool OpenTelemetry = 4;
+  bool OpenTelemetry = 4 [deprecated=true];
   // 禁用 upnp
   bool DisableUPnP = 5;
 }

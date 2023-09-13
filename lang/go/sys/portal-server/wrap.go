@@ -5,22 +5,18 @@ import (
 	"os"
 	"path"
 
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	grpc "google.golang.org/grpc"
 )
 
 //go:generate protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative portal-server.proto
 
 var (
-	SocketPath = "/run/lzc-sys/portal-server.socket"
+	SocketPath       = "/run/lzc-sys/portal-server.socket"
 	LzcAppSocketPath = "/lzcapp/run/sys/portal-server.socket"
 )
 
 func Serve(srv HPortalSysServer) error {
-	s := grpc.NewServer(
-		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
-		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
-	)
+	s := grpc.NewServer()
 
 	RegisterHPortalSysServer(s, srv)
 
@@ -47,11 +43,7 @@ type Client struct {
 func (c Client) Close() error { return c.conn.Close() }
 
 func NewClient() (*Client, error) {
-	opts := []grpc.DialOption{
-		grpc.WithInsecure(),
-		grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor()),
-		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
-	}
+	opts := []grpc.DialOption{grpc.WithInsecure()}
 	conn, err := grpc.Dial("unix://"+LzcAppSocketPath, opts...)
 	if err != nil {
 		return nil, err

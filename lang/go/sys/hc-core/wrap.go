@@ -5,7 +5,6 @@ import (
 	"net"
 	"os"
 
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc/credentials/insecure"
 
 	"google.golang.org/grpc"
@@ -16,10 +15,7 @@ import (
 var SocketPath = "/run/lzc-sys/hc-core.sock"
 
 func Serve(srv CoreSystemServer) error {
-	s := grpc.NewServer(
-		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
-		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
-	)
+	s := grpc.NewServer()
 
 	RegisterCoreSystemServer(s, srv)
 
@@ -46,11 +42,7 @@ type Client struct {
 func (c *Client) Close() error { return c.conn.Close() }
 
 func NewClient() (*Client, error) {
-	conn, err := grpc.Dial("unix://"+SocketPath,
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor()),
-		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
-	)
+	conn, err := grpc.Dial("unix://"+SocketPath, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}

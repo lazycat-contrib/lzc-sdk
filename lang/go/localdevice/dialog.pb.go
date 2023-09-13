@@ -352,10 +352,9 @@ type OpenFileSeletorRequest struct {
 	// 是否多选（多选在SelectType 为Dir时无效）
 	IsSingle bool `protobuf:"varint,2,opt,name=isSingle,proto3" json:"isSingle,omitempty"`
 	// 文件后缀过滤器
-	//
-	//	PC 只能支持单个过滤器语法 jpg ， 使用多个后缀默认使用第一个后缀
-	//
-	// android 支持多个过滤器， 使用英文逗号，分割 ex: jpb,png,gif
+	// 使用2种类型
+	// 第一种 jpb,png,mp3，指定文件的后缀名,使用,分割
+	// 支持的大类型有必须 image/* , 或者image/*,audio/*,video/*,document/*, 四种大类可以写在一起，也可以分开写,使用,分割。 如何该字段为空，则不过滤
 	Filter string `protobuf:"bytes,3,opt,name=filter,proto3" json:"filter,omitempty"`
 }
 
