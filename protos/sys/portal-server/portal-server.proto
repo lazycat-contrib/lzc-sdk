@@ -48,29 +48,6 @@ service HPortalSys {
   rpc EmitBoxServiceChanged(EmitBoxServiceChangedRequest) returns (google.protobuf.Empty);
   // 通过远端IP地址和服务注册的IP地址查询peer信息
   rpc QueryBoxServicePeerCred(QueryBoxServicePeerCredRequest) returns (QueryBoxServicePeerCredResponse);
-
-  // ----------------------------- 以下为准备废弃的接口 --------------------------------------
-
-  // 请使用QueryHServerInfo
-  rpc QueryBoxInfo(google.protobuf.Empty) returns (BoxInfo) {option deprecated=true;}
-
-  // 请使用RemoteSock自行与HOrigin通讯实现证书ACME逻辑
-  rpc GetDomainCert(DomainCertRequest) returns (DomainCertReply) {option deprecated=true;}
-  rpc AllocVirtualExternalIP(AllocVEIPRequest) returns (AllocVEIPReply) {option deprecated=true;}
-  rpc FreeVirtualExternalIP(FreeVEIPRequest)  returns (FreeVEIPReply) {option deprecated=true;}
-  rpc GetDomainSelfCert(DomainCertRequest) returns (DomainCertReply) {option deprecated=true;}
-
-  // 请使用ListEndDevice
-  rpc ListDevices(ListDeviceRequest) returns (ListDeviceReply) {option deprecated=true;}
-
-  // 请使用EmitBoxServiceChanged
-  rpc BoxServiceChanged(BoxServiceChangedRequest) returns (google.protobuf.Empty) {option deprecated=true;}
-
-  // 请使用QueryBoxServicePeerCred
-  rpc LookupBoxServiceDialer(LookupBoxServiceDialerRequest) returns (LookupBoxServiceDialerResponse) {option deprecated=true;}
-
-  // 请不要调用此接口
-  rpc QueryDeviceByID(DeviceID) returns (Device) {option deprecated=true;}
 }
 
 enum DialerRole {
@@ -97,36 +74,16 @@ message RegisterBoxServiceRequest {
   // 只有客户端是受信任设备时可以调用
   bool require_trust_dev = 8;
 
-  // 是否需要客户端登陆
-  bool login_require = 4 [deprecated=true];
-  // 是否需要登陆的用户为管理员
-  bool admin_require = 5 [deprecated=true];
+  // // 是否需要客户端登陆
+  // bool login_require = 4 [deprecated=true];
+  // // 是否需要登陆的用户为管理员
+  // bool admin_require = 5 [deprecated=true];
 }
 message RegisterBoxServiceReply {}
 
-message BoxServiceChangedRequest {
-  string service_name = 1;
-}
 
 message EmitBoxServiceChangedRequest {
   string service_name = 1;
-}
-
-message LookupBoxServiceDialerRequest {
-  string remote_addr = 1;
-  string local_addr = 2;
-  string protocol = 3;
-}
-message LookupBoxServiceDialerResponse {
-  // 若客户端未登录，则是SRP认证的UID，否则是登录的UID
-  string uid = 1;
-  string device_version = 3;
-  string virtual_ip = 4;
-  string peer_id = 5;
-  bool is_logined = 6;
-  bool is_trust_dev = 7;
-
-  string device_id = 2 [deprecated=true];
 }
 
 message QueryBoxServicePeerCredRequest {
@@ -137,13 +94,12 @@ message QueryBoxServicePeerCredRequest {
 message QueryBoxServicePeerCredResponse {
   // 若客户端未登录，则是SRP认证的UID，否则是登录的UID
   string uid = 1;
+  // string device_id = 2 [deprecated=true];
   string device_version = 3;
   string virtual_ip = 4;
   string peer_id = 5;
   bool is_logined = 6;
   bool is_trust_dev = 7;
-
-  string device_id = 2 [deprecated=true];
 }
 
 message RemoteSocksRequest {
@@ -170,57 +126,6 @@ message ListUsersReply {
   repeated string uids = 1;
 }
 
-message AllocVEIPRequest {
-  // 简短说明使用原因，方便后续管理
-  string usage = 1;
-
-  // 关联的子域名。hserver会自动将$subdomain.$boxdomain的AAAA/A记录关联到对应的IP上
-  // 1. 外部系统需要自行确保subdomain不会冲突
-  string subdomain = 2;
-}
-message AllocVEIPReply {
-  string ip = 1;
-}
-
-message FreeVEIPRequest {
-  string ip = 1;
-
-  // 释放VEIP时为了避免DNS cache的问题，会在删除对应DNS record后等待一定时间后再真实的释放对应VEIP
-  // 不指定则默认为10分钟
-  int32 wait_second = 2;
-}
-message FreeVEIPReply {}
-
-message AuthToken {
-  // 登陆时服务器返回的token
-  string token = 1;
-
-  // 若token_type = HTTPBasicAuth
-  // 则必须包含此字段，以便hportal可以分析出正确的登陆设备
-  // 若仅仅是为了验证帐号密码是否正确，直接调用CheckPassword接口
-  string access_ip = 3;
-
-  enum TokenType {
-    Raw = 0;       // token return by hportal-server login method
-    HTTPBasicAuth = 1; // QWxhZGRpbjpvcGVuIHNlc2FtZQ==
-  }
-  TokenType token_type = 5;
-
-
-  // 若设置了此地址，则在未检测到auth-token时，
-  // 可以使用返回信息中的autologin_token_request_url进行自动查找auth-token
-  // 此地址一般是ingress等组件上提供的服务。
-  // 会通过html post form形式调用，附带token和redirect两个字段
-  // token为自动搜索到的token，redirect为AuthToken.autologin_redirect_url的值。
-  // 若token为空表示自动搜索token失败。
-  string autologin_token_post_url = 2 [deprecated=true];
-  string autologin_redirect_url = 4 [deprecated=true];
-}
-
-message DeviceID {
-  string id = 1;
-}
-
 
 message HServerInfo {
   // 中心化服务器地址, 默认为origin.lazycat.cloud
@@ -239,44 +144,6 @@ message HServerInfo {
   string box_domain = 5;
 }
 
-
-message BoxInfo {
-  //请使用HServerInfo
-  option deprecated=true;
-
-  // 中心化服务器地址, 默认为origin.lazycat.cloud
-  string origin_server = 1;
-
-  // fc03:1136:38/40地址
-  string virtual_ip = 2;
-
-  // p2p节点id
-  string box_id = 3;
-
-  // 注册到origin-server内的名称
-  string box_name = 4;
-
-  // 从origin-server获取到的域名
-  string box_domain = 5;
-
-  // 证书管理器已经就续
-  bool cert_ready = 6;
-
-  // PEM格式的盒子证书, 作为盒子系统其他app cert的CA证书。
-  string box_cert = 7;
-}
-
-message DomainCertRequest {
-  string domain = 1;
-}
-message DomainCertReply {
-  string cert = 1;
-  string key = 2;
-
-  bytes ocsp = 3;
-}
-
-
 message Device {
   string peer_id = 1;
 
@@ -285,22 +152,6 @@ message Device {
 
   // 设备绑定时间
   google.protobuf.Timestamp binding_time = 6;
-
-  // 因为device api的监听端口可能会变化，所以此url有效性不会太长
-  string device_api_url = 3 [deprecated=true];
-
-  // 设备名称
-  string name = 4 [deprecated=true];
-
-  // 设备型号
-  string model = 5 [deprecated=true];
-
-  // 设备的唯一ID
-  string udid = 7 [deprecated=true];
-
-  // 设备是否是移动平台
-  // 此字段应该由上层代码自行分析
-  bool is_mobile = 8 [deprecated=true];
 }
 
 message ListEndDeviceRequest {
@@ -324,7 +175,6 @@ message ChangeRoleReqeust{
   string uid = 1;
   Role role = 2;
 }
-
 message QueryRoleReply {
   string uid = 1;
   Role role = 2;
@@ -381,16 +231,4 @@ message ResetHServerRequest {
   string origin_server = 1;
 }
 message ResetHServerReply {
-}
-
-
-
-// ------------ 废弃字段 ----------------
-
-message ListDeviceRequest {
-  string uid = 1;
-}
-
-message ListDeviceReply {
-  repeated Device devices = 1;
 }

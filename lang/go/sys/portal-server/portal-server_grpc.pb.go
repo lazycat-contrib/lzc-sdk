@@ -36,15 +36,6 @@ const (
 	HPortalSys_RegisterBoxService_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/RegisterBoxService"
 	HPortalSys_EmitBoxServiceChanged_FullMethodName   = "/cloud.lazycat.apis.sys.HPortalSys/EmitBoxServiceChanged"
 	HPortalSys_QueryBoxServicePeerCred_FullMethodName = "/cloud.lazycat.apis.sys.HPortalSys/QueryBoxServicePeerCred"
-	HPortalSys_QueryBoxInfo_FullMethodName            = "/cloud.lazycat.apis.sys.HPortalSys/QueryBoxInfo"
-	HPortalSys_GetDomainCert_FullMethodName           = "/cloud.lazycat.apis.sys.HPortalSys/GetDomainCert"
-	HPortalSys_AllocVirtualExternalIP_FullMethodName  = "/cloud.lazycat.apis.sys.HPortalSys/AllocVirtualExternalIP"
-	HPortalSys_FreeVirtualExternalIP_FullMethodName   = "/cloud.lazycat.apis.sys.HPortalSys/FreeVirtualExternalIP"
-	HPortalSys_GetDomainSelfCert_FullMethodName       = "/cloud.lazycat.apis.sys.HPortalSys/GetDomainSelfCert"
-	HPortalSys_ListDevices_FullMethodName             = "/cloud.lazycat.apis.sys.HPortalSys/ListDevices"
-	HPortalSys_BoxServiceChanged_FullMethodName       = "/cloud.lazycat.apis.sys.HPortalSys/BoxServiceChanged"
-	HPortalSys_LookupBoxServiceDialer_FullMethodName  = "/cloud.lazycat.apis.sys.HPortalSys/LookupBoxServiceDialer"
-	HPortalSys_QueryDeviceByID_FullMethodName         = "/cloud.lazycat.apis.sys.HPortalSys/QueryDeviceByID"
 )
 
 // HPortalSysClient is the client API for HPortalSys service.
@@ -87,30 +78,6 @@ type HPortalSysClient interface {
 	EmitBoxServiceChanged(ctx context.Context, in *EmitBoxServiceChangedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 通过远端IP地址和服务注册的IP地址查询peer信息
 	QueryBoxServicePeerCred(ctx context.Context, in *QueryBoxServicePeerCredRequest, opts ...grpc.CallOption) (*QueryBoxServicePeerCredResponse, error)
-	// Deprecated: Do not use.
-	// 请使用QueryHServerInfo
-	QueryBoxInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxInfo, error)
-	// Deprecated: Do not use.
-	// 请使用RemoteSock自行与HOrigin通讯实现证书ACME逻辑
-	GetDomainCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
-	// Deprecated: Do not use.
-	AllocVirtualExternalIP(ctx context.Context, in *AllocVEIPRequest, opts ...grpc.CallOption) (*AllocVEIPReply, error)
-	// Deprecated: Do not use.
-	FreeVirtualExternalIP(ctx context.Context, in *FreeVEIPRequest, opts ...grpc.CallOption) (*FreeVEIPReply, error)
-	// Deprecated: Do not use.
-	GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error)
-	// Deprecated: Do not use.
-	// 请使用ListEndDevice
-	ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error)
-	// Deprecated: Do not use.
-	// 请使用EmitBoxServiceChanged
-	BoxServiceChanged(ctx context.Context, in *BoxServiceChangedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Deprecated: Do not use.
-	// 请使用QueryBoxServicePeerCred
-	LookupBoxServiceDialer(ctx context.Context, in *LookupBoxServiceDialerRequest, opts ...grpc.CallOption) (*LookupBoxServiceDialerResponse, error)
-	// Deprecated: Do not use.
-	// 请不要调用此接口
-	QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error)
 }
 
 type hPortalSysClient struct {
@@ -288,96 +255,6 @@ func (c *hPortalSysClient) QueryBoxServicePeerCred(ctx context.Context, in *Quer
 	return out, nil
 }
 
-// Deprecated: Do not use.
-func (c *hPortalSysClient) QueryBoxInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxInfo, error) {
-	out := new(BoxInfo)
-	err := c.cc.Invoke(ctx, HPortalSys_QueryBoxInfo_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
-func (c *hPortalSysClient) GetDomainCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error) {
-	out := new(DomainCertReply)
-	err := c.cc.Invoke(ctx, HPortalSys_GetDomainCert_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
-func (c *hPortalSysClient) AllocVirtualExternalIP(ctx context.Context, in *AllocVEIPRequest, opts ...grpc.CallOption) (*AllocVEIPReply, error) {
-	out := new(AllocVEIPReply)
-	err := c.cc.Invoke(ctx, HPortalSys_AllocVirtualExternalIP_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
-func (c *hPortalSysClient) FreeVirtualExternalIP(ctx context.Context, in *FreeVEIPRequest, opts ...grpc.CallOption) (*FreeVEIPReply, error) {
-	out := new(FreeVEIPReply)
-	err := c.cc.Invoke(ctx, HPortalSys_FreeVirtualExternalIP_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
-func (c *hPortalSysClient) GetDomainSelfCert(ctx context.Context, in *DomainCertRequest, opts ...grpc.CallOption) (*DomainCertReply, error) {
-	out := new(DomainCertReply)
-	err := c.cc.Invoke(ctx, HPortalSys_GetDomainSelfCert_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
-func (c *hPortalSysClient) ListDevices(ctx context.Context, in *ListDeviceRequest, opts ...grpc.CallOption) (*ListDeviceReply, error) {
-	out := new(ListDeviceReply)
-	err := c.cc.Invoke(ctx, HPortalSys_ListDevices_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
-func (c *hPortalSysClient) BoxServiceChanged(ctx context.Context, in *BoxServiceChangedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, HPortalSys_BoxServiceChanged_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
-func (c *hPortalSysClient) LookupBoxServiceDialer(ctx context.Context, in *LookupBoxServiceDialerRequest, opts ...grpc.CallOption) (*LookupBoxServiceDialerResponse, error) {
-	out := new(LookupBoxServiceDialerResponse)
-	err := c.cc.Invoke(ctx, HPortalSys_LookupBoxServiceDialer_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
-func (c *hPortalSysClient) QueryDeviceByID(ctx context.Context, in *DeviceID, opts ...grpc.CallOption) (*Device, error) {
-	out := new(Device)
-	err := c.cc.Invoke(ctx, HPortalSys_QueryDeviceByID_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // HPortalSysServer is the server API for HPortalSys service.
 // All implementations must embed UnimplementedHPortalSysServer
 // for forward compatibility
@@ -418,30 +295,6 @@ type HPortalSysServer interface {
 	EmitBoxServiceChanged(context.Context, *EmitBoxServiceChangedRequest) (*emptypb.Empty, error)
 	// 通过远端IP地址和服务注册的IP地址查询peer信息
 	QueryBoxServicePeerCred(context.Context, *QueryBoxServicePeerCredRequest) (*QueryBoxServicePeerCredResponse, error)
-	// Deprecated: Do not use.
-	// 请使用QueryHServerInfo
-	QueryBoxInfo(context.Context, *emptypb.Empty) (*BoxInfo, error)
-	// Deprecated: Do not use.
-	// 请使用RemoteSock自行与HOrigin通讯实现证书ACME逻辑
-	GetDomainCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
-	// Deprecated: Do not use.
-	AllocVirtualExternalIP(context.Context, *AllocVEIPRequest) (*AllocVEIPReply, error)
-	// Deprecated: Do not use.
-	FreeVirtualExternalIP(context.Context, *FreeVEIPRequest) (*FreeVEIPReply, error)
-	// Deprecated: Do not use.
-	GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error)
-	// Deprecated: Do not use.
-	// 请使用ListEndDevice
-	ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error)
-	// Deprecated: Do not use.
-	// 请使用EmitBoxServiceChanged
-	BoxServiceChanged(context.Context, *BoxServiceChangedRequest) (*emptypb.Empty, error)
-	// Deprecated: Do not use.
-	// 请使用QueryBoxServicePeerCred
-	LookupBoxServiceDialer(context.Context, *LookupBoxServiceDialerRequest) (*LookupBoxServiceDialerResponse, error)
-	// Deprecated: Do not use.
-	// 请不要调用此接口
-	QueryDeviceByID(context.Context, *DeviceID) (*Device, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -496,33 +349,6 @@ func (UnimplementedHPortalSysServer) EmitBoxServiceChanged(context.Context, *Emi
 }
 func (UnimplementedHPortalSysServer) QueryBoxServicePeerCred(context.Context, *QueryBoxServicePeerCredRequest) (*QueryBoxServicePeerCredResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryBoxServicePeerCred not implemented")
-}
-func (UnimplementedHPortalSysServer) QueryBoxInfo(context.Context, *emptypb.Empty) (*BoxInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryBoxInfo not implemented")
-}
-func (UnimplementedHPortalSysServer) GetDomainCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDomainCert not implemented")
-}
-func (UnimplementedHPortalSysServer) AllocVirtualExternalIP(context.Context, *AllocVEIPRequest) (*AllocVEIPReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AllocVirtualExternalIP not implemented")
-}
-func (UnimplementedHPortalSysServer) FreeVirtualExternalIP(context.Context, *FreeVEIPRequest) (*FreeVEIPReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FreeVirtualExternalIP not implemented")
-}
-func (UnimplementedHPortalSysServer) GetDomainSelfCert(context.Context, *DomainCertRequest) (*DomainCertReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDomainSelfCert not implemented")
-}
-func (UnimplementedHPortalSysServer) ListDevices(context.Context, *ListDeviceRequest) (*ListDeviceReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListDevices not implemented")
-}
-func (UnimplementedHPortalSysServer) BoxServiceChanged(context.Context, *BoxServiceChangedRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BoxServiceChanged not implemented")
-}
-func (UnimplementedHPortalSysServer) LookupBoxServiceDialer(context.Context, *LookupBoxServiceDialerRequest) (*LookupBoxServiceDialerResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LookupBoxServiceDialer not implemented")
-}
-func (UnimplementedHPortalSysServer) QueryDeviceByID(context.Context, *DeviceID) (*Device, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryDeviceByID not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -828,168 +654,6 @@ func _HPortalSys_QueryBoxServicePeerCred_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HPortalSys_QueryBoxInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).QueryBoxInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_QueryBoxInfo_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).QueryBoxInfo(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_GetDomainCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DomainCertRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).GetDomainCert(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_GetDomainCert_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).GetDomainCert(ctx, req.(*DomainCertRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_AllocVirtualExternalIP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AllocVEIPRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).AllocVirtualExternalIP(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_AllocVirtualExternalIP_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).AllocVirtualExternalIP(ctx, req.(*AllocVEIPRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_FreeVirtualExternalIP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FreeVEIPRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).FreeVirtualExternalIP(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_FreeVirtualExternalIP_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).FreeVirtualExternalIP(ctx, req.(*FreeVEIPRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_GetDomainSelfCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DomainCertRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).GetDomainSelfCert(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_GetDomainSelfCert_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).GetDomainSelfCert(ctx, req.(*DomainCertRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_ListDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListDeviceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).ListDevices(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_ListDevices_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).ListDevices(ctx, req.(*ListDeviceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_BoxServiceChanged_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BoxServiceChangedRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).BoxServiceChanged(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_BoxServiceChanged_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).BoxServiceChanged(ctx, req.(*BoxServiceChangedRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_LookupBoxServiceDialer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LookupBoxServiceDialerRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).LookupBoxServiceDialer(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_LookupBoxServiceDialer_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).LookupBoxServiceDialer(ctx, req.(*LookupBoxServiceDialerRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HPortalSys_QueryDeviceByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeviceID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HPortalSysServer).QueryDeviceByID(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HPortalSys_QueryDeviceByID_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HPortalSysServer).QueryDeviceByID(ctx, req.(*DeviceID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // HPortalSys_ServiceDesc is the grpc.ServiceDesc for HPortalSys service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1056,42 +720,6 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QueryBoxServicePeerCred",
 			Handler:    _HPortalSys_QueryBoxServicePeerCred_Handler,
-		},
-		{
-			MethodName: "QueryBoxInfo",
-			Handler:    _HPortalSys_QueryBoxInfo_Handler,
-		},
-		{
-			MethodName: "GetDomainCert",
-			Handler:    _HPortalSys_GetDomainCert_Handler,
-		},
-		{
-			MethodName: "AllocVirtualExternalIP",
-			Handler:    _HPortalSys_AllocVirtualExternalIP_Handler,
-		},
-		{
-			MethodName: "FreeVirtualExternalIP",
-			Handler:    _HPortalSys_FreeVirtualExternalIP_Handler,
-		},
-		{
-			MethodName: "GetDomainSelfCert",
-			Handler:    _HPortalSys_GetDomainSelfCert_Handler,
-		},
-		{
-			MethodName: "ListDevices",
-			Handler:    _HPortalSys_ListDevices_Handler,
-		},
-		{
-			MethodName: "BoxServiceChanged",
-			Handler:    _HPortalSys_BoxServiceChanged_Handler,
-		},
-		{
-			MethodName: "LookupBoxServiceDialer",
-			Handler:    _HPortalSys_LookupBoxServiceDialer_Handler,
-		},
-		{
-			MethodName: "QueryDeviceByID",
-			Handler:    _HPortalSys_QueryDeviceByID_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
