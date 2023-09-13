@@ -23,7 +23,6 @@ type APIGateway struct {
 	PeripheralDevice common.PeripheralDeviceServiceClient
 	FileTransfer     common.FileTransferServiceClient
 	PkgManager       sys.PackageManagerClient
-	Ingress          sys.IngressServiceClient
 	AccessControler  sys.AccessControlerServiceClient
 	Btrfs            sys.BtrfsUtilClient
 	DirMonitor       sys.DirMonitorClient

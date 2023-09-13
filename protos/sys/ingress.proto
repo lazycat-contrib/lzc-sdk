@@ -6,7 +6,6 @@ import "google/protobuf/empty.proto";
 
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 
-
 service AccessControlerService {
   rpc SetAppAccessPolicy(AppAccessPolicyRequest) returns (google.protobuf.Empty);
   rpc QueryAppAccessPolicy(AppAccessPolicyRequest) returns (AppAccessPolicy);
@@ -37,69 +36,4 @@ message IngressAppLastAccessTimeRequest {
 
 message IngressAppLastAccessTimeResponse {
     int64 UnixTime = 1;
-}
-
-
-// 此接口废弃，新代码请调用AccessControlerService
-service IngressService {
-    option deprecated = true;
-
-    // 允许一个用户对指定 app 的访问
-    rpc AllowAdd(IngressAllowRequest)  returns (google.protobuf.Empty) {}
-
-    // 阻止一个用户对指定 app 的访问权限
-    rpc AllowDel(IngressAllowRequest) returns (google.protobuf.Empty) {}
-
-    // 阻止一个用户对所有 app 的访问权限
-    rpc AllowDelAll(IngressAllowDelAllRequest) returns (google.protobuf.Empty) {}
-
-    // 查询一个用户是否被允许访问指定 app
-    rpc AllowGet(IngressAllowGetRequest) returns (IngressAllowGetResponse) {}
-
-    // 列出一个用户的所有被允许访问的 app 列表
-    rpc AllowList(IngressAllowListRequest) returns (IngressAllowListResponse) {}
-
-    // 清空白名单
-    rpc AllowClear(google.protobuf.Empty) returns (google.protobuf.Empty) {}
-
-    // 启用/禁用白名单
-    rpc AllowManage(IngressAllowManageRequest) returns (IngressAllowManageResponse) {}
-
-    // 获取指定 app 最后一次被访问的时刻
-    rpc GetAppLastAccessTime(IngressAppLastAccessTimeRequest) returns (IngressAppLastAccessTimeResponse) {}
-}
-
-message IngressAllowRequest {
-    string UserId = 1;
-    repeated string AppIdList = 2;
-}
-
-message IngressAllowDelAllRequest {
-    string UserId = 1;
-}
-
-message IngressAllowListRequest {
-    string UserId = 1;
-}
-
-message IngressAllowListResponse {
-    repeated string AppIdList = 1;
-}
-
-message IngressAllowGetRequest {
-    string UserId = 1;
-    string AppId = 2;
-}
-
-message IngressAllowGetResponse {
-    bool IsAllowed = 1;
-}
-
-message IngressAllowManageRequest {
-    string UserId = 1;
-    optional bool Enabled = 2;
-}
-
-message IngressAllowManageResponse {
-    bool Enabled = 1;
 }
