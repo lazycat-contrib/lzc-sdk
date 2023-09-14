@@ -4,12 +4,17 @@ package cloud.lazycat.apis.common;
 
 
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/common";
-
+import "google/protobuf/empty.proto";
 
 service FileHandler {
   rpc query(QueryRequest) returns (QueryReply) {}
   rpc open(OpenRequest) returns (OpenReply) {}
+  rpc openFileManager(OpenFileManagerRequest) returns (google.protobuf.Empty) {}
+}
 
+message OpenFileManagerRequest{
+  // 文件(夹)路径
+  string path = 1;
 }
 
 message OpenRequest {

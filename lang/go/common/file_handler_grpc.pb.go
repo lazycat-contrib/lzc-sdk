@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,8 +20,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	FileHandler_Query_FullMethodName = "/cloud.lazycat.apis.common.FileHandler/query"
-	FileHandler_Open_FullMethodName  = "/cloud.lazycat.apis.common.FileHandler/open"
+	FileHandler_Query_FullMethodName           = "/cloud.lazycat.apis.common.FileHandler/query"
+	FileHandler_Open_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/open"
+	FileHandler_OpenFileManager_FullMethodName = "/cloud.lazycat.apis.common.FileHandler/openFileManager"
 )
 
 // FileHandlerClient is the client API for FileHandler service.
@@ -29,6 +31,7 @@ const (
 type FileHandlerClient interface {
 	Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryReply, error)
 	Open(ctx context.Context, in *OpenRequest, opts ...grpc.CallOption) (*OpenReply, error)
+	OpenFileManager(ctx context.Context, in *OpenFileManagerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type fileHandlerClient struct {
@@ -57,12 +60,22 @@ func (c *fileHandlerClient) Open(ctx context.Context, in *OpenRequest, opts ...g
 	return out, nil
 }
 
+func (c *fileHandlerClient) OpenFileManager(ctx context.Context, in *OpenFileManagerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, FileHandler_OpenFileManager_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FileHandlerServer is the server API for FileHandler service.
 // All implementations must embed UnimplementedFileHandlerServer
 // for forward compatibility
 type FileHandlerServer interface {
 	Query(context.Context, *QueryRequest) (*QueryReply, error)
 	Open(context.Context, *OpenRequest) (*OpenReply, error)
+	OpenFileManager(context.Context, *OpenFileManagerRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedFileHandlerServer()
 }
 
@@ -75,6 +88,9 @@ func (UnimplementedFileHandlerServer) Query(context.Context, *QueryRequest) (*Qu
 }
 func (UnimplementedFileHandlerServer) Open(context.Context, *OpenRequest) (*OpenReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Open not implemented")
+}
+func (UnimplementedFileHandlerServer) OpenFileManager(context.Context, *OpenFileManagerRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OpenFileManager not implemented")
 }
 func (UnimplementedFileHandlerServer) mustEmbedUnimplementedFileHandlerServer() {}
 
@@ -125,6 +141,24 @@ func _FileHandler_Open_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FileHandler_OpenFileManager_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OpenFileManagerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileHandlerServer).OpenFileManager(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FileHandler_OpenFileManager_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileHandlerServer).OpenFileManager(ctx, req.(*OpenFileManagerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FileHandler_ServiceDesc is the grpc.ServiceDesc for FileHandler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -139,6 +173,10 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "open",
 			Handler:    _FileHandler_Open_Handler,
+		},
+		{
+			MethodName: "openFileManager",
+			Handler:    _FileHandler_OpenFileManager_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
