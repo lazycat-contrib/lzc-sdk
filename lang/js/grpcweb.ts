@@ -27,7 +27,7 @@ export class GrpcWebImpl {
       streamingTransport?: grpc.TransportFactory
       debug?: boolean
       metadata?: grpc.Metadata
-    }
+    },
   ) {
     this.host = host
     this.options = options
@@ -57,7 +57,15 @@ export class GrpcWebImpl {
             // auto handle 401 error
           } else if (response.status === grpc.Code.Unauthenticated) {
             console.log("sdk 401 auto handle")
-            window.location.replace(`${window.location.protocol}//${window.location.host}/sys/login?redirect=${encodeURIComponent(window.location.href)}`)
+            const domainList = window.location.host.split(".")
+            let boxdomain = ""
+            // 忽略boxdomain下的子域名
+            if (domainList.length == 3) {
+              boxdomain = window.location.host
+            } else {
+              boxdomain = domainList.slice(domainList.length - 3).join(".")
+            }
+            window.location.replace(`${window.location.protocol}//${boxdomain}/sys/login?redirect=${encodeURIComponent(window.location.href)}`)
             const err = new Error(response.statusMessage) as any
             err.code = response.status
             err.metadata = response.trailers
