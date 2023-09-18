@@ -1,6 +1,6 @@
 {
   "name": "@lazycatcloud/sdk",
-  "version": "0.1.221",
+  "version": "0.1.222",
   "author": "snyh",
   "scripts": {
     "build": "tsc",
@@ -8,9 +8,7 @@
     "prepare": "npm run build"
   },
   "main": "dist/index.js",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.15.0",
     "rxjs": "^7.5.5",
