@@ -127,3 +127,7 @@ func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
 		Message:          common.NewMessageServiceClient(conn),
 	}, nil
 }
+
+func (a *APIGateway) Close() error {
+	return a.conn.Close()
+}
