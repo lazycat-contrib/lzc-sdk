@@ -32,8 +32,9 @@ type APIGateway struct {
 }
 
 type DeviceProxy struct {
-	conn     *grpc.ClientConn
-	metaCred *metadataCredentials
+	unauthedConn *grpc.ClientConn
+	conn         *grpc.ClientConn
+	metaCred     *metadataCredentials
 
 	authToken *AuthToken
 
@@ -50,7 +51,13 @@ func (d *DeviceProxy) GetAuthToken() (*AuthToken, error) {
 	return d.metaCred.getAuthToken()
 }
 
-func (d *DeviceProxy) Close() error { return d.conn.Close() }
+func (d *DeviceProxy) Close() error {
+	err := d.unauthedConn.Close()
+	if err != nil {
+		return err
+	}
+	return d.conn.Close()
+}
 
 func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 	parsedUrl, err := url.Parse(apiurl)
@@ -78,8 +85,9 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 	}
 
 	return &DeviceProxy{
-		conn:     conn,
-		metaCred: metaCred,
+		unauthedConn: unauthedConn,
+		conn:         conn,
+		metaCred:     metaCred,
 
 		Config:       localdevice.NewUserConfigClient(conn),
 		Device:       localdevice.NewDeviceServiceClient(conn),
