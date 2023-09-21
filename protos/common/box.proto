@@ -89,23 +89,26 @@ message DiskInfo {
   // 磁盘类型
   DiskType type = 1;
 
+  // 盘位（仅当 type 为 Data 时才有效）
+  int32 slot = 2;
+
   // 型号
-  string model = 2;
+  string model = 3;
 
   // 序列号
-  string serial = 3;
+  string serial = 4;
 
-  // 磁盘容量（字节）
-  int64 size = 4;
+  // 磁盘容量（字节）（如果该值为 0，则表示该盘位未插盘）
+  int64 size = 5;
 
   // 剩余空间（字节）
-  int64 free = 5;
+  int64 free = 6;
 
   // 温度
-  int32 temperature = 6;
+  int32 temperature = 7;
 
   // 运行时间（小时）
-  int32 power_on_hours = 7;
+  int32 power_on_hours = 8;
 
   // 健康状态
   enum Health {
@@ -113,10 +116,10 @@ message DiskInfo {
     Caution = 1;
     Bad = 2;
   }
-  Health health = 8;
+  Health health = 9;
 
   // 健康状态理由
-  string health_reason = 9;
+  string health_reason = 10;
 }
 
 message DisksInfo {
