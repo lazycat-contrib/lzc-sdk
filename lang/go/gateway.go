@@ -9,7 +9,6 @@ import (
 	"gitee.com/linakesi/lzc-sdk/lang/go/sys"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 type APIGateway struct {
@@ -32,9 +31,8 @@ type APIGateway struct {
 }
 
 type DeviceProxy struct {
-	unauthedConn *grpc.ClientConn
-	conn         *grpc.ClientConn
-	metaCred     *metadataCredentials
+	conn     *grpc.ClientConn
+	metaCred *metadataCredentials
 
 	authToken *AuthToken
 
@@ -47,16 +45,15 @@ type DeviceProxy struct {
 	Permission   localdevice.PermissionManagerClient
 }
 
-func (d *DeviceProxy) GetAuthToken() (*AuthToken, error) {
-	return d.metaCred.getAuthToken()
+func (d *DeviceProxy) GetAuthToken(ctx context.Context) (*AuthToken, error) {
+	return d.metaCred.getAuthToken(ctx)
 }
 
 func (d *DeviceProxy) Close() error {
-	err := d.unauthedConn.Close()
-	if err != nil {
-		return err
+	if d.conn != nil {
+		return d.conn.Close()
 	}
-	return d.conn.Close()
+	return nil
 }
 
 func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
@@ -65,29 +62,15 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 		return nil, err
 	}
 
-	cred := gw.cred
-	if parsedUrl.Scheme == "http" {
-		cred = grpc.WithTransportCredentials(insecure.NewCredentials())
-	}
-
-	unauthedConn, err := grpc.Dial(parsedUrl.Host, cred)
-	if err != nil {
-		return nil, err
-	}
-
-	metaCred := newMetadataCredentials(unauthedConn)
-	conn, err := grpc.Dial(
-		parsedUrl.Host, cred,
-		grpc.WithPerRPCCredentials(metaCred),
-	)
+	metaCred := newMetadataCredentials(parsedUrl.Host, gw.cred)
+	conn, err := grpc.Dial(parsedUrl.Host, grpc.WithPerRPCCredentials(metaCred), gw.cred)
 	if err != nil {
 		return nil, err
 	}
 
 	return &DeviceProxy{
-		unauthedConn: unauthedConn,
-		conn:         conn,
-		metaCred:     metaCred,
+		conn:     conn,
+		metaCred: metaCred,
 
 		Config:       localdevice.NewUserConfigClient(conn),
 		Device:       localdevice.NewDeviceServiceClient(conn),

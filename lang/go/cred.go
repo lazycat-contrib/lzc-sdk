@@ -19,19 +19,26 @@ import (
 
 type metadataCredentials struct {
 	authToken *AuthToken
-	conn      *grpc.ClientConn
+
+	clienthost string
+	dialOpts   []grpc.DialOption
 }
 
-func (c *metadataCredentials) getAuthToken() (*AuthToken, error) {
+func (c *metadataCredentials) getAuthToken(ctx context.Context) (*AuthToken, error) {
 	if c.authToken != nil && time.Now().Before(c.authToken.Deadline) {
 		return c.authToken, nil
 	} else {
-		return RequestAuthToken(c.conn)
+		unauthedConn, err := grpc.Dial(c.clienthost)
+		if err != nil {
+			return nil, err
+		}
+		defer unauthedConn.Close()
+		return requestAuthToken(ctx, unauthedConn)
 	}
 }
 
-func (c *metadataCredentials) GetRequestMetadata(context.Context, ...string) (map[string]string, error) {
-	authToken, err := c.getAuthToken()
+func (c *metadataCredentials) GetRequestMetadata(ctx context.Context, _ ...string) (map[string]string, error) {
+	authToken, err := c.getAuthToken(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -44,8 +51,8 @@ func (c *metadataCredentials) RequireTransportSecurity() bool {
 	return true
 }
 
-func newMetadataCredentials(conn *grpc.ClientConn) *metadataCredentials {
-	return &metadataCredentials{conn: conn}
+func newMetadataCredentials(clienthost string, opts ...grpc.DialOption) *metadataCredentials {
+	return &metadataCredentials{clienthost: clienthost, dialOpts: opts}
 }
 
 type AuthToken struct {
@@ -53,13 +60,13 @@ type AuthToken struct {
 	Deadline time.Time
 }
 
-func RequestAuthToken(conn *grpc.ClientConn) (*AuthToken, error) {
+func requestAuthToken(ctx context.Context, conn *grpc.ClientConn) (*AuthToken, error) {
 	perm := localdevice.NewPermissionManagerClient(conn)
 	atr, err := genRequestAuthTokenRequest()
 	if err != nil {
 		return nil, err
 	}
-	resp, err := perm.RequestAuthToken(context.Background(), atr)
+	resp, err := perm.RequestAuthToken(ctx, atr)
 	if err != nil {
 		return nil, err
 	}
