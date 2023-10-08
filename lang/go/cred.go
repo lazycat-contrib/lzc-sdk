@@ -33,7 +33,7 @@ func (c *metadataCredentials) getAuthToken(ctx context.Context) (*AuthToken, err
 			return nil, err
 		}
 		defer unauthedConn.Close()
-		return requestAuthToken(ctx, unauthedConn)
+		return RequestAuthToken(ctx, unauthedConn)
 	}
 }
 
@@ -60,7 +60,7 @@ type AuthToken struct {
 	Deadline time.Time
 }
 
-func requestAuthToken(ctx context.Context, conn *grpc.ClientConn) (*AuthToken, error) {
+func RequestAuthToken(ctx context.Context, conn *grpc.ClientConn) (*AuthToken, error) {
 	perm := localdevice.NewPermissionManagerClient(conn)
 	atr, err := genRequestAuthTokenRequest()
 	if err != nil {
