@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	BoxService_QueryInfo_FullMethodName         = "/cloud.lazycat.apis.common.BoxService/QueryInfo"
 	BoxService_ChangeDisplayName_FullMethodName = "/cloud.lazycat.apis.common.BoxService/ChangeDisplayName"
+	BoxService_ChangePowerLed_FullMethodName    = "/cloud.lazycat.apis.common.BoxService/ChangePowerLed"
 	BoxService_SetBootOption_FullMethodName     = "/cloud.lazycat.apis.common.BoxService/SetBootOption"
 	BoxService_Shutdown_FullMethodName          = "/cloud.lazycat.apis.common.BoxService/Shutdown"
 	BoxService_QueryDisksInfo_FullMethodName    = "/cloud.lazycat.apis.common.BoxService/QueryDisksInfo"
@@ -33,6 +34,7 @@ const (
 type BoxServiceClient interface {
 	QueryInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxInfo, error)
 	ChangeDisplayName(ctx context.Context, in *ChangeDisplayNameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ChangePowerLed(ctx context.Context, in *ChangePowerLedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SetBootOption(ctx context.Context, in *BootOption, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Shutdown(ctx context.Context, in *ShutdownRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	QueryDisksInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DisksInfo, error)
@@ -58,6 +60,15 @@ func (c *boxServiceClient) QueryInfo(ctx context.Context, in *emptypb.Empty, opt
 func (c *boxServiceClient) ChangeDisplayName(ctx context.Context, in *ChangeDisplayNameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, BoxService_ChangeDisplayName_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *boxServiceClient) ChangePowerLed(ctx context.Context, in *ChangePowerLedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, BoxService_ChangePowerLed_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,6 +108,7 @@ func (c *boxServiceClient) QueryDisksInfo(ctx context.Context, in *emptypb.Empty
 type BoxServiceServer interface {
 	QueryInfo(context.Context, *emptypb.Empty) (*BoxInfo, error)
 	ChangeDisplayName(context.Context, *ChangeDisplayNameRequest) (*emptypb.Empty, error)
+	ChangePowerLed(context.Context, *ChangePowerLedRequest) (*emptypb.Empty, error)
 	SetBootOption(context.Context, *BootOption) (*emptypb.Empty, error)
 	Shutdown(context.Context, *ShutdownRequest) (*emptypb.Empty, error)
 	QueryDisksInfo(context.Context, *emptypb.Empty) (*DisksInfo, error)
@@ -112,6 +124,9 @@ func (UnimplementedBoxServiceServer) QueryInfo(context.Context, *emptypb.Empty) 
 }
 func (UnimplementedBoxServiceServer) ChangeDisplayName(context.Context, *ChangeDisplayNameRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeDisplayName not implemented")
+}
+func (UnimplementedBoxServiceServer) ChangePowerLed(context.Context, *ChangePowerLedRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangePowerLed not implemented")
 }
 func (UnimplementedBoxServiceServer) SetBootOption(context.Context, *BootOption) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetBootOption not implemented")
@@ -167,6 +182,24 @@ func _BoxService_ChangeDisplayName_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BoxServiceServer).ChangeDisplayName(ctx, req.(*ChangeDisplayNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BoxService_ChangePowerLed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangePowerLedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxServiceServer).ChangePowerLed(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BoxService_ChangePowerLed_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxServiceServer).ChangePowerLed(ctx, req.(*ChangePowerLedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -239,6 +272,10 @@ var BoxService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangeDisplayName",
 			Handler:    _BoxService_ChangeDisplayName_Handler,
+		},
+		{
+			MethodName: "ChangePowerLed",
+			Handler:    _BoxService_ChangePowerLed_Handler,
 		},
 		{
 			MethodName: "SetBootOption",
