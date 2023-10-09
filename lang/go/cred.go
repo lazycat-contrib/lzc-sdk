@@ -28,7 +28,7 @@ func (c *metadataCredentials) getAuthToken(ctx context.Context) (*AuthToken, err
 	if c.authToken != nil && time.Now().Before(c.authToken.Deadline) {
 		return c.authToken, nil
 	} else {
-		unauthedConn, err := grpc.Dial(c.clienthost)
+		unauthedConn, err := grpc.Dial(c.clienthost, c.dialOpts...)
 		if err != nil {
 			return nil, err
 		}
