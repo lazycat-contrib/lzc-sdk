@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-IMAGE=registry.lazycat.cloud/lzc/lzc-api-protoc
+IMAGE=registry.corp.lazycat.cloud/lzc/lzc-api-protoc
 
 docker pull "$IMAGE"
 
@@ -11,9 +11,9 @@ docker run -ti -w $(pwd) -v $(pwd):$(pwd) -v /tmp/maven:/tmp/maven -e ENABLE_JAR
 pushd tools/protoc-gen-lzc/
 go build
 popd
-docker run -ti -w $(pwd) -v $(pwd):$(pwd) --rm registry.lazycat.cloud/lzc/lzc-api-protoc ./tools/gen_scontext_rules.sh
+docker run -ti -w $(pwd) -v $(pwd):$(pwd) --rm registry.corp.lazycat.cloud/lzc/lzc-api-protoc ./tools/gen_scontext_rules.sh
 # 上面直接用-u 1000会导致npm无法执行
-docker run -ti -w $(pwd) -v $(pwd):$(pwd) --rm registry.lazycat.cloud/lzc/lzc-api-protoc chown -R $UID:$UID ./
+docker run -ti -w $(pwd) -v $(pwd):$(pwd) --rm registry.corp.lazycat.cloud/lzc/lzc-api-protoc chown -R $UID:$UID ./
 
 pushd lang/go/
 go build
