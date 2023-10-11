@@ -193,6 +193,8 @@ service FileTransferService {
   rpc QueryQueue(TaskQueueQueryReq) returns (stream Task) {}
   // 通过队列的 ID 和 Status 获取任务状态，即running/paused等各个状态中各有多少个任务
   rpc QueryQueueStatistics(TaskQueueStatisticsReq) returns (TaskQueueStatisticsResp) {}
+  rpc QueryQueueStatistic(TaskQueueID) returns (stream TaskQueueStatistics) {}
+
   // 通过队列的 ID 和 Status 清除任务
   rpc ClearQueue(TaskQueueQueryReq) returns (google.protobuf.Empty) {}
 

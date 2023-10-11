@@ -24,6 +24,7 @@ const (
 	FileTransferService_ListQueue_FullMethodName            = "/cloud.lazycat.apis.common.FileTransferService/ListQueue"
 	FileTransferService_QueryQueue_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/QueryQueue"
 	FileTransferService_QueryQueueStatistics_FullMethodName = "/cloud.lazycat.apis.common.FileTransferService/QueryQueueStatistics"
+	FileTransferService_QueryQueueStatistic_FullMethodName  = "/cloud.lazycat.apis.common.FileTransferService/QueryQueueStatistic"
 	FileTransferService_ClearQueue_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/ClearQueue"
 	FileTransferService_ConfigQueue_FullMethodName          = "/cloud.lazycat.apis.common.FileTransferService/ConfigQueue"
 	FileTransferService_PauseQueue_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/PauseQueue"
@@ -49,6 +50,7 @@ type FileTransferServiceClient interface {
 	QueryQueue(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (FileTransferService_QueryQueueClient, error)
 	// 通过队列的 ID 和 Status 获取任务状态，即running/paused等各个状态中各有多少个任务
 	QueryQueueStatistics(ctx context.Context, in *TaskQueueStatisticsReq, opts ...grpc.CallOption) (*TaskQueueStatisticsResp, error)
+	QueryQueueStatistic(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (FileTransferService_QueryQueueStatisticClient, error)
 	// 通过队列的 ID 和 Status 清除任务
 	ClearQueue(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据队列 ID 设置队列的速率并发等设置
@@ -139,6 +141,38 @@ func (c *fileTransferServiceClient) QueryQueueStatistics(ctx context.Context, in
 	return out, nil
 }
 
+func (c *fileTransferServiceClient) QueryQueueStatistic(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (FileTransferService_QueryQueueStatisticClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[1], FileTransferService_QueryQueueStatistic_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &fileTransferServiceQueryQueueStatisticClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FileTransferService_QueryQueueStatisticClient interface {
+	Recv() (*TaskQueueStatistics, error)
+	grpc.ClientStream
+}
+
+type fileTransferServiceQueryQueueStatisticClient struct {
+	grpc.ClientStream
+}
+
+func (x *fileTransferServiceQueryQueueStatisticClient) Recv() (*TaskQueueStatistics, error) {
+	m := new(TaskQueueStatistics)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *fileTransferServiceClient) ClearQueue(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, FileTransferService_ClearQueue_FullMethodName, in, out, opts...)
@@ -176,7 +210,7 @@ func (c *fileTransferServiceClient) StartQuque(ctx context.Context, in *TaskQueu
 }
 
 func (c *fileTransferServiceClient) QueryQueueMessage(ctx context.Context, in *TaskQueueQueryReq, opts ...grpc.CallOption) (FileTransferService_QueryQueueMessageClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[1], FileTransferService_QueryQueueMessage_FullMethodName, opts...)
+	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[2], FileTransferService_QueryQueueMessage_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +251,7 @@ func (c *fileTransferServiceClient) CreateTask(ctx context.Context, in *TaskCrea
 }
 
 func (c *fileTransferServiceClient) CreateTasks(ctx context.Context, in *TaskCreateRequests, opts ...grpc.CallOption) (FileTransferService_CreateTasksClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[2], FileTransferService_CreateTasks_FullMethodName, opts...)
+	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[3], FileTransferService_CreateTasks_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +283,7 @@ func (x *fileTransferServiceCreateTasksClient) Recv() (*Task, error) {
 }
 
 func (c *fileTransferServiceClient) QueryTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (FileTransferService_QueryTaskClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[3], FileTransferService_QueryTask_FullMethodName, opts...)
+	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[4], FileTransferService_QueryTask_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -319,6 +353,7 @@ type FileTransferServiceServer interface {
 	QueryQueue(*TaskQueueQueryReq, FileTransferService_QueryQueueServer) error
 	// 通过队列的 ID 和 Status 获取任务状态，即running/paused等各个状态中各有多少个任务
 	QueryQueueStatistics(context.Context, *TaskQueueStatisticsReq) (*TaskQueueStatisticsResp, error)
+	QueryQueueStatistic(*TaskQueueID, FileTransferService_QueryQueueStatisticServer) error
 	// 通过队列的 ID 和 Status 清除任务
 	ClearQueue(context.Context, *TaskQueueQueryReq) (*emptypb.Empty, error)
 	// 根据队列 ID 设置队列的速率并发等设置
@@ -358,6 +393,9 @@ func (UnimplementedFileTransferServiceServer) QueryQueue(*TaskQueueQueryReq, Fil
 }
 func (UnimplementedFileTransferServiceServer) QueryQueueStatistics(context.Context, *TaskQueueStatisticsReq) (*TaskQueueStatisticsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryQueueStatistics not implemented")
+}
+func (UnimplementedFileTransferServiceServer) QueryQueueStatistic(*TaskQueueID, FileTransferService_QueryQueueStatisticServer) error {
+	return status.Errorf(codes.Unimplemented, "method QueryQueueStatistic not implemented")
 }
 func (UnimplementedFileTransferServiceServer) ClearQueue(context.Context, *TaskQueueQueryReq) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ClearQueue not implemented")
@@ -478,6 +516,27 @@ func _FileTransferService_QueryQueueStatistics_Handler(srv interface{}, ctx cont
 		return srv.(FileTransferServiceServer).QueryQueueStatistics(ctx, req.(*TaskQueueStatisticsReq))
 	}
 	return interceptor(ctx, in, info, handler)
+}
+
+func _FileTransferService_QueryQueueStatistic_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(TaskQueueID)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FileTransferServiceServer).QueryQueueStatistic(m, &fileTransferServiceQueryQueueStatisticServer{stream})
+}
+
+type FileTransferService_QueryQueueStatisticServer interface {
+	Send(*TaskQueueStatistics) error
+	grpc.ServerStream
+}
+
+type fileTransferServiceQueryQueueStatisticServer struct {
+	grpc.ServerStream
+}
+
+func (x *fileTransferServiceQueryQueueStatisticServer) Send(m *TaskQueueStatistics) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _FileTransferService_ClearQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -743,6 +802,11 @@ var FileTransferService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "QueryQueue",
 			Handler:       _FileTransferService_QueryQueue_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "QueryQueueStatistic",
+			Handler:       _FileTransferService_QueryQueueStatistic_Handler,
 			ServerStreams: true,
 		},
 		{
