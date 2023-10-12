@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.localdevice;
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
+import "google/protobuf/empty.proto";
+
+service Client {
+  rpc GetClientInfo(google.protobuf.Empty) returns (GetClientInfoResponse) {}
+}
+
+message  GetClientInfoResponse{
+  // 设备客户端版本名字
+  string versionName = 1;
+  // 设备版本编码
+  int64 clientCode = 2;
+}
