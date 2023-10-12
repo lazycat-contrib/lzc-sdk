@@ -22,6 +22,7 @@ import { PermissionManager as DevicePermissionManager, PermissionManagerClientIm
 import { FileHandlerClientImpl, FileHandler } from "./common/file_handler"
 import { FileTransferServiceClientImpl, FileTransferService } from "./common/filetrans"
 import { LocalLaunchService, LocalLaunchServiceClientImpl } from "./localdevice/local-launch"
+import { Client, ClientClientImpl } from "./localdevice/client"
 import { RemoteMediaPlayerService, RemoteMediaPlayerServiceClientImpl } from "./dlna/dlna"
 import { grpc } from "@improbable-eng/grpc-web"
 const opt = {
@@ -163,6 +164,7 @@ export class EndDeviceProxy {
     this.fileHandler = new FileHandlerClientImpl(rpc)
     this.permission = new DevicePermissionManagerClientImpl(rpc)
     this.localLaunch = new LocalLaunchServiceClientImpl(rpc)
+    this.client = new ClientClientImpl(rpc)
   }
   public device: DeviceService
   public dialog: DialogManager
@@ -173,6 +175,7 @@ export class EndDeviceProxy {
   public fileHandler: FileHandler
   public permission: DevicePermissionManager
   public localLaunch: LocalLaunchService
+  public client: Client
 }
 
 import pkg from "./package.json"
