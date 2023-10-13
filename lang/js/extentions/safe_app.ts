@@ -89,4 +89,8 @@ export const SAFE = {
     const jsBridge = LzcAppSdk.useNative(android_dialog)
     jsBridge.Close(result)
   },
+  InstallApk(url: string) {
+    const jsBridge = LzcAppSdk.useNative(lzc_app_manager)
+    jsBridge.InstallClient(url)
+  }
 }

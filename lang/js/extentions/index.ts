@@ -18,7 +18,8 @@ declare global {
   }
   const android: any
   const android_launch_service: any
-  const android_dialog
+  const android_dialog: any
+  const lzc_app_manager : any
 }
 export default LzcApp
 export { LzcAppPlatformType, LzcClient } from "./base"

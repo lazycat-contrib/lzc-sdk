@@ -1,5 +1,4 @@
 import App, { LzcClient } from "./base"
-import Extentions from "./index"
 import LzcAppSdk from "./base"
 
 declare global {
@@ -129,4 +128,8 @@ const UNSAFE = {
     const jsBridge = LzcAppSdk.useNative(android_dialog)
     jsBridge.Close(result)
   },
+  InstallApk(url: string) {
+    const jsBridge = LzcAppSdk.useNative(lzc_app_manager)
+    jsBridge.InstallClient(url)
+  }
 }
