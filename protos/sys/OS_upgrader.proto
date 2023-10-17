@@ -45,6 +45,9 @@ message SystemVersionInfo {
 
   // ChangeLog
   string changelog = 2;
+
+  // 大小（字节）
+  uint64 size = 3;
 }
 
 enum DownloaderStatus {
