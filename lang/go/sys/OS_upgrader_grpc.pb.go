@@ -20,15 +20,15 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	OSUpgradeService_Local_FullMethodName        = "/cloud.lazycat.apis.sys.OSUpgradeService/Local"
-	OSUpgradeService_Remote_FullMethodName       = "/cloud.lazycat.apis.sys.OSUpgradeService/Remote"
-	OSUpgradeService_LatestRemote_FullMethodName = "/cloud.lazycat.apis.sys.OSUpgradeService/LatestRemote"
-	OSUpgradeService_Select_FullMethodName       = "/cloud.lazycat.apis.sys.OSUpgradeService/Select"
-	OSUpgradeService_GetSelected_FullMethodName  = "/cloud.lazycat.apis.sys.OSUpgradeService/GetSelected"
-	OSUpgradeService_Start_FullMethodName        = "/cloud.lazycat.apis.sys.OSUpgradeService/Start"
-	OSUpgradeService_Pause_FullMethodName        = "/cloud.lazycat.apis.sys.OSUpgradeService/Pause"
-	OSUpgradeService_Progress_FullMethodName     = "/cloud.lazycat.apis.sys.OSUpgradeService/Progress"
-	OSUpgradeService_Prune_FullMethodName        = "/cloud.lazycat.apis.sys.OSUpgradeService/Prune"
+	OSUpgradeService_Local_FullMethodName       = "/cloud.lazycat.apis.sys.OSUpgradeService/Local"
+	OSUpgradeService_Remote_FullMethodName      = "/cloud.lazycat.apis.sys.OSUpgradeService/Remote"
+	OSUpgradeService_GetLatest_FullMethodName   = "/cloud.lazycat.apis.sys.OSUpgradeService/GetLatest"
+	OSUpgradeService_Select_FullMethodName      = "/cloud.lazycat.apis.sys.OSUpgradeService/Select"
+	OSUpgradeService_GetSelected_FullMethodName = "/cloud.lazycat.apis.sys.OSUpgradeService/GetSelected"
+	OSUpgradeService_Start_FullMethodName       = "/cloud.lazycat.apis.sys.OSUpgradeService/Start"
+	OSUpgradeService_Pause_FullMethodName       = "/cloud.lazycat.apis.sys.OSUpgradeService/Pause"
+	OSUpgradeService_Progress_FullMethodName    = "/cloud.lazycat.apis.sys.OSUpgradeService/Progress"
+	OSUpgradeService_Prune_FullMethodName       = "/cloud.lazycat.apis.sys.OSUpgradeService/Prune"
 )
 
 // OSUpgradeServiceClient is the client API for OSUpgradeService service.
@@ -40,7 +40,7 @@ type OSUpgradeServiceClient interface {
 	// 获取指定版本系统信息
 	Remote(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*SystemVersionInfo, error)
 	// 获取指定发行类型的最新系统信息
-	LatestRemote(ctx context.Context, in *LatestRemoteRequest, opts ...grpc.CallOption) (*SystemVersionInfo, error)
+	GetLatest(ctx context.Context, in *GetLatestRequest, opts ...grpc.CallOption) (*SystemVersionInfo, error)
 	// 选择远程某个版本，获取到大小准备下载
 	Select(ctx context.Context, in *SystemVersion, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 获取下载器当前已选择的版本
@@ -81,9 +81,9 @@ func (c *oSUpgradeServiceClient) Remote(ctx context.Context, in *SystemVersion, 
 	return out, nil
 }
 
-func (c *oSUpgradeServiceClient) LatestRemote(ctx context.Context, in *LatestRemoteRequest, opts ...grpc.CallOption) (*SystemVersionInfo, error) {
+func (c *oSUpgradeServiceClient) GetLatest(ctx context.Context, in *GetLatestRequest, opts ...grpc.CallOption) (*SystemVersionInfo, error) {
 	out := new(SystemVersionInfo)
-	err := c.cc.Invoke(ctx, OSUpgradeService_LatestRemote_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, OSUpgradeService_GetLatest_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +153,7 @@ type OSUpgradeServiceServer interface {
 	// 获取指定版本系统信息
 	Remote(context.Context, *SystemVersion) (*SystemVersionInfo, error)
 	// 获取指定发行类型的最新系统信息
-	LatestRemote(context.Context, *LatestRemoteRequest) (*SystemVersionInfo, error)
+	GetLatest(context.Context, *GetLatestRequest) (*SystemVersionInfo, error)
 	// 选择远程某个版本，获取到大小准备下载
 	Select(context.Context, *SystemVersion) (*emptypb.Empty, error)
 	// 获取下载器当前已选择的版本
@@ -179,8 +179,8 @@ func (UnimplementedOSUpgradeServiceServer) Local(context.Context, *emptypb.Empty
 func (UnimplementedOSUpgradeServiceServer) Remote(context.Context, *SystemVersion) (*SystemVersionInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Remote not implemented")
 }
-func (UnimplementedOSUpgradeServiceServer) LatestRemote(context.Context, *LatestRemoteRequest) (*SystemVersionInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LatestRemote not implemented")
+func (UnimplementedOSUpgradeServiceServer) GetLatest(context.Context, *GetLatestRequest) (*SystemVersionInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLatest not implemented")
 }
 func (UnimplementedOSUpgradeServiceServer) Select(context.Context, *SystemVersion) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Select not implemented")
@@ -249,20 +249,20 @@ func _OSUpgradeService_Remote_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OSUpgradeService_LatestRemote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LatestRemoteRequest)
+func _OSUpgradeService_GetLatest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLatestRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OSUpgradeServiceServer).LatestRemote(ctx, in)
+		return srv.(OSUpgradeServiceServer).GetLatest(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OSUpgradeService_LatestRemote_FullMethodName,
+		FullMethod: OSUpgradeService_GetLatest_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OSUpgradeServiceServer).LatestRemote(ctx, req.(*LatestRemoteRequest))
+		return srv.(OSUpgradeServiceServer).GetLatest(ctx, req.(*GetLatestRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -391,8 +391,8 @@ var OSUpgradeService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OSUpgradeService_Remote_Handler,
 		},
 		{
-			MethodName: "LatestRemote",
-			Handler:    _OSUpgradeService_LatestRemote_Handler,
+			MethodName: "GetLatest",
+			Handler:    _OSUpgradeService_GetLatest_Handler,
 		},
 		{
 			MethodName: "Select",

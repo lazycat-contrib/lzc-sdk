@@ -14,7 +14,7 @@ service OSUpgradeService {
   rpc Remote(SystemVersion) returns (SystemVersionInfo) {}
 
   // 获取指定发行类型的最新系统信息
-  rpc LatestRemote(LatestRemoteRequest) returns (SystemVersionInfo) {}
+  rpc GetLatest(GetLatestRequest) returns (SystemVersionInfo) {}
 
   // 选择远程某个版本，获取到大小准备下载
   rpc Select(SystemVersion) returns (google.protobuf.Empty) {}
@@ -35,7 +35,7 @@ service OSUpgradeService {
   rpc Prune(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }
 
-message LatestRemoteRequest {
+message GetLatestRequest {
   repeated string groups = 1;
 }
 
