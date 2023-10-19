@@ -21,6 +21,8 @@ enum MsgType {
   BOX_UPGRADE = 5;
   // 应用升级
   APP_UPGRADE = 6;
+  // 用户没有受信任设备
+  USER_NO_TRUSTDEVICE = 7;
 }
 
 message Msg {
@@ -54,6 +56,14 @@ message NewMessageResponse{
   int64 id = 1;
 }
 
+message NewMessageRequest{
+  string receiver = 1;
+  MsgType message_type = 2;
+  string title = 3;
+  string content = 4;
+  string meta = 5;
+}
+
 
 service MessageService{
   // 列出所有消息
@@ -69,7 +79,7 @@ service MessageService{
   // 删除指定的消息
   rpc DelMessage(MessageActionRequest)		returns (DelMessageResponse)	{}
   // 新增一个消息
-  rpc NewMessage(Msg)				returns (NewMessageResponse)	{}
+  rpc NewMessage(NewMessageRequest)		returns (NewMessageResponse)	{}
   // 流式的获取最新的消息
   rpc LatestMessage(google.protobuf.Empty)	returns (stream Msg)		{}
 }

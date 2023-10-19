@@ -47,7 +47,7 @@ type MessageServiceClient interface {
 	// 删除指定的消息
 	DelMessage(ctx context.Context, in *MessageActionRequest, opts ...grpc.CallOption) (*DelMessageResponse, error)
 	// 新增一个消息
-	NewMessage(ctx context.Context, in *Msg, opts ...grpc.CallOption) (*NewMessageResponse, error)
+	NewMessage(ctx context.Context, in *NewMessageRequest, opts ...grpc.CallOption) (*NewMessageResponse, error)
 	// 流式的获取最新的消息
 	LatestMessage(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (MessageService_LatestMessageClient, error)
 }
@@ -114,7 +114,7 @@ func (c *messageServiceClient) DelMessage(ctx context.Context, in *MessageAction
 	return out, nil
 }
 
-func (c *messageServiceClient) NewMessage(ctx context.Context, in *Msg, opts ...grpc.CallOption) (*NewMessageResponse, error) {
+func (c *messageServiceClient) NewMessage(ctx context.Context, in *NewMessageRequest, opts ...grpc.CallOption) (*NewMessageResponse, error) {
 	out := new(NewMessageResponse)
 	err := c.cc.Invoke(ctx, MessageService_NewMessage_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -172,7 +172,7 @@ type MessageServiceServer interface {
 	// 删除指定的消息
 	DelMessage(context.Context, *MessageActionRequest) (*DelMessageResponse, error)
 	// 新增一个消息
-	NewMessage(context.Context, *Msg) (*NewMessageResponse, error)
+	NewMessage(context.Context, *NewMessageRequest) (*NewMessageResponse, error)
 	// 流式的获取最新的消息
 	LatestMessage(*emptypb.Empty, MessageService_LatestMessageServer) error
 	mustEmbedUnimplementedMessageServiceServer()
@@ -200,7 +200,7 @@ func (UnimplementedMessageServiceServer) MarkAsRead(context.Context, *MessageAct
 func (UnimplementedMessageServiceServer) DelMessage(context.Context, *MessageActionRequest) (*DelMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DelMessage not implemented")
 }
-func (UnimplementedMessageServiceServer) NewMessage(context.Context, *Msg) (*NewMessageResponse, error) {
+func (UnimplementedMessageServiceServer) NewMessage(context.Context, *NewMessageRequest) (*NewMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewMessage not implemented")
 }
 func (UnimplementedMessageServiceServer) LatestMessage(*emptypb.Empty, MessageService_LatestMessageServer) error {
@@ -328,7 +328,7 @@ func _MessageService_DelMessage_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _MessageService_NewMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Msg)
+	in := new(NewMessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -340,7 +340,7 @@ func _MessageService_NewMessage_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: MessageService_NewMessage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageServiceServer).NewMessage(ctx, req.(*Msg))
+		return srv.(MessageServiceServer).NewMessage(ctx, req.(*NewMessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
