@@ -65,6 +65,10 @@ message NewMessageRequest{
 }
 
 
+message HandleNoTrustDeviceUserRequest{
+  int32 id = 1;
+}
+
 service MessageService{
   // 列出所有消息
   rpc ListMessages(google.protobuf.Empty)	returns (ListMessagesResponse)	{}
@@ -82,4 +86,6 @@ service MessageService{
   rpc NewMessage(NewMessageRequest)		returns (NewMessageResponse)	{}
   // 流式的获取最新的消息
   rpc LatestMessage(google.protobuf.Empty)	returns (stream Msg)		{}
+  // 处理普通用户没有受信任设备消息
+  rpc HandleNoTrustDeviceUser(HandleNoTrustDeviceUserRequest) returns (google.protobuf.Empty) {}
 }

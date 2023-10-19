@@ -20,14 +20,15 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	MessageService_ListMessages_FullMethodName       = "/cloud.lazycat.apis.common.MessageService/ListMessages"
-	MessageService_ListReadMessages_FullMethodName   = "/cloud.lazycat.apis.common.MessageService/ListReadMessages"
-	MessageService_ListUnReadMessages_FullMethodName = "/cloud.lazycat.apis.common.MessageService/ListUnReadMessages"
-	MessageService_QueryMessage_FullMethodName       = "/cloud.lazycat.apis.common.MessageService/QueryMessage"
-	MessageService_MarkAsRead_FullMethodName         = "/cloud.lazycat.apis.common.MessageService/MarkAsRead"
-	MessageService_DelMessage_FullMethodName         = "/cloud.lazycat.apis.common.MessageService/DelMessage"
-	MessageService_NewMessage_FullMethodName         = "/cloud.lazycat.apis.common.MessageService/NewMessage"
-	MessageService_LatestMessage_FullMethodName      = "/cloud.lazycat.apis.common.MessageService/LatestMessage"
+	MessageService_ListMessages_FullMethodName            = "/cloud.lazycat.apis.common.MessageService/ListMessages"
+	MessageService_ListReadMessages_FullMethodName        = "/cloud.lazycat.apis.common.MessageService/ListReadMessages"
+	MessageService_ListUnReadMessages_FullMethodName      = "/cloud.lazycat.apis.common.MessageService/ListUnReadMessages"
+	MessageService_QueryMessage_FullMethodName            = "/cloud.lazycat.apis.common.MessageService/QueryMessage"
+	MessageService_MarkAsRead_FullMethodName              = "/cloud.lazycat.apis.common.MessageService/MarkAsRead"
+	MessageService_DelMessage_FullMethodName              = "/cloud.lazycat.apis.common.MessageService/DelMessage"
+	MessageService_NewMessage_FullMethodName              = "/cloud.lazycat.apis.common.MessageService/NewMessage"
+	MessageService_LatestMessage_FullMethodName           = "/cloud.lazycat.apis.common.MessageService/LatestMessage"
+	MessageService_HandleNoTrustDeviceUser_FullMethodName = "/cloud.lazycat.apis.common.MessageService/HandleNoTrustDeviceUser"
 )
 
 // MessageServiceClient is the client API for MessageService service.
@@ -50,6 +51,8 @@ type MessageServiceClient interface {
 	NewMessage(ctx context.Context, in *NewMessageRequest, opts ...grpc.CallOption) (*NewMessageResponse, error)
 	// 流式的获取最新的消息
 	LatestMessage(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (MessageService_LatestMessageClient, error)
+	// 处理普通用户没有受信任设备消息
+	HandleNoTrustDeviceUser(ctx context.Context, in *HandleNoTrustDeviceUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type messageServiceClient struct {
@@ -155,6 +158,15 @@ func (x *messageServiceLatestMessageClient) Recv() (*Msg, error) {
 	return m, nil
 }
 
+func (c *messageServiceClient) HandleNoTrustDeviceUser(ctx context.Context, in *HandleNoTrustDeviceUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, MessageService_HandleNoTrustDeviceUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MessageServiceServer is the server API for MessageService service.
 // All implementations must embed UnimplementedMessageServiceServer
 // for forward compatibility
@@ -175,6 +187,8 @@ type MessageServiceServer interface {
 	NewMessage(context.Context, *NewMessageRequest) (*NewMessageResponse, error)
 	// 流式的获取最新的消息
 	LatestMessage(*emptypb.Empty, MessageService_LatestMessageServer) error
+	// 处理普通用户没有受信任设备消息
+	HandleNoTrustDeviceUser(context.Context, *HandleNoTrustDeviceUserRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedMessageServiceServer()
 }
 
@@ -205,6 +219,9 @@ func (UnimplementedMessageServiceServer) NewMessage(context.Context, *NewMessage
 }
 func (UnimplementedMessageServiceServer) LatestMessage(*emptypb.Empty, MessageService_LatestMessageServer) error {
 	return status.Errorf(codes.Unimplemented, "method LatestMessage not implemented")
+}
+func (UnimplementedMessageServiceServer) HandleNoTrustDeviceUser(context.Context, *HandleNoTrustDeviceUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HandleNoTrustDeviceUser not implemented")
 }
 func (UnimplementedMessageServiceServer) mustEmbedUnimplementedMessageServiceServer() {}
 
@@ -366,6 +383,24 @@ func (x *messageServiceLatestMessageServer) Send(m *Msg) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _MessageService_HandleNoTrustDeviceUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HandleNoTrustDeviceUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageServiceServer).HandleNoTrustDeviceUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MessageService_HandleNoTrustDeviceUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageServiceServer).HandleNoTrustDeviceUser(ctx, req.(*HandleNoTrustDeviceUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MessageService_ServiceDesc is the grpc.ServiceDesc for MessageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -400,6 +435,10 @@ var MessageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "NewMessage",
 			Handler:    _MessageService_NewMessage_Handler,
+		},
+		{
+			MethodName: "HandleNoTrustDeviceUser",
+			Handler:    _MessageService_HandleNoTrustDeviceUser_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
