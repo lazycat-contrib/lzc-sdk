@@ -9,6 +9,9 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 service DevOptService {
   rpc GetDeveloperOptions(google.protobuf.Empty) returns (DeveloperOptions) {}
   rpc SetDeveloperOptions(DeveloperOptions) returns (google.protobuf.Empty) {}
+
+  rpc SshdEnable(SshdEnableRequest) returns (google.protobuf.Empty) {}
+  rpc SshdEnabled(google.protobuf.Empty) returns (EnableSshdResponse) {}
 }
 
 message DeveloperOptions {
@@ -17,9 +20,22 @@ message DeveloperOptions {
   // 开启 debug bridge
   bool DebugBridge = 2 [deprecated=true];
   // 开启 sshd 服务
-  bool DebugSshd = 3;
+  bool DebugSshd = 3 [deprecated=true];
   // 开启 open telemetry
   bool OpenTelemetry = 4 [deprecated=true];
   // 禁用 upnp
   bool DisableUPnP = 5;
+}
+
+message SshdEnableRequest {
+  // 是否开启 sshd 服务
+  bool Enable = 1;
+
+  // root 密码（该字段仅当 Enable 为 true 时有效）
+  string Password = 2;
+}
+
+message EnableSshdResponse {
+  // 是否开启了 sshd 服务
+  bool Enabled = 1;
 }
