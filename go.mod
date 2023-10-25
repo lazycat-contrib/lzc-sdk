@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	gitee.com/linakesi/remotesocks v0.0.0-20230414024608-42085c40688f
+	github.com/vishvananda/netlink v1.1.0
 	google.golang.org/grpc v1.49.0
 	google.golang.org/protobuf v1.28.1
 )
@@ -12,6 +13,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
+	github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
