@@ -1,8 +1,7 @@
-import { lzcAPIGateway } from "./../index"
 /*
  * @Author: Bin
  * @Date: 2023-03-03
- * @FilePath: /lzc-sdk/lang/js/extentions/index.ts
+ * @FilePath: /lzc-app-ext/src/lzc-sdk/lang/js/extentions/index.ts
  */
 
 import LzcApp from "./base"

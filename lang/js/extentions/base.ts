@@ -1,7 +1,7 @@
 /*
  * @Author: Bin
  * @Date: 2023-03-03
- * @FilePath: /lzc-sdk/lang/js/extentions/base.ts
+ * @FilePath: /lzc-app-ext/src/lzc-sdk/lang/js/extentions/base.ts
  */
 
 enum PlatformType {
@@ -213,7 +213,7 @@ class LzcAppSdk {
    * @param {string} name
    * @return {Promise<any> | undefined}
    */
-  private static async _registerCallBackFunc(name: string): Promise<any> | undefined {
+  private static async _registerCallBackFunc(name: string): Promise<any | undefined> {
     if (!name) return null
     return async function (...args: any[]) {
       let returnData = undefined
@@ -380,7 +380,11 @@ class LzcAppSdk {
 }
 
 class LzcAppSdkManage {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   protected static LzcApp: LzcAppSdk
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   protected LzcApp: LzcAppSdk
 }
 
