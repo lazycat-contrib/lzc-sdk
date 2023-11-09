@@ -64,6 +64,8 @@ message RegisterBoxServiceRequest {
   string service_network = 2; //tcp、udp
   string service_address = 3; // $ip:$port
 
+  string description = 4; //服务的自描述信息
+
   // 服务提供的额外信息，此信息会原封不动的传递给hclient端，
   // service可以基于此机制进行进一步的安全认证等作用
   string extra_info = 6;
@@ -74,10 +76,6 @@ message RegisterBoxServiceRequest {
   // 只有客户端是受信任设备时可以调用
   bool require_trust_dev = 8;
 
-  // // 是否需要客户端登陆
-  // bool login_require = 4 [deprecated=true];
-  // // 是否需要登陆的用户为管理员
-  // bool admin_require = 5 [deprecated=true];
 }
 message RegisterBoxServiceReply {}
 
