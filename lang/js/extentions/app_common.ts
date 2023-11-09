@@ -82,7 +82,6 @@ class AppCommon extends LzcAppSdkManage {
       console.error("LaunchNativeApp 方法暂未实现。")
       return
     }
-
     // 在 Android 环境
     if (LzcAppSdk.isAndroidWebShell()) {
       const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
@@ -92,8 +91,8 @@ class AppCommon extends LzcAppSdkManage {
       }
       var requestStr = JSON.stringify(openApprequest)
       jsBridge.LaunchNativeApp(requestStr)
+      return
     }
-
     // TODO: 其他环境中待实现
     console.error("LaunchNativeApp 方法暂未实现。")
   }
