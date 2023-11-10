@@ -1,7 +1,7 @@
 /*
  * @Author: Bin
  * @Date: 2023-03-03
- * @FilePath: /lzc-app-ext/src/lzc-sdk/lang/js/extentions/base.ts
+ * @FilePath: /lzc-sdk/lang/js/extentions/base.ts
  */
 
 enum PlatformType {
@@ -296,10 +296,10 @@ class LzcAppSdk {
         LzcAppSdk.initJSBridgeIOS() // 触发刷新缓存 ios JSBridge
         defaultNamespaces = LzcAppSdk.cacheJSBridgeIOS
       }
-      if (this.isAndroidWebShell()) {
+      if (this.isAndroidWebShell() && android) {
         defaultNamespaces = android
       }
-      if (this.isPCWebShell()) {
+      if (this.isPCWebShell() && window.electronAPI) {
         defaultNamespaces = window.electronAPI
       }
       namespaces = defaultNamespaces
