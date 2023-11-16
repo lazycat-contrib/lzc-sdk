@@ -165,6 +165,8 @@ message TaskQueueStatisticsResp {
 enum MsgAction {
   Add = 0;
   Del = 1;
+  Update = 2;
+  Cancel = 3;
 }
 message QueueMessageResp {
   TaskID id = 1;
