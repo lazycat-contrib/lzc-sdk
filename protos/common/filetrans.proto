@@ -168,6 +168,8 @@ enum MsgAction {
   Cancel = 3;
   UpdateAll = 4;
   CancelAll = 5;
+  StartAll = 6;
+  PauseAll = 7;
 }
 message QueueMessageResp {
   TaskID id = 1;
