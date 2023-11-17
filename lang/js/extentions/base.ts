@@ -296,10 +296,10 @@ class LzcAppSdk {
         LzcAppSdk.initJSBridgeIOS() // 触发刷新缓存 ios JSBridge
         defaultNamespaces = LzcAppSdk.cacheJSBridgeIOS
       }
-      if (this.isAndroidWebShell() && android) {
+      if (this.isAndroidWebShell() && (<any>window).android) {
         defaultNamespaces = android
       }
-      if (this.isPCWebShell() && window.electronAPI) {
+      if (this.isPCWebShell() && (<any>window).electronAPI) {
         defaultNamespaces = window.electronAPI
       }
       namespaces = defaultNamespaces
