@@ -51,6 +51,8 @@ enum TaskStatus {
   Paused = 2;       // 暂停
   Finished = 3;     // 已完成
   Failed = 4;       // 下载失败
+  Removed = 5;      // 被移除状态，这个状态不会写入数据库，只有单个任务被删除的时候会出现
+  All = 6;          // 表示前五种状态的合集，只在完成status参数为空(或者正好是前五个状态）时的 ClearQueue 时出现
 }
 
 // TODO 考虑空文件夹
