@@ -97,6 +97,15 @@ export class lzcAPIGateway {
     })
   }
 
+  // 获取当前设备 url
+  public async currentDeviceURL(gateway: lzcAPIGateway = this): Promise<URL | undefined> {
+    let session = await gateway.session
+    let uid = session.uid
+    let endDevices = await gateway.devices.ListEndDevices({ uid })
+    let endDevice = endDevices.devices.find(d => d.uniqueDeivceId == session.deviceId)
+    return new URL(endDevice.deviceApiUrl)
+  }
+
   public authToken: string
   public get session(): Promise<SessionInfo> {
     return new Promise<SessionInfo>(async res => {
@@ -110,11 +119,8 @@ export class lzcAPIGateway {
     }
 
     async function currentDeviceApiHost(cc: lzcAPIGateway): Promise<string> {
-      let session = await cc.session
-      let uid = session.uid
-      let endDevices = await cc.devices.ListEndDevices({ uid })
-      let endDevice = endDevices.devices.find(d => d.uniqueDeivceId == session.deviceId)
-      return new URL(endDevice.deviceApiUrl).toString().replace(/\/+$/, "")
+      const url = await cc.currentDeviceURL(cc)
+      return `${url.protocol}//${url.hostname}`
     }
     async function requestAuthToken(cc: lzcAPIGateway, deviceApiUrl: string): Promise<string> {
       const resp = await fetch(cc.host + "/_lzc/deviceapi_auth_token", {
