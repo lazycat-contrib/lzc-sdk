@@ -119,8 +119,8 @@ export class lzcAPIGateway {
     }
 
     async function currentDeviceApiHost(cc: lzcAPIGateway): Promise<string> {
-      const url = await cc.currentDeviceURL(cc)
-      return `${url.protocol}//${url.hostname}`
+      const url = (await cc.currentDeviceURL(cc)).toString().replace(/\/+$/, "")
+      return url
     }
     async function requestAuthToken(cc: lzcAPIGateway, deviceApiUrl: string): Promise<string> {
       const resp = await fetch(cc.host + "/_lzc/deviceapi_auth_token", {
