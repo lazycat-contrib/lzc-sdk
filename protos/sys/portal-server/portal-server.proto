@@ -48,6 +48,8 @@ service HPortalSys {
   rpc EmitBoxServiceChanged(EmitBoxServiceChangedRequest) returns (google.protobuf.Empty);
   // 通过远端IP地址和服务注册的IP地址查询peer信息
   rpc QueryBoxServicePeerCred(QueryBoxServicePeerCredRequest) returns (QueryBoxServicePeerCredResponse);
+
+  rpc DumpPeers(google.protobuf.Empty) returns (PeersInfo) {}
 }
 
 enum DialerRole {
@@ -229,4 +231,8 @@ message ResetHServerRequest {
   string origin_server = 1;
 }
 message ResetHServerReply {
+}
+
+message PeersInfo {
+  string peer_info = 1;
 }

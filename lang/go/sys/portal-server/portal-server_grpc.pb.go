@@ -36,6 +36,7 @@ const (
 	HPortalSys_RegisterBoxService_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/RegisterBoxService"
 	HPortalSys_EmitBoxServiceChanged_FullMethodName   = "/cloud.lazycat.apis.sys.HPortalSys/EmitBoxServiceChanged"
 	HPortalSys_QueryBoxServicePeerCred_FullMethodName = "/cloud.lazycat.apis.sys.HPortalSys/QueryBoxServicePeerCred"
+	HPortalSys_DumpPeers_FullMethodName               = "/cloud.lazycat.apis.sys.HPortalSys/DumpPeers"
 )
 
 // HPortalSysClient is the client API for HPortalSys service.
@@ -78,6 +79,7 @@ type HPortalSysClient interface {
 	EmitBoxServiceChanged(ctx context.Context, in *EmitBoxServiceChangedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 通过远端IP地址和服务注册的IP地址查询peer信息
 	QueryBoxServicePeerCred(ctx context.Context, in *QueryBoxServicePeerCredRequest, opts ...grpc.CallOption) (*QueryBoxServicePeerCredResponse, error)
+	DumpPeers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PeersInfo, error)
 }
 
 type hPortalSysClient struct {
@@ -255,6 +257,15 @@ func (c *hPortalSysClient) QueryBoxServicePeerCred(ctx context.Context, in *Quer
 	return out, nil
 }
 
+func (c *hPortalSysClient) DumpPeers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PeersInfo, error) {
+	out := new(PeersInfo)
+	err := c.cc.Invoke(ctx, HPortalSys_DumpPeers_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HPortalSysServer is the server API for HPortalSys service.
 // All implementations must embed UnimplementedHPortalSysServer
 // for forward compatibility
@@ -295,6 +306,7 @@ type HPortalSysServer interface {
 	EmitBoxServiceChanged(context.Context, *EmitBoxServiceChangedRequest) (*emptypb.Empty, error)
 	// 通过远端IP地址和服务注册的IP地址查询peer信息
 	QueryBoxServicePeerCred(context.Context, *QueryBoxServicePeerCredRequest) (*QueryBoxServicePeerCredResponse, error)
+	DumpPeers(context.Context, *emptypb.Empty) (*PeersInfo, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
 
@@ -349,6 +361,9 @@ func (UnimplementedHPortalSysServer) EmitBoxServiceChanged(context.Context, *Emi
 }
 func (UnimplementedHPortalSysServer) QueryBoxServicePeerCred(context.Context, *QueryBoxServicePeerCredRequest) (*QueryBoxServicePeerCredResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryBoxServicePeerCred not implemented")
+}
+func (UnimplementedHPortalSysServer) DumpPeers(context.Context, *emptypb.Empty) (*PeersInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DumpPeers not implemented")
 }
 func (UnimplementedHPortalSysServer) mustEmbedUnimplementedHPortalSysServer() {}
 
@@ -654,6 +669,24 @@ func _HPortalSys_QueryBoxServicePeerCred_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_DumpPeers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).DumpPeers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HPortalSys_DumpPeers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).DumpPeers(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HPortalSys_ServiceDesc is the grpc.ServiceDesc for HPortalSys service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -720,6 +753,10 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QueryBoxServicePeerCred",
 			Handler:    _HPortalSys_QueryBoxServicePeerCred_Handler,
+		},
+		{
+			MethodName: "DumpPeers",
+			Handler:    _HPortalSys_DumpPeers_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
