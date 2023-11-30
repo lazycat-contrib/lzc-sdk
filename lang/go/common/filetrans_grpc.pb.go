@@ -36,7 +36,7 @@ const (
 	FileTransferService_ResumeTask_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/ResumeTask"
 	FileTransferService_PauseTask_FullMethodName            = "/cloud.lazycat.apis.common.FileTransferService/PauseTask"
 	FileTransferService_DeleteTask_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/DeleteTask"
-	FileTransferService_SubscribeQueueMsg_FullMethodName    = "/cloud.lazycat.apis.common.FileTransferService/subscribeQueueMsg"
+	FileTransferService_SubscribeQueueMsg_FullMethodName    = "/cloud.lazycat.apis.common.FileTransferService/SubscribeQueueMsg"
 )
 
 // FileTransferServiceClient is the client API for FileTransferService service.
@@ -884,7 +884,7 @@ var FileTransferService_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 		{
-			StreamName:    "subscribeQueueMsg",
+			StreamName:    "SubscribeQueueMsg",
 			Handler:       _FileTransferService_SubscribeQueueMsg_Handler,
 			ServerStreams: true,
 		},

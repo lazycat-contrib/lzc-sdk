@@ -172,6 +172,7 @@ enum MsgAction {
   CancelAll = 5;
   StartAll = 6;
   PauseAll = 7;
+  NoAction = 100;
 }
 message QueueMessageResp {
   TaskID id = 1;
@@ -243,5 +244,5 @@ service FileTransferService {
   // 根据 ID 删除单个任务
   rpc DeleteTask(TaskID) returns (google.protobuf.Empty) {}
 
-  rpc subscribeQueueMsg(TaskQueueID) returns (stream MiniMessageResp) {}
+  rpc SubscribeQueueMsg(TaskQueueID) returns (stream MiniMessageResp) {}
 }
