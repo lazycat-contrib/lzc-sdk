@@ -36,6 +36,7 @@ const (
 	FileTransferService_ResumeTask_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/ResumeTask"
 	FileTransferService_PauseTask_FullMethodName            = "/cloud.lazycat.apis.common.FileTransferService/PauseTask"
 	FileTransferService_DeleteTask_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/DeleteTask"
+	FileTransferService_SubscribeQueueMsg_FullMethodName    = "/cloud.lazycat.apis.common.FileTransferService/subscribeQueueMsg"
 )
 
 // FileTransferServiceClient is the client API for FileTransferService service.
@@ -72,6 +73,7 @@ type FileTransferServiceClient interface {
 	PauseTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据 ID 删除单个任务
 	DeleteTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SubscribeQueueMsg(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (FileTransferService_SubscribeQueueMsgClient, error)
 }
 
 type fileTransferServiceClient struct {
@@ -341,6 +343,38 @@ func (c *fileTransferServiceClient) DeleteTask(ctx context.Context, in *TaskID, 
 	return out, nil
 }
 
+func (c *fileTransferServiceClient) SubscribeQueueMsg(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (FileTransferService_SubscribeQueueMsgClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[5], FileTransferService_SubscribeQueueMsg_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &fileTransferServiceSubscribeQueueMsgClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FileTransferService_SubscribeQueueMsgClient interface {
+	Recv() (*MiniMessageResp, error)
+	grpc.ClientStream
+}
+
+type fileTransferServiceSubscribeQueueMsgClient struct {
+	grpc.ClientStream
+}
+
+func (x *fileTransferServiceSubscribeQueueMsgClient) Recv() (*MiniMessageResp, error) {
+	m := new(MiniMessageResp)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // FileTransferServiceServer is the server API for FileTransferService service.
 // All implementations must embed UnimplementedFileTransferServiceServer
 // for forward compatibility
@@ -375,6 +409,7 @@ type FileTransferServiceServer interface {
 	PauseTask(context.Context, *TaskID) (*emptypb.Empty, error)
 	// 根据 ID 删除单个任务
 	DeleteTask(context.Context, *TaskID) (*emptypb.Empty, error)
+	SubscribeQueueMsg(*TaskQueueID, FileTransferService_SubscribeQueueMsgServer) error
 	mustEmbedUnimplementedFileTransferServiceServer()
 }
 
@@ -429,6 +464,9 @@ func (UnimplementedFileTransferServiceServer) PauseTask(context.Context, *TaskID
 }
 func (UnimplementedFileTransferServiceServer) DeleteTask(context.Context, *TaskID) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTask not implemented")
+}
+func (UnimplementedFileTransferServiceServer) SubscribeQueueMsg(*TaskQueueID, FileTransferService_SubscribeQueueMsgServer) error {
+	return status.Errorf(codes.Unimplemented, "method SubscribeQueueMsg not implemented")
 }
 func (UnimplementedFileTransferServiceServer) mustEmbedUnimplementedFileTransferServiceServer() {}
 
@@ -746,6 +784,27 @@ func _FileTransferService_DeleteTask_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FileTransferService_SubscribeQueueMsg_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(TaskQueueID)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FileTransferServiceServer).SubscribeQueueMsg(m, &fileTransferServiceSubscribeQueueMsgServer{stream})
+}
+
+type FileTransferService_SubscribeQueueMsgServer interface {
+	Send(*MiniMessageResp) error
+	grpc.ServerStream
+}
+
+type fileTransferServiceSubscribeQueueMsgServer struct {
+	grpc.ServerStream
+}
+
+func (x *fileTransferServiceSubscribeQueueMsgServer) Send(m *MiniMessageResp) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // FileTransferService_ServiceDesc is the grpc.ServiceDesc for FileTransferService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -822,6 +881,11 @@ var FileTransferService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "QueryTask",
 			Handler:       _FileTransferService_QueryTask_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "subscribeQueueMsg",
+			Handler:       _FileTransferService_SubscribeQueueMsg_Handler,
 			ServerStreams: true,
 		},
 	},

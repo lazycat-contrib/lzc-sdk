@@ -1401,6 +1401,93 @@ func (x *QueueMessageResp) GetErrorMessage() string {
 	return ""
 }
 
+type MiniMessageResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id           *TaskID       `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Action       MsgAction     `protobuf:"varint,2,opt,name=action,proto3,enum=cloud.lazycat.apis.common.MsgAction" json:"action,omitempty"`
+	Status       TaskStatus    `protobuf:"varint,3,opt,name=status,proto3,enum=cloud.lazycat.apis.common.TaskStatus" json:"status,omitempty"`
+	Info         *TransmitInfo `protobuf:"bytes,4,opt,name=info,proto3" json:"info,omitempty"`
+	Task         *Task         `protobuf:"bytes,5,opt,name=task,proto3,oneof" json:"task,omitempty"`
+	ErrorMessage *string       `protobuf:"bytes,6,opt,name=error_message,json=errorMessage,proto3,oneof" json:"error_message,omitempty"`
+}
+
+func (x *MiniMessageResp) Reset() {
+	*x = MiniMessageResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_common_filetrans_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MiniMessageResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MiniMessageResp) ProtoMessage() {}
+
+func (x *MiniMessageResp) ProtoReflect() protoreflect.Message {
+	mi := &file_common_filetrans_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MiniMessageResp.ProtoReflect.Descriptor instead.
+func (*MiniMessageResp) Descriptor() ([]byte, []int) {
+	return file_common_filetrans_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *MiniMessageResp) GetId() *TaskID {
+	if x != nil {
+		return x.Id
+	}
+	return nil
+}
+
+func (x *MiniMessageResp) GetAction() MsgAction {
+	if x != nil {
+		return x.Action
+	}
+	return MsgAction_Add
+}
+
+func (x *MiniMessageResp) GetStatus() TaskStatus {
+	if x != nil {
+		return x.Status
+	}
+	return TaskStatus_Pending
+}
+
+func (x *MiniMessageResp) GetInfo() *TransmitInfo {
+	if x != nil {
+		return x.Info
+	}
+	return nil
+}
+
+func (x *MiniMessageResp) GetTask() *Task {
+	if x != nil {
+		return x.Task
+	}
+	return nil
+}
+
+func (x *MiniMessageResp) GetErrorMessage() string {
+	if x != nil && x.ErrorMessage != nil {
+		return *x.ErrorMessage
+	}
+	return ""
+}
+
 type TaskQueueListResp struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1412,7 +1499,7 @@ type TaskQueueListResp struct {
 func (x *TaskQueueListResp) Reset() {
 	*x = TaskQueueListResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_common_filetrans_proto_msgTypes[17]
+		mi := &file_common_filetrans_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1425,7 +1512,7 @@ func (x *TaskQueueListResp) String() string {
 func (*TaskQueueListResp) ProtoMessage() {}
 
 func (x *TaskQueueListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_common_filetrans_proto_msgTypes[17]
+	mi := &file_common_filetrans_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1438,7 +1525,7 @@ func (x *TaskQueueListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskQueueListResp.ProtoReflect.Descriptor instead.
 func (*TaskQueueListResp) Descriptor() ([]byte, []int) {
-	return file_common_filetrans_proto_rawDescGZIP(), []int{17}
+	return file_common_filetrans_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *TaskQueueListResp) GetIds() []*TaskQueueID {
@@ -1654,6 +1741,30 @@ var file_common_filetrans_proto_rawDesc = []byte{
 	0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x48, 0x00,
 	0x52, 0x0c, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x88, 0x01,
 	0x01, 0x42, 0x10, 0x0a, 0x0e, 0x5f, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x5f, 0x6d, 0x65, 0x73, 0x73,
+	0x61, 0x67, 0x65, 0x22, 0xfd, 0x02, 0x0a, 0x0f, 0x4d, 0x69, 0x6e, 0x69, 0x4d, 0x65, 0x73, 0x73,
+	0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x31, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x21, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79,
+	0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e,
+	0x54, 0x61, 0x73, 0x6b, 0x49, 0x44, 0x52, 0x02, 0x69, 0x64, 0x12, 0x3c, 0x0a, 0x06, 0x61, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x24, 0x2e, 0x63, 0x6c, 0x6f,
+	0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e,
+	0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x4d, 0x73, 0x67, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x52, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x3d, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74,
+	0x75, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x25, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64,
+	0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x63, 0x6f,
+	0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x54, 0x61, 0x73, 0x6b, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52,
+	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x3b, 0x0a, 0x04, 0x69, 0x6e, 0x66, 0x6f, 0x18,
+	0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61,
+	0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f,
+	0x6e, 0x2e, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x6d, 0x69, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x04,
+	0x69, 0x6e, 0x66, 0x6f, 0x12, 0x38, 0x0a, 0x04, 0x74, 0x61, 0x73, 0x6b, 0x18, 0x05, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63,
+	0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x54,
+	0x61, 0x73, 0x6b, 0x48, 0x00, 0x52, 0x04, 0x74, 0x61, 0x73, 0x6b, 0x88, 0x01, 0x01, 0x12, 0x28,
+	0x0a, 0x0d, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18,
+	0x06, 0x20, 0x01, 0x28, 0x09, 0x48, 0x01, 0x52, 0x0c, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x4d, 0x65,
+	0x73, 0x73, 0x61, 0x67, 0x65, 0x88, 0x01, 0x01, 0x42, 0x07, 0x0a, 0x05, 0x5f, 0x74, 0x61, 0x73,
+	0x6b, 0x42, 0x10, 0x0a, 0x0e, 0x5f, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x5f, 0x6d, 0x65, 0x73, 0x73,
 	0x61, 0x67, 0x65, 0x22, 0x4d, 0x0a, 0x11, 0x54, 0x61, 0x73, 0x6b, 0x51, 0x75, 0x65, 0x75, 0x65,
 	0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x12, 0x38, 0x0a, 0x03, 0x69, 0x64, 0x73, 0x18,
 	0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61,
@@ -1676,7 +1787,7 @@ var file_common_filetrans_proto_rawDesc = []byte{
 	0x0a, 0x09, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x6c, 0x6c, 0x10, 0x04, 0x12, 0x0d, 0x0a,
 	0x09, 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x41, 0x6c, 0x6c, 0x10, 0x05, 0x12, 0x0c, 0x0a, 0x08,
 	0x53, 0x74, 0x61, 0x72, 0x74, 0x41, 0x6c, 0x6c, 0x10, 0x06, 0x12, 0x0c, 0x0a, 0x08, 0x50, 0x61,
-	0x75, 0x73, 0x65, 0x41, 0x6c, 0x6c, 0x10, 0x07, 0x32, 0xdf, 0x0b, 0x0a, 0x13, 0x46, 0x69, 0x6c,
+	0x75, 0x73, 0x65, 0x41, 0x6c, 0x6c, 0x10, 0x07, 0x32, 0xcc, 0x0c, 0x0a, 0x13, 0x46, 0x69, 0x6c,
 	0x65, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
 	0x12, 0x65, 0x0a, 0x0b, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x51, 0x75, 0x65, 0x75, 0x65, 0x12,
 	0x26, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e,
@@ -1770,10 +1881,17 @@ var file_common_filetrans_proto_rawDesc = []byte{
 	0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70,
 	0x69, 0x73, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x54, 0x61, 0x73, 0x6b, 0x49, 0x44,
 	0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
-	0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x42, 0x2b, 0x5a, 0x29, 0x67, 0x69,
-	0x74, 0x65, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6c, 0x69, 0x6e, 0x61, 0x6b, 0x65, 0x73, 0x69,
-	0x2f, 0x6c, 0x7a, 0x63, 0x2d, 0x73, 0x64, 0x6b, 0x2f, 0x6c, 0x61, 0x6e, 0x67, 0x2f, 0x67, 0x6f,
-	0x2f, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12, 0x6b, 0x0a, 0x11, 0x73, 0x75,
+	0x62, 0x73, 0x63, 0x72, 0x69, 0x62, 0x65, 0x51, 0x75, 0x65, 0x75, 0x65, 0x4d, 0x73, 0x67, 0x12,
+	0x26, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e,
+	0x61, 0x70, 0x69, 0x73, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x54, 0x61, 0x73, 0x6b,
+	0x51, 0x75, 0x65, 0x75, 0x65, 0x49, 0x44, 0x1a, 0x2a, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e,
+	0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x63, 0x6f, 0x6d,
+	0x6d, 0x6f, 0x6e, 0x2e, 0x4d, 0x69, 0x6e, 0x69, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x52,
+	0x65, 0x73, 0x70, 0x22, 0x00, 0x30, 0x01, 0x42, 0x2b, 0x5a, 0x29, 0x67, 0x69, 0x74, 0x65, 0x65,
+	0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6c, 0x69, 0x6e, 0x61, 0x6b, 0x65, 0x73, 0x69, 0x2f, 0x6c, 0x7a,
+	0x63, 0x2d, 0x73, 0x64, 0x6b, 0x2f, 0x6c, 0x61, 0x6e, 0x67, 0x2f, 0x67, 0x6f, 0x2f, 0x63, 0x6f,
+	0x6d, 0x6d, 0x6f, 0x6e, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1789,7 +1907,7 @@ func file_common_filetrans_proto_rawDescGZIP() []byte {
 }
 
 var file_common_filetrans_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_common_filetrans_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_common_filetrans_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_common_filetrans_proto_goTypes = []interface{}{
 	(TaskStatus)(0),                    // 0: cloud.lazycat.apis.common.TaskStatus
 	(QueueStatus)(0),                   // 1: cloud.lazycat.apis.common.QueueStatus
@@ -1813,9 +1931,10 @@ var file_common_filetrans_proto_goTypes = []interface{}{
 	(*TaskQueueStatistics)(nil),        // 19: cloud.lazycat.apis.common.TaskQueueStatistics
 	(*TaskQueueStatisticsResp)(nil),    // 20: cloud.lazycat.apis.common.TaskQueueStatisticsResp
 	(*QueueMessageResp)(nil),           // 21: cloud.lazycat.apis.common.QueueMessageResp
-	(*TaskQueueListResp)(nil),          // 22: cloud.lazycat.apis.common.TaskQueueListResp
-	(*timestamppb.Timestamp)(nil),      // 23: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),              // 24: google.protobuf.Empty
+	(*MiniMessageResp)(nil),            // 22: cloud.lazycat.apis.common.MiniMessageResp
+	(*TaskQueueListResp)(nil),          // 23: cloud.lazycat.apis.common.TaskQueueListResp
+	(*timestamppb.Timestamp)(nil),      // 24: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),              // 25: google.protobuf.Empty
 }
 var file_common_filetrans_proto_depIdxs = []int32{
 	4,  // 0: cloud.lazycat.apis.common.FileLocation.location_type:type_name -> cloud.lazycat.apis.common.FileLocation.FileLocationType
@@ -1830,8 +1949,8 @@ var file_common_filetrans_proto_depIdxs = []int32{
 	5,  // 9: cloud.lazycat.apis.common.Task.dst:type_name -> cloud.lazycat.apis.common.FileLocation
 	0,  // 10: cloud.lazycat.apis.common.Task.status:type_name -> cloud.lazycat.apis.common.TaskStatus
 	10, // 11: cloud.lazycat.apis.common.Task.info:type_name -> cloud.lazycat.apis.common.TransmitInfo
-	23, // 12: cloud.lazycat.apis.common.Task.created_at:type_name -> google.protobuf.Timestamp
-	23, // 13: cloud.lazycat.apis.common.Task.updated_at:type_name -> google.protobuf.Timestamp
+	24, // 12: cloud.lazycat.apis.common.Task.created_at:type_name -> google.protobuf.Timestamp
+	24, // 13: cloud.lazycat.apis.common.Task.updated_at:type_name -> google.protobuf.Timestamp
 	6,  // 14: cloud.lazycat.apis.common.Task.meta_info:type_name -> cloud.lazycat.apis.common.MetaInfo
 	13, // 15: cloud.lazycat.apis.common.TaskQueueConfigReq.id:type_name -> cloud.lazycat.apis.common.TaskQueueID
 	12, // 16: cloud.lazycat.apis.common.TaskQueueConfigReq.config:type_name -> cloud.lazycat.apis.common.TaskQueueConfig
@@ -1850,44 +1969,51 @@ var file_common_filetrans_proto_depIdxs = []int32{
 	11, // 29: cloud.lazycat.apis.common.QueueMessageResp.task:type_name -> cloud.lazycat.apis.common.Task
 	3,  // 30: cloud.lazycat.apis.common.QueueMessageResp.action:type_name -> cloud.lazycat.apis.common.MsgAction
 	0,  // 31: cloud.lazycat.apis.common.QueueMessageResp.status:type_name -> cloud.lazycat.apis.common.TaskStatus
-	13, // 32: cloud.lazycat.apis.common.TaskQueueListResp.ids:type_name -> cloud.lazycat.apis.common.TaskQueueID
-	13, // 33: cloud.lazycat.apis.common.FileTransferService.CreateQueue:input_type -> cloud.lazycat.apis.common.TaskQueueID
-	24, // 34: cloud.lazycat.apis.common.FileTransferService.ListQueue:input_type -> google.protobuf.Empty
-	17, // 35: cloud.lazycat.apis.common.FileTransferService.QueryQueue:input_type -> cloud.lazycat.apis.common.TaskQueueQueryReq
-	18, // 36: cloud.lazycat.apis.common.FileTransferService.QueryQueueStatistics:input_type -> cloud.lazycat.apis.common.TaskQueueStatisticsReq
-	13, // 37: cloud.lazycat.apis.common.FileTransferService.QueryQueueStatistic:input_type -> cloud.lazycat.apis.common.TaskQueueID
-	17, // 38: cloud.lazycat.apis.common.FileTransferService.ClearQueue:input_type -> cloud.lazycat.apis.common.TaskQueueQueryReq
-	14, // 39: cloud.lazycat.apis.common.FileTransferService.ConfigQueue:input_type -> cloud.lazycat.apis.common.TaskQueueConfigReq
-	13, // 40: cloud.lazycat.apis.common.FileTransferService.PauseQueue:input_type -> cloud.lazycat.apis.common.TaskQueueID
-	13, // 41: cloud.lazycat.apis.common.FileTransferService.StartQuque:input_type -> cloud.lazycat.apis.common.TaskQueueID
-	17, // 42: cloud.lazycat.apis.common.FileTransferService.QueryQueueMessage:input_type -> cloud.lazycat.apis.common.TaskQueueQueryReq
-	7,  // 43: cloud.lazycat.apis.common.FileTransferService.CreateTask:input_type -> cloud.lazycat.apis.common.TaskCreateRequest
-	8,  // 44: cloud.lazycat.apis.common.FileTransferService.CreateTasks:input_type -> cloud.lazycat.apis.common.TaskCreateRequests
-	9,  // 45: cloud.lazycat.apis.common.FileTransferService.QueryTask:input_type -> cloud.lazycat.apis.common.TaskID
-	9,  // 46: cloud.lazycat.apis.common.FileTransferService.ResumeTask:input_type -> cloud.lazycat.apis.common.TaskID
-	9,  // 47: cloud.lazycat.apis.common.FileTransferService.PauseTask:input_type -> cloud.lazycat.apis.common.TaskID
-	9,  // 48: cloud.lazycat.apis.common.FileTransferService.DeleteTask:input_type -> cloud.lazycat.apis.common.TaskID
-	16, // 49: cloud.lazycat.apis.common.FileTransferService.CreateQueue:output_type -> cloud.lazycat.apis.common.FileTaskQueueResp
-	22, // 50: cloud.lazycat.apis.common.FileTransferService.ListQueue:output_type -> cloud.lazycat.apis.common.TaskQueueListResp
-	11, // 51: cloud.lazycat.apis.common.FileTransferService.QueryQueue:output_type -> cloud.lazycat.apis.common.Task
-	20, // 52: cloud.lazycat.apis.common.FileTransferService.QueryQueueStatistics:output_type -> cloud.lazycat.apis.common.TaskQueueStatisticsResp
-	19, // 53: cloud.lazycat.apis.common.FileTransferService.QueryQueueStatistic:output_type -> cloud.lazycat.apis.common.TaskQueueStatistics
-	24, // 54: cloud.lazycat.apis.common.FileTransferService.ClearQueue:output_type -> google.protobuf.Empty
-	24, // 55: cloud.lazycat.apis.common.FileTransferService.ConfigQueue:output_type -> google.protobuf.Empty
-	24, // 56: cloud.lazycat.apis.common.FileTransferService.PauseQueue:output_type -> google.protobuf.Empty
-	24, // 57: cloud.lazycat.apis.common.FileTransferService.StartQuque:output_type -> google.protobuf.Empty
-	21, // 58: cloud.lazycat.apis.common.FileTransferService.QueryQueueMessage:output_type -> cloud.lazycat.apis.common.QueueMessageResp
-	11, // 59: cloud.lazycat.apis.common.FileTransferService.CreateTask:output_type -> cloud.lazycat.apis.common.Task
-	11, // 60: cloud.lazycat.apis.common.FileTransferService.CreateTasks:output_type -> cloud.lazycat.apis.common.Task
-	11, // 61: cloud.lazycat.apis.common.FileTransferService.QueryTask:output_type -> cloud.lazycat.apis.common.Task
-	24, // 62: cloud.lazycat.apis.common.FileTransferService.ResumeTask:output_type -> google.protobuf.Empty
-	24, // 63: cloud.lazycat.apis.common.FileTransferService.PauseTask:output_type -> google.protobuf.Empty
-	24, // 64: cloud.lazycat.apis.common.FileTransferService.DeleteTask:output_type -> google.protobuf.Empty
-	49, // [49:65] is the sub-list for method output_type
-	33, // [33:49] is the sub-list for method input_type
-	33, // [33:33] is the sub-list for extension type_name
-	33, // [33:33] is the sub-list for extension extendee
-	0,  // [0:33] is the sub-list for field type_name
+	9,  // 32: cloud.lazycat.apis.common.MiniMessageResp.id:type_name -> cloud.lazycat.apis.common.TaskID
+	3,  // 33: cloud.lazycat.apis.common.MiniMessageResp.action:type_name -> cloud.lazycat.apis.common.MsgAction
+	0,  // 34: cloud.lazycat.apis.common.MiniMessageResp.status:type_name -> cloud.lazycat.apis.common.TaskStatus
+	10, // 35: cloud.lazycat.apis.common.MiniMessageResp.info:type_name -> cloud.lazycat.apis.common.TransmitInfo
+	11, // 36: cloud.lazycat.apis.common.MiniMessageResp.task:type_name -> cloud.lazycat.apis.common.Task
+	13, // 37: cloud.lazycat.apis.common.TaskQueueListResp.ids:type_name -> cloud.lazycat.apis.common.TaskQueueID
+	13, // 38: cloud.lazycat.apis.common.FileTransferService.CreateQueue:input_type -> cloud.lazycat.apis.common.TaskQueueID
+	25, // 39: cloud.lazycat.apis.common.FileTransferService.ListQueue:input_type -> google.protobuf.Empty
+	17, // 40: cloud.lazycat.apis.common.FileTransferService.QueryQueue:input_type -> cloud.lazycat.apis.common.TaskQueueQueryReq
+	18, // 41: cloud.lazycat.apis.common.FileTransferService.QueryQueueStatistics:input_type -> cloud.lazycat.apis.common.TaskQueueStatisticsReq
+	13, // 42: cloud.lazycat.apis.common.FileTransferService.QueryQueueStatistic:input_type -> cloud.lazycat.apis.common.TaskQueueID
+	17, // 43: cloud.lazycat.apis.common.FileTransferService.ClearQueue:input_type -> cloud.lazycat.apis.common.TaskQueueQueryReq
+	14, // 44: cloud.lazycat.apis.common.FileTransferService.ConfigQueue:input_type -> cloud.lazycat.apis.common.TaskQueueConfigReq
+	13, // 45: cloud.lazycat.apis.common.FileTransferService.PauseQueue:input_type -> cloud.lazycat.apis.common.TaskQueueID
+	13, // 46: cloud.lazycat.apis.common.FileTransferService.StartQuque:input_type -> cloud.lazycat.apis.common.TaskQueueID
+	17, // 47: cloud.lazycat.apis.common.FileTransferService.QueryQueueMessage:input_type -> cloud.lazycat.apis.common.TaskQueueQueryReq
+	7,  // 48: cloud.lazycat.apis.common.FileTransferService.CreateTask:input_type -> cloud.lazycat.apis.common.TaskCreateRequest
+	8,  // 49: cloud.lazycat.apis.common.FileTransferService.CreateTasks:input_type -> cloud.lazycat.apis.common.TaskCreateRequests
+	9,  // 50: cloud.lazycat.apis.common.FileTransferService.QueryTask:input_type -> cloud.lazycat.apis.common.TaskID
+	9,  // 51: cloud.lazycat.apis.common.FileTransferService.ResumeTask:input_type -> cloud.lazycat.apis.common.TaskID
+	9,  // 52: cloud.lazycat.apis.common.FileTransferService.PauseTask:input_type -> cloud.lazycat.apis.common.TaskID
+	9,  // 53: cloud.lazycat.apis.common.FileTransferService.DeleteTask:input_type -> cloud.lazycat.apis.common.TaskID
+	13, // 54: cloud.lazycat.apis.common.FileTransferService.subscribeQueueMsg:input_type -> cloud.lazycat.apis.common.TaskQueueID
+	16, // 55: cloud.lazycat.apis.common.FileTransferService.CreateQueue:output_type -> cloud.lazycat.apis.common.FileTaskQueueResp
+	23, // 56: cloud.lazycat.apis.common.FileTransferService.ListQueue:output_type -> cloud.lazycat.apis.common.TaskQueueListResp
+	11, // 57: cloud.lazycat.apis.common.FileTransferService.QueryQueue:output_type -> cloud.lazycat.apis.common.Task
+	20, // 58: cloud.lazycat.apis.common.FileTransferService.QueryQueueStatistics:output_type -> cloud.lazycat.apis.common.TaskQueueStatisticsResp
+	19, // 59: cloud.lazycat.apis.common.FileTransferService.QueryQueueStatistic:output_type -> cloud.lazycat.apis.common.TaskQueueStatistics
+	25, // 60: cloud.lazycat.apis.common.FileTransferService.ClearQueue:output_type -> google.protobuf.Empty
+	25, // 61: cloud.lazycat.apis.common.FileTransferService.ConfigQueue:output_type -> google.protobuf.Empty
+	25, // 62: cloud.lazycat.apis.common.FileTransferService.PauseQueue:output_type -> google.protobuf.Empty
+	25, // 63: cloud.lazycat.apis.common.FileTransferService.StartQuque:output_type -> google.protobuf.Empty
+	21, // 64: cloud.lazycat.apis.common.FileTransferService.QueryQueueMessage:output_type -> cloud.lazycat.apis.common.QueueMessageResp
+	11, // 65: cloud.lazycat.apis.common.FileTransferService.CreateTask:output_type -> cloud.lazycat.apis.common.Task
+	11, // 66: cloud.lazycat.apis.common.FileTransferService.CreateTasks:output_type -> cloud.lazycat.apis.common.Task
+	11, // 67: cloud.lazycat.apis.common.FileTransferService.QueryTask:output_type -> cloud.lazycat.apis.common.Task
+	25, // 68: cloud.lazycat.apis.common.FileTransferService.ResumeTask:output_type -> google.protobuf.Empty
+	25, // 69: cloud.lazycat.apis.common.FileTransferService.PauseTask:output_type -> google.protobuf.Empty
+	25, // 70: cloud.lazycat.apis.common.FileTransferService.DeleteTask:output_type -> google.protobuf.Empty
+	22, // 71: cloud.lazycat.apis.common.FileTransferService.subscribeQueueMsg:output_type -> cloud.lazycat.apis.common.MiniMessageResp
+	55, // [55:72] is the sub-list for method output_type
+	38, // [38:55] is the sub-list for method input_type
+	38, // [38:38] is the sub-list for extension type_name
+	38, // [38:38] is the sub-list for extension extendee
+	0,  // [0:38] is the sub-list for field type_name
 }
 
 func init() { file_common_filetrans_proto_init() }
@@ -2101,6 +2227,18 @@ func file_common_filetrans_proto_init() {
 			}
 		}
 		file_common_filetrans_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MiniMessageResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_common_filetrans_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TaskQueueListResp); i {
 			case 0:
 				return &v.state
@@ -2118,13 +2256,14 @@ func file_common_filetrans_proto_init() {
 	file_common_filetrans_proto_msgTypes[8].OneofWrappers = []interface{}{}
 	file_common_filetrans_proto_msgTypes[12].OneofWrappers = []interface{}{}
 	file_common_filetrans_proto_msgTypes[16].OneofWrappers = []interface{}{}
+	file_common_filetrans_proto_msgTypes[17].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_common_filetrans_proto_rawDesc,
 			NumEnums:      5,
-			NumMessages:   18,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

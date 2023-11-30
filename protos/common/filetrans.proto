@@ -181,6 +181,15 @@ message QueueMessageResp {
   optional string error_message = 5;
 }
 
+message MiniMessageResp {
+  TaskID id = 1;
+  MsgAction action = 2;
+  TaskStatus status = 3;
+  TransmitInfo info = 4;
+  optional Task task = 5;
+  optional string error_message = 6;
+}
+
 message TaskQueueListResp { repeated TaskQueueID ids = 1; }
 
 // hclient与hserver均实现此service
@@ -233,4 +242,6 @@ service FileTransferService {
 
   // 根据 ID 删除单个任务
   rpc DeleteTask(TaskID) returns (google.protobuf.Empty) {}
+
+  rpc subscribeQueueMsg(TaskQueueID) returns (stream MiniMessageResp) {}
 }
