@@ -10,6 +10,27 @@ service FileHandler {
   rpc query(QueryRequest) returns (QueryReply) {}
   rpc open(OpenRequest) returns (OpenReply) {}
   rpc openFileManager(OpenFileManagerRequest) returns (google.protobuf.Empty) {}
+  // 列出目录结构
+  rpc walkDirectory(WalkDirectoryRequest) returns (stream WalkDirectoryReply) {}
+}
+
+message WalkDirectoryRequest {
+  // 目录路径
+  string path = 1;
+  // 过滤条件
+  optional string pattern = 2;
+  // 并行线程数，不传或<=0的话，就等于$ nproc
+  optional int32 worker_count = 3;
+}
+
+// 每Walk 10层目录后返回一次reply
+message WalkDirectoryReply {
+  // 每一个目录中的内容
+  message Entry {
+    string name = 1;
+    bool dirp = 2;
+  }
+  repeated Entry result = 1;
 }
 
 message OpenFileManagerRequest{

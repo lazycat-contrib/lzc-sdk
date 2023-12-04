@@ -23,6 +23,7 @@ const (
 	FileHandler_Query_FullMethodName           = "/cloud.lazycat.apis.common.FileHandler/query"
 	FileHandler_Open_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/open"
 	FileHandler_OpenFileManager_FullMethodName = "/cloud.lazycat.apis.common.FileHandler/openFileManager"
+	FileHandler_WalkDirectory_FullMethodName   = "/cloud.lazycat.apis.common.FileHandler/walkDirectory"
 )
 
 // FileHandlerClient is the client API for FileHandler service.
@@ -32,6 +33,8 @@ type FileHandlerClient interface {
 	Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryReply, error)
 	Open(ctx context.Context, in *OpenRequest, opts ...grpc.CallOption) (*OpenReply, error)
 	OpenFileManager(ctx context.Context, in *OpenFileManagerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 列出目录结构
+	WalkDirectory(ctx context.Context, in *WalkDirectoryRequest, opts ...grpc.CallOption) (FileHandler_WalkDirectoryClient, error)
 }
 
 type fileHandlerClient struct {
@@ -69,6 +72,38 @@ func (c *fileHandlerClient) OpenFileManager(ctx context.Context, in *OpenFileMan
 	return out, nil
 }
 
+func (c *fileHandlerClient) WalkDirectory(ctx context.Context, in *WalkDirectoryRequest, opts ...grpc.CallOption) (FileHandler_WalkDirectoryClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[0], FileHandler_WalkDirectory_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &fileHandlerWalkDirectoryClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FileHandler_WalkDirectoryClient interface {
+	Recv() (*WalkDirectoryReply, error)
+	grpc.ClientStream
+}
+
+type fileHandlerWalkDirectoryClient struct {
+	grpc.ClientStream
+}
+
+func (x *fileHandlerWalkDirectoryClient) Recv() (*WalkDirectoryReply, error) {
+	m := new(WalkDirectoryReply)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // FileHandlerServer is the server API for FileHandler service.
 // All implementations must embed UnimplementedFileHandlerServer
 // for forward compatibility
@@ -76,6 +111,8 @@ type FileHandlerServer interface {
 	Query(context.Context, *QueryRequest) (*QueryReply, error)
 	Open(context.Context, *OpenRequest) (*OpenReply, error)
 	OpenFileManager(context.Context, *OpenFileManagerRequest) (*emptypb.Empty, error)
+	// 列出目录结构
+	WalkDirectory(*WalkDirectoryRequest, FileHandler_WalkDirectoryServer) error
 	mustEmbedUnimplementedFileHandlerServer()
 }
 
@@ -91,6 +128,9 @@ func (UnimplementedFileHandlerServer) Open(context.Context, *OpenRequest) (*Open
 }
 func (UnimplementedFileHandlerServer) OpenFileManager(context.Context, *OpenFileManagerRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OpenFileManager not implemented")
+}
+func (UnimplementedFileHandlerServer) WalkDirectory(*WalkDirectoryRequest, FileHandler_WalkDirectoryServer) error {
+	return status.Errorf(codes.Unimplemented, "method WalkDirectory not implemented")
 }
 func (UnimplementedFileHandlerServer) mustEmbedUnimplementedFileHandlerServer() {}
 
@@ -159,6 +199,27 @@ func _FileHandler_OpenFileManager_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FileHandler_WalkDirectory_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(WalkDirectoryRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FileHandlerServer).WalkDirectory(m, &fileHandlerWalkDirectoryServer{stream})
+}
+
+type FileHandler_WalkDirectoryServer interface {
+	Send(*WalkDirectoryReply) error
+	grpc.ServerStream
+}
+
+type fileHandlerWalkDirectoryServer struct {
+	grpc.ServerStream
+}
+
+func (x *fileHandlerWalkDirectoryServer) Send(m *WalkDirectoryReply) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // FileHandler_ServiceDesc is the grpc.ServiceDesc for FileHandler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -179,6 +240,12 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _FileHandler_OpenFileManager_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "walkDirectory",
+			Handler:       _FileHandler_WalkDirectory_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "common/file_handler.proto",
 }
