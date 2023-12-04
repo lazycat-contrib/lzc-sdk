@@ -23,12 +23,18 @@ message WalkDirectoryRequest {
   optional int32 worker_count = 3;
 }
 
-// 每Walk 10层目录后返回一次reply
+// 每Walk 1000个entry后返回一次reply
 message WalkDirectoryReply {
   // 每一个目录中的内容
   message Entry {
-    string name = 1;
-    bool dirp = 2;
+    // 全路径 /home/lnks/hello.txt
+    string path = 1;
+    // 文件名 hello.txt
+    string base = 2;
+    // 文件大小
+    int64 size = 3;
+    // 是否为目录
+    bool dirp = 4;
   }
   repeated Entry result = 1;
 }
