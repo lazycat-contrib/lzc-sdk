@@ -20,23 +20,25 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	FileTransferService_CreateQueue_FullMethodName          = "/cloud.lazycat.apis.common.FileTransferService/CreateQueue"
-	FileTransferService_ListQueue_FullMethodName            = "/cloud.lazycat.apis.common.FileTransferService/ListQueue"
-	FileTransferService_QueryQueue_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/QueryQueue"
-	FileTransferService_QueryQueueStatistics_FullMethodName = "/cloud.lazycat.apis.common.FileTransferService/QueryQueueStatistics"
-	FileTransferService_QueryQueueStatistic_FullMethodName  = "/cloud.lazycat.apis.common.FileTransferService/QueryQueueStatistic"
-	FileTransferService_ClearQueue_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/ClearQueue"
-	FileTransferService_ConfigQueue_FullMethodName          = "/cloud.lazycat.apis.common.FileTransferService/ConfigQueue"
-	FileTransferService_PauseQueue_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/PauseQueue"
-	FileTransferService_StartQuque_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/StartQuque"
-	FileTransferService_QueryQueueMessage_FullMethodName    = "/cloud.lazycat.apis.common.FileTransferService/QueryQueueMessage"
-	FileTransferService_CreateTask_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/CreateTask"
-	FileTransferService_CreateTasks_FullMethodName          = "/cloud.lazycat.apis.common.FileTransferService/CreateTasks"
-	FileTransferService_QueryTask_FullMethodName            = "/cloud.lazycat.apis.common.FileTransferService/QueryTask"
-	FileTransferService_ResumeTask_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/ResumeTask"
-	FileTransferService_PauseTask_FullMethodName            = "/cloud.lazycat.apis.common.FileTransferService/PauseTask"
-	FileTransferService_DeleteTask_FullMethodName           = "/cloud.lazycat.apis.common.FileTransferService/DeleteTask"
-	FileTransferService_SubscribeQueueMsg_FullMethodName    = "/cloud.lazycat.apis.common.FileTransferService/SubscribeQueueMsg"
+	FileTransferService_CreateQueue_FullMethodName              = "/cloud.lazycat.apis.common.FileTransferService/CreateQueue"
+	FileTransferService_ListQueue_FullMethodName                = "/cloud.lazycat.apis.common.FileTransferService/ListQueue"
+	FileTransferService_QueryQueue_FullMethodName               = "/cloud.lazycat.apis.common.FileTransferService/QueryQueue"
+	FileTransferService_QueryQueueStatistics_FullMethodName     = "/cloud.lazycat.apis.common.FileTransferService/QueryQueueStatistics"
+	FileTransferService_QueryQueueStatistic_FullMethodName      = "/cloud.lazycat.apis.common.FileTransferService/QueryQueueStatistic"
+	FileTransferService_ClearQueue_FullMethodName               = "/cloud.lazycat.apis.common.FileTransferService/ClearQueue"
+	FileTransferService_ConfigQueue_FullMethodName              = "/cloud.lazycat.apis.common.FileTransferService/ConfigQueue"
+	FileTransferService_PauseQueue_FullMethodName               = "/cloud.lazycat.apis.common.FileTransferService/PauseQueue"
+	FileTransferService_StartQuque_FullMethodName               = "/cloud.lazycat.apis.common.FileTransferService/StartQuque"
+	FileTransferService_QueryQueueMessage_FullMethodName        = "/cloud.lazycat.apis.common.FileTransferService/QueryQueueMessage"
+	FileTransferService_CreateTask_FullMethodName               = "/cloud.lazycat.apis.common.FileTransferService/CreateTask"
+	FileTransferService_CreateTasks_FullMethodName              = "/cloud.lazycat.apis.common.FileTransferService/CreateTasks"
+	FileTransferService_QueryTask_FullMethodName                = "/cloud.lazycat.apis.common.FileTransferService/QueryTask"
+	FileTransferService_ResumeTask_FullMethodName               = "/cloud.lazycat.apis.common.FileTransferService/ResumeTask"
+	FileTransferService_PauseTask_FullMethodName                = "/cloud.lazycat.apis.common.FileTransferService/PauseTask"
+	FileTransferService_DeleteTask_FullMethodName               = "/cloud.lazycat.apis.common.FileTransferService/DeleteTask"
+	FileTransferService_SubscribeQueueMsg_FullMethodName        = "/cloud.lazycat.apis.common.FileTransferService/SubscribeQueueMsg"
+	FileTransferService_CreateTaskUploadFolder_FullMethodName   = "/cloud.lazycat.apis.common.FileTransferService/CreateTaskUploadFolder"
+	FileTransferService_CreateTaskDownloadFolder_FullMethodName = "/cloud.lazycat.apis.common.FileTransferService/CreateTaskDownloadFolder"
 )
 
 // FileTransferServiceClient is the client API for FileTransferService service.
@@ -74,6 +76,8 @@ type FileTransferServiceClient interface {
 	// 根据 ID 删除单个任务
 	DeleteTask(ctx context.Context, in *TaskID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SubscribeQueueMsg(ctx context.Context, in *TaskQueueID, opts ...grpc.CallOption) (FileTransferService_SubscribeQueueMsgClient, error)
+	CreateTaskUploadFolder(ctx context.Context, in *TaskFolderReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CreateTaskDownloadFolder(ctx context.Context, in *TaskFolderReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type fileTransferServiceClient struct {
@@ -375,6 +379,24 @@ func (x *fileTransferServiceSubscribeQueueMsgClient) Recv() (*MiniMessageResp, e
 	return m, nil
 }
 
+func (c *fileTransferServiceClient) CreateTaskUploadFolder(ctx context.Context, in *TaskFolderReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, FileTransferService_CreateTaskUploadFolder_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *fileTransferServiceClient) CreateTaskDownloadFolder(ctx context.Context, in *TaskFolderReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, FileTransferService_CreateTaskDownloadFolder_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FileTransferServiceServer is the server API for FileTransferService service.
 // All implementations must embed UnimplementedFileTransferServiceServer
 // for forward compatibility
@@ -410,6 +432,8 @@ type FileTransferServiceServer interface {
 	// 根据 ID 删除单个任务
 	DeleteTask(context.Context, *TaskID) (*emptypb.Empty, error)
 	SubscribeQueueMsg(*TaskQueueID, FileTransferService_SubscribeQueueMsgServer) error
+	CreateTaskUploadFolder(context.Context, *TaskFolderReq) (*emptypb.Empty, error)
+	CreateTaskDownloadFolder(context.Context, *TaskFolderReq) (*emptypb.Empty, error)
 	mustEmbedUnimplementedFileTransferServiceServer()
 }
 
@@ -467,6 +491,12 @@ func (UnimplementedFileTransferServiceServer) DeleteTask(context.Context, *TaskI
 }
 func (UnimplementedFileTransferServiceServer) SubscribeQueueMsg(*TaskQueueID, FileTransferService_SubscribeQueueMsgServer) error {
 	return status.Errorf(codes.Unimplemented, "method SubscribeQueueMsg not implemented")
+}
+func (UnimplementedFileTransferServiceServer) CreateTaskUploadFolder(context.Context, *TaskFolderReq) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTaskUploadFolder not implemented")
+}
+func (UnimplementedFileTransferServiceServer) CreateTaskDownloadFolder(context.Context, *TaskFolderReq) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTaskDownloadFolder not implemented")
 }
 func (UnimplementedFileTransferServiceServer) mustEmbedUnimplementedFileTransferServiceServer() {}
 
@@ -805,6 +835,42 @@ func (x *fileTransferServiceSubscribeQueueMsgServer) Send(m *MiniMessageResp) er
 	return x.ServerStream.SendMsg(m)
 }
 
+func _FileTransferService_CreateTaskUploadFolder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskFolderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileTransferServiceServer).CreateTaskUploadFolder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FileTransferService_CreateTaskUploadFolder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileTransferServiceServer).CreateTaskUploadFolder(ctx, req.(*TaskFolderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FileTransferService_CreateTaskDownloadFolder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskFolderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileTransferServiceServer).CreateTaskDownloadFolder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FileTransferService_CreateTaskDownloadFolder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileTransferServiceServer).CreateTaskDownloadFolder(ctx, req.(*TaskFolderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FileTransferService_ServiceDesc is the grpc.ServiceDesc for FileTransferService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -855,6 +921,14 @@ var FileTransferService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteTask",
 			Handler:    _FileTransferService_DeleteTask_Handler,
+		},
+		{
+			MethodName: "CreateTaskUploadFolder",
+			Handler:    _FileTransferService_CreateTaskUploadFolder_Handler,
+		},
+		{
+			MethodName: "CreateTaskDownloadFolder",
+			Handler:    _FileTransferService_CreateTaskDownloadFolder_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

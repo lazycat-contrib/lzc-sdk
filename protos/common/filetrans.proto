@@ -193,6 +193,14 @@ message MiniMessageResp {
 
 message TaskQueueListResp { repeated TaskQueueID ids = 1; }
 
+// 上传文件夹的时候，src是http，dst是网盘中的相对路径。
+// 下载文件夹的时候，src是网盘中的相对路径，dst是http。
+message TaskFolderReq {
+  TaskQueueID id = 1;
+  string src = 2;
+  string dst = 3;
+}
+
 // hclient与hserver均实现此service
 // service FilePutService {}
 
@@ -245,4 +253,8 @@ service FileTransferService {
   rpc DeleteTask(TaskID) returns (google.protobuf.Empty) {}
 
   rpc SubscribeQueueMsg(TaskQueueID) returns (stream MiniMessageResp) {}
+
+  rpc CreateTaskUploadFolder(TaskFolderReq) returns (google.protobuf.Empty) {}
+
+  rpc CreateTaskDownloadFolder(TaskFolderReq) returns (google.protobuf.Empty) {}
 }
