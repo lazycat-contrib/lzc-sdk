@@ -43,6 +43,7 @@ type DeviceProxy struct {
 	PhotoLibrary localdevice.PhotoLibraryClient
 	Network      localdevice.NetworkManagerClient
 	Permission   localdevice.PermissionManagerClient
+	FileHandler  common.FileHandlerClient
 }
 
 func (d *DeviceProxy) GetAuthToken(ctx context.Context) (*AuthToken, error) {
@@ -79,6 +80,7 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 		PhotoLibrary: localdevice.NewPhotoLibraryClient(conn),
 		Network:      localdevice.NewNetworkManagerClient(conn),
 		Permission:   localdevice.NewPermissionManagerClient(conn),
+		FileHandler:  common.NewFileHandlerClient(conn),
 	}, nil
 }
 
