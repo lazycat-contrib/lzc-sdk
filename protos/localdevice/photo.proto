@@ -149,5 +149,5 @@ message ListAlbumsReply {
 }
 
 message ListPhotosReply {
-  repeated Album photos = 1;
+  repeated PhotoMeta photos = 1;
 }
