@@ -20,6 +20,9 @@ service PhotoLibrary {
   // 枚举具体相册中的图片元信息
   rpc ListPhotoMetas(ListPhotoMetasRequest) returns (stream PhotoMeta) {}
 
+  // 列举所有的系统图片
+  rpc ListPhotos(ListPhotoMetasRequest) returns (ListPhotosReply) {}
+
   rpc QueryPhoto(QueryPhotoRequest) returns (PhotoMeta) {}
 }
 
@@ -140,6 +143,11 @@ message ListAlbumsRequest {
    optional int32 thumbnail_height = 2;
    optional int32 thumbnail_choose_way = 3;
 }
+
 message ListAlbumsReply {
   repeated Album albums = 1;
+}
+
+message ListPhotosReply {
+  repeated Album photos = 1;
 }

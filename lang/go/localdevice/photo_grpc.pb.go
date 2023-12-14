@@ -24,6 +24,7 @@ const (
 	PhotoLibrary_PutPhoto_FullMethodName       = "/cloud.lazycat.apis.localdevice.PhotoLibrary/PutPhoto"
 	PhotoLibrary_DeletePhoto_FullMethodName    = "/cloud.lazycat.apis.localdevice.PhotoLibrary/DeletePhoto"
 	PhotoLibrary_ListPhotoMetas_FullMethodName = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListPhotoMetas"
+	PhotoLibrary_ListPhotos_FullMethodName     = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListPhotos"
 	PhotoLibrary_QueryPhoto_FullMethodName     = "/cloud.lazycat.apis.localdevice.PhotoLibrary/QueryPhoto"
 )
 
@@ -39,6 +40,8 @@ type PhotoLibraryClient interface {
 	DeletePhoto(ctx context.Context, in *DeletePhotoRequest, opts ...grpc.CallOption) (*DeletePhotoReply, error)
 	// 枚举具体相册中的图片元信息
 	ListPhotoMetas(ctx context.Context, in *ListPhotoMetasRequest, opts ...grpc.CallOption) (PhotoLibrary_ListPhotoMetasClient, error)
+	// 列举所有的系统图片
+	ListPhotos(ctx context.Context, in *ListPhotoMetasRequest, opts ...grpc.CallOption) (*ListPhotosReply, error)
 	QueryPhoto(ctx context.Context, in *QueryPhotoRequest, opts ...grpc.CallOption) (*PhotoMeta, error)
 }
 
@@ -141,6 +144,15 @@ func (x *photoLibraryListPhotoMetasClient) Recv() (*PhotoMeta, error) {
 	return m, nil
 }
 
+func (c *photoLibraryClient) ListPhotos(ctx context.Context, in *ListPhotoMetasRequest, opts ...grpc.CallOption) (*ListPhotosReply, error) {
+	out := new(ListPhotosReply)
+	err := c.cc.Invoke(ctx, PhotoLibrary_ListPhotos_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *photoLibraryClient) QueryPhoto(ctx context.Context, in *QueryPhotoRequest, opts ...grpc.CallOption) (*PhotoMeta, error) {
 	out := new(PhotoMeta)
 	err := c.cc.Invoke(ctx, PhotoLibrary_QueryPhoto_FullMethodName, in, out, opts...)
@@ -162,6 +174,8 @@ type PhotoLibraryServer interface {
 	DeletePhoto(context.Context, *DeletePhotoRequest) (*DeletePhotoReply, error)
 	// 枚举具体相册中的图片元信息
 	ListPhotoMetas(*ListPhotoMetasRequest, PhotoLibrary_ListPhotoMetasServer) error
+	// 列举所有的系统图片
+	ListPhotos(context.Context, *ListPhotoMetasRequest) (*ListPhotosReply, error)
 	QueryPhoto(context.Context, *QueryPhotoRequest) (*PhotoMeta, error)
 	mustEmbedUnimplementedPhotoLibraryServer()
 }
@@ -184,6 +198,9 @@ func (UnimplementedPhotoLibraryServer) DeletePhoto(context.Context, *DeletePhoto
 }
 func (UnimplementedPhotoLibraryServer) ListPhotoMetas(*ListPhotoMetasRequest, PhotoLibrary_ListPhotoMetasServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListPhotoMetas not implemented")
+}
+func (UnimplementedPhotoLibraryServer) ListPhotos(context.Context, *ListPhotoMetasRequest) (*ListPhotosReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListPhotos not implemented")
 }
 func (UnimplementedPhotoLibraryServer) QueryPhoto(context.Context, *QueryPhotoRequest) (*PhotoMeta, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryPhoto not implemented")
@@ -297,6 +314,24 @@ func (x *photoLibraryListPhotoMetasServer) Send(m *PhotoMeta) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _PhotoLibrary_ListPhotos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPhotoMetasRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PhotoLibraryServer).ListPhotos(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PhotoLibrary_ListPhotos_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PhotoLibraryServer).ListPhotos(ctx, req.(*ListPhotoMetasRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PhotoLibrary_QueryPhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryPhotoRequest)
 	if err := dec(in); err != nil {
@@ -333,6 +368,10 @@ var PhotoLibrary_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeletePhoto",
 			Handler:    _PhotoLibrary_DeletePhoto_Handler,
+		},
+		{
+			MethodName: "ListPhotos",
+			Handler:    _PhotoLibrary_ListPhotos_Handler,
 		},
 		{
 			MethodName: "QueryPhoto",
