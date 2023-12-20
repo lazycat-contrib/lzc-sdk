@@ -24,6 +24,7 @@ const (
 	PhotoLibrary_PutPhoto_FullMethodName       = "/cloud.lazycat.apis.localdevice.PhotoLibrary/PutPhoto"
 	PhotoLibrary_DeletePhoto_FullMethodName    = "/cloud.lazycat.apis.localdevice.PhotoLibrary/DeletePhoto"
 	PhotoLibrary_ListPhotoMetas_FullMethodName = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListPhotoMetas"
+	PhotoLibrary_ListAssets_FullMethodName     = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListAssets"
 	PhotoLibrary_ListPhotos_FullMethodName     = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListPhotos"
 	PhotoLibrary_QueryPhoto_FullMethodName     = "/cloud.lazycat.apis.localdevice.PhotoLibrary/QueryPhoto"
 )
@@ -38,8 +39,11 @@ type PhotoLibraryClient interface {
 	// 存储一张图片到某个相册中
 	PutPhoto(ctx context.Context, in *PutPhotoRequest, opts ...grpc.CallOption) (PhotoLibrary_PutPhotoClient, error)
 	DeletePhoto(ctx context.Context, in *DeletePhotoRequest, opts ...grpc.CallOption) (*DeletePhotoReply, error)
+	// Deprecated: Do not use.
 	// 枚举具体相册中的图片元信息
 	ListPhotoMetas(ctx context.Context, in *ListPhotoMetasRequest, opts ...grpc.CallOption) (PhotoLibrary_ListPhotoMetasClient, error)
+	// 枚举相册中的资源（视频 & 图片）列表
+	ListAssets(ctx context.Context, in *ListAssetsRequest, opts ...grpc.CallOption) (PhotoLibrary_ListAssetsClient, error)
 	// 列举所有的系统图片
 	ListPhotos(ctx context.Context, in *ListPhotoMetasRequest, opts ...grpc.CallOption) (*ListPhotosReply, error)
 	QueryPhoto(ctx context.Context, in *QueryPhotoRequest, opts ...grpc.CallOption) (*PhotoMeta, error)
@@ -112,6 +116,7 @@ func (c *photoLibraryClient) DeletePhoto(ctx context.Context, in *DeletePhotoReq
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *photoLibraryClient) ListPhotoMetas(ctx context.Context, in *ListPhotoMetasRequest, opts ...grpc.CallOption) (PhotoLibrary_ListPhotoMetasClient, error) {
 	stream, err := c.cc.NewStream(ctx, &PhotoLibrary_ServiceDesc.Streams[1], PhotoLibrary_ListPhotoMetas_FullMethodName, opts...)
 	if err != nil {
@@ -137,6 +142,38 @@ type photoLibraryListPhotoMetasClient struct {
 }
 
 func (x *photoLibraryListPhotoMetasClient) Recv() (*PhotoMeta, error) {
+	m := new(PhotoMeta)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *photoLibraryClient) ListAssets(ctx context.Context, in *ListAssetsRequest, opts ...grpc.CallOption) (PhotoLibrary_ListAssetsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PhotoLibrary_ServiceDesc.Streams[2], PhotoLibrary_ListAssets_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &photoLibraryListAssetsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PhotoLibrary_ListAssetsClient interface {
+	Recv() (*PhotoMeta, error)
+	grpc.ClientStream
+}
+
+type photoLibraryListAssetsClient struct {
+	grpc.ClientStream
+}
+
+func (x *photoLibraryListAssetsClient) Recv() (*PhotoMeta, error) {
 	m := new(PhotoMeta)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -172,8 +209,11 @@ type PhotoLibraryServer interface {
 	// 存储一张图片到某个相册中
 	PutPhoto(*PutPhotoRequest, PhotoLibrary_PutPhotoServer) error
 	DeletePhoto(context.Context, *DeletePhotoRequest) (*DeletePhotoReply, error)
+	// Deprecated: Do not use.
 	// 枚举具体相册中的图片元信息
 	ListPhotoMetas(*ListPhotoMetasRequest, PhotoLibrary_ListPhotoMetasServer) error
+	// 枚举相册中的资源（视频 & 图片）列表
+	ListAssets(*ListAssetsRequest, PhotoLibrary_ListAssetsServer) error
 	// 列举所有的系统图片
 	ListPhotos(context.Context, *ListPhotoMetasRequest) (*ListPhotosReply, error)
 	QueryPhoto(context.Context, *QueryPhotoRequest) (*PhotoMeta, error)
@@ -198,6 +238,9 @@ func (UnimplementedPhotoLibraryServer) DeletePhoto(context.Context, *DeletePhoto
 }
 func (UnimplementedPhotoLibraryServer) ListPhotoMetas(*ListPhotoMetasRequest, PhotoLibrary_ListPhotoMetasServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListPhotoMetas not implemented")
+}
+func (UnimplementedPhotoLibraryServer) ListAssets(*ListAssetsRequest, PhotoLibrary_ListAssetsServer) error {
+	return status.Errorf(codes.Unimplemented, "method ListAssets not implemented")
 }
 func (UnimplementedPhotoLibraryServer) ListPhotos(context.Context, *ListPhotoMetasRequest) (*ListPhotosReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPhotos not implemented")
@@ -314,6 +357,27 @@ func (x *photoLibraryListPhotoMetasServer) Send(m *PhotoMeta) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _PhotoLibrary_ListAssets_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ListAssetsRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PhotoLibraryServer).ListAssets(m, &photoLibraryListAssetsServer{stream})
+}
+
+type PhotoLibrary_ListAssetsServer interface {
+	Send(*PhotoMeta) error
+	grpc.ServerStream
+}
+
+type photoLibraryListAssetsServer struct {
+	grpc.ServerStream
+}
+
+func (x *photoLibraryListAssetsServer) Send(m *PhotoMeta) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 func _PhotoLibrary_ListPhotos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListPhotoMetasRequest)
 	if err := dec(in); err != nil {
@@ -387,6 +451,11 @@ var PhotoLibrary_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "ListPhotoMetas",
 			Handler:       _PhotoLibrary_ListPhotoMetas_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "ListAssets",
+			Handler:       _PhotoLibrary_ListAssets_Handler,
 			ServerStreams: true,
 		},
 	},

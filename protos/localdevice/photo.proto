@@ -18,7 +18,12 @@ service PhotoLibrary {
   rpc DeletePhoto(DeletePhotoRequest) returns (DeletePhotoReply) {}
 
   // 枚举具体相册中的图片元信息
-  rpc ListPhotoMetas(ListPhotoMetasRequest) returns (stream PhotoMeta) {}
+  rpc ListPhotoMetas(ListPhotoMetasRequest) returns (stream PhotoMeta) {
+    option deprecated = true;
+  }
+
+  // 枚举相册中的资源（视频 & 图片）列表
+  rpc ListAssets(ListAssetsRequest) returns (stream PhotoMeta) {}
 
   // 列举所有的系统图片
   rpc ListPhotos(ListPhotoMetasRequest) returns (ListPhotosReply) {}
@@ -28,7 +33,6 @@ service PhotoLibrary {
 
 // 查询照片信息的排序方式
 enum PhotoMetasSortType{
-
   // 创建时间降序
   CREATE_DATE_DESC = 0;
   // 拍照时间降序
@@ -46,6 +50,19 @@ enum PhotoMetasSortType{
  // 拍摄时间，创建时间升序
   TOKEN_CREATE_ASC = 7;
 }
+
+// 查询照片信息的排序方式
+enum ListAssetsSortType {
+    // 创建时间降序
+    ASSETS_CREATE_DATE_DESC = 0;
+    // 创建时间升序
+    ASSETS_CREATE_DATE_ASC = 1;    
+    // 时间线降序
+    ASSETS_TIMELINE_DATE_DESC  = 2;
+    // 时间线降序
+    ASSETS_TIMELINE_DATE_ASC  = 3;   
+}
+
 message QueryPhotoHashRequest {
   // changed_after语义为: changed_after之后的新增文件都会加入返回的集合里,
   // 与文件本身的modify time无关。
@@ -108,6 +125,19 @@ message ListPhotoMetasRequest {
   optional bool is_filter_video = 9;
   // 给定文件的修改时间过滤meta信息返回
   optional google.protobuf.Timestamp filter_by_modified_date = 10 ;
+}
+
+message ListAssetsRequest {
+    // 相册ID， 若为空，则表示返回所有相册中的图片
+    repeated string album_ids = 1;
+    // 是否过滤视频 （默认false,照片和视频信息一起返回)
+    optional bool is_filter_video = 2;
+    // 排序方法
+    optional ListAssetsSortType sort_by = 3;
+    // 给定指定日期后的资源，为空表示获取全部
+    optional google.protobuf.Timestamp start_date = 4;
+
+    // tisp: 默认缩略图大小 100*100
 }
 
 message PhotoMeta {
