@@ -34,14 +34,15 @@ export class GrpcWebImpl {
   }
 
   unary<T extends UnaryMethodDefinitionish>(methodDesc: T, _request: any, metadata: grpc.Metadata | undefined): Promise<any> {
-    const request = { ..._request, ...methodDesc.requestType }
+    const request = {..._request, ...methodDesc.requestType}
     const maybeCombinedMetadata =
-      metadata && this.options.metadata
-        ? new BrowserHeaders({
-            ...this.options?.metadata.headersMap,
-            ...metadata?.headersMap,
-          })
-        : metadata || this.options.metadata
+        metadata && this.options.metadata
+            ? new BrowserHeaders({
+              ...this.options?.metadata.headersMap,
+              ...metadata?.headersMap,
+            })
+            : metadata || this.options.metadata
+    this.addExtHeaders(maybeCombinedMetadata);
     return new Promise((resolve, reject) => {
       let that = this
       grpc.unary(methodDesc, {
@@ -81,6 +82,10 @@ export class GrpcWebImpl {
     })
   }
 
+  private addExtHeaders(meta: BrowserHeaders) {
+    meta.set("x-request-time", new Date().getTime() + "")
+  }
+
   invoke<T extends UnaryMethodDefinitionish>(methodDesc: T, _request: any, metadata: grpc.Metadata | undefined): Observable<any> {
     const request = { ..._request, ...methodDesc.requestType }
     const maybeCombinedMetadata =
@@ -90,6 +95,7 @@ export class GrpcWebImpl {
             ...metadata?.headersMap,
           })
         : metadata || this.options.metadata
+    this.addExtHeaders(maybeCombinedMetadata)
     return new Observable(observer => {
       const upStream = () => {
         const client = grpc.invoke(methodDesc, {
