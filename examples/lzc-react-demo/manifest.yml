@@ -1,8 +1,8 @@
 lzc-sdk-version: 0.1
-package: lzc-react-demo
-version: 0.0.1
-name: react-demo
+package: cloud.lazycat.apps.sdk
+version: 0.0.0
+name: 懒猫微服SDK调试
 application:
-  subdomain: lzc-react-demo
+  subdomain: sdk
   routes:
     - /=file:///lzcapp/pkg/content/

@@ -3,10 +3,10 @@ import reactLogo from './assets/react.svg';
 import './App.css';
 import { LoadingIcon } from 'tdesign-icons-react';
 // import { firstValueFrom } from 'rxjs';
-import { lzcAPIGateway, EndDeviceProxy } from '@lazycatcloud/sdk';
-import { ListAlbumsReply, PhotoMeta } from '@lazycatcloud/sdk/dist/localdevice/photo';
-import { DeviceInfo } from '@lazycatcloud/sdk/dist/localdevice/device';
-import { Permission } from '@lazycatcloud/sdk/dist/localdevice/permission';
+import { lzcAPIGateway, EndDeviceProxy } from '@lazycatcloud/sdk/index';
+import { ListAlbumsReply, PhotoMeta } from '@lazycatcloud/sdk/localdevice/photo';
+import { DeviceInfo } from '@lazycatcloud/sdk/localdevice/device';
+import { Permission } from '@lazycatcloud/sdk/localdevice/permission';
 
 function App() {
     const [loading, setLoading] = useState(false);
@@ -28,7 +28,8 @@ function App() {
     useEffect(() => {
         if (!lzcAPI.current) {
             lzcAPI.current = new lzcAPIGateway();
-
+            // @ts-ignore
+            window.ll = lzcAPI.current
             // 调试
             // getAlbumsDebug();
         }
@@ -406,6 +407,15 @@ function App() {
                         }}
                     >
                         File Open Handler
+                    </button>
+
+                    <button
+                        style={{ marginTop: 10 }}
+                        onClick={async () => {
+                            console.log(await lzcAPI.current?.currentDevice)
+                        }}
+                    >
+                        getCurrentDevice
                     </button>
                 </div>
 

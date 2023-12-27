@@ -1,4 +1,9 @@
 buildscript: npm run build
 manifest: ./manifest.yml
+icon: ./icon.png
 contentdir: ./dist
 pkgout: ./
+devshell:
+  image: alpine:3.18
+  routes:
+    - /=http://${LocalIP}:5171

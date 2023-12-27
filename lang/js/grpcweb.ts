@@ -83,7 +83,8 @@ export class GrpcWebImpl {
   }
 
   private addExtHeaders(meta: BrowserHeaders) {
-    meta.set("x-request-time", new Date().getTime() + "")
+    // meta可能不存在
+    meta?.set("x-request-time", new Date().getTime() + "")
   }
 
   invoke<T extends UnaryMethodDefinitionish>(methodDesc: T, _request: any, metadata: grpc.Metadata | undefined): Observable<any> {

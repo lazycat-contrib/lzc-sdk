@@ -108,13 +108,15 @@ export class lzcAPIGateway {
 
   public authToken: string
   public get session(): Promise<SessionInfo> {
-    return new Promise<SessionInfo>(async res => {
+    return new Promise<SessionInfo>(res => {
       this._session = this.bo.QuerySessionInfo({})
       res(this._session)
     })
   }
+
   public get currentDevice(): Promise<EndDeviceProxy> {
-    if (this._currentDevice && Date.now() > this.deviceApiTokenDeadline) {
+    // 有设备 且 当前时间 小于 过期时间
+    if (this._currentDevice && Date.now() < this.deviceApiTokenDeadline) {
       return new Promise(res => res(this._currentDevice))
     }
 
@@ -122,6 +124,7 @@ export class lzcAPIGateway {
       const url = (await cc.currentDeviceURL(cc)).toString().replace(/\/+$/, "")
       return url
     }
+
     async function requestAuthToken(cc: lzcAPIGateway, deviceApiUrl: string): Promise<string> {
       const resp = await fetch(cc.host + "/_lzc/deviceapi_auth_token", {
         method: "POST",
@@ -149,17 +152,11 @@ export class lzcAPIGateway {
       // build grpc metadata for credentials
       const metadata = new grpc.Metadata()
       metadata.set("lzc_dapi_auth_token", authToken)
-
       const rpc = new GrpcWebImpl(deviceApiUrl, { ...opt, ...{ metadata: metadata } })
       this._currentDevice = new EndDeviceProxy(rpc)
       res(this._currentDevice)
     })
   }
-}
-
-async function test() {
-  let cc = new lzcAPIGateway()
-  cc.openDevices()
 }
 
 export class EndDeviceProxy {
