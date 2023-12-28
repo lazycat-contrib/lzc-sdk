@@ -29,14 +29,19 @@ service PhotoLibrary {
   rpc ListPhotos(ListPhotoMetasRequest) returns (ListPhotosReply) {}
 
   rpc QueryPhoto(QueryPhotoRequest) returns (PhotoMeta) {}
+  // 查询指定条件的的图片id信息
+  rpc ListAssetStats(ListAssetsRequest) returns (stream ListAssetIdsReply) {}
+  // 查询指定条件的的图片
+  rpc ListAssetsByIds(ListAssetsByIdsRequest)returns (stream PhotoMeta) {}
 }
+
 
 // 查询照片信息的排序方式
 enum PhotoMetasSortType{
   // 创建时间降序
   CREATE_DATE_DESC = 0;
   // 拍照时间降序
-  TAKEN_DATE_DESC  = 1;
+  TAKEN_DATE_DESC = 1;
   // 创建时间升序
   CREATE_DATE_ASC = 2;
   // 拍摄时间升序
@@ -47,20 +52,20 @@ enum PhotoMetasSortType{
   CREATE_TAKEN_ASC = 5;
   // 拍摄时间，创建时间 降序
   TOKEN_CREATE_DESC = 6;
- // 拍摄时间，创建时间升序
+  // 拍摄时间，创建时间升序
   TOKEN_CREATE_ASC = 7;
 }
 
 // 查询照片信息的排序方式
 enum ListAssetsSortType {
-    // 创建时间降序
-    ASSETS_CREATE_DATE_DESC = 0;
-    // 创建时间升序
-    ASSETS_CREATE_DATE_ASC = 1;    
-    // 时间线降序
-    ASSETS_TIMELINE_DATE_DESC  = 2;
-    // 时间线降序
-    ASSETS_TIMELINE_DATE_ASC  = 3;   
+  // 创建时间降序
+  ASSETS_CREATE_DATE_DESC = 0;
+  // 创建时间升序
+  ASSETS_CREATE_DATE_ASC = 1;
+  // 时间线降序
+  ASSETS_TIMELINE_DATE_DESC = 2;
+  // 时间线降序
+  ASSETS_TIMELINE_DATE_ASC = 3;
 }
 
 message QueryPhotoHashRequest {
@@ -128,16 +133,15 @@ message ListPhotoMetasRequest {
 }
 
 message ListAssetsRequest {
-    // 相册ID， 若为空，则表示返回所有相册中的图片
-    repeated string album_ids = 1;
-    // 是否过滤视频 （默认false,照片和视频信息一起返回)
-    optional bool is_filter_video = 2;
-    // 排序方法
-    optional ListAssetsSortType sort_by = 3;
-    // 给定指定日期后的资源，为空表示获取全部
-    optional google.protobuf.Timestamp start_date = 4;
+  // 相册ID， 若为空，则表示返回所有相册中的图片
+  repeated string album_ids = 1;
+  // 是否过滤视频 （默认false,照片和视频信息一起返回)
+  optional bool is_filter_video = 2;
+  // 排序方法
+  optional ListAssetsSortType sort_by = 3;
+  // 给定指定日期后的资源，为空表示获取全部
+  optional google.protobuf.Timestamp start_date = 4;
 
-    // tisp: 默认缩略图大小 100*100
 }
 
 message PhotoMeta {
@@ -169,9 +173,9 @@ message Album {
 }
 
 message ListAlbumsRequest {
-   optional int32 thumbnail_width = 1;
-   optional int32 thumbnail_height = 2;
-   optional int32 thumbnail_choose_way = 3;
+  optional int32 thumbnail_width = 1;
+  optional int32 thumbnail_height = 2;
+  optional int32 thumbnail_choose_way = 3;
 }
 
 message ListAlbumsReply {
@@ -180,4 +184,21 @@ message ListAlbumsReply {
 
 message ListPhotosReply {
   repeated PhotoMeta photos = 1;
+}
+
+message ListAssetIdsRequest{
+  // 是否过滤视频 （默认false,照片和视频信息一起返回)
+  optional bool is_filter_video = 1;
+  // 排序方法
+  optional ListAssetsSortType sort_by = 3;
+}
+
+message ListAssetIdsReply{
+  string id = 1;
+  google.protobuf.Timestamp  date = 2;
+  string mime = 3;
+}
+message ListAssetsByIdsRequest{
+  repeated string ids = 1;
+  ListAssetsSortType sort_by = 2;
 }

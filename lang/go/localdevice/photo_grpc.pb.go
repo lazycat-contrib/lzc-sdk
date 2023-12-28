@@ -19,14 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PhotoLibrary_MakeAlbum_FullMethodName      = "/cloud.lazycat.apis.localdevice.PhotoLibrary/MakeAlbum"
-	PhotoLibrary_ListAlbums_FullMethodName     = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListAlbums"
-	PhotoLibrary_PutPhoto_FullMethodName       = "/cloud.lazycat.apis.localdevice.PhotoLibrary/PutPhoto"
-	PhotoLibrary_DeletePhoto_FullMethodName    = "/cloud.lazycat.apis.localdevice.PhotoLibrary/DeletePhoto"
-	PhotoLibrary_ListPhotoMetas_FullMethodName = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListPhotoMetas"
-	PhotoLibrary_ListAssets_FullMethodName     = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListAssets"
-	PhotoLibrary_ListPhotos_FullMethodName     = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListPhotos"
-	PhotoLibrary_QueryPhoto_FullMethodName     = "/cloud.lazycat.apis.localdevice.PhotoLibrary/QueryPhoto"
+	PhotoLibrary_MakeAlbum_FullMethodName       = "/cloud.lazycat.apis.localdevice.PhotoLibrary/MakeAlbum"
+	PhotoLibrary_ListAlbums_FullMethodName      = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListAlbums"
+	PhotoLibrary_PutPhoto_FullMethodName        = "/cloud.lazycat.apis.localdevice.PhotoLibrary/PutPhoto"
+	PhotoLibrary_DeletePhoto_FullMethodName     = "/cloud.lazycat.apis.localdevice.PhotoLibrary/DeletePhoto"
+	PhotoLibrary_ListPhotoMetas_FullMethodName  = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListPhotoMetas"
+	PhotoLibrary_ListAssets_FullMethodName      = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListAssets"
+	PhotoLibrary_ListPhotos_FullMethodName      = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListPhotos"
+	PhotoLibrary_QueryPhoto_FullMethodName      = "/cloud.lazycat.apis.localdevice.PhotoLibrary/QueryPhoto"
+	PhotoLibrary_ListAssetStats_FullMethodName  = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListAssetStats"
+	PhotoLibrary_ListAssetsByIds_FullMethodName = "/cloud.lazycat.apis.localdevice.PhotoLibrary/ListAssetsByIds"
 )
 
 // PhotoLibraryClient is the client API for PhotoLibrary service.
@@ -47,6 +49,10 @@ type PhotoLibraryClient interface {
 	// 列举所有的系统图片
 	ListPhotos(ctx context.Context, in *ListPhotoMetasRequest, opts ...grpc.CallOption) (*ListPhotosReply, error)
 	QueryPhoto(ctx context.Context, in *QueryPhotoRequest, opts ...grpc.CallOption) (*PhotoMeta, error)
+	// 查询指定条件的的图片id信息
+	ListAssetStats(ctx context.Context, in *ListAssetsRequest, opts ...grpc.CallOption) (PhotoLibrary_ListAssetStatsClient, error)
+	// 查询指定条件的的图片
+	ListAssetsByIds(ctx context.Context, in *ListAssetsByIdsRequest, opts ...grpc.CallOption) (PhotoLibrary_ListAssetsByIdsClient, error)
 }
 
 type photoLibraryClient struct {
@@ -199,6 +205,70 @@ func (c *photoLibraryClient) QueryPhoto(ctx context.Context, in *QueryPhotoReque
 	return out, nil
 }
 
+func (c *photoLibraryClient) ListAssetStats(ctx context.Context, in *ListAssetsRequest, opts ...grpc.CallOption) (PhotoLibrary_ListAssetStatsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PhotoLibrary_ServiceDesc.Streams[3], PhotoLibrary_ListAssetStats_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &photoLibraryListAssetStatsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PhotoLibrary_ListAssetStatsClient interface {
+	Recv() (*ListAssetIdsReply, error)
+	grpc.ClientStream
+}
+
+type photoLibraryListAssetStatsClient struct {
+	grpc.ClientStream
+}
+
+func (x *photoLibraryListAssetStatsClient) Recv() (*ListAssetIdsReply, error) {
+	m := new(ListAssetIdsReply)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *photoLibraryClient) ListAssetsByIds(ctx context.Context, in *ListAssetsByIdsRequest, opts ...grpc.CallOption) (PhotoLibrary_ListAssetsByIdsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PhotoLibrary_ServiceDesc.Streams[4], PhotoLibrary_ListAssetsByIds_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &photoLibraryListAssetsByIdsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PhotoLibrary_ListAssetsByIdsClient interface {
+	Recv() (*PhotoMeta, error)
+	grpc.ClientStream
+}
+
+type photoLibraryListAssetsByIdsClient struct {
+	grpc.ClientStream
+}
+
+func (x *photoLibraryListAssetsByIdsClient) Recv() (*PhotoMeta, error) {
+	m := new(PhotoMeta)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // PhotoLibraryServer is the server API for PhotoLibrary service.
 // All implementations must embed UnimplementedPhotoLibraryServer
 // for forward compatibility
@@ -217,6 +287,10 @@ type PhotoLibraryServer interface {
 	// 列举所有的系统图片
 	ListPhotos(context.Context, *ListPhotoMetasRequest) (*ListPhotosReply, error)
 	QueryPhoto(context.Context, *QueryPhotoRequest) (*PhotoMeta, error)
+	// 查询指定条件的的图片id信息
+	ListAssetStats(*ListAssetsRequest, PhotoLibrary_ListAssetStatsServer) error
+	// 查询指定条件的的图片
+	ListAssetsByIds(*ListAssetsByIdsRequest, PhotoLibrary_ListAssetsByIdsServer) error
 	mustEmbedUnimplementedPhotoLibraryServer()
 }
 
@@ -247,6 +321,12 @@ func (UnimplementedPhotoLibraryServer) ListPhotos(context.Context, *ListPhotoMet
 }
 func (UnimplementedPhotoLibraryServer) QueryPhoto(context.Context, *QueryPhotoRequest) (*PhotoMeta, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryPhoto not implemented")
+}
+func (UnimplementedPhotoLibraryServer) ListAssetStats(*ListAssetsRequest, PhotoLibrary_ListAssetStatsServer) error {
+	return status.Errorf(codes.Unimplemented, "method ListAssetStats not implemented")
+}
+func (UnimplementedPhotoLibraryServer) ListAssetsByIds(*ListAssetsByIdsRequest, PhotoLibrary_ListAssetsByIdsServer) error {
+	return status.Errorf(codes.Unimplemented, "method ListAssetsByIds not implemented")
 }
 func (UnimplementedPhotoLibraryServer) mustEmbedUnimplementedPhotoLibraryServer() {}
 
@@ -414,6 +494,48 @@ func _PhotoLibrary_QueryPhoto_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PhotoLibrary_ListAssetStats_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ListAssetsRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PhotoLibraryServer).ListAssetStats(m, &photoLibraryListAssetStatsServer{stream})
+}
+
+type PhotoLibrary_ListAssetStatsServer interface {
+	Send(*ListAssetIdsReply) error
+	grpc.ServerStream
+}
+
+type photoLibraryListAssetStatsServer struct {
+	grpc.ServerStream
+}
+
+func (x *photoLibraryListAssetStatsServer) Send(m *ListAssetIdsReply) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _PhotoLibrary_ListAssetsByIds_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ListAssetsByIdsRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PhotoLibraryServer).ListAssetsByIds(m, &photoLibraryListAssetsByIdsServer{stream})
+}
+
+type PhotoLibrary_ListAssetsByIdsServer interface {
+	Send(*PhotoMeta) error
+	grpc.ServerStream
+}
+
+type photoLibraryListAssetsByIdsServer struct {
+	grpc.ServerStream
+}
+
+func (x *photoLibraryListAssetsByIdsServer) Send(m *PhotoMeta) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // PhotoLibrary_ServiceDesc is the grpc.ServiceDesc for PhotoLibrary service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -456,6 +578,16 @@ var PhotoLibrary_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "ListAssets",
 			Handler:       _PhotoLibrary_ListAssets_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "ListAssetStats",
+			Handler:       _PhotoLibrary_ListAssetStats_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "ListAssetsByIds",
+			Handler:       _PhotoLibrary_ListAssetsByIds_Handler,
 			ServerStreams: true,
 		},
 	},
