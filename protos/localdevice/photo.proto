@@ -30,7 +30,7 @@ service PhotoLibrary {
 
   rpc QueryPhoto(QueryPhotoRequest) returns (PhotoMeta) {}
   // 查询指定条件的的图片id信息
-  rpc ListAssetStats(ListAssetsRequest) returns (stream ListAssetIdsReply) {}
+  rpc ListAssetStats(ListAssetStatsRequest) returns (stream ListAssetStatsReply) {}
   // 查询指定条件的的图片
   rpc ListAssetsByIds(ListAssetsByIdsRequest)returns (stream PhotoMeta) {}
 }
@@ -186,14 +186,16 @@ message ListPhotosReply {
   repeated PhotoMeta photos = 1;
 }
 
-message ListAssetIdsRequest{
+message ListAssetStatsRequest{
   // 是否过滤视频 （默认false,照片和视频信息一起返回)
   optional bool is_filter_video = 1;
   // 排序方法
-  optional ListAssetsSortType sort_by = 3;
+  optional ListAssetsSortType sort_by = 2;
+
+  optional google.protobuf.Timestamp start_date = 3;
 }
 
-message ListAssetIdsReply{
+message ListAssetStatsReply{
   string id = 1;
   google.protobuf.Timestamp  date = 2;
   string mime = 3;

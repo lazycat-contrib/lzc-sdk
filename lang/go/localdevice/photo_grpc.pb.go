@@ -50,7 +50,7 @@ type PhotoLibraryClient interface {
 	ListPhotos(ctx context.Context, in *ListPhotoMetasRequest, opts ...grpc.CallOption) (*ListPhotosReply, error)
 	QueryPhoto(ctx context.Context, in *QueryPhotoRequest, opts ...grpc.CallOption) (*PhotoMeta, error)
 	// 查询指定条件的的图片id信息
-	ListAssetStats(ctx context.Context, in *ListAssetsRequest, opts ...grpc.CallOption) (PhotoLibrary_ListAssetStatsClient, error)
+	ListAssetStats(ctx context.Context, in *ListAssetStatsRequest, opts ...grpc.CallOption) (PhotoLibrary_ListAssetStatsClient, error)
 	// 查询指定条件的的图片
 	ListAssetsByIds(ctx context.Context, in *ListAssetsByIdsRequest, opts ...grpc.CallOption) (PhotoLibrary_ListAssetsByIdsClient, error)
 }
@@ -205,7 +205,7 @@ func (c *photoLibraryClient) QueryPhoto(ctx context.Context, in *QueryPhotoReque
 	return out, nil
 }
 
-func (c *photoLibraryClient) ListAssetStats(ctx context.Context, in *ListAssetsRequest, opts ...grpc.CallOption) (PhotoLibrary_ListAssetStatsClient, error) {
+func (c *photoLibraryClient) ListAssetStats(ctx context.Context, in *ListAssetStatsRequest, opts ...grpc.CallOption) (PhotoLibrary_ListAssetStatsClient, error) {
 	stream, err := c.cc.NewStream(ctx, &PhotoLibrary_ServiceDesc.Streams[3], PhotoLibrary_ListAssetStats_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
@@ -221,7 +221,7 @@ func (c *photoLibraryClient) ListAssetStats(ctx context.Context, in *ListAssetsR
 }
 
 type PhotoLibrary_ListAssetStatsClient interface {
-	Recv() (*ListAssetIdsReply, error)
+	Recv() (*ListAssetStatsReply, error)
 	grpc.ClientStream
 }
 
@@ -229,8 +229,8 @@ type photoLibraryListAssetStatsClient struct {
 	grpc.ClientStream
 }
 
-func (x *photoLibraryListAssetStatsClient) Recv() (*ListAssetIdsReply, error) {
-	m := new(ListAssetIdsReply)
+func (x *photoLibraryListAssetStatsClient) Recv() (*ListAssetStatsReply, error) {
+	m := new(ListAssetStatsReply)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -288,7 +288,7 @@ type PhotoLibraryServer interface {
 	ListPhotos(context.Context, *ListPhotoMetasRequest) (*ListPhotosReply, error)
 	QueryPhoto(context.Context, *QueryPhotoRequest) (*PhotoMeta, error)
 	// 查询指定条件的的图片id信息
-	ListAssetStats(*ListAssetsRequest, PhotoLibrary_ListAssetStatsServer) error
+	ListAssetStats(*ListAssetStatsRequest, PhotoLibrary_ListAssetStatsServer) error
 	// 查询指定条件的的图片
 	ListAssetsByIds(*ListAssetsByIdsRequest, PhotoLibrary_ListAssetsByIdsServer) error
 	mustEmbedUnimplementedPhotoLibraryServer()
@@ -322,7 +322,7 @@ func (UnimplementedPhotoLibraryServer) ListPhotos(context.Context, *ListPhotoMet
 func (UnimplementedPhotoLibraryServer) QueryPhoto(context.Context, *QueryPhotoRequest) (*PhotoMeta, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryPhoto not implemented")
 }
-func (UnimplementedPhotoLibraryServer) ListAssetStats(*ListAssetsRequest, PhotoLibrary_ListAssetStatsServer) error {
+func (UnimplementedPhotoLibraryServer) ListAssetStats(*ListAssetStatsRequest, PhotoLibrary_ListAssetStatsServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListAssetStats not implemented")
 }
 func (UnimplementedPhotoLibraryServer) ListAssetsByIds(*ListAssetsByIdsRequest, PhotoLibrary_ListAssetsByIdsServer) error {
@@ -495,7 +495,7 @@ func _PhotoLibrary_QueryPhoto_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _PhotoLibrary_ListAssetStats_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ListAssetsRequest)
+	m := new(ListAssetStatsRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
@@ -503,7 +503,7 @@ func _PhotoLibrary_ListAssetStats_Handler(srv interface{}, stream grpc.ServerStr
 }
 
 type PhotoLibrary_ListAssetStatsServer interface {
-	Send(*ListAssetIdsReply) error
+	Send(*ListAssetStatsReply) error
 	grpc.ServerStream
 }
 
@@ -511,7 +511,7 @@ type photoLibraryListAssetStatsServer struct {
 	grpc.ServerStream
 }
 
-func (x *photoLibraryListAssetStatsServer) Send(m *ListAssetIdsReply) error {
+func (x *photoLibraryListAssetStatsServer) Send(m *ListAssetStatsReply) error {
 	return x.ServerStream.SendMsg(m)
 }
 
