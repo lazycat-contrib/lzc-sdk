@@ -22,9 +22,6 @@ service PhotoLibrary {
     option deprecated = true;
   }
 
-  // 枚举相册中的资源（视频 & 图片）列表
-  rpc ListAssets(ListAssetsRequest) returns (stream PhotoMeta) {}
-
   // 列举所有的系统图片
   rpc ListPhotos(ListPhotoMetasRequest) returns (ListPhotosReply) {}
 
@@ -130,18 +127,6 @@ message ListPhotoMetasRequest {
   optional bool is_filter_video = 9;
   // 给定文件的修改时间过滤meta信息返回
   optional google.protobuf.Timestamp filter_by_modified_date = 10 ;
-}
-
-message ListAssetsRequest {
-  // 相册ID， 若为空，则表示返回所有相册中的图片
-  repeated string album_ids = 1;
-  // 是否过滤视频 （默认false,照片和视频信息一起返回)
-  optional bool is_filter_video = 2;
-  // 排序方法
-  optional ListAssetsSortType sort_by = 3;
-  // 给定指定日期后的资源，为空表示获取全部
-  optional google.protobuf.Timestamp start_date = 4;
-
 }
 
 message PhotoMeta {
