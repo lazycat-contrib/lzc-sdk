@@ -185,9 +185,9 @@ message ListAlbumsReply {
 
 message ListAssetStatsRequest{
   // 是否过滤视频 （默认false,照片和视频信息一起返回)
-  optional bool is_filter_video = 1;
+  bool is_filter_video = 1;
   // 排序方法
-  optional ListAssetsSortType sort_by = 2;
+  ListAssetsSortType sort_by = 2;
 
   optional google.protobuf.Timestamp start_date = 3;
 }
@@ -195,7 +195,7 @@ message ListAssetStatsRequest{
 message ListAssetStatsReply{
   string id = 1;
   google.protobuf.Timestamp  date = 2;
-  string mime = 3;
+  optional string mime = 3;
 }
 message ListAssetsByIdsRequest{
   repeated string ids = 1;
@@ -203,6 +203,6 @@ message ListAssetsByIdsRequest{
 }
 
 message QueryAssetUrlPathReply{
-   string asset_url = 1;
-   string thumbnail_url = 2;
+  string asset_url = 1;
+  string thumbnail_url = 2;
 }
