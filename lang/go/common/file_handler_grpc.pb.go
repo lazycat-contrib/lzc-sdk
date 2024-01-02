@@ -24,6 +24,7 @@ const (
 	FileHandler_Open_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/open"
 	FileHandler_OpenFileManager_FullMethodName = "/cloud.lazycat.apis.common.FileHandler/openFileManager"
 	FileHandler_WalkDir_FullMethodName         = "/cloud.lazycat.apis.common.FileHandler/walkDir"
+	FileHandler_CreateDir_FullMethodName       = "/cloud.lazycat.apis.common.FileHandler/createDir"
 )
 
 // FileHandlerClient is the client API for FileHandler service.
@@ -35,6 +36,7 @@ type FileHandlerClient interface {
 	OpenFileManager(ctx context.Context, in *OpenFileManagerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列出目录结构
 	WalkDir(ctx context.Context, in *WalkDirRequest, opts ...grpc.CallOption) (FileHandler_WalkDirClient, error)
+	CreateDir(ctx context.Context, opts ...grpc.CallOption) (FileHandler_CreateDirClient, error)
 }
 
 type fileHandlerClient struct {
@@ -104,6 +106,40 @@ func (x *fileHandlerWalkDirClient) Recv() (*WalkDirReply, error) {
 	return m, nil
 }
 
+func (c *fileHandlerClient) CreateDir(ctx context.Context, opts ...grpc.CallOption) (FileHandler_CreateDirClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[1], FileHandler_CreateDir_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &fileHandlerCreateDirClient{stream}
+	return x, nil
+}
+
+type FileHandler_CreateDirClient interface {
+	Send(*CreateDirRequest) error
+	CloseAndRecv() (*emptypb.Empty, error)
+	grpc.ClientStream
+}
+
+type fileHandlerCreateDirClient struct {
+	grpc.ClientStream
+}
+
+func (x *fileHandlerCreateDirClient) Send(m *CreateDirRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *fileHandlerCreateDirClient) CloseAndRecv() (*emptypb.Empty, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(emptypb.Empty)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // FileHandlerServer is the server API for FileHandler service.
 // All implementations must embed UnimplementedFileHandlerServer
 // for forward compatibility
@@ -113,6 +149,7 @@ type FileHandlerServer interface {
 	OpenFileManager(context.Context, *OpenFileManagerRequest) (*emptypb.Empty, error)
 	// 列出目录结构
 	WalkDir(*WalkDirRequest, FileHandler_WalkDirServer) error
+	CreateDir(FileHandler_CreateDirServer) error
 	mustEmbedUnimplementedFileHandlerServer()
 }
 
@@ -131,6 +168,9 @@ func (UnimplementedFileHandlerServer) OpenFileManager(context.Context, *OpenFile
 }
 func (UnimplementedFileHandlerServer) WalkDir(*WalkDirRequest, FileHandler_WalkDirServer) error {
 	return status.Errorf(codes.Unimplemented, "method WalkDir not implemented")
+}
+func (UnimplementedFileHandlerServer) CreateDir(FileHandler_CreateDirServer) error {
+	return status.Errorf(codes.Unimplemented, "method CreateDir not implemented")
 }
 func (UnimplementedFileHandlerServer) mustEmbedUnimplementedFileHandlerServer() {}
 
@@ -220,6 +260,32 @@ func (x *fileHandlerWalkDirServer) Send(m *WalkDirReply) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _FileHandler_CreateDir_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(FileHandlerServer).CreateDir(&fileHandlerCreateDirServer{stream})
+}
+
+type FileHandler_CreateDirServer interface {
+	SendAndClose(*emptypb.Empty) error
+	Recv() (*CreateDirRequest, error)
+	grpc.ServerStream
+}
+
+type fileHandlerCreateDirServer struct {
+	grpc.ServerStream
+}
+
+func (x *fileHandlerCreateDirServer) SendAndClose(m *emptypb.Empty) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *fileHandlerCreateDirServer) Recv() (*CreateDirRequest, error) {
+	m := new(CreateDirRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // FileHandler_ServiceDesc is the grpc.ServiceDesc for FileHandler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -245,6 +311,11 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "walkDir",
 			Handler:       _FileHandler_WalkDir_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "createDir",
+			Handler:       _FileHandler_CreateDir_Handler,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "common/file_handler.proto",
