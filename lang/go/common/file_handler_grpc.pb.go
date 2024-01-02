@@ -23,7 +23,7 @@ const (
 	FileHandler_Query_FullMethodName           = "/cloud.lazycat.apis.common.FileHandler/query"
 	FileHandler_Open_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/open"
 	FileHandler_OpenFileManager_FullMethodName = "/cloud.lazycat.apis.common.FileHandler/openFileManager"
-	FileHandler_WalkDirectory_FullMethodName   = "/cloud.lazycat.apis.common.FileHandler/walkDirectory"
+	FileHandler_WalkDir_FullMethodName         = "/cloud.lazycat.apis.common.FileHandler/walkDir"
 )
 
 // FileHandlerClient is the client API for FileHandler service.
@@ -34,7 +34,7 @@ type FileHandlerClient interface {
 	Open(ctx context.Context, in *OpenRequest, opts ...grpc.CallOption) (*OpenReply, error)
 	OpenFileManager(ctx context.Context, in *OpenFileManagerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列出目录结构
-	WalkDirectory(ctx context.Context, in *WalkDirectoryRequest, opts ...grpc.CallOption) (FileHandler_WalkDirectoryClient, error)
+	WalkDir(ctx context.Context, in *WalkDirRequest, opts ...grpc.CallOption) (FileHandler_WalkDirClient, error)
 }
 
 type fileHandlerClient struct {
@@ -72,12 +72,12 @@ func (c *fileHandlerClient) OpenFileManager(ctx context.Context, in *OpenFileMan
 	return out, nil
 }
 
-func (c *fileHandlerClient) WalkDirectory(ctx context.Context, in *WalkDirectoryRequest, opts ...grpc.CallOption) (FileHandler_WalkDirectoryClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[0], FileHandler_WalkDirectory_FullMethodName, opts...)
+func (c *fileHandlerClient) WalkDir(ctx context.Context, in *WalkDirRequest, opts ...grpc.CallOption) (FileHandler_WalkDirClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[0], FileHandler_WalkDir_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &fileHandlerWalkDirectoryClient{stream}
+	x := &fileHandlerWalkDirClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -87,17 +87,17 @@ func (c *fileHandlerClient) WalkDirectory(ctx context.Context, in *WalkDirectory
 	return x, nil
 }
 
-type FileHandler_WalkDirectoryClient interface {
-	Recv() (*WalkDirectoryReply, error)
+type FileHandler_WalkDirClient interface {
+	Recv() (*WalkDirReply, error)
 	grpc.ClientStream
 }
 
-type fileHandlerWalkDirectoryClient struct {
+type fileHandlerWalkDirClient struct {
 	grpc.ClientStream
 }
 
-func (x *fileHandlerWalkDirectoryClient) Recv() (*WalkDirectoryReply, error) {
-	m := new(WalkDirectoryReply)
+func (x *fileHandlerWalkDirClient) Recv() (*WalkDirReply, error) {
+	m := new(WalkDirReply)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ type FileHandlerServer interface {
 	Open(context.Context, *OpenRequest) (*OpenReply, error)
 	OpenFileManager(context.Context, *OpenFileManagerRequest) (*emptypb.Empty, error)
 	// 列出目录结构
-	WalkDirectory(*WalkDirectoryRequest, FileHandler_WalkDirectoryServer) error
+	WalkDir(*WalkDirRequest, FileHandler_WalkDirServer) error
 	mustEmbedUnimplementedFileHandlerServer()
 }
 
@@ -129,8 +129,8 @@ func (UnimplementedFileHandlerServer) Open(context.Context, *OpenRequest) (*Open
 func (UnimplementedFileHandlerServer) OpenFileManager(context.Context, *OpenFileManagerRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OpenFileManager not implemented")
 }
-func (UnimplementedFileHandlerServer) WalkDirectory(*WalkDirectoryRequest, FileHandler_WalkDirectoryServer) error {
-	return status.Errorf(codes.Unimplemented, "method WalkDirectory not implemented")
+func (UnimplementedFileHandlerServer) WalkDir(*WalkDirRequest, FileHandler_WalkDirServer) error {
+	return status.Errorf(codes.Unimplemented, "method WalkDir not implemented")
 }
 func (UnimplementedFileHandlerServer) mustEmbedUnimplementedFileHandlerServer() {}
 
@@ -199,24 +199,24 @@ func _FileHandler_OpenFileManager_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FileHandler_WalkDirectory_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(WalkDirectoryRequest)
+func _FileHandler_WalkDir_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(WalkDirRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(FileHandlerServer).WalkDirectory(m, &fileHandlerWalkDirectoryServer{stream})
+	return srv.(FileHandlerServer).WalkDir(m, &fileHandlerWalkDirServer{stream})
 }
 
-type FileHandler_WalkDirectoryServer interface {
-	Send(*WalkDirectoryReply) error
+type FileHandler_WalkDirServer interface {
+	Send(*WalkDirReply) error
 	grpc.ServerStream
 }
 
-type fileHandlerWalkDirectoryServer struct {
+type fileHandlerWalkDirServer struct {
 	grpc.ServerStream
 }
 
-func (x *fileHandlerWalkDirectoryServer) Send(m *WalkDirectoryReply) error {
+func (x *fileHandlerWalkDirServer) Send(m *WalkDirReply) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -242,8 +242,8 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "walkDirectory",
-			Handler:       _FileHandler_WalkDirectory_Handler,
+			StreamName:    "walkDir",
+			Handler:       _FileHandler_WalkDir_Handler,
 			ServerStreams: true,
 		},
 	},

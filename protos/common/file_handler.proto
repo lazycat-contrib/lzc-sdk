@@ -11,10 +11,10 @@ service FileHandler {
   rpc open(OpenRequest) returns (OpenReply) {}
   rpc openFileManager(OpenFileManagerRequest) returns (google.protobuf.Empty) {}
   // 列出目录结构
-  rpc walkDirectory(WalkDirectoryRequest) returns (stream WalkDirectoryReply) {}
+  rpc walkDir(WalkDirRequest) returns (stream WalkDirReply) {}
 }
 
-message WalkDirectoryRequest {
+message WalkDirRequest {
   // 目录路径
   string path = 1;
   // 过滤条件
@@ -23,20 +23,15 @@ message WalkDirectoryRequest {
   optional int32 worker_count = 3;
 }
 
-// 每Walk 1000个entry后返回一次reply
-message WalkDirectoryReply {
-  // 每一个目录中的内容
-  message Entry {
-    // 全路径 /home/lnks/hello.txt
-    string path = 1;
-    // 文件名 hello.txt
-    string base = 2;
-    // 文件大小
-    int64 size = 3;
-    // 是否为目录
-    bool dirp = 4;
-  }
-  repeated Entry result = 1;
+message WalkDirReply {
+  // 全路径 /home/lnks/hello.txt
+  string path = 1;
+  // 文件名 hello.txt
+  string base = 2;
+  // 文件大小
+  int64 size = 3;
+  // 是否为目录
+  bool isDir = 4;
 }
 
 message OpenFileManagerRequest{
