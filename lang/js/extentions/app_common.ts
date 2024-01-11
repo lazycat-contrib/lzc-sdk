@@ -1,4 +1,5 @@
-import LzcAppSdk, { LzcAppPlatformType, LzcAppSdkManage, native } from "./base"
+import LzcAppSdk, {LzcAppPlatformType, LzcAppSdkManage, native} from "./base"
+import {IntentAction, intentActionFromJSON} from "../common/file_handler";
 
 class AppCommon extends LzcAppSdkManage {
   /**
@@ -73,10 +74,11 @@ class AppCommon extends LzcAppSdkManage {
    * @description: 打开原生应用
    * @param {string} filepath
    * @param {string} appid
+   * @param {IntentAction} intentAction
    * @return {*}
    */
   @native(LzcAppPlatformType.Android)
-  public static async LaunchNativeApp(filepath: string, appid: string): Promise<void> {
+  public static async LaunchNativeApp(filepath: string, appid: string,intentAction: IntentAction = IntentAction.UN_kNOWN): Promise<void> {
     // 在浏览器环境中
     if (!LzcAppSdk.isInApplication()) {
       console.error("LaunchNativeApp 方法暂未实现。")
@@ -88,6 +90,7 @@ class AppCommon extends LzcAppSdkManage {
       const openApprequest = {
         appid: appid,
         filepath: filepath,
+        intentAction: intentActionFromJSON(intentAction),
       }
       var requestStr = JSON.stringify(openApprequest)
       jsBridge.LaunchNativeApp(requestStr)
