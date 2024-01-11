@@ -44,12 +44,24 @@ message OpenFileManagerRequest{
   string path = 1;
 }
 
+enum IntentAction{
+  // 未知
+  UN_kNOWN = 0;
+  // 打开
+  OPEN = 1;
+  // 分享
+  SHARE = 2;
+}
+
 message OpenRequest {
   // 应用id
   string app_id = 1;
   // 文件路径
   string path = 2;
+
+  IntentAction intent_action = 4;
 }
+
 
 message OpenReply {
   // 打开应用的地址
@@ -72,13 +84,5 @@ message AppShortcut{
   string app_id = 1;
   string title = 2;
   string icon = 3;
-  enum IntentAction{
-    // 未知
-    UN_kNOWN = 0;
-    // 打开
-    OPEN = 1;
-    // 分享
-    SHARE = 2;
-  }
   IntentAction intent_action = 4;
 }
