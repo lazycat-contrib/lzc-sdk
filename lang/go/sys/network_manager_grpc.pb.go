@@ -39,8 +39,7 @@ type NetworkManagerClient interface {
 	WifiList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AccessPointInfoList, error)
 	// 连接一个 wifi 热点
 	//
-	//	连接成功后会把其它配置设为非自动连接，把自己设为自动
-	//	连接失败会删除已保存的配置
+	//	连接失败会删除已保存的配置，并自动连回上一次连接的 wifi（如果有的话），防止失联
 	WifiConnect(ctx context.Context, in *WifiConnectInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
 	// 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
 	WifiConfigAdd(ctx context.Context, in *WifiConfigInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
@@ -111,8 +110,7 @@ type NetworkManagerServer interface {
 	WifiList(context.Context, *emptypb.Empty) (*AccessPointInfoList, error)
 	// 连接一个 wifi 热点
 	//
-	//	连接成功后会把其它配置设为非自动连接，把自己设为自动
-	//	连接失败会删除已保存的配置
+	//	连接失败会删除已保存的配置，并自动连回上一次连接的 wifi（如果有的话），防止失联
 	WifiConnect(context.Context, *WifiConnectInfo) (*WifiConnectReply, error)
 	// 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
 	WifiConfigAdd(context.Context, *WifiConfigInfo) (*WifiConnectReply, error)

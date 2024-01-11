@@ -18,8 +18,7 @@ service NetworkManager {
   rpc WifiList(google.protobuf.Empty) returns (AccessPointInfoList) {}
 
   // 连接一个 wifi 热点
-  //   连接成功后会把其它配置设为非自动连接，把自己设为自动
-  //   连接失败会删除已保存的配置
+  //   连接失败会删除已保存的配置，并自动连回上一次连接的 wifi（如果有的话），防止失联
   rpc WifiConnect(WifiConnectInfo) returns (WifiConnectReply) {}
 
   // 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
@@ -79,10 +78,19 @@ message NetworkDeviceStatusInfo {
 message WifiConnectInfo {
   // bssid 和 ssid 指定其一即可
   string bssid = 1;
+
+  // 当指定了 bssid 时，该值无效。所以要指定该值就不要指定 bssid
   string ssid = 2;
 
+  // wifi 密码，如果 KeyMgmt 值是 KeyMgmtNone 则该值无效
   string password = 3;
+
+  // 加密类型，该值一般不用指定，会自动嗅探，只有连接隐藏网络或手动添加网络才会用到此字段
   optional KeyMgmt key_mgmt = 4;
+
+  // 连接超时时间（单位：秒），如果不指定则为 NetworkManager 默认行为。
+  // 如果连接超时，会当作失败处理抛出异常
+  optional int64 timeout = 5;
 }
 
 enum KeyMgmt {
