@@ -46,6 +46,9 @@ message AccessPointInfo {
 
   // 是否自动连接
   bool auto_connected = 7;
+
+  // 是否锁定 bssid （锁定后，不会自动连接其他同名不同 bssid 的热点）
+  bool bssid_locked = 8;
 }
 
 message AccessPointInfoList {
