@@ -173,19 +173,24 @@ export const GetPositionInfoRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetPositionInfoRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetPositionInfoRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.playerUuid = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -196,7 +201,9 @@ export const GetPositionInfoRequest = {
 
   toJSON(message: GetPositionInfoRequest): unknown {
     const obj: any = {};
-    message.playerUuid !== undefined && (obj.playerUuid = message.playerUuid);
+    if (message.playerUuid !== "") {
+      obj.playerUuid = message.playerUuid;
+    }
     return obj;
   },
 
@@ -254,40 +261,73 @@ export const GetPositionInfoResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetPositionInfoResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetPositionInfoResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.track = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.trackDuration = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.trackMetadata = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.trackUri = reader.string();
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.relTime = reader.string();
-          break;
+          continue;
         case 6:
+          if (tag !== 50) {
+            break;
+          }
+
           message.absTime = reader.string();
-          break;
+          continue;
         case 7:
+          if (tag !== 56) {
+            break;
+          }
+
           message.relCount = reader.int32();
-          break;
+          continue;
         case 8:
+          if (tag !== 64) {
+            break;
+          }
+
           message.absCount = reader.int32();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -307,14 +347,30 @@ export const GetPositionInfoResponse = {
 
   toJSON(message: GetPositionInfoResponse): unknown {
     const obj: any = {};
-    message.track !== undefined && (obj.track = message.track);
-    message.trackDuration !== undefined && (obj.trackDuration = message.trackDuration);
-    message.trackMetadata !== undefined && (obj.trackMetadata = message.trackMetadata);
-    message.trackUri !== undefined && (obj.trackUri = message.trackUri);
-    message.relTime !== undefined && (obj.relTime = message.relTime);
-    message.absTime !== undefined && (obj.absTime = message.absTime);
-    message.relCount !== undefined && (obj.relCount = Math.round(message.relCount));
-    message.absCount !== undefined && (obj.absCount = Math.round(message.absCount));
+    if (message.track !== "") {
+      obj.track = message.track;
+    }
+    if (message.trackDuration !== "") {
+      obj.trackDuration = message.trackDuration;
+    }
+    if (message.trackMetadata !== "") {
+      obj.trackMetadata = message.trackMetadata;
+    }
+    if (message.trackUri !== "") {
+      obj.trackUri = message.trackUri;
+    }
+    if (message.relTime !== "") {
+      obj.relTime = message.relTime;
+    }
+    if (message.absTime !== "") {
+      obj.absTime = message.absTime;
+    }
+    if (message.relCount !== 0) {
+      obj.relCount = Math.round(message.relCount);
+    }
+    if (message.absCount !== 0) {
+      obj.absCount = Math.round(message.absCount);
+    }
     return obj;
   },
 
@@ -361,31 +417,52 @@ export const DoActionRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DoActionRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDoActionRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.playerUuid = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.action = reader.int32() as any;
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.mediaFile = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.mediaSubtitle = reader.string();
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.seekTarget = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -402,11 +479,21 @@ export const DoActionRequest = {
 
   toJSON(message: DoActionRequest): unknown {
     const obj: any = {};
-    message.playerUuid !== undefined && (obj.playerUuid = message.playerUuid);
-    message.action !== undefined && (obj.action = doActionRequest_ActionToJSON(message.action));
-    message.mediaFile !== undefined && (obj.mediaFile = message.mediaFile);
-    message.mediaSubtitle !== undefined && (obj.mediaSubtitle = message.mediaSubtitle);
-    message.seekTarget !== undefined && (obj.seekTarget = message.seekTarget);
+    if (message.playerUuid !== "") {
+      obj.playerUuid = message.playerUuid;
+    }
+    if (message.action !== 0) {
+      obj.action = doActionRequest_ActionToJSON(message.action);
+    }
+    if (message.mediaFile !== undefined) {
+      obj.mediaFile = message.mediaFile;
+    }
+    if (message.mediaSubtitle !== undefined) {
+      obj.mediaSubtitle = message.mediaSubtitle;
+    }
+    if (message.seekTarget !== undefined) {
+      obj.seekTarget = message.seekTarget;
+    }
     return obj;
   },
 
@@ -438,19 +525,24 @@ export const RMPStatus = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RMPStatus {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRMPStatus();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.status = reader.int32() as any;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -461,7 +553,9 @@ export const RMPStatus = {
 
   toJSON(message: RMPStatus): unknown {
     const obj: any = {};
-    message.status !== undefined && (obj.status = rMPStatus_StatusToJSON(message.status));
+    if (message.status !== 0) {
+      obj.status = rMPStatus_StatusToJSON(message.status);
+    }
     return obj;
   },
 
@@ -489,19 +583,24 @@ export const ScanRMPResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): ScanRMPResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseScanRMPResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.remoteMediaPlayers.push(RemoteMediaPlayer.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -516,10 +615,8 @@ export const ScanRMPResponse = {
 
   toJSON(message: ScanRMPResponse): unknown {
     const obj: any = {};
-    if (message.remoteMediaPlayers) {
-      obj.remoteMediaPlayers = message.remoteMediaPlayers.map((e) => e ? RemoteMediaPlayer.toJSON(e) : undefined);
-    } else {
-      obj.remoteMediaPlayers = [];
+    if (message.remoteMediaPlayers?.length) {
+      obj.remoteMediaPlayers = message.remoteMediaPlayers.map((e) => RemoteMediaPlayer.toJSON(e));
     }
     return obj;
   },
@@ -548,19 +645,24 @@ export const SubscribeRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): SubscribeRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSubscribeRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.playerUuid = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -571,7 +673,9 @@ export const SubscribeRequest = {
 
   toJSON(message: SubscribeRequest): unknown {
     const obj: any = {};
-    message.playerUuid !== undefined && (obj.playerUuid = message.playerUuid);
+    if (message.playerUuid !== "") {
+      obj.playerUuid = message.playerUuid;
+    }
     return obj;
   },
 
@@ -608,28 +712,45 @@ export const RemoteMediaPlayer = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RemoteMediaPlayer {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRemoteMediaPlayer();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.uuid = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.name = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.iconData = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.lanRegion = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -645,10 +766,18 @@ export const RemoteMediaPlayer = {
 
   toJSON(message: RemoteMediaPlayer): unknown {
     const obj: any = {};
-    message.uuid !== undefined && (obj.uuid = message.uuid);
-    message.name !== undefined && (obj.name = message.name);
-    message.iconData !== undefined && (obj.iconData = message.iconData);
-    message.lanRegion !== undefined && (obj.lanRegion = message.lanRegion);
+    if (message.uuid !== "") {
+      obj.uuid = message.uuid;
+    }
+    if (message.name !== "") {
+      obj.name = message.name;
+    }
+    if (message.iconData !== "") {
+      obj.iconData = message.iconData;
+    }
+    if (message.lanRegion !== "") {
+      obj.lanRegion = message.lanRegion;
+    }
     return obj;
   },
 
@@ -859,14 +988,14 @@ export class GrpcWebImpl {
     const request = { ..._request, ...methodDesc.requestType };
     const maybeCombinedMetadata = metadata && this.options.metadata
       ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
-      : metadata || this.options.metadata;
+      : metadata ?? this.options.metadata;
     return new Promise((resolve, reject) => {
       grpc.unary(methodDesc, {
         request,
         host: this.host,
-        metadata: maybeCombinedMetadata,
-        transport: this.options.transport,
-        debug: this.options.debug,
+        metadata: maybeCombinedMetadata ?? {},
+        ...(this.options.transport !== undefined ? { transport: this.options.transport } : {}),
+        debug: this.options.debug ?? false,
         onEnd: function (response) {
           if (response.status === grpc.Code.OK) {
             resolve(response.message!.toObject());
@@ -884,20 +1013,21 @@ export class GrpcWebImpl {
     _request: any,
     metadata: grpc.Metadata | undefined,
   ): Observable<any> {
-    const upStreamCodes = this.options.upStreamRetryCodes || [];
+    const upStreamCodes = this.options.upStreamRetryCodes ?? [];
     const DEFAULT_TIMEOUT_TIME: number = 3_000;
     const request = { ..._request, ...methodDesc.requestType };
+    const transport = this.options.streamingTransport ?? this.options.transport;
     const maybeCombinedMetadata = metadata && this.options.metadata
       ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
-      : metadata || this.options.metadata;
+      : metadata ?? this.options.metadata;
     return new Observable((observer) => {
       const upStream = (() => {
         const client = grpc.invoke(methodDesc, {
           host: this.host,
           request,
-          transport: this.options.streamingTransport || this.options.transport,
-          metadata: maybeCombinedMetadata,
-          debug: this.options.debug,
+          ...(transport !== undefined ? { transport } : {}),
+          metadata: maybeCombinedMetadata ?? {},
+          debug: this.options.debug ?? false,
           onMessage: (next) => observer.next(next),
           onEnd: (code: grpc.Code, message: string, trailers: grpc.Metadata) => {
             if (code === 0) {
@@ -912,17 +1042,19 @@ export class GrpcWebImpl {
             }
           },
         });
-        observer.add(() => client.close());
+        observer.add(() => {
+          return client.close();
+        });
       });
       upStream();
     }).pipe(share());
   }
 }
 
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var tsProtoGlobalThis: any = (() => {
+declare const self: any | undefined;
+declare const window: any | undefined;
+declare const global: any | undefined;
+const tsProtoGlobalThis: any = (() => {
   if (typeof globalThis !== "undefined") {
     return globalThis;
   }

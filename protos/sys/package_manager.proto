@@ -115,11 +115,22 @@ message AppDownloadProgress {
   uint64 total = 2;
 }
 
+enum InstanceStatus {
+  Status_Error = 0;
+  Status_Paused = 1;
+  Status_Stopping = 2;
+  Status_Starting = 3;
+  Status_Running = 4;
+}
+
 message AppInfo {
   string appid = 1;
 
-  // 应用当前的状态
+  // 应用当前的安装状态
   AppStatus status = 2;
+
+  // 应用当前的运行状态
+  InstanceStatus instance_status = 12;
 
   optional string version = 3;
 
