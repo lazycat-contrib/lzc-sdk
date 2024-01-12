@@ -4,8 +4,7 @@
   "author": "snyh",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint --ext .ts ./ --max-warnings 0",
-    "prepare": "npm run build"
+    "lint": "eslint --ext .ts ./ --max-warnings 0"
   },
   "main": "dist/index.js",
   "files": ["dist"],

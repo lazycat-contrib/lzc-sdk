@@ -196,7 +196,7 @@ export const GetPositionInfoRequest = {
   },
 
   fromJSON(object: any): GetPositionInfoRequest {
-    return { playerUuid: isSet(object.playerUuid) ? String(object.playerUuid) : "" };
+    return { playerUuid: isSet(object.playerUuid) ? globalThis.String(object.playerUuid) : "" };
   },
 
   toJSON(message: GetPositionInfoRequest): unknown {
@@ -208,9 +208,8 @@ export const GetPositionInfoRequest = {
   },
 
   create<I extends Exact<DeepPartial<GetPositionInfoRequest>, I>>(base?: I): GetPositionInfoRequest {
-    return GetPositionInfoRequest.fromPartial(base ?? {});
+    return GetPositionInfoRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<GetPositionInfoRequest>, I>>(object: I): GetPositionInfoRequest {
     const message = createBaseGetPositionInfoRequest();
     message.playerUuid = object.playerUuid ?? "";
@@ -334,14 +333,14 @@ export const GetPositionInfoResponse = {
 
   fromJSON(object: any): GetPositionInfoResponse {
     return {
-      track: isSet(object.track) ? String(object.track) : "",
-      trackDuration: isSet(object.trackDuration) ? String(object.trackDuration) : "",
-      trackMetadata: isSet(object.trackMetadata) ? String(object.trackMetadata) : "",
-      trackUri: isSet(object.trackUri) ? String(object.trackUri) : "",
-      relTime: isSet(object.relTime) ? String(object.relTime) : "",
-      absTime: isSet(object.absTime) ? String(object.absTime) : "",
-      relCount: isSet(object.relCount) ? Number(object.relCount) : 0,
-      absCount: isSet(object.absCount) ? Number(object.absCount) : 0,
+      track: isSet(object.track) ? globalThis.String(object.track) : "",
+      trackDuration: isSet(object.trackDuration) ? globalThis.String(object.trackDuration) : "",
+      trackMetadata: isSet(object.trackMetadata) ? globalThis.String(object.trackMetadata) : "",
+      trackUri: isSet(object.trackUri) ? globalThis.String(object.trackUri) : "",
+      relTime: isSet(object.relTime) ? globalThis.String(object.relTime) : "",
+      absTime: isSet(object.absTime) ? globalThis.String(object.absTime) : "",
+      relCount: isSet(object.relCount) ? globalThis.Number(object.relCount) : 0,
+      absCount: isSet(object.absCount) ? globalThis.Number(object.absCount) : 0,
     };
   },
 
@@ -375,9 +374,8 @@ export const GetPositionInfoResponse = {
   },
 
   create<I extends Exact<DeepPartial<GetPositionInfoResponse>, I>>(base?: I): GetPositionInfoResponse {
-    return GetPositionInfoResponse.fromPartial(base ?? {});
+    return GetPositionInfoResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<GetPositionInfoResponse>, I>>(object: I): GetPositionInfoResponse {
     const message = createBaseGetPositionInfoResponse();
     message.track = object.track ?? "";
@@ -469,11 +467,11 @@ export const DoActionRequest = {
 
   fromJSON(object: any): DoActionRequest {
     return {
-      playerUuid: isSet(object.playerUuid) ? String(object.playerUuid) : "",
+      playerUuid: isSet(object.playerUuid) ? globalThis.String(object.playerUuid) : "",
       action: isSet(object.action) ? doActionRequest_ActionFromJSON(object.action) : 0,
-      mediaFile: isSet(object.mediaFile) ? String(object.mediaFile) : undefined,
-      mediaSubtitle: isSet(object.mediaSubtitle) ? String(object.mediaSubtitle) : undefined,
-      seekTarget: isSet(object.seekTarget) ? String(object.seekTarget) : undefined,
+      mediaFile: isSet(object.mediaFile) ? globalThis.String(object.mediaFile) : undefined,
+      mediaSubtitle: isSet(object.mediaSubtitle) ? globalThis.String(object.mediaSubtitle) : undefined,
+      seekTarget: isSet(object.seekTarget) ? globalThis.String(object.seekTarget) : undefined,
     };
   },
 
@@ -498,9 +496,8 @@ export const DoActionRequest = {
   },
 
   create<I extends Exact<DeepPartial<DoActionRequest>, I>>(base?: I): DoActionRequest {
-    return DoActionRequest.fromPartial(base ?? {});
+    return DoActionRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<DoActionRequest>, I>>(object: I): DoActionRequest {
     const message = createBaseDoActionRequest();
     message.playerUuid = object.playerUuid ?? "";
@@ -560,9 +557,8 @@ export const RMPStatus = {
   },
 
   create<I extends Exact<DeepPartial<RMPStatus>, I>>(base?: I): RMPStatus {
-    return RMPStatus.fromPartial(base ?? {});
+    return RMPStatus.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<RMPStatus>, I>>(object: I): RMPStatus {
     const message = createBaseRMPStatus();
     message.status = object.status ?? 0;
@@ -607,7 +603,7 @@ export const ScanRMPResponse = {
 
   fromJSON(object: any): ScanRMPResponse {
     return {
-      remoteMediaPlayers: Array.isArray(object?.remoteMediaPlayers)
+      remoteMediaPlayers: globalThis.Array.isArray(object?.remoteMediaPlayers)
         ? object.remoteMediaPlayers.map((e: any) => RemoteMediaPlayer.fromJSON(e))
         : [],
     };
@@ -622,9 +618,8 @@ export const ScanRMPResponse = {
   },
 
   create<I extends Exact<DeepPartial<ScanRMPResponse>, I>>(base?: I): ScanRMPResponse {
-    return ScanRMPResponse.fromPartial(base ?? {});
+    return ScanRMPResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<ScanRMPResponse>, I>>(object: I): ScanRMPResponse {
     const message = createBaseScanRMPResponse();
     message.remoteMediaPlayers = object.remoteMediaPlayers?.map((e) => RemoteMediaPlayer.fromPartial(e)) || [];
@@ -668,7 +663,7 @@ export const SubscribeRequest = {
   },
 
   fromJSON(object: any): SubscribeRequest {
-    return { playerUuid: isSet(object.playerUuid) ? String(object.playerUuid) : "" };
+    return { playerUuid: isSet(object.playerUuid) ? globalThis.String(object.playerUuid) : "" };
   },
 
   toJSON(message: SubscribeRequest): unknown {
@@ -680,9 +675,8 @@ export const SubscribeRequest = {
   },
 
   create<I extends Exact<DeepPartial<SubscribeRequest>, I>>(base?: I): SubscribeRequest {
-    return SubscribeRequest.fromPartial(base ?? {});
+    return SubscribeRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<SubscribeRequest>, I>>(object: I): SubscribeRequest {
     const message = createBaseSubscribeRequest();
     message.playerUuid = object.playerUuid ?? "";
@@ -757,10 +751,10 @@ export const RemoteMediaPlayer = {
 
   fromJSON(object: any): RemoteMediaPlayer {
     return {
-      uuid: isSet(object.uuid) ? String(object.uuid) : "",
-      name: isSet(object.name) ? String(object.name) : "",
-      iconData: isSet(object.iconData) ? String(object.iconData) : "",
-      lanRegion: isSet(object.lanRegion) ? String(object.lanRegion) : "",
+      uuid: isSet(object.uuid) ? globalThis.String(object.uuid) : "",
+      name: isSet(object.name) ? globalThis.String(object.name) : "",
+      iconData: isSet(object.iconData) ? globalThis.String(object.iconData) : "",
+      lanRegion: isSet(object.lanRegion) ? globalThis.String(object.lanRegion) : "",
     };
   },
 
@@ -782,9 +776,8 @@ export const RemoteMediaPlayer = {
   },
 
   create<I extends Exact<DeepPartial<RemoteMediaPlayer>, I>>(base?: I): RemoteMediaPlayer {
-    return RemoteMediaPlayer.fromPartial(base ?? {});
+    return RemoteMediaPlayer.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<RemoteMediaPlayer>, I>>(object: I): RemoteMediaPlayer {
     const message = createBaseRemoteMediaPlayer();
     message.uuid = object.uuid ?? "";
@@ -1021,7 +1014,7 @@ export class GrpcWebImpl {
       ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
       : metadata ?? this.options.metadata;
     return new Observable((observer) => {
-      const upStream = (() => {
+      const upStream = () => {
         const client = grpc.invoke(methodDesc, {
           host: this.host,
           request,
@@ -1042,38 +1035,18 @@ export class GrpcWebImpl {
             }
           },
         });
-        observer.add(() => {
-          return client.close();
-        });
-      });
+        observer.add(() => client.close());
+      };
       upStream();
     }).pipe(share());
   }
 }
 
-declare const self: any | undefined;
-declare const window: any | undefined;
-declare const global: any | undefined;
-const tsProtoGlobalThis: any = (() => {
-  if (typeof globalThis !== "undefined") {
-    return globalThis;
-  }
-  if (typeof self !== "undefined") {
-    return self;
-  }
-  if (typeof window !== "undefined") {
-    return window;
-  }
-  if (typeof global !== "undefined") {
-    return global;
-  }
-  throw "Unable to locate global object";
-})();
-
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
@@ -1085,7 +1058,7 @@ function isSet(value: any): boolean {
   return value !== null && value !== undefined;
 }
 
-export class GrpcWebError extends tsProtoGlobalThis.Error {
+export class GrpcWebError extends globalThis.Error {
   constructor(message: string, public code: grpc.Code, public metadata: grpc.Metadata) {
     super(message);
   }
