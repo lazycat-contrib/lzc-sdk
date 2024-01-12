@@ -5,6 +5,7 @@ package cloud.lazycat.apis.common;
 
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/common";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 service FileHandler {
   rpc query(QueryRequest) returns (QueryReply) {}
@@ -33,6 +34,8 @@ message WalkDirReply {
   int64 size = 3;
   // 是否为目录
   bool isDir = 4;
+  // 文件修改时间
+  google.protobuf.Timestamp mtime = 5;
 }
 
 message CreateDirRequest {
