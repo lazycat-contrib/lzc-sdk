@@ -25,6 +25,7 @@ const (
 	FileHandler_OpenFileManager_FullMethodName = "/cloud.lazycat.apis.common.FileHandler/openFileManager"
 	FileHandler_WalkDir_FullMethodName         = "/cloud.lazycat.apis.common.FileHandler/walkDir"
 	FileHandler_CreateDir_FullMethodName       = "/cloud.lazycat.apis.common.FileHandler/createDir"
+	FileHandler_Stat_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/stat"
 )
 
 // FileHandlerClient is the client API for FileHandler service.
@@ -37,6 +38,7 @@ type FileHandlerClient interface {
 	// 列出目录结构
 	WalkDir(ctx context.Context, in *WalkDirRequest, opts ...grpc.CallOption) (FileHandler_WalkDirClient, error)
 	CreateDir(ctx context.Context, opts ...grpc.CallOption) (FileHandler_CreateDirClient, error)
+	Stat(ctx context.Context, in *StatRequest, opts ...grpc.CallOption) (*StatReply, error)
 }
 
 type fileHandlerClient struct {
@@ -140,6 +142,15 @@ func (x *fileHandlerCreateDirClient) CloseAndRecv() (*emptypb.Empty, error) {
 	return m, nil
 }
 
+func (c *fileHandlerClient) Stat(ctx context.Context, in *StatRequest, opts ...grpc.CallOption) (*StatReply, error) {
+	out := new(StatReply)
+	err := c.cc.Invoke(ctx, FileHandler_Stat_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FileHandlerServer is the server API for FileHandler service.
 // All implementations must embed UnimplementedFileHandlerServer
 // for forward compatibility
@@ -150,6 +161,7 @@ type FileHandlerServer interface {
 	// 列出目录结构
 	WalkDir(*WalkDirRequest, FileHandler_WalkDirServer) error
 	CreateDir(FileHandler_CreateDirServer) error
+	Stat(context.Context, *StatRequest) (*StatReply, error)
 	mustEmbedUnimplementedFileHandlerServer()
 }
 
@@ -171,6 +183,9 @@ func (UnimplementedFileHandlerServer) WalkDir(*WalkDirRequest, FileHandler_WalkD
 }
 func (UnimplementedFileHandlerServer) CreateDir(FileHandler_CreateDirServer) error {
 	return status.Errorf(codes.Unimplemented, "method CreateDir not implemented")
+}
+func (UnimplementedFileHandlerServer) Stat(context.Context, *StatRequest) (*StatReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Stat not implemented")
 }
 func (UnimplementedFileHandlerServer) mustEmbedUnimplementedFileHandlerServer() {}
 
@@ -286,6 +301,24 @@ func (x *fileHandlerCreateDirServer) Recv() (*CreateDirRequest, error) {
 	return m, nil
 }
 
+func _FileHandler_Stat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileHandlerServer).Stat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FileHandler_Stat_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileHandlerServer).Stat(ctx, req.(*StatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FileHandler_ServiceDesc is the grpc.ServiceDesc for FileHandler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,6 +337,10 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "openFileManager",
 			Handler:    _FileHandler_OpenFileManager_Handler,
+		},
+		{
+			MethodName: "stat",
+			Handler:    _FileHandler_Stat_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
