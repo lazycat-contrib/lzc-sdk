@@ -99,6 +99,39 @@ class AppCommon extends LzcAppSdkManage {
     // TODO: 其他环境中待实现
     console.error("LaunchNativeApp 方法暂未实现。")
   }
+
+  /**
+   * @description: 使用指定的原生应用打开在线文件
+   * @param boxName 盒子名称
+   * @param {string} webdav_file_url webdav 文件地址
+   * @param {string} appid 原生应用 id
+   * @param {IntentAction} intentAction
+   * @return {*}
+   */
+  @native(LzcAppPlatformType.Android)
+  public static async OpenOnlineFile(boxName: string,webdav_file_url: string, appid: string,intentAction: IntentAction = IntentAction.UN_kNOWN): Promise<void> {
+    // 在浏览器环境中
+    if (!LzcAppSdk.isInApplication()) {
+      console.error("LaunchNativeApp 方法暂未实现。")
+      return
+    }
+    // 在 Android 环境
+    if (LzcAppSdk.isAndroidWebShell()) {
+      const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
+      const openApprequest = {
+        appid: appid,
+        filepath: webdav_file_url,
+        boxName: boxName,
+        intentAction: intentActionFromJSON(intentAction),
+      }
+      var requestStr = JSON.stringify(openApprequest)
+      jsBridge.LaunchNativeApp(requestStr)
+      return
+    }
+    // TODO: 其他环境中待实现
+    console.error("LaunchNativeApp 方法暂未实现。")
+  }
 }
+
 
 export { AppCommon }
