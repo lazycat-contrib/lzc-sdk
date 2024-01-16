@@ -78,7 +78,7 @@ class AppCommon extends LzcAppSdkManage {
    * @return {*}
    */
   @native(LzcAppPlatformType.Android)
-  public static async LaunchNativeApp(filepath: string, appid: string,intentAction: IntentAction = IntentAction.UN_kNOWN): Promise<void> {
+  public static async LaunchNativeApp(filepath: string, appid: string,intentAction: IntentAction = IntentAction.UN_KNOWN): Promise<void> {
     // 在浏览器环境中
     if (!LzcAppSdk.isInApplication()) {
       console.error("LaunchNativeApp 方法暂未实现。")
@@ -104,12 +104,12 @@ class AppCommon extends LzcAppSdkManage {
    * @description: 使用指定的原生应用打开在线文件
    * @param boxName 盒子名称
    * @param {string} webdav_file_url webdav 文件地址
-   * @param {string} appid 原生应用 id
    * @param {IntentAction} intentAction
+   * @param {string} appid 原生应用 id
    * @return {*}
    */
   @native(LzcAppPlatformType.Android)
-  public static async OpenOnlineFile(boxName: string,webdav_file_url: string, appid: string,intentAction: IntentAction = IntentAction.UN_kNOWN): Promise<void> {
+  public static async ShareWith(boxName: string, webdav_file_url: string,  intentAction: IntentAction = IntentAction.UN_KNOWN,appid: string): Promise<void> {
     // 在浏览器环境中
     if (!LzcAppSdk.isInApplication()) {
       console.error("LaunchNativeApp 方法暂未实现。")
@@ -119,13 +119,13 @@ class AppCommon extends LzcAppSdkManage {
     if (LzcAppSdk.isAndroidWebShell()) {
       const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
       const openApprequest = {
-        appid: appid,
         filepath: webdav_file_url,
         boxName: boxName,
         intentAction: intentActionFromJSON(intentAction),
+        appid: appid,
       }
       var requestStr = JSON.stringify(openApprequest)
-      jsBridge.LaunchNativeApp(requestStr)
+      jsBridge.ShareWith(requestStr)
       return
     }
     // TODO: 其他环境中待实现

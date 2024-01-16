@@ -50,7 +50,7 @@ message OpenFileManagerRequest{
 
 enum IntentAction{
   // 未知
-  UN_kNOWN = 0;
+  UN_KNOWN = 0;
   // 打开
   OPEN = 1;
   // 分享
