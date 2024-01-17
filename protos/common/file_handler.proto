@@ -44,7 +44,9 @@ message CreateDirRequest {
 }
 
 message OpenFileManagerRequest{
-  // 文件(夹)路径
+  // 文件(夹)绝对路径
+  // 1. window 下面的必须以盘符开头，如 C:\Users\lnks\Desktop
+  // 2. unix   下面的必须以 / 开头，如 /home/lnks/Desktop
   string path = 1;
 }
 
