@@ -57,7 +57,7 @@ export const SAFE = {
     LzcClient.SubVoice()
   },
   CloseWindow() {
-    LzcClient.CloseWindow
+    LzcClient.CloseWindow()
   },
   Minimize() {
     LzcClient.Minimize()
@@ -93,5 +93,14 @@ export const SAFE = {
     console.log(lzc_app_manager)
     const jsBridge = LzcAppSdk.useNative(lzc_app_manager)
     jsBridge.InstallLzcClient(url)
+  },
+  /**
+   * 仅仅android 实现
+   * @param enable 是否开启键盘弹出
+   * 部分页面需要禁止当前页面键盘弹出，比如输入密码的时候.
+   * @constructor
+   */
+  EnableKeyboard(enable: boolean) {
+    LzcClient.EnableKeyboard(enable)
   }
 }
