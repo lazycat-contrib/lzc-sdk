@@ -276,7 +276,9 @@ type OpenFileManagerRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// 文件(夹)路径
+	// 文件(夹)绝对路径
+	// 1. window 下面的必须以盘符开头，如 C:\Users\lnks\Desktop
+	// 2. unix   下面的必须以 / 开头，如 /home/lnks/Desktop
 	Path string `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
 }
 

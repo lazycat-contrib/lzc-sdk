@@ -416,7 +416,7 @@ type OpenFileSeletorResult struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// 文件或者目录的路径
+	// 文件或者目录的路径, 如果是文件就是文件的全路径 比如 /home/lnks/1.jpg ,如果是目录就是目录的全路径,并且末尾以/结尾, 比如/home/lnks/
 	Path []string `protobuf:"bytes,1,rep,name=path,proto3" json:"path,omitempty"`
 }
 
