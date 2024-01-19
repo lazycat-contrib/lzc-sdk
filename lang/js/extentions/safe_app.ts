@@ -96,5 +96,3 @@ export const SAFE = {
     }
 }
 
-
-android_launch_service.LaunchApp('{"appid":"com.tencent.m12m:com.tencent.mm.ui.tools.ShareImgUI","webdavUrl":"https://file.lnks009.heiyu.space/_lzc/files/home/Pictures/%E9%A9%AC%E7%9D%A3%E5%B7%A5673.mp4","boxName":"home"}')
