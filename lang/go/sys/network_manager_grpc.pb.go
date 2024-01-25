@@ -44,6 +44,7 @@ type NetworkManagerClient interface {
 	WifiConnect(ctx context.Context, in *WifiConnectInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
 	// 暂时连接一个 wifi 热点
 	// 时间到了之后会Revert回指定的 wifi 热点
+	// 如果在上一个调用的duration时间范围内再次调用，则会取消上次调用时间到后对fallback_bssid的连接
 	WifiConnectTemp(ctx context.Context, in *WifiConnectTempInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
 	// 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
 	WifiConfigAdd(ctx context.Context, in *WifiConfigInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
@@ -127,6 +128,7 @@ type NetworkManagerServer interface {
 	WifiConnect(context.Context, *WifiConnectInfo) (*WifiConnectReply, error)
 	// 暂时连接一个 wifi 热点
 	// 时间到了之后会Revert回指定的 wifi 热点
+	// 如果在上一个调用的duration时间范围内再次调用，则会取消上次调用时间到后对fallback_bssid的连接
 	WifiConnectTemp(context.Context, *WifiConnectTempInfo) (*WifiConnectReply, error)
 	// 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
 	WifiConfigAdd(context.Context, *WifiConfigInfo) (*WifiConnectReply, error)
