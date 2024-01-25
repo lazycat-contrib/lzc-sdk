@@ -108,9 +108,10 @@ message WifiConnectTempInfo {
   // 到时间后自动连接的 bssid
   string fallback_bssid = 2;
 
-  // 暂时连接的 wifi 密码，如果 KeyMgmt 值是 KeyMgmtNone 则该值无效
+  // 暂时连接的 wifi 密码
   string password = 3;
 
+  // 到时间后自动连接的 wifi 密码
   string fallback_password = 4;
 
   // 连接持续时间（单位：秒），到时间后会自动连接回之前的 bssid

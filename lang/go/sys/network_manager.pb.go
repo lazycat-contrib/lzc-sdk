@@ -510,8 +510,9 @@ type WifiConnectTempInfo struct {
 	Bssid string `protobuf:"bytes,1,opt,name=bssid,proto3" json:"bssid,omitempty"`
 	// 到时间后自动连接的 bssid
 	FallbackBssid string `protobuf:"bytes,2,opt,name=fallback_bssid,json=fallbackBssid,proto3" json:"fallback_bssid,omitempty"`
-	// 暂时连接的 wifi 密码，如果 KeyMgmt 值是 KeyMgmtNone 则该值无效
-	Password         string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	// 暂时连接的 wifi 密码
+	Password string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	// 到时间后自动连接的 wifi 密码
 	FallbackPassword string `protobuf:"bytes,4,opt,name=fallback_password,json=fallbackPassword,proto3" json:"fallback_password,omitempty"`
 	// 连接持续时间（单位：秒），到时间后会自动连接回之前的 bssid
 	Duration int64 `protobuf:"varint,5,opt,name=duration,proto3" json:"duration,omitempty"`
