@@ -108,14 +108,13 @@ message WifiConnectTempInfo {
   // 到时间后自动连接的 bssid
   string fallback_bssid = 2;
 
-  // wifi 密码，如果 KeyMgmt 值是 KeyMgmtNone 则该值无效
+  // 暂时连接的 wifi 密码，如果 KeyMgmt 值是 KeyMgmtNone 则该值无效
   string password = 3;
 
-  // 连接持续时间（单位：秒），到时间后会自动连接回之前的 bssid
-  int64 duration = 4;
+  string fallback_password = 4;
 
-  // 加密类型，该值一般不用指定，会自动嗅探，只有连接隐藏网络或手动添加网络才会用到此字段
-  optional KeyMgmt key_mgmt = 5;
+  // 连接持续时间（单位：秒），到时间后会自动连接回之前的 bssid
+  int64 duration = 5;
 }
 
 enum KeyMgmt {
