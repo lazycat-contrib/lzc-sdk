@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	NetworkManager_Status_FullMethodName        = "/cloud.lazycat.apis.sys.NetworkManager/Status"
-	NetworkManager_WifiScan_FullMethodName      = "/cloud.lazycat.apis.sys.NetworkManager/WifiScan"
-	NetworkManager_WifiList_FullMethodName      = "/cloud.lazycat.apis.sys.NetworkManager/WifiList"
-	NetworkManager_WifiConnect_FullMethodName   = "/cloud.lazycat.apis.sys.NetworkManager/WifiConnect"
-	NetworkManager_WifiConfigAdd_FullMethodName = "/cloud.lazycat.apis.sys.NetworkManager/WifiConfigAdd"
+	NetworkManager_Status_FullMethodName          = "/cloud.lazycat.apis.sys.NetworkManager/Status"
+	NetworkManager_WifiScan_FullMethodName        = "/cloud.lazycat.apis.sys.NetworkManager/WifiScan"
+	NetworkManager_WifiList_FullMethodName        = "/cloud.lazycat.apis.sys.NetworkManager/WifiList"
+	NetworkManager_WifiConnect_FullMethodName     = "/cloud.lazycat.apis.sys.NetworkManager/WifiConnect"
+	NetworkManager_WifiConnectTemp_FullMethodName = "/cloud.lazycat.apis.sys.NetworkManager/WifiConnectTemp"
+	NetworkManager_WifiConfigAdd_FullMethodName   = "/cloud.lazycat.apis.sys.NetworkManager/WifiConfigAdd"
 )
 
 // NetworkManagerClient is the client API for NetworkManager service.
@@ -41,6 +42,9 @@ type NetworkManagerClient interface {
 	//
 	//	连接失败会删除已保存的配置，并自动连回上一次连接的 wifi（如果有的话），防止失联
 	WifiConnect(ctx context.Context, in *WifiConnectInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
+	// 暂时连接一个 wifi 热点
+	// 时间到了之后会Revert回指定的 wifi 热点
+	WifiConnectTemp(ctx context.Context, in *WifiConnectTempInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
 	// 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
 	WifiConfigAdd(ctx context.Context, in *WifiConfigInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
 }
@@ -89,6 +93,15 @@ func (c *networkManagerClient) WifiConnect(ctx context.Context, in *WifiConnectI
 	return out, nil
 }
 
+func (c *networkManagerClient) WifiConnectTemp(ctx context.Context, in *WifiConnectTempInfo, opts ...grpc.CallOption) (*WifiConnectReply, error) {
+	out := new(WifiConnectReply)
+	err := c.cc.Invoke(ctx, NetworkManager_WifiConnectTemp_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *networkManagerClient) WifiConfigAdd(ctx context.Context, in *WifiConfigInfo, opts ...grpc.CallOption) (*WifiConnectReply, error) {
 	out := new(WifiConnectReply)
 	err := c.cc.Invoke(ctx, NetworkManager_WifiConfigAdd_FullMethodName, in, out, opts...)
@@ -112,6 +125,9 @@ type NetworkManagerServer interface {
 	//
 	//	连接失败会删除已保存的配置，并自动连回上一次连接的 wifi（如果有的话），防止失联
 	WifiConnect(context.Context, *WifiConnectInfo) (*WifiConnectReply, error)
+	// 暂时连接一个 wifi 热点
+	// 时间到了之后会Revert回指定的 wifi 热点
+	WifiConnectTemp(context.Context, *WifiConnectTempInfo) (*WifiConnectReply, error)
 	// 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
 	WifiConfigAdd(context.Context, *WifiConfigInfo) (*WifiConnectReply, error)
 	mustEmbedUnimplementedNetworkManagerServer()
@@ -132,6 +148,9 @@ func (UnimplementedNetworkManagerServer) WifiList(context.Context, *emptypb.Empt
 }
 func (UnimplementedNetworkManagerServer) WifiConnect(context.Context, *WifiConnectInfo) (*WifiConnectReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WifiConnect not implemented")
+}
+func (UnimplementedNetworkManagerServer) WifiConnectTemp(context.Context, *WifiConnectTempInfo) (*WifiConnectReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WifiConnectTemp not implemented")
 }
 func (UnimplementedNetworkManagerServer) WifiConfigAdd(context.Context, *WifiConfigInfo) (*WifiConnectReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WifiConfigAdd not implemented")
@@ -221,6 +240,24 @@ func _NetworkManager_WifiConnect_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NetworkManager_WifiConnectTemp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WifiConnectTempInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NetworkManagerServer).WifiConnectTemp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NetworkManager_WifiConnectTemp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NetworkManagerServer).WifiConnectTemp(ctx, req.(*WifiConnectTempInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _NetworkManager_WifiConfigAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WifiConfigInfo)
 	if err := dec(in); err != nil {
@@ -261,6 +298,10 @@ var NetworkManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "WifiConnect",
 			Handler:    _NetworkManager_WifiConnect_Handler,
+		},
+		{
+			MethodName: "WifiConnectTemp",
+			Handler:    _NetworkManager_WifiConnectTemp_Handler,
 		},
 		{
 			MethodName: "WifiConfigAdd",
