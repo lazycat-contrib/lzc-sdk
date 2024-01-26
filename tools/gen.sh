@@ -31,6 +31,7 @@ if [[ "$PROTOC_GEN_JS" -eq 1 ]]; then
 		--ts_proto_opt=outputClientImpl=grpc-web
 		--ts_proto_opt=exportCommonSymbols=false
 		--ts_proto_opt=esModuleInterop=true
+		--ts_proto_opt=useAbortSignal=true
 		--plugin=$JS_PLUGIN_PATH
 	)
 fi
