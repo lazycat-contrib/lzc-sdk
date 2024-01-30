@@ -40,6 +40,9 @@ message AccessPointInfo {
   // 信号强度（范围 0 <= signal <= 100）
   int32 signal = 3;
 
+  // 信号频率
+  int32 frequency = 9;
+
   // 是否需要密码
   bool security = 4;
 
