@@ -29,7 +29,6 @@ const (
 	MessageService_NewMessage_FullMethodName              = "/cloud.lazycat.apis.common.MessageService/NewMessage"
 	MessageService_LatestMessage_FullMethodName           = "/cloud.lazycat.apis.common.MessageService/LatestMessage"
 	MessageService_HandleNoTrustDeviceUser_FullMethodName = "/cloud.lazycat.apis.common.MessageService/HandleNoTrustDeviceUser"
-	MessageService_Ping_FullMethodName                    = "/cloud.lazycat.apis.common.MessageService/Ping"
 )
 
 // MessageServiceClient is the client API for MessageService service.
@@ -54,7 +53,6 @@ type MessageServiceClient interface {
 	LatestMessage(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (MessageService_LatestMessageClient, error)
 	// 处理普通用户没有受信任设备消息
 	HandleNoTrustDeviceUser(ctx context.Context, in *HandleNoTrustDeviceUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type messageServiceClient struct {
@@ -169,15 +167,6 @@ func (c *messageServiceClient) HandleNoTrustDeviceUser(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *messageServiceClient) Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, MessageService_Ping_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // MessageServiceServer is the server API for MessageService service.
 // All implementations must embed UnimplementedMessageServiceServer
 // for forward compatibility
@@ -200,7 +189,6 @@ type MessageServiceServer interface {
 	LatestMessage(*emptypb.Empty, MessageService_LatestMessageServer) error
 	// 处理普通用户没有受信任设备消息
 	HandleNoTrustDeviceUser(context.Context, *HandleNoTrustDeviceUserRequest) (*emptypb.Empty, error)
-	Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedMessageServiceServer()
 }
 
@@ -234,9 +222,6 @@ func (UnimplementedMessageServiceServer) LatestMessage(*emptypb.Empty, MessageSe
 }
 func (UnimplementedMessageServiceServer) HandleNoTrustDeviceUser(context.Context, *HandleNoTrustDeviceUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HandleNoTrustDeviceUser not implemented")
-}
-func (UnimplementedMessageServiceServer) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
 func (UnimplementedMessageServiceServer) mustEmbedUnimplementedMessageServiceServer() {}
 
@@ -416,24 +401,6 @@ func _MessageService_HandleNoTrustDeviceUser_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MessageService_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MessageServiceServer).Ping(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: MessageService_Ping_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageServiceServer).Ping(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // MessageService_ServiceDesc is the grpc.ServiceDesc for MessageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -472,10 +439,6 @@ var MessageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HandleNoTrustDeviceUser",
 			Handler:    _MessageService_HandleNoTrustDeviceUser_Handler,
-		},
-		{
-			MethodName: "Ping",
-			Handler:    _MessageService_Ping_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

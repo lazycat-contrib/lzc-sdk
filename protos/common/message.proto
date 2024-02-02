@@ -93,5 +93,4 @@ service MessageService{
   rpc LatestMessage(google.protobuf.Empty)	returns (stream Msg)		{}
   // 处理普通用户没有受信任设备消息
   rpc HandleNoTrustDeviceUser(HandleNoTrustDeviceUserRequest) returns (google.protobuf.Empty) {}
-  rpc Ping(google.protobuf.Empty) returns(google.protobuf.Empty) {}
 }
