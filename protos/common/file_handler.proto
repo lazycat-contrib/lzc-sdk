@@ -24,6 +24,8 @@ message WalkDirRequest {
   optional string pattern = 2;
   // 并行线程数，不传或<=0的话，就等于$ nproc
   optional int32 worker_count = 3;
+  // 遍历深度，只支持0或1。0表示无限制递归，1表示仅返回一层文件夹
+  optional int32 depth = 4;
 }
 
 message WalkDirReply {
