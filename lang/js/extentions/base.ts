@@ -16,6 +16,8 @@ export enum LzcUserAgent {
   AndroidWebShell = "Lazycat_101",
   // 桌面客户端 webview内
   DesktopWebShell = "LazyCatClientDesktop",
+  // TvOS webview内
+  TvOsWebShell = "LazyCatTvOsClient",
   // IOS客户端 webview内
   IOSWebShell = "Lazycat_103",
   // control webview内
@@ -343,6 +345,14 @@ class LzcAppSdk {
    */
   public isPCWebShell(): boolean {
     return navigator.userAgent.indexOf(LzcUserAgent.DesktopWebShell) != -1
+  }
+
+  /**
+   * @description: 是否是tvos webshell 环境
+   * @return {boolean}
+   */
+  public isTvOsWebShell(): boolean {
+    return navigator.userAgent.indexOf(LzcUserAgent.TvOsWebShell) != -1
   }
 
   /**

@@ -1,5 +1,5 @@
-import LzcAppSdk, {LzcAppPlatformType, LzcAppSdkManage, native} from "./base"
-import {IntentAction, intentActionFromJSON} from "../common/file_handler";
+import LzcAppSdk, { LzcAppPlatformType, LzcAppSdkManage, native } from "./base"
+import { IntentAction, intentActionFromJSON } from "../common/file_handler"
 
 class AppCommon extends LzcAppSdkManage {
   /**
@@ -68,6 +68,11 @@ class AppCommon extends LzcAppSdkManage {
       window.ipcRenderer.invoke("launchApp", url, appid)
       return
     }
+
+    // tvos打开应用
+    if (LzcAppSdk.isTvOsWebShell()) {
+      window.ipcRenderer.invoke("launch-app", url, appid)
+    }
   }
 
   /**
@@ -78,7 +83,7 @@ class AppCommon extends LzcAppSdkManage {
    * @return {*}
    */
   @native(LzcAppPlatformType.Android)
-  public static async LaunchNativeApp(filepath: string, appid: string,intentAction: IntentAction = IntentAction.UN_KNOWN): Promise<void> {
+  public static async LaunchNativeApp(filepath: string, appid: string, intentAction: IntentAction = IntentAction.UN_KNOWN): Promise<void> {
     // 在浏览器环境中
     if (!LzcAppSdk.isInApplication()) {
       console.error("LaunchNativeApp 方法暂未实现。")
@@ -109,7 +114,7 @@ class AppCommon extends LzcAppSdkManage {
    * @return {*}
    */
   @native(LzcAppPlatformType.Android)
-  public static async ShareWith(boxName: string,webdav_url: string,appid: string): Promise<void> {
+  public static async ShareWith(boxName: string, webdav_url: string, appid: string): Promise<void> {
     // 在浏览器环境中
     if (!LzcAppSdk.isInApplication()) {
       console.error("LaunchNativeApp 方法暂未实现。")
@@ -132,7 +137,7 @@ class AppCommon extends LzcAppSdkManage {
   }
 
   @native(LzcAppPlatformType.Android)
-  public static async OpenWith(boxName: string, webdav_url: string,appid: string): Promise<void> {
+  public static async OpenWith(boxName: string, webdav_url: string, appid: string): Promise<void> {
     // 在浏览器环境中
     if (!LzcAppSdk.isInApplication()) {
       console.error("LaunchNativeApp 方法暂未实现。")
@@ -154,6 +159,5 @@ class AppCommon extends LzcAppSdkManage {
     console.error("LaunchNativeApp 方法暂未实现。")
   }
 }
-
 
 export { AppCommon }
