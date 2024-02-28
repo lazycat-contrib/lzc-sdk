@@ -6,6 +6,6 @@
 2. 通过反代方式将本地demo项目代理到盒子
   - `cd example/lzc-react-demo`
   - `npm run dev`
-  - `lzc-cli project build`
+  - `lzc-cli project devshell`
   - `lzc-cli app install cloud.lazycat.apps.sdk-v0.0.0.lpk`
 3. 打开盒子中的应用或通过链接访问 `https://sdk.[boxName].heiyu.space`
