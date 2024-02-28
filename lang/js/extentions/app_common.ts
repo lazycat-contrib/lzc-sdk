@@ -71,7 +71,9 @@ class AppCommon extends LzcAppSdkManage {
 
     // tvos打开应用
     if (LzcAppSdk.isTvOsWebShell()) {
-      window.ipcRenderer.invoke("launch-app", url, appid)
+      // @ts-ignore
+      // mipcr支持的类型: https://gitee.com/linakesi/lzc-tvos/blob/master/client/src/preload.ts#L19
+      window.mipcr.LaunchApp(url, appid)
     }
   }
 
