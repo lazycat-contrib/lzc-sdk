@@ -9,6 +9,7 @@ enum PlatformType {
   IOS,
   PC,
   Browser,
+  TvOs,
 }
 
 export enum LzcUserAgent {
@@ -29,47 +30,6 @@ export enum LzcUserAgent {
 declare global {
   interface Window {
     ipcRenderer: any
-  }
-}
-
-// 不支持的平台 notSupportPlatform
-function disabled(...platforms: PlatformType[]) {
-  // console.log("PlatformType", list);
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    if (!(target.constructor === LzcAppSdk)) {
-      console.error("LzcAppSdk:", `notSupportPlatform error ${target.constructor}`)
-      return
-    }
-
-    let notSupport = false
-    platforms.forEach((item: PlatformType) => {
-      switch (item) {
-        case PlatformType.Android:
-          notSupport = target.isAndroidWebShell()
-          return
-        case PlatformType.IOS:
-          notSupport = target.isIosWebShell()
-          return
-        case PlatformType.PC:
-          notSupport = target.isPCWebShell()
-          return
-        case PlatformType.Browser:
-          notSupport = !target.isWebShell()
-          return
-      }
-    })
-
-    if (notSupport) {
-      descriptor.value = (...args: any) => {
-        console.error("LzcAppSdk:", `The current platform does not support the ${propertyKey} method`)
-      }
-    }
-
-    // console.log("target", target);
-    // console.log("propertyKey", propertyKey);
-    // console.log("descriptor", descriptor);
-
-    return descriptor
   }
 }
 
@@ -103,6 +63,8 @@ function native(...platforms: PlatformType[]): (...args: any[]) => any {
           return
         case PlatformType.Browser:
           support = !lzcSdk.isInApplication()
+        case PlatformType.TvOs:
+          support = lzcSdk.isTvOsWebShell()
           return
       }
     })
@@ -385,7 +347,7 @@ class LzcAppSdk {
    * @return {boolean}
    */
   public isInApplication(): boolean {
-    return navigator.userAgent.indexOf("Lazycat_Client") != -1 || this.isPCWebShell()
+    return navigator.userAgent.indexOf("Lazycat_Client") != -1 || this.isPCWebShell() || this.isTvOsWebShell()
   }
 }
 

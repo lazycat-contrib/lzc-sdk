@@ -37,7 +37,7 @@ class AppCommon extends LzcAppSdkManage {
    * @param {string} appid
    * @return {Promise<void>}
    */
-  @native(LzcAppPlatformType.IOS, LzcAppPlatformType.Android, LzcAppPlatformType.PC, LzcAppPlatformType.Browser)
+  @native(LzcAppPlatformType.IOS, LzcAppPlatformType.Android, LzcAppPlatformType.PC, LzcAppPlatformType.Browser, LzcAppPlatformType.TvOs)
   public static async LaunchApp(url: string, appid: string): Promise<void> {
     // 判断是否在浏览器中
     if (!LzcAppSdk.isInApplication()) {
