@@ -24,6 +24,7 @@ import { FileHandlerClientImpl, FileHandler } from "./common/file_handler"
 import { FileTransferServiceClientImpl, FileTransferService } from "./common/filetrans"
 import { LocalLaunchService, LocalLaunchServiceClientImpl } from "./localdevice/local-launch"
 import { Client, ClientClientImpl } from "./localdevice/client"
+import { Rim, RimClientImpl } from "./localdevice/remote-input-method"
 import { RemoteMediaPlayerService, RemoteMediaPlayerServiceClientImpl } from "./dlna/dlna"
 import { grpc } from "@improbable-eng/grpc-web"
 const opt = {
@@ -171,6 +172,7 @@ export class EndDeviceProxy {
     this.permission = new DevicePermissionManagerClientImpl(rpc)
     this.localLaunch = new LocalLaunchServiceClientImpl(rpc)
     this.client = new ClientClientImpl(rpc)
+    this.rim = new RimClientImpl(rpc)
   }
   public device: DeviceService
   public dialog: DialogManager
@@ -182,6 +184,7 @@ export class EndDeviceProxy {
   public permission: DevicePermissionManager
   public localLaunch: LocalLaunchService
   public client: Client
+  public rim: Rim
 }
 
 import pkg from "./package.json"
@@ -194,7 +197,7 @@ async function dumpInfo(bo: BrowserOnlyProxy) {
       `%c ${title} %c ${info} %c`,
       "background:#35495E; padding: 1px; border-radius: 3px 0 0 3px; color: #fff;",
       `background:#3488ff; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff;`,
-      "background:transparent"
+      "background:transparent",
     )
   }
   capsule(`The ${pkg.name} version is`, `${pkg.version}`)
