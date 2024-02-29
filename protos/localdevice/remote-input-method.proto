@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.localdevice;
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
+import "google/protobuf/empty.proto";
+
+service Rim{
+  // 监听输入框聚焦
+  rpc ListenInputFocus(UserDeviceId) returns (stream InputContentReply) {}
+  // 监听输入框失焦
+  rpc ListenInputBlur(UserDeviceId) returns (stream InputContentReply) {}
+  // 获取当前聚焦输入框文本
+  rpc GetInputText(UserDeviceId) returns (InputContentReply) {}
+  // 设置当前聚焦输入框文本
+  rpc SetInputText(SetInputTextRequest) returns (google.protobuf.Empty) {}
+  // 获取当前是否有聚焦输入框
+  rpc IsInputFocus(UserDeviceId) returns(IsInputFocusResponse) {}
+}
+
+message InputContentReply {
+  string text = 1;
+}
+
+message UserDeviceId {
+  string udid = 1;
+}
+
+message IsInputFocusResponse {
+  bool focus = 1; 
+}
+
+message SetInputTextRequest {
+  string udid = 1;
+  string text = 2;
+}
+
