@@ -32,15 +32,15 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RimClient interface {
 	// 监听输入框聚焦
-	ListenInputFocus(ctx context.Context, in *UserDeviceId, opts ...grpc.CallOption) (Rim_ListenInputFocusClient, error)
+	ListenInputFocus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Rim_ListenInputFocusClient, error)
 	// 监听输入框失焦
-	ListenInputBlur(ctx context.Context, in *UserDeviceId, opts ...grpc.CallOption) (Rim_ListenInputBlurClient, error)
+	ListenInputBlur(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Rim_ListenInputBlurClient, error)
 	// 获取当前聚焦输入框文本
-	GetInputText(ctx context.Context, in *UserDeviceId, opts ...grpc.CallOption) (*InputContentReply, error)
+	GetInputText(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InputContentReply, error)
 	// 设置当前聚焦输入框文本
 	SetInputText(ctx context.Context, in *SetInputTextRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 获取当前是否有聚焦输入框
-	IsInputFocus(ctx context.Context, in *UserDeviceId, opts ...grpc.CallOption) (*IsInputFocusResponse, error)
+	IsInputFocus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*IsInputFocusResponse, error)
 }
 
 type rimClient struct {
@@ -51,7 +51,7 @@ func NewRimClient(cc grpc.ClientConnInterface) RimClient {
 	return &rimClient{cc}
 }
 
-func (c *rimClient) ListenInputFocus(ctx context.Context, in *UserDeviceId, opts ...grpc.CallOption) (Rim_ListenInputFocusClient, error) {
+func (c *rimClient) ListenInputFocus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Rim_ListenInputFocusClient, error) {
 	stream, err := c.cc.NewStream(ctx, &Rim_ServiceDesc.Streams[0], Rim_ListenInputFocus_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
@@ -83,7 +83,7 @@ func (x *rimListenInputFocusClient) Recv() (*InputContentReply, error) {
 	return m, nil
 }
 
-func (c *rimClient) ListenInputBlur(ctx context.Context, in *UserDeviceId, opts ...grpc.CallOption) (Rim_ListenInputBlurClient, error) {
+func (c *rimClient) ListenInputBlur(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Rim_ListenInputBlurClient, error) {
 	stream, err := c.cc.NewStream(ctx, &Rim_ServiceDesc.Streams[1], Rim_ListenInputBlur_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
@@ -115,7 +115,7 @@ func (x *rimListenInputBlurClient) Recv() (*InputContentReply, error) {
 	return m, nil
 }
 
-func (c *rimClient) GetInputText(ctx context.Context, in *UserDeviceId, opts ...grpc.CallOption) (*InputContentReply, error) {
+func (c *rimClient) GetInputText(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InputContentReply, error) {
 	out := new(InputContentReply)
 	err := c.cc.Invoke(ctx, Rim_GetInputText_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -133,7 +133,7 @@ func (c *rimClient) SetInputText(ctx context.Context, in *SetInputTextRequest, o
 	return out, nil
 }
 
-func (c *rimClient) IsInputFocus(ctx context.Context, in *UserDeviceId, opts ...grpc.CallOption) (*IsInputFocusResponse, error) {
+func (c *rimClient) IsInputFocus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*IsInputFocusResponse, error) {
 	out := new(IsInputFocusResponse)
 	err := c.cc.Invoke(ctx, Rim_IsInputFocus_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -147,15 +147,15 @@ func (c *rimClient) IsInputFocus(ctx context.Context, in *UserDeviceId, opts ...
 // for forward compatibility
 type RimServer interface {
 	// 监听输入框聚焦
-	ListenInputFocus(*UserDeviceId, Rim_ListenInputFocusServer) error
+	ListenInputFocus(*emptypb.Empty, Rim_ListenInputFocusServer) error
 	// 监听输入框失焦
-	ListenInputBlur(*UserDeviceId, Rim_ListenInputBlurServer) error
+	ListenInputBlur(*emptypb.Empty, Rim_ListenInputBlurServer) error
 	// 获取当前聚焦输入框文本
-	GetInputText(context.Context, *UserDeviceId) (*InputContentReply, error)
+	GetInputText(context.Context, *emptypb.Empty) (*InputContentReply, error)
 	// 设置当前聚焦输入框文本
 	SetInputText(context.Context, *SetInputTextRequest) (*emptypb.Empty, error)
 	// 获取当前是否有聚焦输入框
-	IsInputFocus(context.Context, *UserDeviceId) (*IsInputFocusResponse, error)
+	IsInputFocus(context.Context, *emptypb.Empty) (*IsInputFocusResponse, error)
 	mustEmbedUnimplementedRimServer()
 }
 
@@ -163,19 +163,19 @@ type RimServer interface {
 type UnimplementedRimServer struct {
 }
 
-func (UnimplementedRimServer) ListenInputFocus(*UserDeviceId, Rim_ListenInputFocusServer) error {
+func (UnimplementedRimServer) ListenInputFocus(*emptypb.Empty, Rim_ListenInputFocusServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListenInputFocus not implemented")
 }
-func (UnimplementedRimServer) ListenInputBlur(*UserDeviceId, Rim_ListenInputBlurServer) error {
+func (UnimplementedRimServer) ListenInputBlur(*emptypb.Empty, Rim_ListenInputBlurServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListenInputBlur not implemented")
 }
-func (UnimplementedRimServer) GetInputText(context.Context, *UserDeviceId) (*InputContentReply, error) {
+func (UnimplementedRimServer) GetInputText(context.Context, *emptypb.Empty) (*InputContentReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetInputText not implemented")
 }
 func (UnimplementedRimServer) SetInputText(context.Context, *SetInputTextRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetInputText not implemented")
 }
-func (UnimplementedRimServer) IsInputFocus(context.Context, *UserDeviceId) (*IsInputFocusResponse, error) {
+func (UnimplementedRimServer) IsInputFocus(context.Context, *emptypb.Empty) (*IsInputFocusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsInputFocus not implemented")
 }
 func (UnimplementedRimServer) mustEmbedUnimplementedRimServer() {}
@@ -192,7 +192,7 @@ func RegisterRimServer(s grpc.ServiceRegistrar, srv RimServer) {
 }
 
 func _Rim_ListenInputFocus_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(UserDeviceId)
+	m := new(emptypb.Empty)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
@@ -213,7 +213,7 @@ func (x *rimListenInputFocusServer) Send(m *InputContentReply) error {
 }
 
 func _Rim_ListenInputBlur_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(UserDeviceId)
+	m := new(emptypb.Empty)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
@@ -234,7 +234,7 @@ func (x *rimListenInputBlurServer) Send(m *InputContentReply) error {
 }
 
 func _Rim_GetInputText_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserDeviceId)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -246,7 +246,7 @@ func _Rim_GetInputText_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: Rim_GetInputText_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RimServer).GetInputText(ctx, req.(*UserDeviceId))
+		return srv.(RimServer).GetInputText(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -270,7 +270,7 @@ func _Rim_SetInputText_Handler(srv interface{}, ctx context.Context, dec func(in
 }
 
 func _Rim_IsInputFocus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserDeviceId)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -282,7 +282,7 @@ func _Rim_IsInputFocus_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: Rim_IsInputFocus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RimServer).IsInputFocus(ctx, req.(*UserDeviceId))
+		return srv.(RimServer).IsInputFocus(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
