@@ -97,6 +97,22 @@ export class lzcAPIGateway {
       })
     })
   }
+  public async getDeviceProxy(udid: string): Promise<EndDeviceProxy> {
+    // 1. get device api url
+    const apiUrl = (await this.getDeviceURL(udid)).toString().replace(/\/+$/, "")
+    // 2. get auth token
+    const authToken = await this.requestAuthToken(this, apiUrl)
+    // 3. new grpc rpc
+    const metadata = new grpc.Metadata()
+    metadata.set("lzc_dapi_auth_token", authToken)
+    const rpc = new GrpcWebImpl(apiUrl, { ...opt, ...{ metadata: metadata } })
+    // 4. return EndDeviceProxy grpc client
+    return new EndDeviceProxy(rpc)
+  }
+  public async getDeviceURL(udid: string): Promise<URL> {
+    let session = await this.session
+    return new URL((await this.devices.ListEndDevices({ uid: session.uid })).devices.find(d => d.uniqueDeivceId == udid).deviceApiUrl)
+  }
 
   // 获取当前设备 url
   public async currentDeviceURL(gateway: lzcAPIGateway = this): Promise<URL | undefined> {
@@ -115,6 +131,26 @@ export class lzcAPIGateway {
     })
   }
 
+  public async requestAuthToken(cc: lzcAPIGateway, deviceApiUrl: string): Promise<string> {
+    const resp = await fetch(cc.host + "/_lzc/deviceapi_auth_token", {
+      method: "POST",
+      body: deviceApiUrl,
+    })
+    if (!resp.ok) {
+      throw new Error(`${resp.status}: ${resp.statusText}`)
+    }
+    const respJson = await resp.json()
+    const token: string = respJson["Token"]
+    const deadline: string = respJson["Deadline"]
+
+    cc.deviceApiTokenDeadline = Date.parse(deadline)
+
+    if (token === undefined) {
+      throw new Error(`Token not set: ${respJson}`)
+    }
+    return token
+  }
+
   public get currentDevice(): Promise<EndDeviceProxy> {
     // 有设备 且 当前时间 小于 过期时间
     if (this._currentDevice && Date.now() < this.deviceApiTokenDeadline) {
@@ -126,28 +162,9 @@ export class lzcAPIGateway {
       return url
     }
 
-    async function requestAuthToken(cc: lzcAPIGateway, deviceApiUrl: string): Promise<string> {
-      const resp = await fetch(cc.host + "/_lzc/deviceapi_auth_token", {
-        method: "POST",
-        body: deviceApiUrl,
-      })
-      if (!resp.ok) {
-        throw new Error(`${resp.status}: ${resp.statusText}`)
-      }
-      const respJson = await resp.json()
-      const token: string = respJson["Token"]
-      const deadline: string = respJson["Deadline"]
-
-      cc.deviceApiTokenDeadline = Date.parse(deadline)
-
-      if (token === undefined) {
-        throw new Error(`Token not set: ${respJson}`)
-      }
-      return token
-    }
     return new Promise(async res => {
       const deviceApiUrl = await currentDeviceApiHost(this)
-      const authToken = await requestAuthToken(this, deviceApiUrl)
+      const authToken = await this.requestAuthToken(this, deviceApiUrl)
       // save authToken for other uses(eg. webdav auth)
       this.authToken = authToken
       // build grpc metadata for credentials
