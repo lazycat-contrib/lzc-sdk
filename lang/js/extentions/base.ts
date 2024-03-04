@@ -63,6 +63,7 @@ function native(...platforms: PlatformType[]): (...args: any[]) => any {
           return
         case PlatformType.Browser:
           support = !lzcSdk.isInApplication()
+          return
         case PlatformType.TvOs:
           support = lzcSdk.isTvOsWebShell()
           return
