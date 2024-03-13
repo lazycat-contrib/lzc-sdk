@@ -51,6 +51,9 @@ message EndDevice {
 
   // 设备是否是移动平台
   bool is_mobile = 8;
+
+  // 设备是否是电视平台
+  bool is_tv = 9;
 }
 
 message ListEndDeviceRequest {
