@@ -26,6 +26,8 @@ const (
 	HPortalSys_DeleteUser_FullMethodName              = "/cloud.lazycat.apis.sys.HPortalSys/DeleteUser"
 	HPortalSys_ResetPassword_FullMethodName           = "/cloud.lazycat.apis.sys.HPortalSys/ResetPassword"
 	HPortalSys_CheckPassword_FullMethodName           = "/cloud.lazycat.apis.sys.HPortalSys/CheckPassword"
+	HPortalSys_GetPasswordHash_FullMethodName         = "/cloud.lazycat.apis.sys.HPortalSys/GetPasswordHash"
+	HPortalSys_SetPasswordHash_FullMethodName         = "/cloud.lazycat.apis.sys.HPortalSys/SetPasswordHash"
 	HPortalSys_QueryRole_FullMethodName               = "/cloud.lazycat.apis.sys.HPortalSys/QueryRole"
 	HPortalSys_ChangeRole_FullMethodName              = "/cloud.lazycat.apis.sys.HPortalSys/ChangeRole"
 	HPortalSys_ChangeTrustEndDevice_FullMethodName    = "/cloud.lazycat.apis.sys.HPortalSys/ChangeTrustEndDevice"
@@ -55,6 +57,10 @@ type HPortalSysClient interface {
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 校验用户密码是否正确
 	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取用户密码Hash（供备份还原使用）
+	GetPasswordHash(ctx context.Context, in *GetPasswordHashRequest, opts ...grpc.CallOption) (*GetPasswordHashResponse, error)
+	// 设置用户密码Hash（供备份还原使用）
+	SetPasswordHash(ctx context.Context, in *SetPasswordHashRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据用户uid查询用户信息
 	QueryRole(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*QueryRoleReply, error)
 	// 修改指定uid的用户角色
@@ -138,6 +144,24 @@ func (c *hPortalSysClient) ResetPassword(ctx context.Context, in *ResetPasswordR
 func (c *hPortalSysClient) CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, HPortalSys_CheckPassword_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) GetPasswordHash(ctx context.Context, in *GetPasswordHashRequest, opts ...grpc.CallOption) (*GetPasswordHashResponse, error) {
+	out := new(GetPasswordHashResponse)
+	err := c.cc.Invoke(ctx, HPortalSys_GetPasswordHash_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hPortalSysClient) SetPasswordHash(ctx context.Context, in *SetPasswordHashRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, HPortalSys_SetPasswordHash_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -282,6 +306,10 @@ type HPortalSysServer interface {
 	ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error)
 	// 校验用户密码是否正确
 	CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error)
+	// 获取用户密码Hash（供备份还原使用）
+	GetPasswordHash(context.Context, *GetPasswordHashRequest) (*GetPasswordHashResponse, error)
+	// 设置用户密码Hash（供备份还原使用）
+	SetPasswordHash(context.Context, *SetPasswordHashRequest) (*emptypb.Empty, error)
 	// 根据用户uid查询用户信息
 	QueryRole(context.Context, *UserID) (*QueryRoleReply, error)
 	// 修改指定uid的用户角色
@@ -331,6 +359,12 @@ func (UnimplementedHPortalSysServer) ResetPassword(context.Context, *ResetPasswo
 }
 func (UnimplementedHPortalSysServer) CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
+}
+func (UnimplementedHPortalSysServer) GetPasswordHash(context.Context, *GetPasswordHashRequest) (*GetPasswordHashResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPasswordHash not implemented")
+}
+func (UnimplementedHPortalSysServer) SetPasswordHash(context.Context, *SetPasswordHashRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPasswordHash not implemented")
 }
 func (UnimplementedHPortalSysServer) QueryRole(context.Context, *UserID) (*QueryRoleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryRole not implemented")
@@ -482,6 +516,42 @@ func _HPortalSys_CheckPassword_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HPortalSysServer).CheckPassword(ctx, req.(*CheckPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_GetPasswordHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPasswordHashRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).GetPasswordHash(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HPortalSys_GetPasswordHash_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).GetPasswordHash(ctx, req.(*GetPasswordHashRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HPortalSys_SetPasswordHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetPasswordHashRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).SetPasswordHash(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HPortalSys_SetPasswordHash_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).SetPasswordHash(ctx, req.(*SetPasswordHashRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -717,6 +787,14 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckPassword",
 			Handler:    _HPortalSys_CheckPassword_Handler,
+		},
+		{
+			MethodName: "GetPasswordHash",
+			Handler:    _HPortalSys_GetPasswordHash_Handler,
+		},
+		{
+			MethodName: "SetPasswordHash",
+			Handler:    _HPortalSys_SetPasswordHash_Handler,
 		},
 		{
 			MethodName: "QueryRole",

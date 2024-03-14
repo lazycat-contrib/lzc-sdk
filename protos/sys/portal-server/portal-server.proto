@@ -21,6 +21,11 @@ service HPortalSys {
   rpc ResetPassword(ResetPasswordRequest) returns(google.protobuf.Empty){}
   //  校验用户密码是否正确
   rpc CheckPassword(CheckPasswordRequest) returns (google.protobuf.Empty) {}
+  //  获取用户密码Hash（供备份还原使用）
+  rpc GetPasswordHash(GetPasswordHashRequest) returns (GetPasswordHashResponse) {}
+  //  设置用户密码Hash（供备份还原使用）
+  rpc SetPasswordHash(SetPasswordHashRequest) returns (google.protobuf.Empty) {}
+
   //  根据用户uid查询用户信息
   rpc QueryRole(UserID) returns (QueryRoleReply) {}
   //  修改指定uid的用户角色
@@ -235,4 +240,16 @@ message ResetHServerReply {
 
 message PeersInfo {
   string peer_info = 1;
+}
+
+message GetPasswordHashRequest {
+  string uid = 1;
+}
+message GetPasswordHashResponse {
+  string password_hash = 1;
+}
+
+message SetPasswordHashRequest {
+  string uid = 1;
+  string password_hash = 2;
 }
