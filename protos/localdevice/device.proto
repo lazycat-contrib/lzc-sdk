@@ -15,4 +15,6 @@ message DeviceInfo {
   string CPU = 2;
   string name = 3;
   string documentRootDir = 4;
+  // 用于扫码或辅助登录标记操作端
+  optional string identityProvider = 5;
 }
