@@ -170,23 +170,23 @@ class AppCommon extends LzcAppSdkManage {
      */
     @native(LzcAppPlatformType.Android, LzcAppPlatformType.IOS)
     public static async ShareMedia(options: {
-        actionName: string | null,
-        ids: string[] | null, id: string | null
+        actionName?: string,
+        ids?: string[], id?: string
     }): Promise<void> {
         // 在浏览器环境中
         if (!LzcAppSdk.isInApplication()) {
             console.error("LaunchNativeApp 方法暂未实现。")
             return
         }
-        if(!options.ids && !options.id){
-            throw Error("至少有一个id参数")
-        }
         const idArray = []
-        if (options.ids.length > 0) {
-            idArray.push(options.ids)
+        if (options.ids && options.ids.length > 0) {
+            idArray.push(...options.ids)
         }
-        if (options.id != null) {
+        if (options.id && options.id.length > 0) {
             idArray.push(options.id)
+        }
+        if (idArray.length == 0) {
+            throw Error("至少有一个id参数")
         }
         if(LzcAppSdk.isAndroidWebShell()){
             if(options.actionName.length == 0 || options.actionName.indexOf(":") < 0){
