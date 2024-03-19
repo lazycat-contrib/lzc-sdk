@@ -17,7 +17,7 @@ ENV GOPROXY=https://goproxy.cn
 RUN go install github.com/golang/protobuf/protoc-gen-go@v1.5.3
 RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.3.0
 
-RUN npm config set registry https://registry.npm.taobao.org/
+RUN npm config set registry https://registry.npmmirror.com/
 
 RUN npm install -g ts-proto@1.155.1
 

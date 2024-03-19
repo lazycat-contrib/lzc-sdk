@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# 作为不更新 docker image 的处理措施
+npm config set registry https://registry.npmmirror.com/
+
 PROTOC_ARGS=()
 
 if [[ "$PROTOC_GEN_GO" -eq 1 ]]; then
