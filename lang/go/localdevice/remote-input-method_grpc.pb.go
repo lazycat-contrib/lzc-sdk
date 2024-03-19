@@ -25,6 +25,7 @@ const (
 	Rim_GetInputText_FullMethodName     = "/cloud.lazycat.apis.localdevice.Rim/GetInputText"
 	Rim_SetInputText_FullMethodName     = "/cloud.lazycat.apis.localdevice.Rim/SetInputText"
 	Rim_IsInputFocus_FullMethodName     = "/cloud.lazycat.apis.localdevice.Rim/IsInputFocus"
+	Rim_InputPressEnter_FullMethodName  = "/cloud.lazycat.apis.localdevice.Rim/InputPressEnter"
 )
 
 // RimClient is the client API for Rim service.
@@ -41,6 +42,8 @@ type RimClient interface {
 	SetInputText(ctx context.Context, in *SetInputTextRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 获取当前是否有聚焦输入框
 	IsInputFocus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*IsInputFocusResponse, error)
+	// 在聚焦的输入框内键入回车
+	InputPressEnter(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type rimClient struct {
@@ -142,6 +145,15 @@ func (c *rimClient) IsInputFocus(ctx context.Context, in *emptypb.Empty, opts ..
 	return out, nil
 }
 
+func (c *rimClient) InputPressEnter(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Rim_InputPressEnter_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RimServer is the server API for Rim service.
 // All implementations must embed UnimplementedRimServer
 // for forward compatibility
@@ -156,6 +168,8 @@ type RimServer interface {
 	SetInputText(context.Context, *SetInputTextRequest) (*emptypb.Empty, error)
 	// 获取当前是否有聚焦输入框
 	IsInputFocus(context.Context, *emptypb.Empty) (*IsInputFocusResponse, error)
+	// 在聚焦的输入框内键入回车
+	InputPressEnter(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRimServer()
 }
 
@@ -177,6 +191,9 @@ func (UnimplementedRimServer) SetInputText(context.Context, *SetInputTextRequest
 }
 func (UnimplementedRimServer) IsInputFocus(context.Context, *emptypb.Empty) (*IsInputFocusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsInputFocus not implemented")
+}
+func (UnimplementedRimServer) InputPressEnter(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InputPressEnter not implemented")
 }
 func (UnimplementedRimServer) mustEmbedUnimplementedRimServer() {}
 
@@ -287,6 +304,24 @@ func _Rim_IsInputFocus_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Rim_InputPressEnter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RimServer).InputPressEnter(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Rim_InputPressEnter_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RimServer).InputPressEnter(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Rim_ServiceDesc is the grpc.ServiceDesc for Rim service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -305,6 +340,10 @@ var Rim_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsInputFocus",
 			Handler:    _Rim_IsInputFocus_Handler,
+		},
+		{
+			MethodName: "InputPressEnter",
+			Handler:    _Rim_InputPressEnter_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
