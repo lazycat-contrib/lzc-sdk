@@ -25,6 +25,7 @@ const (
 	CoreSystem_Apply_FullMethodName          = "/cloud.lazycat.apis.sys.CoreSystem/Apply"
 	CoreSystem_Apply2_FullMethodName         = "/cloud.lazycat.apis.sys.CoreSystem/Apply2"
 	CoreSystem_Apply3_FullMethodName         = "/cloud.lazycat.apis.sys.CoreSystem/Apply3"
+	CoreSystem_ApplyLpk_FullMethodName       = "/cloud.lazycat.apis.sys.CoreSystem/ApplyLpk"
 	CoreSystem_Remove_FullMethodName         = "/cloud.lazycat.apis.sys.CoreSystem/Remove"
 	CoreSystem_Disable_FullMethodName        = "/cloud.lazycat.apis.sys.CoreSystem/Disable"
 	CoreSystem_Enable_FullMethodName         = "/cloud.lazycat.apis.sys.CoreSystem/Enable"
@@ -48,6 +49,8 @@ type CoreSystemClient interface {
 	Apply(ctx context.Context, in *RawData, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Apply2(ctx context.Context, in *sys.PkgURL, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Apply3(ctx context.Context, in *sys.PkgURL, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// ApplyLpk 安装或更新一个 app (lpk 封装)
+	ApplyLpk(ctx context.Context, in *sys.PkgURL, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Remove 移除一个 app
 	Remove(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Disable 禁用一个 app
@@ -110,6 +113,15 @@ func (c *coreSystemClient) Apply2(ctx context.Context, in *sys.PkgURL, opts ...g
 func (c *coreSystemClient) Apply3(ctx context.Context, in *sys.PkgURL, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, CoreSystem_Apply3_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreSystemClient) ApplyLpk(ctx context.Context, in *sys.PkgURL, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, CoreSystem_ApplyLpk_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -225,6 +237,8 @@ type CoreSystemServer interface {
 	Apply(context.Context, *RawData) (*emptypb.Empty, error)
 	Apply2(context.Context, *sys.PkgURL) (*emptypb.Empty, error)
 	Apply3(context.Context, *sys.PkgURL) (*emptypb.Empty, error)
+	// ApplyLpk 安装或更新一个 app (lpk 封装)
+	ApplyLpk(context.Context, *sys.PkgURL) (*emptypb.Empty, error)
 	// Remove 移除一个 app
 	Remove(context.Context, *DeleteRequest) (*emptypb.Empty, error)
 	// Disable 禁用一个 app
@@ -265,6 +279,9 @@ func (UnimplementedCoreSystemServer) Apply2(context.Context, *sys.PkgURL) (*empt
 }
 func (UnimplementedCoreSystemServer) Apply3(context.Context, *sys.PkgURL) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Apply3 not implemented")
+}
+func (UnimplementedCoreSystemServer) ApplyLpk(context.Context, *sys.PkgURL) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApplyLpk not implemented")
 }
 func (UnimplementedCoreSystemServer) Remove(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Remove not implemented")
@@ -380,6 +397,24 @@ func _CoreSystem_Apply3_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CoreSystemServer).Apply3(ctx, req.(*sys.PkgURL))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CoreSystem_ApplyLpk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(sys.PkgURL)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreSystemServer).ApplyLpk(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CoreSystem_ApplyLpk_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreSystemServer).ApplyLpk(ctx, req.(*sys.PkgURL))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -604,6 +639,10 @@ var CoreSystem_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Apply3",
 			Handler:    _CoreSystem_Apply3_Handler,
+		},
+		{
+			MethodName: "ApplyLpk",
+			Handler:    _CoreSystem_ApplyLpk_Handler,
 		},
 		{
 			MethodName: "Remove",

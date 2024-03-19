@@ -180,14 +180,14 @@ export const GetPositionInfoRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag != 10) {
+          if (tag !== 10) {
             break;
           }
 
           message.playerUuid = reader.string();
           continue;
       }
-      if ((tag & 7) == 4 || tag == 0) {
+      if ((tag & 7) === 4 || tag === 0) {
         break;
       }
       reader.skipType(tag & 7);
@@ -196,19 +196,20 @@ export const GetPositionInfoRequest = {
   },
 
   fromJSON(object: any): GetPositionInfoRequest {
-    return { playerUuid: isSet(object.playerUuid) ? String(object.playerUuid) : "" };
+    return { playerUuid: isSet(object.playerUuid) ? globalThis.String(object.playerUuid) : "" };
   },
 
   toJSON(message: GetPositionInfoRequest): unknown {
     const obj: any = {};
-    message.playerUuid !== undefined && (obj.playerUuid = message.playerUuid);
+    if (message.playerUuid !== "") {
+      obj.playerUuid = message.playerUuid;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<GetPositionInfoRequest>, I>>(base?: I): GetPositionInfoRequest {
-    return GetPositionInfoRequest.fromPartial(base ?? {});
+    return GetPositionInfoRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<GetPositionInfoRequest>, I>>(object: I): GetPositionInfoRequest {
     const message = createBaseGetPositionInfoRequest();
     message.playerUuid = object.playerUuid ?? "";
@@ -266,63 +267,63 @@ export const GetPositionInfoResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag != 10) {
+          if (tag !== 10) {
             break;
           }
 
           message.track = reader.string();
           continue;
         case 2:
-          if (tag != 18) {
+          if (tag !== 18) {
             break;
           }
 
           message.trackDuration = reader.string();
           continue;
         case 3:
-          if (tag != 26) {
+          if (tag !== 26) {
             break;
           }
 
           message.trackMetadata = reader.string();
           continue;
         case 4:
-          if (tag != 34) {
+          if (tag !== 34) {
             break;
           }
 
           message.trackUri = reader.string();
           continue;
         case 5:
-          if (tag != 42) {
+          if (tag !== 42) {
             break;
           }
 
           message.relTime = reader.string();
           continue;
         case 6:
-          if (tag != 50) {
+          if (tag !== 50) {
             break;
           }
 
           message.absTime = reader.string();
           continue;
         case 7:
-          if (tag != 56) {
+          if (tag !== 56) {
             break;
           }
 
           message.relCount = reader.int32();
           continue;
         case 8:
-          if (tag != 64) {
+          if (tag !== 64) {
             break;
           }
 
           message.absCount = reader.int32();
           continue;
       }
-      if ((tag & 7) == 4 || tag == 0) {
+      if ((tag & 7) === 4 || tag === 0) {
         break;
       }
       reader.skipType(tag & 7);
@@ -332,34 +333,49 @@ export const GetPositionInfoResponse = {
 
   fromJSON(object: any): GetPositionInfoResponse {
     return {
-      track: isSet(object.track) ? String(object.track) : "",
-      trackDuration: isSet(object.trackDuration) ? String(object.trackDuration) : "",
-      trackMetadata: isSet(object.trackMetadata) ? String(object.trackMetadata) : "",
-      trackUri: isSet(object.trackUri) ? String(object.trackUri) : "",
-      relTime: isSet(object.relTime) ? String(object.relTime) : "",
-      absTime: isSet(object.absTime) ? String(object.absTime) : "",
-      relCount: isSet(object.relCount) ? Number(object.relCount) : 0,
-      absCount: isSet(object.absCount) ? Number(object.absCount) : 0,
+      track: isSet(object.track) ? globalThis.String(object.track) : "",
+      trackDuration: isSet(object.trackDuration) ? globalThis.String(object.trackDuration) : "",
+      trackMetadata: isSet(object.trackMetadata) ? globalThis.String(object.trackMetadata) : "",
+      trackUri: isSet(object.trackUri) ? globalThis.String(object.trackUri) : "",
+      relTime: isSet(object.relTime) ? globalThis.String(object.relTime) : "",
+      absTime: isSet(object.absTime) ? globalThis.String(object.absTime) : "",
+      relCount: isSet(object.relCount) ? globalThis.Number(object.relCount) : 0,
+      absCount: isSet(object.absCount) ? globalThis.Number(object.absCount) : 0,
     };
   },
 
   toJSON(message: GetPositionInfoResponse): unknown {
     const obj: any = {};
-    message.track !== undefined && (obj.track = message.track);
-    message.trackDuration !== undefined && (obj.trackDuration = message.trackDuration);
-    message.trackMetadata !== undefined && (obj.trackMetadata = message.trackMetadata);
-    message.trackUri !== undefined && (obj.trackUri = message.trackUri);
-    message.relTime !== undefined && (obj.relTime = message.relTime);
-    message.absTime !== undefined && (obj.absTime = message.absTime);
-    message.relCount !== undefined && (obj.relCount = Math.round(message.relCount));
-    message.absCount !== undefined && (obj.absCount = Math.round(message.absCount));
+    if (message.track !== "") {
+      obj.track = message.track;
+    }
+    if (message.trackDuration !== "") {
+      obj.trackDuration = message.trackDuration;
+    }
+    if (message.trackMetadata !== "") {
+      obj.trackMetadata = message.trackMetadata;
+    }
+    if (message.trackUri !== "") {
+      obj.trackUri = message.trackUri;
+    }
+    if (message.relTime !== "") {
+      obj.relTime = message.relTime;
+    }
+    if (message.absTime !== "") {
+      obj.absTime = message.absTime;
+    }
+    if (message.relCount !== 0) {
+      obj.relCount = Math.round(message.relCount);
+    }
+    if (message.absCount !== 0) {
+      obj.absCount = Math.round(message.absCount);
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<GetPositionInfoResponse>, I>>(base?: I): GetPositionInfoResponse {
-    return GetPositionInfoResponse.fromPartial(base ?? {});
+    return GetPositionInfoResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<GetPositionInfoResponse>, I>>(object: I): GetPositionInfoResponse {
     const message = createBaseGetPositionInfoResponse();
     message.track = object.track ?? "";
@@ -406,42 +422,42 @@ export const DoActionRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag != 10) {
+          if (tag !== 10) {
             break;
           }
 
           message.playerUuid = reader.string();
           continue;
         case 2:
-          if (tag != 16) {
+          if (tag !== 16) {
             break;
           }
 
           message.action = reader.int32() as any;
           continue;
         case 3:
-          if (tag != 26) {
+          if (tag !== 26) {
             break;
           }
 
           message.mediaFile = reader.string();
           continue;
         case 4:
-          if (tag != 34) {
+          if (tag !== 34) {
             break;
           }
 
           message.mediaSubtitle = reader.string();
           continue;
         case 5:
-          if (tag != 42) {
+          if (tag !== 42) {
             break;
           }
 
           message.seekTarget = reader.string();
           continue;
       }
-      if ((tag & 7) == 4 || tag == 0) {
+      if ((tag & 7) === 4 || tag === 0) {
         break;
       }
       reader.skipType(tag & 7);
@@ -451,28 +467,37 @@ export const DoActionRequest = {
 
   fromJSON(object: any): DoActionRequest {
     return {
-      playerUuid: isSet(object.playerUuid) ? String(object.playerUuid) : "",
+      playerUuid: isSet(object.playerUuid) ? globalThis.String(object.playerUuid) : "",
       action: isSet(object.action) ? doActionRequest_ActionFromJSON(object.action) : 0,
-      mediaFile: isSet(object.mediaFile) ? String(object.mediaFile) : undefined,
-      mediaSubtitle: isSet(object.mediaSubtitle) ? String(object.mediaSubtitle) : undefined,
-      seekTarget: isSet(object.seekTarget) ? String(object.seekTarget) : undefined,
+      mediaFile: isSet(object.mediaFile) ? globalThis.String(object.mediaFile) : undefined,
+      mediaSubtitle: isSet(object.mediaSubtitle) ? globalThis.String(object.mediaSubtitle) : undefined,
+      seekTarget: isSet(object.seekTarget) ? globalThis.String(object.seekTarget) : undefined,
     };
   },
 
   toJSON(message: DoActionRequest): unknown {
     const obj: any = {};
-    message.playerUuid !== undefined && (obj.playerUuid = message.playerUuid);
-    message.action !== undefined && (obj.action = doActionRequest_ActionToJSON(message.action));
-    message.mediaFile !== undefined && (obj.mediaFile = message.mediaFile);
-    message.mediaSubtitle !== undefined && (obj.mediaSubtitle = message.mediaSubtitle);
-    message.seekTarget !== undefined && (obj.seekTarget = message.seekTarget);
+    if (message.playerUuid !== "") {
+      obj.playerUuid = message.playerUuid;
+    }
+    if (message.action !== 0) {
+      obj.action = doActionRequest_ActionToJSON(message.action);
+    }
+    if (message.mediaFile !== undefined) {
+      obj.mediaFile = message.mediaFile;
+    }
+    if (message.mediaSubtitle !== undefined) {
+      obj.mediaSubtitle = message.mediaSubtitle;
+    }
+    if (message.seekTarget !== undefined) {
+      obj.seekTarget = message.seekTarget;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<DoActionRequest>, I>>(base?: I): DoActionRequest {
-    return DoActionRequest.fromPartial(base ?? {});
+    return DoActionRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<DoActionRequest>, I>>(object: I): DoActionRequest {
     const message = createBaseDoActionRequest();
     message.playerUuid = object.playerUuid ?? "";
@@ -504,14 +529,14 @@ export const RMPStatus = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag != 8) {
+          if (tag !== 8) {
             break;
           }
 
           message.status = reader.int32() as any;
           continue;
       }
-      if ((tag & 7) == 4 || tag == 0) {
+      if ((tag & 7) === 4 || tag === 0) {
         break;
       }
       reader.skipType(tag & 7);
@@ -525,14 +550,15 @@ export const RMPStatus = {
 
   toJSON(message: RMPStatus): unknown {
     const obj: any = {};
-    message.status !== undefined && (obj.status = rMPStatus_StatusToJSON(message.status));
+    if (message.status !== 0) {
+      obj.status = rMPStatus_StatusToJSON(message.status);
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<RMPStatus>, I>>(base?: I): RMPStatus {
-    return RMPStatus.fromPartial(base ?? {});
+    return RMPStatus.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<RMPStatus>, I>>(object: I): RMPStatus {
     const message = createBaseRMPStatus();
     message.status = object.status ?? 0;
@@ -560,14 +586,14 @@ export const ScanRMPResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag != 10) {
+          if (tag !== 10) {
             break;
           }
 
           message.remoteMediaPlayers.push(RemoteMediaPlayer.decode(reader, reader.uint32()));
           continue;
       }
-      if ((tag & 7) == 4 || tag == 0) {
+      if ((tag & 7) === 4 || tag === 0) {
         break;
       }
       reader.skipType(tag & 7);
@@ -577,7 +603,7 @@ export const ScanRMPResponse = {
 
   fromJSON(object: any): ScanRMPResponse {
     return {
-      remoteMediaPlayers: Array.isArray(object?.remoteMediaPlayers)
+      remoteMediaPlayers: globalThis.Array.isArray(object?.remoteMediaPlayers)
         ? object.remoteMediaPlayers.map((e: any) => RemoteMediaPlayer.fromJSON(e))
         : [],
     };
@@ -585,18 +611,15 @@ export const ScanRMPResponse = {
 
   toJSON(message: ScanRMPResponse): unknown {
     const obj: any = {};
-    if (message.remoteMediaPlayers) {
-      obj.remoteMediaPlayers = message.remoteMediaPlayers.map((e) => e ? RemoteMediaPlayer.toJSON(e) : undefined);
-    } else {
-      obj.remoteMediaPlayers = [];
+    if (message.remoteMediaPlayers?.length) {
+      obj.remoteMediaPlayers = message.remoteMediaPlayers.map((e) => RemoteMediaPlayer.toJSON(e));
     }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<ScanRMPResponse>, I>>(base?: I): ScanRMPResponse {
-    return ScanRMPResponse.fromPartial(base ?? {});
+    return ScanRMPResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<ScanRMPResponse>, I>>(object: I): ScanRMPResponse {
     const message = createBaseScanRMPResponse();
     message.remoteMediaPlayers = object.remoteMediaPlayers?.map((e) => RemoteMediaPlayer.fromPartial(e)) || [];
@@ -624,14 +647,14 @@ export const SubscribeRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag != 10) {
+          if (tag !== 10) {
             break;
           }
 
           message.playerUuid = reader.string();
           continue;
       }
-      if ((tag & 7) == 4 || tag == 0) {
+      if ((tag & 7) === 4 || tag === 0) {
         break;
       }
       reader.skipType(tag & 7);
@@ -640,19 +663,20 @@ export const SubscribeRequest = {
   },
 
   fromJSON(object: any): SubscribeRequest {
-    return { playerUuid: isSet(object.playerUuid) ? String(object.playerUuid) : "" };
+    return { playerUuid: isSet(object.playerUuid) ? globalThis.String(object.playerUuid) : "" };
   },
 
   toJSON(message: SubscribeRequest): unknown {
     const obj: any = {};
-    message.playerUuid !== undefined && (obj.playerUuid = message.playerUuid);
+    if (message.playerUuid !== "") {
+      obj.playerUuid = message.playerUuid;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<SubscribeRequest>, I>>(base?: I): SubscribeRequest {
-    return SubscribeRequest.fromPartial(base ?? {});
+    return SubscribeRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<SubscribeRequest>, I>>(object: I): SubscribeRequest {
     const message = createBaseSubscribeRequest();
     message.playerUuid = object.playerUuid ?? "";
@@ -689,35 +713,35 @@ export const RemoteMediaPlayer = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag != 10) {
+          if (tag !== 10) {
             break;
           }
 
           message.uuid = reader.string();
           continue;
         case 2:
-          if (tag != 18) {
+          if (tag !== 18) {
             break;
           }
 
           message.name = reader.string();
           continue;
         case 3:
-          if (tag != 26) {
+          if (tag !== 26) {
             break;
           }
 
           message.iconData = reader.string();
           continue;
         case 4:
-          if (tag != 34) {
+          if (tag !== 34) {
             break;
           }
 
           message.lanRegion = reader.string();
           continue;
       }
-      if ((tag & 7) == 4 || tag == 0) {
+      if ((tag & 7) === 4 || tag === 0) {
         break;
       }
       reader.skipType(tag & 7);
@@ -727,26 +751,33 @@ export const RemoteMediaPlayer = {
 
   fromJSON(object: any): RemoteMediaPlayer {
     return {
-      uuid: isSet(object.uuid) ? String(object.uuid) : "",
-      name: isSet(object.name) ? String(object.name) : "",
-      iconData: isSet(object.iconData) ? String(object.iconData) : "",
-      lanRegion: isSet(object.lanRegion) ? String(object.lanRegion) : "",
+      uuid: isSet(object.uuid) ? globalThis.String(object.uuid) : "",
+      name: isSet(object.name) ? globalThis.String(object.name) : "",
+      iconData: isSet(object.iconData) ? globalThis.String(object.iconData) : "",
+      lanRegion: isSet(object.lanRegion) ? globalThis.String(object.lanRegion) : "",
     };
   },
 
   toJSON(message: RemoteMediaPlayer): unknown {
     const obj: any = {};
-    message.uuid !== undefined && (obj.uuid = message.uuid);
-    message.name !== undefined && (obj.name = message.name);
-    message.iconData !== undefined && (obj.iconData = message.iconData);
-    message.lanRegion !== undefined && (obj.lanRegion = message.lanRegion);
+    if (message.uuid !== "") {
+      obj.uuid = message.uuid;
+    }
+    if (message.name !== "") {
+      obj.name = message.name;
+    }
+    if (message.iconData !== "") {
+      obj.iconData = message.iconData;
+    }
+    if (message.lanRegion !== "") {
+      obj.lanRegion = message.lanRegion;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<RemoteMediaPlayer>, I>>(base?: I): RemoteMediaPlayer {
-    return RemoteMediaPlayer.fromPartial(base ?? {});
+    return RemoteMediaPlayer.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<RemoteMediaPlayer>, I>>(object: I): RemoteMediaPlayer {
     const message = createBaseRemoteMediaPlayer();
     message.uuid = object.uuid ?? "";
@@ -974,14 +1005,14 @@ export class GrpcWebImpl {
     const request = { ..._request, ...methodDesc.requestType };
     const maybeCombinedMetadata = metadata && this.options.metadata
       ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
-      : metadata || this.options.metadata;
+      : metadata ?? this.options.metadata;
     return new Promise((resolve, reject) => {
       const client = grpc.unary(methodDesc, {
         request,
         host: this.host,
-        metadata: maybeCombinedMetadata,
-        transport: this.options.transport,
-        debug: this.options.debug,
+        metadata: maybeCombinedMetadata ?? {},
+        ...(this.options.transport !== undefined ? { transport: this.options.transport } : {}),
+        debug: this.options.debug ?? false,
         onEnd: function (response) {
           if (response.status === grpc.Code.OK) {
             resolve(response.message!.toObject());
@@ -992,13 +1023,11 @@ export class GrpcWebImpl {
         },
       });
 
-      const abortHandler = () => {
-        client.close();
-        reject(new Error("Aborted"));
-      };
-
       if (abortSignal) {
-        abortSignal.addEventListener("abort", abortHandler);
+        abortSignal.addEventListener("abort", () => {
+          client.close();
+          reject(abortSignal.reason);
+        });
       }
     });
   }
@@ -1009,20 +1038,21 @@ export class GrpcWebImpl {
     metadata: grpc.Metadata | undefined,
     abortSignal?: AbortSignal,
   ): Observable<any> {
-    const upStreamCodes = this.options.upStreamRetryCodes || [];
+    const upStreamCodes = this.options.upStreamRetryCodes ?? [];
     const DEFAULT_TIMEOUT_TIME: number = 3_000;
     const request = { ..._request, ...methodDesc.requestType };
+    const transport = this.options.streamingTransport ?? this.options.transport;
     const maybeCombinedMetadata = metadata && this.options.metadata
       ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
-      : metadata || this.options.metadata;
+      : metadata ?? this.options.metadata;
     return new Observable((observer) => {
-      const upStream = (() => {
+      const upStream = () => {
         const client = grpc.invoke(methodDesc, {
           host: this.host,
           request,
-          transport: this.options.streamingTransport || this.options.transport,
-          metadata: maybeCombinedMetadata,
-          debug: this.options.debug,
+          ...(transport !== undefined ? { transport } : {}),
+          metadata: maybeCombinedMetadata ?? {},
+          debug: this.options.debug ?? false,
           onMessage: (next) => observer.next(next),
           onEnd: (code: grpc.Code, message: string, trailers: grpc.Metadata) => {
             if (code === 0) {
@@ -1037,48 +1067,35 @@ export class GrpcWebImpl {
             }
           },
         });
-        observer.add(() => {
-          if (!observer.closed) {
-            return client.close();
-          }
-        });
 
-        const abortHandler = () => {
-          observer.error("Aborted");
-          client.close();
-        };
         if (abortSignal) {
-          abortSignal.addEventListener("abort", abortHandler);
+          const abort = () => {
+            observer.error(abortSignal.reason);
+            client.close();
+          };
+          abortSignal.addEventListener("abort", abort);
+          observer.add(() => {
+            if (abortSignal.aborted) {
+              return;
+            }
+
+            abortSignal.removeEventListener("abort", abort);
+            client.close();
+          });
+        } else {
+          observer.add(() => client.close());
         }
-      });
+      };
       upStream();
     }).pipe(share());
   }
 }
 
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var tsProtoGlobalThis: any = (() => {
-  if (typeof globalThis !== "undefined") {
-    return globalThis;
-  }
-  if (typeof self !== "undefined") {
-    return self;
-  }
-  if (typeof window !== "undefined") {
-    return window;
-  }
-  if (typeof global !== "undefined") {
-    return global;
-  }
-  throw "Unable to locate global object";
-})();
-
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
@@ -1090,7 +1107,7 @@ function isSet(value: any): boolean {
   return value !== null && value !== undefined;
 }
 
-export class GrpcWebError extends tsProtoGlobalThis.Error {
+export class GrpcWebError extends globalThis.Error {
   constructor(message: string, public code: grpc.Code, public metadata: grpc.Metadata) {
     super(message);
   }
