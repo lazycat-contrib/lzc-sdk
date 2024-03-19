@@ -16,8 +16,8 @@ service Rim{
   rpc SetInputText(SetInputTextRequest) returns (google.protobuf.Empty) {}
   // 获取当前是否有聚焦输入框
   rpc IsInputFocus(google.protobuf.Empty) returns(IsInputFocusResponse) {}
-  // 在聚焦的输入框内键入回车
-  rpc InputPressEnter(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 给聚焦窗口发送回车输入事件
+  rpc SendInputEventEnter(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }
 
 message InputContentReply {
