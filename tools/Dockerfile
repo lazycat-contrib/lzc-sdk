@@ -16,6 +16,9 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debi
     apt clean all -y ;\
     rm -rf /usr/bin/*.deb /usr/lib/x86_64-linux-gnu/perl-base /var/lib/apt/lists /root/.npm /usr/share/{locale,doc,man,fonts} /usr/lib/node_modules/typescript/lib/tsserver.js /usr/lib/node_modules/ts-proto/node_modules/dprint-node/{dprint-node.win32-x64-msvc.node,dprint-node.linux-x64-musl.node,dprint-node.linux-arm64-musl.node,dprint-node.linux-arm64-gnu.node,dprint-node.darwin-x64.node,dprint-node.darwin-arm64.node}
 
+FROM rvolosatovs/protoc:v4.1.0 as swift-plugin
+
 FROM debian:12
-RUN --mount=type=bind,from=build,source=/,target=/build cp -prnv /build/* / || true
+RUN --mount=type=bind,from=build,source=/,target=/build --mount=type=bind,from=swift-plugin,source=/,target=/swift-plugin ( cp -prn /build/* / ; cp -r /swift-plugin/protoc-gen-swift / ; ln -s /protoc-gen-swift/protoc-gen-swift /usr/bin/protoc-gen-swift ) || true
+ENV PATH="/usr/bin/node_modules/npm/bin:$PATH"
 CMD ["/usr/bin/protoc"]
