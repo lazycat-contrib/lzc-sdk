@@ -31,7 +31,12 @@ if [ "$1" = "build-image" ]; then
     tar -xf nodejs.tar.xz --strip-components 1
     mv lib/node_modules bin/node_modules # fix path error
     cd ../..
-    docker build -t $IMAGE .
+    if [ ! -e ~/.docker/cli-plugins/docker-buildx ]; then
+        mkdir -p ~/.docker/cli-plugins/
+        curl -o ~/.docker/cli-plugins/docker-buildx -L https://github.com/docker/buildx/releases/download/v0.13.1/buildx-v0.13.1.linux-amd64
+        chmod +x ~/.docker/cli-plugins/docker-buildx
+    fi
+    DOCKER_BUILDKIT=1 docker build -t $IMAGE .
     rm -rf cache
     exit
 fi

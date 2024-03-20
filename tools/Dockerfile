@@ -1,4 +1,4 @@
-FROM debian:12
+FROM debian:12 as build
 COPY cache/usr/bin/ /usr/bin/
 COPY cache/usr/boot/ /usr/boot/
 COPY cache/usr/conf/ /usr/conf/
@@ -15,4 +15,7 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debi
     apt autoremove -y ;\
     apt clean all -y ;\
     rm -rf /usr/bin/*.deb /usr/lib/x86_64-linux-gnu/perl-base /var/lib/apt/lists /root/.npm /usr/share/{locale,doc,man,fonts} /usr/lib/node_modules/typescript/lib/tsserver.js /usr/lib/node_modules/ts-proto/node_modules/dprint-node/{dprint-node.win32-x64-msvc.node,dprint-node.linux-x64-musl.node,dprint-node.linux-arm64-musl.node,dprint-node.linux-arm64-gnu.node,dprint-node.darwin-x64.node,dprint-node.darwin-arm64.node}
+
+FROM debian:12
+RUN --mount=type=bind,from=build,source=/,target=/build cp -prnv /build/* / || true
 CMD ["/usr/bin/protoc"]
