@@ -94,8 +94,8 @@ if [ "$1" = "gen-security-content-rules" ]; then
         ./localdevice/*.proto \
         ./common/*.proto
     popd
-    # 上面直接用 -u $UID 会导致 npm 无法执行
-    chmod -R 777 ./lang
+    # 容器内总是 root，写入的文件 owner = root 导致外部的非 root 用户被 denied，这里修复。可以考虑 git config core.filemode false 避免 git 发疯
+    chmod -R 777 ./lang # 之前的 chown 设置一个不存在的 uid 在 macos 上的 docker 内出错
     exit
 fi
 
