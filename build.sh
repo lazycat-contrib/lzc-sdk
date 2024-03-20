@@ -95,16 +95,16 @@ if [ "$1" = "gen-security-content-rules" ]; then
         ./common/*.proto
     popd
     # 上面直接用 -u $UID 会导致 npm 无法执行
-    chown -R $ORIGIN_UID .
+    chmod -R 777 ./lang
     exit
 fi
 
 # generate all
 if [ "$1" = "gen" ]; then
     inner_builder="docker run -it --network host --rm -w $(pwd) -v $(pwd):$(pwd) $IMAGE"
-    $inner_builder env NPM_CONFIG_UPDATE_NOTIFIER=false PROTOC_GEN_GO=1 PROTOC_GEN_JS=1 PROTOC_GEN_SWIFT=1 PROTOC_GEN_JAVA=0 ENABLE_JAR=0 ./build.sh gen-protos
+    $inner_builder env NPM_CONFIG_UPDATE_NOTIFIER=false PROTOC_GEN_GO=1 PROTOC_GEN_JS=1 PROTOC_GEN_SWIFT=0 PROTOC_GEN_JAVA=0 ENABLE_JAR=0 ./build.sh gen-protos
     # 必须先生成 lang/go 的内容后才能生成 security content rules
-    go build -ldflags "-w -s" -o protoc-gen-lzc tools/protoc-gen-lzc/permgen.go
+    GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-w -s" -o protoc-gen-lzc tools/protoc-gen-lzc/permgen.go
     $inner_builder env ORIGIN_UID=$UID ./build.sh gen-security-content-rules
     pushd lang/go/
     go build
