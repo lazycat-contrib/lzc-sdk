@@ -102,7 +102,7 @@ fi
 # generate all
 if [ "$1" = "gen" ]; then
     inner_builder="docker run -it --network host --rm -w $(pwd) -v $(pwd):$(pwd) $IMAGE"
-    $inner_builder env NPM_CONFIG_UPDATE_NOTIFIER=false PROTOC_GEN_GO=1 PROTOC_GEN_JS=1 PROTOC_GEN_SWIFT=0 PROTOC_GEN_JAVA=0 ENABLE_JAR=0 ./build.sh gen-protos
+    $inner_builder env NPM_CONFIG_UPDATE_NOTIFIER=false PROTOC_GEN_GO=1 PROTOC_GEN_JS=1 PROTOC_GEN_SWIFT=1 PROTOC_GEN_JAVA=0 ENABLE_JAR=0 ./build.sh gen-protos
     # 必须先生成 lang/go 的内容后才能生成 security content rules
     GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-w -s" -o protoc-gen-lzc tools/protoc-gen-lzc/permgen.go
     $inner_builder env ORIGIN_UID=$UID ./build.sh gen-security-content-rules
@@ -120,15 +120,14 @@ if [ "$1" = "build-builder-image" ]; then
     CGO_ENABLED=0 GOBIN=$(pwd)/bin go install -ldflags "-w -s" github.com/golang/protobuf/protoc-gen-go@v1.5.3
     CGO_ENABLED=0 GOBIN=$(pwd)/bin go install -ldflags "-w -s" google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.3.0
     curl -o protoc.zip -L https://github.com/protocolbuffers/protobuf/releases/download/v23.4/protoc-23.4-linux-x86_64.zip &
-    curl -o protoc-grpc-swift-plugins.zip -L https://github.com/grpc/grpc-swift/releases/download/1.21.1/protoc-grpc-swift-plugins-1.21.1.zip &
     curl -o maven.tar.gz -L https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz &
+    curl -o swift-protobuf.tar.gz -L https://github.com/apple/swift-protobuf/archive/refs/tags/1.25.2.tar.gz &
     curl -o bin/jre.deb -L https://mirrors.ustc.edu.cn/adoptium/deb/pool/main/t/temurin-11/temurin-11-jre_11.0.22.0.0%2B7_amd64.deb & # or full jdk?
     curl -o bin/adoptium-ca.deb -L https://mirrors.ustc.edu.cn/adoptium/deb/pool/main/a/adoptium-ca-certificates/adoptium-ca-certificates_1.0.2-1_all.deb &
     curl -o bin/protoc-gen-grpc-java -L https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/1.47.0/protoc-gen-grpc-java-1.47.0-linux-x86_64.exe &
     curl -o nodejs.tar.xz -L https://registry.npmmirror.com/-/binary/node/v18.19.1/node-v18.19.1-linux-x64.tar.xz &
     wait # wait all parallel download jobs
     unzip protoc.zip
-    unzip protoc-grpc-swift-plugins.zip
     tar -xf maven.tar.gz --strip-components 1
     chmod a+x bin/protoc-gen-grpc-java
     tar -xf nodejs.tar.xz --strip-components 1
