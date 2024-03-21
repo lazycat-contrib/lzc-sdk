@@ -27,8 +27,8 @@ strip .build/release/protoc-gen-swift
 EOF
 
 FROM debian:12
-RUN --mount=type=bind,from=build,source=/,target=/build --mount=type=bind,from=swift,source=/,target=/swift <<EOF
-cp -prn /build/* /
+RUN --mount=type=bind,from=build,source=/,target=/build --mount=type=bind,from=swift,source=/,target=/swift --mount=type=bind,from=awesomecontainers/static-rsync:3.2.7,source=/,target=/rsync <<EOF
+/rsync/bin/rsync -a --delete /build/ / # better than --squash
 cp /swift/.build/release/protoc-gen-swift /usr/bin/
 EOF
 ENV PATH="/usr/bin/node_modules/npm/bin:$PATH"
