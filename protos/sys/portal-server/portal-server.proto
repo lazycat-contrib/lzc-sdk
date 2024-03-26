@@ -147,6 +147,9 @@ message HServerInfo {
 
   // 从origin-server获取到的域名
   string box_domain = 5;
+
+  // 当前使用的中继服务器地址，如/ip4/x.x.x.x/tcp/5500
+  string relay_server = 6;
 }
 
 message Device {
