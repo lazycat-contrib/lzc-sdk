@@ -54,6 +54,8 @@ service HPortalSys {
   // 通过远端IP地址和服务注册的IP地址查询peer信息
   rpc QueryBoxServicePeerCred(QueryBoxServicePeerCredRequest) returns (QueryBoxServicePeerCredResponse);
 
+  rpc SetRelay(SetRelayRequest) returns (google.protobuf.Empty);
+
   rpc DumpPeers(google.protobuf.Empty) returns (PeersInfo) {}
 }
 
@@ -255,4 +257,8 @@ message GetPasswordHashResponse {
 message SetPasswordHashRequest {
   string uid = 1;
   string password_hash = 2;
+}
+
+message SetRelayRequest {
+  string relay_address = 1;
 }

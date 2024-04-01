@@ -38,6 +38,7 @@ const (
 	HPortalSys_RegisterBoxService_FullMethodName      = "/cloud.lazycat.apis.sys.HPortalSys/RegisterBoxService"
 	HPortalSys_EmitBoxServiceChanged_FullMethodName   = "/cloud.lazycat.apis.sys.HPortalSys/EmitBoxServiceChanged"
 	HPortalSys_QueryBoxServicePeerCred_FullMethodName = "/cloud.lazycat.apis.sys.HPortalSys/QueryBoxServicePeerCred"
+	HPortalSys_SetRelay_FullMethodName                = "/cloud.lazycat.apis.sys.HPortalSys/SetRelay"
 	HPortalSys_DumpPeers_FullMethodName               = "/cloud.lazycat.apis.sys.HPortalSys/DumpPeers"
 )
 
@@ -85,6 +86,7 @@ type HPortalSysClient interface {
 	EmitBoxServiceChanged(ctx context.Context, in *EmitBoxServiceChangedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 通过远端IP地址和服务注册的IP地址查询peer信息
 	QueryBoxServicePeerCred(ctx context.Context, in *QueryBoxServicePeerCredRequest, opts ...grpc.CallOption) (*QueryBoxServicePeerCredResponse, error)
+	SetRelay(ctx context.Context, in *SetRelayRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DumpPeers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PeersInfo, error)
 }
 
@@ -281,6 +283,15 @@ func (c *hPortalSysClient) QueryBoxServicePeerCred(ctx context.Context, in *Quer
 	return out, nil
 }
 
+func (c *hPortalSysClient) SetRelay(ctx context.Context, in *SetRelayRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, HPortalSys_SetRelay_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *hPortalSysClient) DumpPeers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PeersInfo, error) {
 	out := new(PeersInfo)
 	err := c.cc.Invoke(ctx, HPortalSys_DumpPeers_FullMethodName, in, out, opts...)
@@ -334,6 +345,7 @@ type HPortalSysServer interface {
 	EmitBoxServiceChanged(context.Context, *EmitBoxServiceChangedRequest) (*emptypb.Empty, error)
 	// 通过远端IP地址和服务注册的IP地址查询peer信息
 	QueryBoxServicePeerCred(context.Context, *QueryBoxServicePeerCredRequest) (*QueryBoxServicePeerCredResponse, error)
+	SetRelay(context.Context, *SetRelayRequest) (*emptypb.Empty, error)
 	DumpPeers(context.Context, *emptypb.Empty) (*PeersInfo, error)
 	mustEmbedUnimplementedHPortalSysServer()
 }
@@ -395,6 +407,9 @@ func (UnimplementedHPortalSysServer) EmitBoxServiceChanged(context.Context, *Emi
 }
 func (UnimplementedHPortalSysServer) QueryBoxServicePeerCred(context.Context, *QueryBoxServicePeerCredRequest) (*QueryBoxServicePeerCredResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryBoxServicePeerCred not implemented")
+}
+func (UnimplementedHPortalSysServer) SetRelay(context.Context, *SetRelayRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetRelay not implemented")
 }
 func (UnimplementedHPortalSysServer) DumpPeers(context.Context, *emptypb.Empty) (*PeersInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DumpPeers not implemented")
@@ -739,6 +754,24 @@ func _HPortalSys_QueryBoxServicePeerCred_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HPortalSys_SetRelay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetRelayRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HPortalSysServer).SetRelay(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HPortalSys_SetRelay_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HPortalSysServer).SetRelay(ctx, req.(*SetRelayRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _HPortalSys_DumpPeers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -831,6 +864,10 @@ var HPortalSys_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QueryBoxServicePeerCred",
 			Handler:    _HPortalSys_QueryBoxServicePeerCred_Handler,
+		},
+		{
+			MethodName: "SetRelay",
+			Handler:    _HPortalSys_SetRelay_Handler,
 		},
 		{
 			MethodName: "DumpPeers",
