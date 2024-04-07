@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+// ServiceName cloud.lazycat.base.daemon
+
+package cloud.lazycat.apis.sys;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
+
+// 新的 更新接口
+service OSUpgraderService {
+  rpc Download(OSUpgraderDownloadRequest) returns (google.protobuf.Empty) {} // 重复调用可用于继续下载，如果 hash 不一致就删掉旧的
+  rpc PauseDownload(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc Install(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc GetInfo(google.protobuf.Empty) returns (OSUpgraderInfo) {}
+}
+
+message OSUpgraderDownloadEntry {
+  string url = 1;
+  int64 size = 2;
+  string hash = 3;
+}
+
+message OSUpgraderDownloadRequest {
+  string version = 1;
+  repeated OSUpgraderDownloadEntry entries = 2;
+}
+
+message OSUpgraderInfo {
+  enum State {
+    IDLE = 0;
+    DOWNLOADING = 1;
+    DOWNLOAD_PAUSED = 2;
+    DOWNLOAD_COMPLETED = 3;
+    INSTALLING = 4;
+    ERROR = 5;
+  }
+  // 状态
+  State state = 1;
+  // 当前系统版本
+  string current_version = 2;
+  // 正在下载的系统版本，（为空表示没有正在下载的进度，后面所有字段都没有意义）
+  string download_version = 3;
+  // 已下载的大小（包含所有包）（字节）
+  int64 download_complete = 4;
+  // 总需要下载的大小（包含所有包）（字节）
+  int64 download_total = 5;
+  // 预期的所有下载项目
+  repeated OSUpgraderDownloadEntry download_entries = 6;
+  // 错误信息（在没有错误时该值为空）
+  string error = 7;
+}

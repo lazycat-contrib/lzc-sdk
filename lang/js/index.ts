@@ -10,6 +10,7 @@ import { NetworkManager as NM, NetworkManagerClientImpl as NMClientImpl } from "
 
 import { OSSnapshotService, OSSnapshotServiceClientImpl } from "./sys/OS_snapshot"
 import { OSUpgradeService, OSUpgradeServiceClientImpl } from "./sys/OS_upgrader"
+import { OSUpgraderService, OSUpgraderServiceClientImpl } from "./sys/osupgrader"
 
 import { AccessControlerService, AccessControlerServiceClientImpl } from "./sys/ingress"
 
@@ -54,6 +55,7 @@ export class lzcAPIGateway {
     this.nm = new NMClientImpl(rpc)
     this.osSnapshot = new OSSnapshotServiceClientImpl(rpc)
     this.osUpgrade = new OSUpgradeServiceClientImpl(rpc)
+    this.osUpgrader = new OSUpgraderServiceClientImpl(rpc)
 
     this.rmp = new RemoteMediaPlayerServiceClientImpl(rpc)
 
@@ -80,6 +82,7 @@ export class lzcAPIGateway {
   public ac: AccessControlerService
   public osSnapshot: OSSnapshotService
   public osUpgrade: OSUpgradeService
+  public osUpgrader: OSUpgraderService
 
   public appinfo: Promise<AppInfo>
   public fileTransfer: FileTransferService
