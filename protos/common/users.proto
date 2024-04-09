@@ -6,8 +6,6 @@ import "google/protobuf/empty.proto";
 
 import "common/security_context.proto";
 
-import "sys/portal-server/portal-server.proto";
-
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/common";
 
 service UserManager {
@@ -45,7 +43,7 @@ service UserManager {
   }
 
   // 检测用户密码有效性（是否能够登录）
-  rpc CheckPassword(cloud.lazycat.apis.sys.CheckPasswordRequest) returns(google.protobuf.Empty){
+  rpc CheckPassword(CheckPasswordRequest) returns(google.protobuf.Empty){
     option(cloud.lazycat.apis.common.scontext).require_user_class = TARGET_USER;
   }
 }
@@ -55,11 +53,22 @@ message UserID {
   string uid = 1;
 }
 
+
+enum Role {
+  ROLE_NORMAL = 0;
+  ROLE_ADMIN = 1;
+}
+message CheckPasswordRequest{
+  string uid = 1;
+  string password = 2;
+}
+
+
 message UserInfo {
   string uid = 1;
   string nickname = 2;
   string avatar = 3;
-  cloud.lazycat.apis.sys.Role role = 4;
+  Role role = 4;
   repeated string phone_number = 5;
 }
 
@@ -72,7 +81,7 @@ message ListUIDsReply {
 
 message ChangeRoleReqeust{
   string uid  = 1;
-  cloud.lazycat.apis.sys.Role role = 2;
+  Role role = 2;
 }
 
 message ResetPasswordRequest{
@@ -90,7 +99,7 @@ message DeleteUserRequest {
 message CreateUserRequest{
   string uid = 1;
   string password = 2;
-  cloud.lazycat.apis.sys.Role role = 3;
+  Role role = 3;
 }
 
 message UpdateUserInfoRequest {

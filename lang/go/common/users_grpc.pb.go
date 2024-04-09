@@ -8,7 +8,6 @@ package common
 
 import (
 	context "context"
-	portal_server "gitee.com/linakesi/lzc-sdk/lang/go/sys/portal-server"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -53,7 +52,7 @@ type UserManagerClient interface {
 	// 强制重置用户密码（管理员角色允许调用)
 	ForceResetPassword(ctx context.Context, in *ForceResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 检测用户密码有效性（是否能够登录）
-	CheckPassword(ctx context.Context, in *portal_server.CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type userManagerClient struct {
@@ -136,7 +135,7 @@ func (c *userManagerClient) ForceResetPassword(ctx context.Context, in *ForceRes
 	return out, nil
 }
 
-func (c *userManagerClient) CheckPassword(ctx context.Context, in *portal_server.CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *userManagerClient) CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, UserManager_CheckPassword_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -166,7 +165,7 @@ type UserManagerServer interface {
 	// 强制重置用户密码（管理员角色允许调用)
 	ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error)
 	// 检测用户密码有效性（是否能够登录）
-	CheckPassword(context.Context, *portal_server.CheckPasswordRequest) (*emptypb.Empty, error)
+	CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUserManagerServer()
 }
 
@@ -198,7 +197,7 @@ func (UnimplementedUserManagerServer) CreateUser(context.Context, *CreateUserReq
 func (UnimplementedUserManagerServer) ForceResetPassword(context.Context, *ForceResetPasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ForceResetPassword not implemented")
 }
-func (UnimplementedUserManagerServer) CheckPassword(context.Context, *portal_server.CheckPasswordRequest) (*emptypb.Empty, error) {
+func (UnimplementedUserManagerServer) CheckPassword(context.Context, *CheckPasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
 }
 func (UnimplementedUserManagerServer) mustEmbedUnimplementedUserManagerServer() {}
@@ -359,7 +358,7 @@ func _UserManager_ForceResetPassword_Handler(srv interface{}, ctx context.Contex
 }
 
 func _UserManager_CheckPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(portal_server.CheckPasswordRequest)
+	in := new(CheckPasswordRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -371,7 +370,7 @@ func _UserManager_CheckPassword_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: UserManager_CheckPassword_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserManagerServer).CheckPassword(ctx, req.(*portal_server.CheckPasswordRequest))
+		return srv.(UserManagerServer).CheckPassword(ctx, req.(*CheckPasswordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
