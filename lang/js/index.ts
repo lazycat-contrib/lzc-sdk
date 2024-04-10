@@ -8,10 +8,6 @@ import { PeripheralDeviceService, PeripheralDeviceServiceClientImpl } from "./co
 import { PackageManager, PackageManagerClientImpl } from "./sys/package_manager"
 import { NetworkManager as NM, NetworkManagerClientImpl as NMClientImpl } from "./sys/network_manager"
 
-import { OSSnapshotService, OSSnapshotServiceClientImpl } from "./sys/OS_snapshot"
-import { OSUpgradeService, OSUpgradeServiceClientImpl } from "./sys/OS_upgrader"
-import { OSUpgraderService, OSUpgraderServiceClientImpl } from "./sys/osupgrader"
-
 import { AccessControlerService, AccessControlerServiceClientImpl } from "./sys/ingress"
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog"
@@ -53,9 +49,6 @@ export class lzcAPIGateway {
     this.ac = new AccessControlerServiceClientImpl(rpc)
     this.box = new BoxServiceClientImpl(rpc)
     this.nm = new NMClientImpl(rpc)
-    this.osSnapshot = new OSSnapshotServiceClientImpl(rpc)
-    this.osUpgrade = new OSUpgradeServiceClientImpl(rpc)
-    this.osUpgrader = new OSUpgraderServiceClientImpl(rpc)
 
     this.rmp = new RemoteMediaPlayerServiceClientImpl(rpc)
 
@@ -80,9 +73,6 @@ export class lzcAPIGateway {
   public box: BoxService
 
   public ac: AccessControlerService
-  public osSnapshot: OSSnapshotService
-  public osUpgrade: OSUpgradeService
-  public osUpgrader: OSUpgraderService
 
   public appinfo: Promise<AppInfo>
   public fileTransfer: FileTransferService

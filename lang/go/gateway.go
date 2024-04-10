@@ -26,9 +26,6 @@ type APIGateway struct {
 	Btrfs            sys.BtrfsUtilClient
 	DirMonitor       sys.DirMonitorClient
 	Message          common.MessageServiceClient
-	OsUpgrade        sys.OSUpgradeServiceClient
-	OsUpgrader       sys.OSUpgraderServiceClient
-	OSSnapshot       sys.OSSnapshotServiceClient
 }
 
 type DeviceProxy struct {
@@ -110,13 +107,10 @@ func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
 		cred: cred,
 		conn: conn,
 
-		OSSnapshot:      sys.NewOSSnapshotServiceClient(conn),
 		PkgManager:      sys.NewPackageManagerClient(conn),
 		AccessControler: sys.NewAccessControlerServiceClient(conn),
 		Btrfs:           sys.NewBtrfsUtilClient(conn),
 		DirMonitor:      sys.NewDirMonitorClient(conn),
-		OsUpgrade:       sys.NewOSUpgradeServiceClient(conn),
-		OsUpgrader:      sys.NewOSUpgraderServiceClient(conn),
 
 		Box:              common.NewBoxServiceClient(conn),
 		Users:            common.NewUserManagerClient(conn),
