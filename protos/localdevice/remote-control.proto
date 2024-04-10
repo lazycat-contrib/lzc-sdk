@@ -9,8 +9,8 @@ import "google/protobuf/empty.proto";
 enum InputEventCodes {
   KEY_HOME = 0;
   KEY_BACK = 1;
-  KEY_FULL_SCREEN = 2;
-  KEY_OPTION = 3;
+  KEY_F11 = 2;
+  KEY_MENU = 3;
   BTN_LEFT = 4;
   BTN_RIGHT = 5;
   BTN_MIDDLE = 6;
