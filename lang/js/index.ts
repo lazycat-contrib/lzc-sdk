@@ -193,6 +193,7 @@ export class EndDeviceProxy {
     this.localLaunch = new LocalLaunchServiceClientImpl(rpc)
     this.client = new ClientClientImpl(rpc)
     this.rim = new RimClientImpl(rpc)
+    this.remoteControl = new RemoteControlClientImpl(rpc)
   }
   public device: DeviceService
   public dialog: DialogManager
@@ -205,11 +206,13 @@ export class EndDeviceProxy {
   public localLaunch: LocalLaunchService
   public client: Client
   public rim: Rim
+  public remoteControl: RemoteControl
 }
 
 import pkg from "./package.json"
 import { DevOptService, DevOptServiceClientImpl } from "./sys/devopt"
 import { MessageServiceClientImpl } from "./common/message"
+import { RemoteControl, RemoteControlClientImpl } from "./localdevice/remote-control"
 
 async function dumpInfo(bo: BrowserOnlyProxy) {
   function capsule(title, info) {
