@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.localdevice;
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
+import "google/protobuf/empty.proto";
+
+
+enum InputEventCodes {
+  KEY_HOME = 0;
+  KEY_BACK = 1;
+  KEY_FULL_SCREEN = 2;
+  KEY_OPTION = 3;
+  BTN_LEFT = 4;
+  BTN_RIGHT = 5;
+  BTN_MIDDLE = 6;
+  REL_X = 7;
+  REL_Y = 8;
+  REL_WHEEL = 9;
+  REL_WHEEL_HI_RES = 10;
+  KEY_UP = 11;
+  KEY_DOWN = 12;
+  KEY_LEFT = 13;
+  KEY_RIGHT = 14;
+  KEY_PAGEUP = 15;
+  KEY_PAGEDOWN = 16;
+}
+
+enum EventState {
+  PRESS = 0;
+  RELEASE = 1;
+}
+
+message SendEventRequest {
+  InputEventCodes code = 1;
+  EventState state = 2;
+}
+service RemoteControl{
+  // 发送输入事件
+  rpc SendInputEvent(SendEventRequest)returns(google.protobuf.Empty) {}
+}
