@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package cloud.lazycat.apis.sys;
 
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 
 // 在 lzc-hal 中实现
@@ -50,8 +53,8 @@ message ButtonEventQueue {
     BUTTON_LONG_PRESS_10S = 5;
   }
   message ButtonEvent {
-    Kind kind = 1;
-    Timestamp timestamp;
+    ButtonEventKind kind = 1;
+    google.protobuf.Timestamp timestamp = 2;
   }
   repeated ButtonEvent queue = 1;
 }
