@@ -24,6 +24,7 @@ enum InputEventCodes {
   KEY_RIGHT = 14;
   KEY_PAGEUP = 15;
   KEY_PAGEDOWN = 16;
+  KEY_ENTER = 17;
 }
 
 enum EventState {
