@@ -17,12 +17,16 @@ service HalService {
   // Get 电源 LED (在 前面板上的 大个的 一条的 白色的)
   rpc GetPLed(google.protobuf.Empty) returns (PLedState) {}
   // Set 状态 LED (在 IO 面板上的 电源按钮边上的 小个的 红色的)
-  rpc SetSLed(PLedState) returns (google.protobuf.Empty) {}
+  rpc SetSLed(SLedState) returns (google.protobuf.Empty) {}
   // 最近 Button 事件队列，最近 30s 内。同时 续命 Button 监测，续命到 当前时间 +10s
   rpc GetButtonEventQueue(google.protobuf.Empty) returns (ButtonEventQueue) {}
 }
 
 message PLedState {
+  bool enabled = 1;
+}
+
+message SLedState {
   bool enabled = 1;
 }
 
