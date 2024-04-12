@@ -20,15 +20,18 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RemoteControl_SendInputEvent_FullMethodName = "/cloud.lazycat.apis.localdevice.RemoteControl/SendInputEvent"
+	RemoteControl_SendKeyboardEvent_FullMethodName = "/cloud.lazycat.apis.localdevice.RemoteControl/SendKeyboardEvent"
+	RemoteControl_SendTouchpadEvent_FullMethodName = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadEvent"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RemoteControlClient interface {
-	// 发送输入事件
-	SendInputEvent(ctx context.Context, in *SendEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发送键盘输入事件
+	SendKeyboardEvent(ctx context.Context, in *SendKeyboardEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发送触摸板输入事件
+	SendTouchpadEvent(ctx context.Context, in *SendTouchpadEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type remoteControlClient struct {
@@ -39,9 +42,18 @@ func NewRemoteControlClient(cc grpc.ClientConnInterface) RemoteControlClient {
 	return &remoteControlClient{cc}
 }
 
-func (c *remoteControlClient) SendInputEvent(ctx context.Context, in *SendEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *remoteControlClient) SendKeyboardEvent(ctx context.Context, in *SendKeyboardEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, RemoteControl_SendInputEvent_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, RemoteControl_SendKeyboardEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) SendTouchpadEvent(ctx context.Context, in *SendTouchpadEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendTouchpadEvent_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -52,8 +64,10 @@ func (c *remoteControlClient) SendInputEvent(ctx context.Context, in *SendEventR
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
 type RemoteControlServer interface {
-	// 发送输入事件
-	SendInputEvent(context.Context, *SendEventRequest) (*emptypb.Empty, error)
+	// 发送键盘输入事件
+	SendKeyboardEvent(context.Context, *SendKeyboardEventRequest) (*emptypb.Empty, error)
+	// 发送触摸板输入事件
+	SendTouchpadEvent(context.Context, *SendTouchpadEventRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -61,8 +75,11 @@ type RemoteControlServer interface {
 type UnimplementedRemoteControlServer struct {
 }
 
-func (UnimplementedRemoteControlServer) SendInputEvent(context.Context, *SendEventRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendInputEvent not implemented")
+func (UnimplementedRemoteControlServer) SendKeyboardEvent(context.Context, *SendKeyboardEventRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendKeyboardEvent not implemented")
+}
+func (UnimplementedRemoteControlServer) SendTouchpadEvent(context.Context, *SendTouchpadEventRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendTouchpadEvent not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -77,20 +94,38 @@ func RegisterRemoteControlServer(s grpc.ServiceRegistrar, srv RemoteControlServe
 	s.RegisterService(&RemoteControl_ServiceDesc, srv)
 }
 
-func _RemoteControl_SendInputEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SendEventRequest)
+func _RemoteControl_SendKeyboardEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendKeyboardEventRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RemoteControlServer).SendInputEvent(ctx, in)
+		return srv.(RemoteControlServer).SendKeyboardEvent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RemoteControl_SendInputEvent_FullMethodName,
+		FullMethod: RemoteControl_SendKeyboardEvent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RemoteControlServer).SendInputEvent(ctx, req.(*SendEventRequest))
+		return srv.(RemoteControlServer).SendKeyboardEvent(ctx, req.(*SendKeyboardEventRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_SendTouchpadEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendTouchpadEventRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendTouchpadEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendTouchpadEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendTouchpadEvent(ctx, req.(*SendTouchpadEventRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -103,8 +138,12 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*RemoteControlServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SendInputEvent",
-			Handler:    _RemoteControl_SendInputEvent_Handler,
+			MethodName: "SendKeyboardEvent",
+			Handler:    _RemoteControl_SendKeyboardEvent_Handler,
+		},
+		{
+			MethodName: "SendTouchpadEvent",
+			Handler:    _RemoteControl_SendTouchpadEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

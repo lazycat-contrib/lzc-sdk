@@ -6,25 +6,19 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
 import "google/protobuf/empty.proto";
 
 
-enum InputEventCodes {
+// /usr/include/linux/input-event-codes.h
+enum InputEvent {
   KEY_HOME = 0;
   KEY_BACK = 1;
   KEY_F11 = 2;
   KEY_MENU = 3;
-  BTN_LEFT = 4;
-  BTN_RIGHT = 5;
-  BTN_MIDDLE = 6;
-  REL_X = 7;
-  REL_Y = 8;
-  REL_WHEEL = 9;
-  REL_WHEEL_HI_RES = 10;
-  KEY_UP = 11;
-  KEY_DOWN = 12;
-  KEY_LEFT = 13;
-  KEY_RIGHT = 14;
-  KEY_PAGEUP = 15;
-  KEY_PAGEDOWN = 16;
-  KEY_ENTER = 17;
+  KEY_UP = 4;
+  KEY_DOWN = 5;
+  KEY_LEFT = 6;
+  KEY_RIGHT = 7;
+  KEY_PAGEUP = 8;
+  KEY_PAGEDOWN = 9;
+  KEY_ENTER = 10;
 }
 
 enum EventState {
@@ -32,11 +26,37 @@ enum EventState {
   RELEASE = 1;
 }
 
-message SendEventRequest {
-  InputEventCodes code = 1;
+
+// uinput TouchPad interface
+enum TouchEvent {
+  MoveTo = 0;
+  LeftClick = 1;
+  RightClick = 2;
+  LeftPress = 3;
+  LeftRelease = 4;
+  RightPress = 5;
+  TouchDown = 6;
+  TouchUp = 7;
+}
+
+message SendKeyboardEventRequest {
+  InputEvent code = 1;
   EventState state = 2;
 }
+
+message MovePosition {
+  int64 x = 1;
+  int64 y = 2;
+}
+
+message SendTouchpadEventRequest {
+  TouchEvent event = 1;
+  optional MovePosition position = 2;
+}
+
 service RemoteControl{
-  // 发送输入事件
-  rpc SendInputEvent(SendEventRequest)returns(google.protobuf.Empty) {}
+  // 发送键盘输入事件
+  rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
+  // 发送触摸板输入事件
+  rpc SendTouchpadEvent(SendTouchpadEventRequest) returns (google.protobuf.Empty) {}
 }
