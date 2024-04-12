@@ -25,6 +25,7 @@ const (
 	RemoteControl_SendTouchpadClick_FullMethodName       = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadClick"
 	RemoteControl_SendTouchpadRightClick_FullMethodName  = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadRightClick"
 	RemoteControl_SendTouchpadDoubleClick_FullMethodName = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadDoubleClick"
+	RemoteControl_SendTouchpadMove_FullMethodName        = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadMove"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -43,6 +44,8 @@ type RemoteControlClient interface {
 	SendTouchpadRightClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 发送双击
 	SendTouchpadDoubleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发送触摸板滑动
+	SendTouchpadMove(ctx context.Context, in *SendTouchpadMoveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type remoteControlClient struct {
@@ -98,6 +101,15 @@ func (c *remoteControlClient) SendTouchpadDoubleClick(ctx context.Context, in *e
 	return out, nil
 }
 
+func (c *remoteControlClient) SendTouchpadMove(ctx context.Context, in *SendTouchpadMoveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendTouchpadMove_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -114,6 +126,8 @@ type RemoteControlServer interface {
 	SendTouchpadRightClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 发送双击
 	SendTouchpadDoubleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 发送触摸板滑动
+	SendTouchpadMove(context.Context, *SendTouchpadMoveRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -135,6 +149,9 @@ func (UnimplementedRemoteControlServer) SendTouchpadRightClick(context.Context, 
 }
 func (UnimplementedRemoteControlServer) SendTouchpadDoubleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendTouchpadDoubleClick not implemented")
+}
+func (UnimplementedRemoteControlServer) SendTouchpadMove(context.Context, *SendTouchpadMoveRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendTouchpadMove not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -239,6 +256,24 @@ func _RemoteControl_SendTouchpadDoubleClick_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_SendTouchpadMove_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendTouchpadMoveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendTouchpadMove(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendTouchpadMove_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendTouchpadMove(ctx, req.(*SendTouchpadMoveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -265,6 +300,10 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendTouchpadDoubleClick",
 			Handler:    _RemoteControl_SendTouchpadDoubleClick_Handler,
+		},
+		{
+			MethodName: "SendTouchpadMove",
+			Handler:    _RemoteControl_SendTouchpadMove_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

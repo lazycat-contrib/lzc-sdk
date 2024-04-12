@@ -54,6 +54,10 @@ message SendTouchpadEventRequest {
   optional MovePosition position = 2;
 }
 
+message SendTouchpadMoveRequest {
+  MovePosition position = 1;
+}
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -67,4 +71,6 @@ service RemoteControl{
   rpc SendTouchpadRightClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   // 发送双击
   rpc SendTouchpadDoubleClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 发送触摸板滑动
+  rpc SendTouchpadMove(SendTouchpadMoveRequest) returns (google.protobuf.Empty) {}
 }
