@@ -58,5 +58,13 @@ service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
   // 发送触摸板输入事件
+  // 此接口发送的事件都是源事件，比如发送LeftPress，只会发起按下，不会发起松开
+  // 如果是想要单击等操作使用其他接口
   rpc SendTouchpadEvent(SendTouchpadEventRequest) returns (google.protobuf.Empty) {}
+  // 发送左键
+  rpc SendTouchpadClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 发送右键
+  rpc SendTouchpadRightClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 发送双击
+  rpc SendTouchpadDoubleClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }

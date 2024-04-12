@@ -20,8 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RemoteControl_SendKeyboardEvent_FullMethodName = "/cloud.lazycat.apis.localdevice.RemoteControl/SendKeyboardEvent"
-	RemoteControl_SendTouchpadEvent_FullMethodName = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadEvent"
+	RemoteControl_SendKeyboardEvent_FullMethodName       = "/cloud.lazycat.apis.localdevice.RemoteControl/SendKeyboardEvent"
+	RemoteControl_SendTouchpadEvent_FullMethodName       = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadEvent"
+	RemoteControl_SendTouchpadClick_FullMethodName       = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadClick"
+	RemoteControl_SendTouchpadRightClick_FullMethodName  = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadRightClick"
+	RemoteControl_SendTouchpadDoubleClick_FullMethodName = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadDoubleClick"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -31,7 +34,15 @@ type RemoteControlClient interface {
 	// 发送键盘输入事件
 	SendKeyboardEvent(ctx context.Context, in *SendKeyboardEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 发送触摸板输入事件
+	// 此接口发送的事件都是源事件，比如发送LeftPress，只会发起按下，不会发起松开
+	// 如果是想要单击等操作使用其他接口
 	SendTouchpadEvent(ctx context.Context, in *SendTouchpadEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发送左键
+	SendTouchpadClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发送右键
+	SendTouchpadRightClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发送双击
+	SendTouchpadDoubleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type remoteControlClient struct {
@@ -60,6 +71,33 @@ func (c *remoteControlClient) SendTouchpadEvent(ctx context.Context, in *SendTou
 	return out, nil
 }
 
+func (c *remoteControlClient) SendTouchpadClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendTouchpadClick_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) SendTouchpadRightClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendTouchpadRightClick_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) SendTouchpadDoubleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendTouchpadDoubleClick_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -67,7 +105,15 @@ type RemoteControlServer interface {
 	// 发送键盘输入事件
 	SendKeyboardEvent(context.Context, *SendKeyboardEventRequest) (*emptypb.Empty, error)
 	// 发送触摸板输入事件
+	// 此接口发送的事件都是源事件，比如发送LeftPress，只会发起按下，不会发起松开
+	// 如果是想要单击等操作使用其他接口
 	SendTouchpadEvent(context.Context, *SendTouchpadEventRequest) (*emptypb.Empty, error)
+	// 发送左键
+	SendTouchpadClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 发送右键
+	SendTouchpadRightClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 发送双击
+	SendTouchpadDoubleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -80,6 +126,15 @@ func (UnimplementedRemoteControlServer) SendKeyboardEvent(context.Context, *Send
 }
 func (UnimplementedRemoteControlServer) SendTouchpadEvent(context.Context, *SendTouchpadEventRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendTouchpadEvent not implemented")
+}
+func (UnimplementedRemoteControlServer) SendTouchpadClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendTouchpadClick not implemented")
+}
+func (UnimplementedRemoteControlServer) SendTouchpadRightClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendTouchpadRightClick not implemented")
+}
+func (UnimplementedRemoteControlServer) SendTouchpadDoubleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendTouchpadDoubleClick not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -130,6 +185,60 @@ func _RemoteControl_SendTouchpadEvent_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_SendTouchpadClick_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendTouchpadClick(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendTouchpadClick_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendTouchpadClick(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_SendTouchpadRightClick_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendTouchpadRightClick(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendTouchpadRightClick_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendTouchpadRightClick(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_SendTouchpadDoubleClick_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendTouchpadDoubleClick(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendTouchpadDoubleClick_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendTouchpadDoubleClick(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -144,6 +253,18 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendTouchpadEvent",
 			Handler:    _RemoteControl_SendTouchpadEvent_Handler,
+		},
+		{
+			MethodName: "SendTouchpadClick",
+			Handler:    _RemoteControl_SendTouchpadClick_Handler,
+		},
+		{
+			MethodName: "SendTouchpadRightClick",
+			Handler:    _RemoteControl_SendTouchpadRightClick_Handler,
+		},
+		{
+			MethodName: "SendTouchpadDoubleClick",
+			Handler:    _RemoteControl_SendTouchpadDoubleClick_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
