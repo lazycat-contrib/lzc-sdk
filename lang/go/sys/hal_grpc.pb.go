@@ -35,7 +35,7 @@ type HalServiceClient interface {
 	// Get 电源 LED (在 前面板上的 大个的 一条的 白色的)
 	GetPLed(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PLedState, error)
 	// Set 状态 LED (在 IO 面板上的 电源按钮边上的 小个的 红色的)
-	SetSLed(ctx context.Context, in *PLedState, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SetSLed(ctx context.Context, in *SLedState, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 最近 Button 事件队列，最近 30s 内。同时 续命 Button 监测，续命到 当前时间 +10s
 	GetButtonEventQueue(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ButtonEventQueue, error)
 }
@@ -66,7 +66,7 @@ func (c *halServiceClient) GetPLed(ctx context.Context, in *emptypb.Empty, opts 
 	return out, nil
 }
 
-func (c *halServiceClient) SetSLed(ctx context.Context, in *PLedState, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *halServiceClient) SetSLed(ctx context.Context, in *SLedState, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, HalService_SetSLed_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -93,7 +93,7 @@ type HalServiceServer interface {
 	// Get 电源 LED (在 前面板上的 大个的 一条的 白色的)
 	GetPLed(context.Context, *emptypb.Empty) (*PLedState, error)
 	// Set 状态 LED (在 IO 面板上的 电源按钮边上的 小个的 红色的)
-	SetSLed(context.Context, *PLedState) (*emptypb.Empty, error)
+	SetSLed(context.Context, *SLedState) (*emptypb.Empty, error)
 	// 最近 Button 事件队列，最近 30s 内。同时 续命 Button 监测，续命到 当前时间 +10s
 	GetButtonEventQueue(context.Context, *emptypb.Empty) (*ButtonEventQueue, error)
 	mustEmbedUnimplementedHalServiceServer()
@@ -109,7 +109,7 @@ func (UnimplementedHalServiceServer) SetPLed(context.Context, *PLedState) (*empt
 func (UnimplementedHalServiceServer) GetPLed(context.Context, *emptypb.Empty) (*PLedState, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPLed not implemented")
 }
-func (UnimplementedHalServiceServer) SetSLed(context.Context, *PLedState) (*emptypb.Empty, error) {
+func (UnimplementedHalServiceServer) SetSLed(context.Context, *SLedState) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetSLed not implemented")
 }
 func (UnimplementedHalServiceServer) GetButtonEventQueue(context.Context, *emptypb.Empty) (*ButtonEventQueue, error) {
@@ -165,7 +165,7 @@ func _HalService_GetPLed_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _HalService_SetSLed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PLedState)
+	in := new(SLedState)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -177,7 +177,7 @@ func _HalService_SetSLed_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: HalService_SetSLed_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HalServiceServer).SetSLed(ctx, req.(*PLedState))
+		return srv.(HalServiceServer).SetSLed(ctx, req.(*SLedState))
 	}
 	return interceptor(ctx, in, info, handler)
 }
