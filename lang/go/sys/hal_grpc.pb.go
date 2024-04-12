@@ -20,22 +20,23 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	HalService_SetPLed_FullMethodName               = "/cloud.lazycat.apis.sys.HalService/SetPLed"
-	HalService_GetPLed_FullMethodName               = "/cloud.lazycat.apis.sys.HalService/GetPLed"
-	HalService_ActivateButtonMonitor_FullMethodName = "/cloud.lazycat.apis.sys.HalService/ActivateButtonMonitor"
-	HalService_GetButtonEventQueue_FullMethodName   = "/cloud.lazycat.apis.sys.HalService/GetButtonEventQueue"
+	HalService_SetPLed_FullMethodName             = "/cloud.lazycat.apis.sys.HalService/SetPLed"
+	HalService_GetPLed_FullMethodName             = "/cloud.lazycat.apis.sys.HalService/GetPLed"
+	HalService_SetSLed_FullMethodName             = "/cloud.lazycat.apis.sys.HalService/SetSLed"
+	HalService_GetButtonEventQueue_FullMethodName = "/cloud.lazycat.apis.sys.HalService/GetButtonEventQueue"
 )
 
 // HalServiceClient is the client API for HalService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HalServiceClient interface {
-	// 目前只用到了这两个
+	// Set 电源 LED (在 前面板上的 大个的 一条的 白色的)
 	SetPLed(ctx context.Context, in *PLedState, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Get 电源 LED (在 前面板上的 大个的 一条的 白色的)
 	GetPLed(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PLedState, error)
-	// 续命 Button 监测，续命到 当前时间+30s
-	ActivateButtonMonitor(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 得到最近 Button 事件队列，最近 30s 内
+	// Set 状态 LED (在 IO 面板上的 电源按钮边上的 小个的 红色的)
+	SetSLed(ctx context.Context, in *PLedState, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 最近 Button 事件队列，最近 30s 内。同时 续命 Button 监测，续命到 当前时间 +10s
 	GetButtonEventQueue(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ButtonEventQueue, error)
 }
 
@@ -65,9 +66,9 @@ func (c *halServiceClient) GetPLed(ctx context.Context, in *emptypb.Empty, opts 
 	return out, nil
 }
 
-func (c *halServiceClient) ActivateButtonMonitor(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *halServiceClient) SetSLed(ctx context.Context, in *PLedState, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, HalService_ActivateButtonMonitor_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, HalService_SetSLed_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,12 +88,13 @@ func (c *halServiceClient) GetButtonEventQueue(ctx context.Context, in *emptypb.
 // All implementations must embed UnimplementedHalServiceServer
 // for forward compatibility
 type HalServiceServer interface {
-	// 目前只用到了这两个
+	// Set 电源 LED (在 前面板上的 大个的 一条的 白色的)
 	SetPLed(context.Context, *PLedState) (*emptypb.Empty, error)
+	// Get 电源 LED (在 前面板上的 大个的 一条的 白色的)
 	GetPLed(context.Context, *emptypb.Empty) (*PLedState, error)
-	// 续命 Button 监测，续命到 当前时间+30s
-	ActivateButtonMonitor(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	// 得到最近 Button 事件队列，最近 30s 内
+	// Set 状态 LED (在 IO 面板上的 电源按钮边上的 小个的 红色的)
+	SetSLed(context.Context, *PLedState) (*emptypb.Empty, error)
+	// 最近 Button 事件队列，最近 30s 内。同时 续命 Button 监测，续命到 当前时间 +10s
 	GetButtonEventQueue(context.Context, *emptypb.Empty) (*ButtonEventQueue, error)
 	mustEmbedUnimplementedHalServiceServer()
 }
@@ -107,8 +109,8 @@ func (UnimplementedHalServiceServer) SetPLed(context.Context, *PLedState) (*empt
 func (UnimplementedHalServiceServer) GetPLed(context.Context, *emptypb.Empty) (*PLedState, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPLed not implemented")
 }
-func (UnimplementedHalServiceServer) ActivateButtonMonitor(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ActivateButtonMonitor not implemented")
+func (UnimplementedHalServiceServer) SetSLed(context.Context, *PLedState) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetSLed not implemented")
 }
 func (UnimplementedHalServiceServer) GetButtonEventQueue(context.Context, *emptypb.Empty) (*ButtonEventQueue, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetButtonEventQueue not implemented")
@@ -162,20 +164,20 @@ func _HalService_GetPLed_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HalService_ActivateButtonMonitor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+func _HalService_SetSLed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PLedState)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(HalServiceServer).ActivateButtonMonitor(ctx, in)
+		return srv.(HalServiceServer).SetSLed(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: HalService_ActivateButtonMonitor_FullMethodName,
+		FullMethod: HalService_SetSLed_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HalServiceServer).ActivateButtonMonitor(ctx, req.(*emptypb.Empty))
+		return srv.(HalServiceServer).SetSLed(ctx, req.(*PLedState))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -214,8 +216,8 @@ var HalService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HalService_GetPLed_Handler,
 		},
 		{
-			MethodName: "ActivateButtonMonitor",
-			Handler:    _HalService_ActivateButtonMonitor_Handler,
+			MethodName: "SetSLed",
+			Handler:    _HalService_SetSLed_Handler,
 		},
 		{
 			MethodName: "GetButtonEventQueue",
