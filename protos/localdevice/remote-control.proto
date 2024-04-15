@@ -45,8 +45,8 @@ message SendKeyboardEventRequest {
 }
 
 message MovePosition {
-  int64 x = 1;
-  int64 y = 2;
+  int32 x = 1;
+  int32 y = 2;
 }
 
 message SendTouchpadEventRequest {
@@ -59,12 +59,12 @@ message SendTouchpadMoveRequest {
 }
 
 message SendMouseMoveByDirectionRequest {
-  int64 pixel = 1;
+  int32 pixel = 1;
 }
 
 message SendMouseMoveRequest {
-  int64 x = 1;
-  int64 y = 2;
+  int32 x = 1;
+  int32 y = 2;
 }
 
 message SendMouseWheelRequest {
