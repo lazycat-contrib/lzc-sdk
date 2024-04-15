@@ -36,7 +36,7 @@ type HalServiceClient interface {
 	GetPLed(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PLedState, error)
 	// Set 状态 LED (在 IO 面板上的 电源按钮边上的 小个的 红色的)
 	SetSLed(ctx context.Context, in *SLedState, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 最近 Button 事件队列，最近 30s 内。同时 续命 Button 监测，续命到 当前时间 +10s
+	// 最近 30s 内 Button 事件队列。同时 续命 Button 监测 到 当前时间 +5s
 	GetButtonEventQueue(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ButtonEventQueue, error)
 }
 
@@ -94,7 +94,7 @@ type HalServiceServer interface {
 	GetPLed(context.Context, *emptypb.Empty) (*PLedState, error)
 	// Set 状态 LED (在 IO 面板上的 电源按钮边上的 小个的 红色的)
 	SetSLed(context.Context, *SLedState) (*emptypb.Empty, error)
-	// 最近 Button 事件队列，最近 30s 内。同时 续命 Button 监测，续命到 当前时间 +10s
+	// 最近 30s 内 Button 事件队列。同时 续命 Button 监测 到 当前时间 +5s
 	GetButtonEventQueue(context.Context, *emptypb.Empty) (*ButtonEventQueue, error)
 	mustEmbedUnimplementedHalServiceServer()
 }
