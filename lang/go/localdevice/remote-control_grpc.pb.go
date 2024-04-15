@@ -34,6 +34,8 @@ const (
 	RemoteControl_SendMouseRightClick_FullMethodName     = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseRightClick"
 	RemoteControl_SendMouseMiddleClick_FullMethodName    = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseMiddleClick"
 	RemoteControl_SendMouseWheel_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseWheel"
+	RemoteControl_SendMouseDoubleClick_FullMethodName    = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseDoubleClick"
+	RemoteControl_SetRemoteScreenRect_FullMethodName     = "/cloud.lazycat.apis.localdevice.RemoteControl/SetRemoteScreenRect"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -70,6 +72,10 @@ type RemoteControlClient interface {
 	SendMouseMiddleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 发起鼠标滚动
 	SendMouseWheel(ctx context.Context, in *SendMouseWheelRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发起鼠标双击左键事件
+	SendMouseDoubleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 设置远程屏幕的宽高(用于计算鼠标，触控板移动的同比例偏移)
+	SetRemoteScreenRect(ctx context.Context, in *SetRemoteScreenRectRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type remoteControlClient struct {
@@ -206,6 +212,24 @@ func (c *remoteControlClient) SendMouseWheel(ctx context.Context, in *SendMouseW
 	return out, nil
 }
 
+func (c *remoteControlClient) SendMouseDoubleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendMouseDoubleClick_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) SetRemoteScreenRect(ctx context.Context, in *SetRemoteScreenRectRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SetRemoteScreenRect_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -240,6 +264,10 @@ type RemoteControlServer interface {
 	SendMouseMiddleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 发起鼠标滚动
 	SendMouseWheel(context.Context, *SendMouseWheelRequest) (*emptypb.Empty, error)
+	// 发起鼠标双击左键事件
+	SendMouseDoubleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 设置远程屏幕的宽高(用于计算鼠标，触控板移动的同比例偏移)
+	SetRemoteScreenRect(context.Context, *SetRemoteScreenRectRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -288,6 +316,12 @@ func (UnimplementedRemoteControlServer) SendMouseMiddleClick(context.Context, *e
 }
 func (UnimplementedRemoteControlServer) SendMouseWheel(context.Context, *SendMouseWheelRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMouseWheel not implemented")
+}
+func (UnimplementedRemoteControlServer) SendMouseDoubleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMouseDoubleClick not implemented")
+}
+func (UnimplementedRemoteControlServer) SetRemoteScreenRect(context.Context, *SetRemoteScreenRectRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetRemoteScreenRect not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -554,6 +588,42 @@ func _RemoteControl_SendMouseWheel_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_SendMouseDoubleClick_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendMouseDoubleClick(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendMouseDoubleClick_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendMouseDoubleClick(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_SetRemoteScreenRect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetRemoteScreenRectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SetRemoteScreenRect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SetRemoteScreenRect_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SetRemoteScreenRect(ctx, req.(*SetRemoteScreenRectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -616,6 +686,14 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendMouseWheel",
 			Handler:    _RemoteControl_SendMouseWheel_Handler,
+		},
+		{
+			MethodName: "SendMouseDoubleClick",
+			Handler:    _RemoteControl_SendMouseDoubleClick_Handler,
+		},
+		{
+			MethodName: "SetRemoteScreenRect",
+			Handler:    _RemoteControl_SetRemoteScreenRect_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

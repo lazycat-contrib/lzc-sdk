@@ -72,6 +72,10 @@ message SendMouseWheelRequest {
   int32 delta = 2;
 }
 
+message SetRemoteScreenRectRequest {
+  int32 height = 1;
+  int32 width = 2;
+}
 
 service RemoteControl{
   // 发送键盘输入事件
@@ -104,4 +108,8 @@ service RemoteControl{
   rpc SendMouseMiddleClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   // 发起鼠标滚动
   rpc SendMouseWheel(SendMouseWheelRequest) returns (google.protobuf.Empty) {}
+  // 发起鼠标双击左键事件
+  rpc SendMouseDoubleClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 设置远程屏幕的宽高(用于计算鼠标，触控板移动的同比例偏移)
+  rpc SetRemoteScreenRect(SetRemoteScreenRectRequest) returns (google.protobuf.Empty) {}
 }
