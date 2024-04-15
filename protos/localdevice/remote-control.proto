@@ -58,6 +58,21 @@ message SendTouchpadMoveRequest {
   MovePosition position = 1;
 }
 
+message SendMouseMoveByDirectionRequest {
+  int64 pixel = 1;
+}
+
+message SendMouseMoveRequest {
+  int64 x = 1;
+  int64 y = 2;
+}
+
+message SendMouseWheelRequest {
+  bool horizontal = 1;
+  int32 delta = 2;
+}
+
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -73,4 +88,20 @@ service RemoteControl{
   rpc SendTouchpadDoubleClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   // 发送触摸板滑动
   rpc SendTouchpadMove(SendTouchpadMoveRequest) returns (google.protobuf.Empty) {}
+  // 发起鼠标向左移动
+  rpc SendMouseMoveLeft(SendMouseMoveByDirectionRequest) returns (google.protobuf.Empty) {}
+  // 发起鼠标向右移动
+  rpc SendMouseMoveRight(SendMouseMoveByDirectionRequest) returns (google.protobuf.Empty) {}
+  // 发起鼠标向上移动
+  rpc SendMouseMoveUp(SendMouseMoveByDirectionRequest) returns (google.protobuf.Empty) {}
+  // 发起鼠标向下移动
+  rpc SendMouseMove(SendMouseMoveRequest) returns (google.protobuf.Empty) {}
+  // 发起鼠标左键单击事件
+  rpc SendMouseLeftClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 发起鼠标右键单击事件
+  rpc SendMouseRightClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 发起鼠标中键单击事件
+  rpc SendMouseMiddleClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 发起鼠标滚动
+  rpc SendMouseWheel(SendMouseWheelRequest) returns (google.protobuf.Empty) {}
 }

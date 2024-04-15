@@ -26,6 +26,14 @@ const (
 	RemoteControl_SendTouchpadRightClick_FullMethodName  = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadRightClick"
 	RemoteControl_SendTouchpadDoubleClick_FullMethodName = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadDoubleClick"
 	RemoteControl_SendTouchpadMove_FullMethodName        = "/cloud.lazycat.apis.localdevice.RemoteControl/SendTouchpadMove"
+	RemoteControl_SendMouseMoveLeft_FullMethodName       = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseMoveLeft"
+	RemoteControl_SendMouseMoveRight_FullMethodName      = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseMoveRight"
+	RemoteControl_SendMouseMoveUp_FullMethodName         = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseMoveUp"
+	RemoteControl_SendMouseMove_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseMove"
+	RemoteControl_SendMouseLeftClick_FullMethodName      = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseLeftClick"
+	RemoteControl_SendMouseRightClick_FullMethodName     = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseRightClick"
+	RemoteControl_SendMouseMiddleClick_FullMethodName    = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseMiddleClick"
+	RemoteControl_SendMouseWheel_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseWheel"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -46,6 +54,22 @@ type RemoteControlClient interface {
 	SendTouchpadDoubleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 发送触摸板滑动
 	SendTouchpadMove(ctx context.Context, in *SendTouchpadMoveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发起鼠标向左移动
+	SendMouseMoveLeft(ctx context.Context, in *SendMouseMoveByDirectionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发起鼠标向右移动
+	SendMouseMoveRight(ctx context.Context, in *SendMouseMoveByDirectionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发起鼠标向上移动
+	SendMouseMoveUp(ctx context.Context, in *SendMouseMoveByDirectionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发起鼠标向下移动
+	SendMouseMove(ctx context.Context, in *SendMouseMoveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发起鼠标左键单击事件
+	SendMouseLeftClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发起鼠标右键单击事件
+	SendMouseRightClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发起鼠标中键单击事件
+	SendMouseMiddleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 发起鼠标滚动
+	SendMouseWheel(ctx context.Context, in *SendMouseWheelRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type remoteControlClient struct {
@@ -110,6 +134,78 @@ func (c *remoteControlClient) SendTouchpadMove(ctx context.Context, in *SendTouc
 	return out, nil
 }
 
+func (c *remoteControlClient) SendMouseMoveLeft(ctx context.Context, in *SendMouseMoveByDirectionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendMouseMoveLeft_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) SendMouseMoveRight(ctx context.Context, in *SendMouseMoveByDirectionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendMouseMoveRight_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) SendMouseMoveUp(ctx context.Context, in *SendMouseMoveByDirectionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendMouseMoveUp_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) SendMouseMove(ctx context.Context, in *SendMouseMoveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendMouseMove_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) SendMouseLeftClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendMouseLeftClick_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) SendMouseRightClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendMouseRightClick_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) SendMouseMiddleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendMouseMiddleClick_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) SendMouseWheel(ctx context.Context, in *SendMouseWheelRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SendMouseWheel_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -128,6 +224,22 @@ type RemoteControlServer interface {
 	SendTouchpadDoubleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 发送触摸板滑动
 	SendTouchpadMove(context.Context, *SendTouchpadMoveRequest) (*emptypb.Empty, error)
+	// 发起鼠标向左移动
+	SendMouseMoveLeft(context.Context, *SendMouseMoveByDirectionRequest) (*emptypb.Empty, error)
+	// 发起鼠标向右移动
+	SendMouseMoveRight(context.Context, *SendMouseMoveByDirectionRequest) (*emptypb.Empty, error)
+	// 发起鼠标向上移动
+	SendMouseMoveUp(context.Context, *SendMouseMoveByDirectionRequest) (*emptypb.Empty, error)
+	// 发起鼠标向下移动
+	SendMouseMove(context.Context, *SendMouseMoveRequest) (*emptypb.Empty, error)
+	// 发起鼠标左键单击事件
+	SendMouseLeftClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 发起鼠标右键单击事件
+	SendMouseRightClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 发起鼠标中键单击事件
+	SendMouseMiddleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 发起鼠标滚动
+	SendMouseWheel(context.Context, *SendMouseWheelRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -152,6 +264,30 @@ func (UnimplementedRemoteControlServer) SendTouchpadDoubleClick(context.Context,
 }
 func (UnimplementedRemoteControlServer) SendTouchpadMove(context.Context, *SendTouchpadMoveRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendTouchpadMove not implemented")
+}
+func (UnimplementedRemoteControlServer) SendMouseMoveLeft(context.Context, *SendMouseMoveByDirectionRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMouseMoveLeft not implemented")
+}
+func (UnimplementedRemoteControlServer) SendMouseMoveRight(context.Context, *SendMouseMoveByDirectionRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMouseMoveRight not implemented")
+}
+func (UnimplementedRemoteControlServer) SendMouseMoveUp(context.Context, *SendMouseMoveByDirectionRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMouseMoveUp not implemented")
+}
+func (UnimplementedRemoteControlServer) SendMouseMove(context.Context, *SendMouseMoveRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMouseMove not implemented")
+}
+func (UnimplementedRemoteControlServer) SendMouseLeftClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMouseLeftClick not implemented")
+}
+func (UnimplementedRemoteControlServer) SendMouseRightClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMouseRightClick not implemented")
+}
+func (UnimplementedRemoteControlServer) SendMouseMiddleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMouseMiddleClick not implemented")
+}
+func (UnimplementedRemoteControlServer) SendMouseWheel(context.Context, *SendMouseWheelRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMouseWheel not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -274,6 +410,150 @@ func _RemoteControl_SendTouchpadMove_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_SendMouseMoveLeft_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendMouseMoveByDirectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendMouseMoveLeft(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendMouseMoveLeft_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendMouseMoveLeft(ctx, req.(*SendMouseMoveByDirectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_SendMouseMoveRight_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendMouseMoveByDirectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendMouseMoveRight(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendMouseMoveRight_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendMouseMoveRight(ctx, req.(*SendMouseMoveByDirectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_SendMouseMoveUp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendMouseMoveByDirectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendMouseMoveUp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendMouseMoveUp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendMouseMoveUp(ctx, req.(*SendMouseMoveByDirectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_SendMouseMove_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendMouseMoveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendMouseMove(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendMouseMove_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendMouseMove(ctx, req.(*SendMouseMoveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_SendMouseLeftClick_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendMouseLeftClick(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendMouseLeftClick_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendMouseLeftClick(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_SendMouseRightClick_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendMouseRightClick(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendMouseRightClick_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendMouseRightClick(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_SendMouseMiddleClick_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendMouseMiddleClick(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendMouseMiddleClick_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendMouseMiddleClick(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_SendMouseWheel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendMouseWheelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SendMouseWheel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SendMouseWheel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SendMouseWheel(ctx, req.(*SendMouseWheelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,6 +584,38 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendTouchpadMove",
 			Handler:    _RemoteControl_SendTouchpadMove_Handler,
+		},
+		{
+			MethodName: "SendMouseMoveLeft",
+			Handler:    _RemoteControl_SendMouseMoveLeft_Handler,
+		},
+		{
+			MethodName: "SendMouseMoveRight",
+			Handler:    _RemoteControl_SendMouseMoveRight_Handler,
+		},
+		{
+			MethodName: "SendMouseMoveUp",
+			Handler:    _RemoteControl_SendMouseMoveUp_Handler,
+		},
+		{
+			MethodName: "SendMouseMove",
+			Handler:    _RemoteControl_SendMouseMove_Handler,
+		},
+		{
+			MethodName: "SendMouseLeftClick",
+			Handler:    _RemoteControl_SendMouseLeftClick_Handler,
+		},
+		{
+			MethodName: "SendMouseRightClick",
+			Handler:    _RemoteControl_SendMouseRightClick_Handler,
+		},
+		{
+			MethodName: "SendMouseMiddleClick",
+			Handler:    _RemoteControl_SendMouseMiddleClick_Handler,
+		},
+		{
+			MethodName: "SendMouseWheel",
+			Handler:    _RemoteControl_SendMouseWheel_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
