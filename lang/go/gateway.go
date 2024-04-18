@@ -34,15 +34,15 @@ type DeviceProxy struct {
 
 	authToken *AuthToken
 
-	Config       localdevice.UserConfigClient
-	Device       localdevice.DeviceServiceClient
-	Clipboard    localdevice.ClipboardManagerClient
-	Dialog       localdevice.DialogManagerClient
-	PhotoLibrary localdevice.PhotoLibraryClient
-	Network      localdevice.NetworkManagerClient
-	Permission   localdevice.PermissionManagerClient
-	FileHandler  common.FileHandlerClient
-	Rim          localdevice.RimClient
+	Config        localdevice.UserConfigClient
+	Device        localdevice.DeviceServiceClient
+	Clipboard     localdevice.ClipboardManagerClient
+	Dialog        localdevice.DialogManagerClient
+	PhotoLibrary  localdevice.PhotoLibraryClient
+	Network       localdevice.NetworkManagerClient
+	Permission    localdevice.PermissionManagerClient
+	FileHandler   common.FileHandlerClient
+	Rim           localdevice.RimClient
 	RemoteControl localdevice.RemoteControlClient
 }
 
@@ -73,21 +73,21 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 		conn:     conn,
 		metaCred: metaCred,
 
-		Config:       localdevice.NewUserConfigClient(conn),
-		Device:       localdevice.NewDeviceServiceClient(conn),
-		Clipboard:    localdevice.NewClipboardManagerClient(conn),
-		Dialog:       localdevice.NewDialogManagerClient(conn),
-		PhotoLibrary: localdevice.NewPhotoLibraryClient(conn),
-		Network:      localdevice.NewNetworkManagerClient(conn),
-		Permission:   localdevice.NewPermissionManagerClient(conn),
-		FileHandler:  common.NewFileHandlerClient(conn),
-		Rim:          localdevice.NewRimClient(conn),
+		Config:        localdevice.NewUserConfigClient(conn),
+		Device:        localdevice.NewDeviceServiceClient(conn),
+		Clipboard:     localdevice.NewClipboardManagerClient(conn),
+		Dialog:        localdevice.NewDialogManagerClient(conn),
+		PhotoLibrary:  localdevice.NewPhotoLibraryClient(conn),
+		Network:       localdevice.NewNetworkManagerClient(conn),
+		Permission:    localdevice.NewPermissionManagerClient(conn),
+		FileHandler:   common.NewFileHandlerClient(conn),
+		Rim:           localdevice.NewRimClient(conn),
 		RemoteControl: localdevice.NewRemoteControlClient(conn),
 	}, nil
 }
 
 func NewAPIConn(ctx context.Context) (*grpc.ClientConn, error) {
-	cred, err := buildClientCredOption(CAPath, APPKeyPath, APPCertPath)
+	cred, err := BuildClientCredOption(CAPath, APPKeyPath, APPCertPath)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func NewAPIConn(ctx context.Context) (*grpc.ClientConn, error) {
 }
 
 func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
-	cred, err := buildClientCredOption(CAPath, APPKeyPath, APPCertPath)
+	cred, err := BuildClientCredOption(CAPath, APPKeyPath, APPCertPath)
 	if err != nil {
 		return nil, err
 	}
