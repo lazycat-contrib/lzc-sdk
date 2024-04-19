@@ -44,7 +44,7 @@ type PeripheralDeviceServiceClient interface {
 	UmountFilesystem(ctx context.Context, in *UmountFilesystemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MountArchive(ctx context.Context, in *MountArchiveRequest, opts ...grpc.CallOption) (PeripheralDeviceService_MountArchiveClient, error)
 	// 扫描插入的USB网络设备
-	ScanUSBNetwork(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ScanUSBNetwork(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*USBNetworks, error)
 	// 管理指定的USB网络设备(对应设备会被分配到当前容器）
 	ManageUSBNetwork(ctx context.Context, in *USBNetwork, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -125,8 +125,8 @@ func (x *peripheralDeviceServiceMountArchiveClient) Recv() (*emptypb.Empty, erro
 	return m, nil
 }
 
-func (c *peripheralDeviceServiceClient) ScanUSBNetwork(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *peripheralDeviceServiceClient) ScanUSBNetwork(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*USBNetworks, error) {
+	out := new(USBNetworks)
 	err := c.cc.Invoke(ctx, PeripheralDeviceService_ScanUSBNetwork_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -158,7 +158,7 @@ type PeripheralDeviceServiceServer interface {
 	UmountFilesystem(context.Context, *UmountFilesystemRequest) (*emptypb.Empty, error)
 	MountArchive(*MountArchiveRequest, PeripheralDeviceService_MountArchiveServer) error
 	// 扫描插入的USB网络设备
-	ScanUSBNetwork(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	ScanUSBNetwork(context.Context, *emptypb.Empty) (*USBNetworks, error)
 	// 管理指定的USB网络设备(对应设备会被分配到当前容器）
 	ManageUSBNetwork(context.Context, *USBNetwork) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPeripheralDeviceServiceServer()
@@ -183,7 +183,7 @@ func (UnimplementedPeripheralDeviceServiceServer) UmountFilesystem(context.Conte
 func (UnimplementedPeripheralDeviceServiceServer) MountArchive(*MountArchiveRequest, PeripheralDeviceService_MountArchiveServer) error {
 	return status.Errorf(codes.Unimplemented, "method MountArchive not implemented")
 }
-func (UnimplementedPeripheralDeviceServiceServer) ScanUSBNetwork(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedPeripheralDeviceServiceServer) ScanUSBNetwork(context.Context, *emptypb.Empty) (*USBNetworks, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ScanUSBNetwork not implemented")
 }
 func (UnimplementedPeripheralDeviceServiceServer) ManageUSBNetwork(context.Context, *USBNetwork) (*emptypb.Empty, error) {
