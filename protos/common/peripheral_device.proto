@@ -28,6 +28,20 @@ service PeripheralDeviceService {
 
   rpc MountArchive(MountArchiveRequest) returns (stream google.protobuf.Empty) {
   }
+
+  // 扫描插入的USB网络设备
+  rpc ScanUSBNetwork(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 管理指定的USB网络设备(对应设备会被分配到当前容器）
+  rpc ManageUSBNetwork(USBNetwork) returns (google.protobuf.Empty) {}
+}
+
+message USBNetwork {
+  string name = 1;
+  string vendor = 2;
+  string product = 3;
+}
+message USBNetworks {
+  repeated USBNetwork networks = 1;
 }
 
 message MountArchiveRequest {
