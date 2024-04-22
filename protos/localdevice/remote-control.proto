@@ -19,6 +19,7 @@ enum InputEvent {
   KEY_PAGEUP = 8;
   KEY_PAGEDOWN = 9;
   KEY_ENTER = 10;
+  KEY_BACKSPACE = 11;
 }
 
 enum EventState {
