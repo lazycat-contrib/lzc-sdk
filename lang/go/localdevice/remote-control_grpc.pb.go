@@ -36,6 +36,9 @@ const (
 	RemoteControl_SendMouseWheel_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseWheel"
 	RemoteControl_SendMouseDoubleClick_FullMethodName    = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseDoubleClick"
 	RemoteControl_SetRemoteScreenRect_FullMethodName     = "/cloud.lazycat.apis.localdevice.RemoteControl/SetRemoteScreenRect"
+	RemoteControl_WriteClipboard_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/WriteClipboard"
+	RemoteControl_ReadClipboard_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/ReadClipboard"
+	RemoteControl_DoPaste_FullMethodName                 = "/cloud.lazycat.apis.localdevice.RemoteControl/DoPaste"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -76,6 +79,12 @@ type RemoteControlClient interface {
 	SendMouseDoubleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 设置远程屏幕的宽高(用于计算鼠标，触控板移动的同比例偏移)
 	SetRemoteScreenRect(ctx context.Context, in *SetRemoteScreenRectRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 写入剪贴板
+	WriteClipboard(ctx context.Context, in *WriteClipboardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 读取剪贴板
+	ReadClipboard(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ReadClipboardResponse, error)
+	// 粘贴
+	DoPaste(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type remoteControlClient struct {
@@ -230,6 +239,33 @@ func (c *remoteControlClient) SetRemoteScreenRect(ctx context.Context, in *SetRe
 	return out, nil
 }
 
+func (c *remoteControlClient) WriteClipboard(ctx context.Context, in *WriteClipboardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_WriteClipboard_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) ReadClipboard(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ReadClipboardResponse, error) {
+	out := new(ReadClipboardResponse)
+	err := c.cc.Invoke(ctx, RemoteControl_ReadClipboard_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) DoPaste(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_DoPaste_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -268,6 +304,12 @@ type RemoteControlServer interface {
 	SendMouseDoubleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 设置远程屏幕的宽高(用于计算鼠标，触控板移动的同比例偏移)
 	SetRemoteScreenRect(context.Context, *SetRemoteScreenRectRequest) (*emptypb.Empty, error)
+	// 写入剪贴板
+	WriteClipboard(context.Context, *WriteClipboardRequest) (*emptypb.Empty, error)
+	// 读取剪贴板
+	ReadClipboard(context.Context, *emptypb.Empty) (*ReadClipboardResponse, error)
+	// 粘贴
+	DoPaste(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -322,6 +364,15 @@ func (UnimplementedRemoteControlServer) SendMouseDoubleClick(context.Context, *e
 }
 func (UnimplementedRemoteControlServer) SetRemoteScreenRect(context.Context, *SetRemoteScreenRectRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetRemoteScreenRect not implemented")
+}
+func (UnimplementedRemoteControlServer) WriteClipboard(context.Context, *WriteClipboardRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WriteClipboard not implemented")
+}
+func (UnimplementedRemoteControlServer) ReadClipboard(context.Context, *emptypb.Empty) (*ReadClipboardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadClipboard not implemented")
+}
+func (UnimplementedRemoteControlServer) DoPaste(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DoPaste not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -624,6 +675,60 @@ func _RemoteControl_SetRemoteScreenRect_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_WriteClipboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WriteClipboardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).WriteClipboard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_WriteClipboard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).WriteClipboard(ctx, req.(*WriteClipboardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_ReadClipboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).ReadClipboard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_ReadClipboard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).ReadClipboard(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_DoPaste_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).DoPaste(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_DoPaste_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).DoPaste(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -694,6 +799,18 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetRemoteScreenRect",
 			Handler:    _RemoteControl_SetRemoteScreenRect_Handler,
+		},
+		{
+			MethodName: "WriteClipboard",
+			Handler:    _RemoteControl_WriteClipboard_Handler,
+		},
+		{
+			MethodName: "ReadClipboard",
+			Handler:    _RemoteControl_ReadClipboard_Handler,
+		},
+		{
+			MethodName: "DoPaste",
+			Handler:    _RemoteControl_DoPaste_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

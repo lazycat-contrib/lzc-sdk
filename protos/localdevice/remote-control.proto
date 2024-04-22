@@ -77,6 +77,15 @@ message SetRemoteScreenRectRequest {
   int32 width = 2;
 }
 
+message WriteClipboardRequest {
+  string text = 1;
+}
+
+message ReadClipboardResponse {
+  string text = 1;
+}
+
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -112,4 +121,10 @@ service RemoteControl{
   rpc SendMouseDoubleClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   // 设置远程屏幕的宽高(用于计算鼠标，触控板移动的同比例偏移)
   rpc SetRemoteScreenRect(SetRemoteScreenRectRequest) returns (google.protobuf.Empty) {}
+  // 写入剪贴板
+  rpc WriteClipboard(WriteClipboardRequest) returns (google.protobuf.Empty) {}
+  // 读取剪贴板
+  rpc ReadClipboard(google.protobuf.Empty) returns (ReadClipboardResponse) {}
+  // 粘贴
+  rpc DoPaste(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }
