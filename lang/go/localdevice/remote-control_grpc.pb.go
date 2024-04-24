@@ -30,6 +30,7 @@ const (
 	RemoteControl_SendMouseMoveRight_FullMethodName      = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseMoveRight"
 	RemoteControl_SendMouseMoveUp_FullMethodName         = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseMoveUp"
 	RemoteControl_SendMouseMove_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseMove"
+	RemoteControl_MouseMoveStream_FullMethodName         = "/cloud.lazycat.apis.localdevice.RemoteControl/MouseMoveStream"
 	RemoteControl_SendMouseLeftClick_FullMethodName      = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseLeftClick"
 	RemoteControl_SendMouseRightClick_FullMethodName     = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseRightClick"
 	RemoteControl_SendMouseMiddleClick_FullMethodName    = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseMiddleClick"
@@ -67,6 +68,8 @@ type RemoteControlClient interface {
 	SendMouseMoveUp(ctx context.Context, in *SendMouseMoveByDirectionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 发起鼠标向下移动
 	SendMouseMove(ctx context.Context, in *SendMouseMoveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 建立鼠标移动客户端流
+	MouseMoveStream(ctx context.Context, opts ...grpc.CallOption) (RemoteControl_MouseMoveStreamClient, error)
 	// 发起鼠标左键单击事件
 	SendMouseLeftClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 发起鼠标右键单击事件
@@ -185,6 +188,40 @@ func (c *remoteControlClient) SendMouseMove(ctx context.Context, in *SendMouseMo
 	return out, nil
 }
 
+func (c *remoteControlClient) MouseMoveStream(ctx context.Context, opts ...grpc.CallOption) (RemoteControl_MouseMoveStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &RemoteControl_ServiceDesc.Streams[0], RemoteControl_MouseMoveStream_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &remoteControlMouseMoveStreamClient{stream}
+	return x, nil
+}
+
+type RemoteControl_MouseMoveStreamClient interface {
+	Send(*SendMouseMoveRequest) error
+	CloseAndRecv() (*emptypb.Empty, error)
+	grpc.ClientStream
+}
+
+type remoteControlMouseMoveStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *remoteControlMouseMoveStreamClient) Send(m *SendMouseMoveRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *remoteControlMouseMoveStreamClient) CloseAndRecv() (*emptypb.Empty, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(emptypb.Empty)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *remoteControlClient) SendMouseLeftClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, RemoteControl_SendMouseLeftClick_FullMethodName, in, out, opts...)
@@ -292,6 +329,8 @@ type RemoteControlServer interface {
 	SendMouseMoveUp(context.Context, *SendMouseMoveByDirectionRequest) (*emptypb.Empty, error)
 	// 发起鼠标向下移动
 	SendMouseMove(context.Context, *SendMouseMoveRequest) (*emptypb.Empty, error)
+	// 建立鼠标移动客户端流
+	MouseMoveStream(RemoteControl_MouseMoveStreamServer) error
 	// 发起鼠标左键单击事件
 	SendMouseLeftClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 发起鼠标右键单击事件
@@ -346,6 +385,9 @@ func (UnimplementedRemoteControlServer) SendMouseMoveUp(context.Context, *SendMo
 }
 func (UnimplementedRemoteControlServer) SendMouseMove(context.Context, *SendMouseMoveRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMouseMove not implemented")
+}
+func (UnimplementedRemoteControlServer) MouseMoveStream(RemoteControl_MouseMoveStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method MouseMoveStream not implemented")
 }
 func (UnimplementedRemoteControlServer) SendMouseLeftClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMouseLeftClick not implemented")
@@ -565,6 +607,32 @@ func _RemoteControl_SendMouseMove_Handler(srv interface{}, ctx context.Context, 
 		return srv.(RemoteControlServer).SendMouseMove(ctx, req.(*SendMouseMoveRequest))
 	}
 	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_MouseMoveStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(RemoteControlServer).MouseMoveStream(&remoteControlMouseMoveStreamServer{stream})
+}
+
+type RemoteControl_MouseMoveStreamServer interface {
+	SendAndClose(*emptypb.Empty) error
+	Recv() (*SendMouseMoveRequest, error)
+	grpc.ServerStream
+}
+
+type remoteControlMouseMoveStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *remoteControlMouseMoveStreamServer) SendAndClose(m *emptypb.Empty) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *remoteControlMouseMoveStreamServer) Recv() (*SendMouseMoveRequest, error) {
+	m := new(SendMouseMoveRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func _RemoteControl_SendMouseLeftClick_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -813,6 +881,12 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RemoteControl_DoPaste_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "MouseMoveStream",
+			Handler:       _RemoteControl_MouseMoveStream_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "localdevice/remote-control.proto",
 }

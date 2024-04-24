@@ -86,7 +86,6 @@ message ReadClipboardResponse {
   string text = 1;
 }
 
-
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -110,6 +109,8 @@ service RemoteControl{
   rpc SendMouseMoveUp(SendMouseMoveByDirectionRequest) returns (google.protobuf.Empty) {}
   // 发起鼠标向下移动
   rpc SendMouseMove(SendMouseMoveRequest) returns (google.protobuf.Empty) {}
+  // 建立鼠标移动客户端流
+  rpc MouseMoveStream(stream SendMouseMoveRequest) returns (google.protobuf.Empty) {}
   // 发起鼠标左键单击事件
   rpc SendMouseLeftClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   // 发起鼠标右键单击事件
@@ -128,4 +129,4 @@ service RemoteControl{
   rpc ReadClipboard(google.protobuf.Empty) returns (ReadClipboardResponse) {}
   // 粘贴
   rpc DoPaste(google.protobuf.Empty) returns (google.protobuf.Empty) {}
-}
+} 
