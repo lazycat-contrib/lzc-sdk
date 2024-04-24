@@ -24,6 +24,7 @@ const (
 	FileHandler_Open_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/open"
 	FileHandler_OpenFileManager_FullMethodName = "/cloud.lazycat.apis.common.FileHandler/openFileManager"
 	FileHandler_WalkDir_FullMethodName         = "/cloud.lazycat.apis.common.FileHandler/walkDir"
+	FileHandler_WalkDirDuplex_FullMethodName   = "/cloud.lazycat.apis.common.FileHandler/walkDirDuplex"
 	FileHandler_CreateDir_FullMethodName       = "/cloud.lazycat.apis.common.FileHandler/createDir"
 	FileHandler_Stat_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/stat"
 )
@@ -37,6 +38,7 @@ type FileHandlerClient interface {
 	OpenFileManager(ctx context.Context, in *OpenFileManagerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列出目录结构
 	WalkDir(ctx context.Context, in *WalkDirRequest, opts ...grpc.CallOption) (FileHandler_WalkDirClient, error)
+	WalkDirDuplex(ctx context.Context, opts ...grpc.CallOption) (FileHandler_WalkDirDuplexClient, error)
 	CreateDir(ctx context.Context, opts ...grpc.CallOption) (FileHandler_CreateDirClient, error)
 	Stat(ctx context.Context, in *StatRequest, opts ...grpc.CallOption) (*StatReply, error)
 }
@@ -108,8 +110,39 @@ func (x *fileHandlerWalkDirClient) Recv() (*WalkDirReply, error) {
 	return m, nil
 }
 
+func (c *fileHandlerClient) WalkDirDuplex(ctx context.Context, opts ...grpc.CallOption) (FileHandler_WalkDirDuplexClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[1], FileHandler_WalkDirDuplex_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &fileHandlerWalkDirDuplexClient{stream}
+	return x, nil
+}
+
+type FileHandler_WalkDirDuplexClient interface {
+	Send(*WalkDirRequest) error
+	Recv() (*WalkDirReply, error)
+	grpc.ClientStream
+}
+
+type fileHandlerWalkDirDuplexClient struct {
+	grpc.ClientStream
+}
+
+func (x *fileHandlerWalkDirDuplexClient) Send(m *WalkDirRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *fileHandlerWalkDirDuplexClient) Recv() (*WalkDirReply, error) {
+	m := new(WalkDirReply)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *fileHandlerClient) CreateDir(ctx context.Context, opts ...grpc.CallOption) (FileHandler_CreateDirClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[1], FileHandler_CreateDir_FullMethodName, opts...)
+	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[2], FileHandler_CreateDir_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -160,6 +193,7 @@ type FileHandlerServer interface {
 	OpenFileManager(context.Context, *OpenFileManagerRequest) (*emptypb.Empty, error)
 	// 列出目录结构
 	WalkDir(*WalkDirRequest, FileHandler_WalkDirServer) error
+	WalkDirDuplex(FileHandler_WalkDirDuplexServer) error
 	CreateDir(FileHandler_CreateDirServer) error
 	Stat(context.Context, *StatRequest) (*StatReply, error)
 	mustEmbedUnimplementedFileHandlerServer()
@@ -180,6 +214,9 @@ func (UnimplementedFileHandlerServer) OpenFileManager(context.Context, *OpenFile
 }
 func (UnimplementedFileHandlerServer) WalkDir(*WalkDirRequest, FileHandler_WalkDirServer) error {
 	return status.Errorf(codes.Unimplemented, "method WalkDir not implemented")
+}
+func (UnimplementedFileHandlerServer) WalkDirDuplex(FileHandler_WalkDirDuplexServer) error {
+	return status.Errorf(codes.Unimplemented, "method WalkDirDuplex not implemented")
 }
 func (UnimplementedFileHandlerServer) CreateDir(FileHandler_CreateDirServer) error {
 	return status.Errorf(codes.Unimplemented, "method CreateDir not implemented")
@@ -275,6 +312,32 @@ func (x *fileHandlerWalkDirServer) Send(m *WalkDirReply) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _FileHandler_WalkDirDuplex_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(FileHandlerServer).WalkDirDuplex(&fileHandlerWalkDirDuplexServer{stream})
+}
+
+type FileHandler_WalkDirDuplexServer interface {
+	Send(*WalkDirReply) error
+	Recv() (*WalkDirRequest, error)
+	grpc.ServerStream
+}
+
+type fileHandlerWalkDirDuplexServer struct {
+	grpc.ServerStream
+}
+
+func (x *fileHandlerWalkDirDuplexServer) Send(m *WalkDirReply) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *fileHandlerWalkDirDuplexServer) Recv() (*WalkDirRequest, error) {
+	m := new(WalkDirRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func _FileHandler_CreateDir_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(FileHandlerServer).CreateDir(&fileHandlerCreateDirServer{stream})
 }
@@ -348,6 +411,12 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "walkDir",
 			Handler:       _FileHandler_WalkDir_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "walkDirDuplex",
+			Handler:       _FileHandler_WalkDirDuplex_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 		{
 			StreamName:    "createDir",
