@@ -31,7 +31,7 @@ service PeripheralDeviceService {
 
   // 扫描插入的USB网络设备
   rpc ScanUSBNetwork(google.protobuf.Empty) returns (USBNetworks) {}
-  // 管理指定的USB网络设备(对应设备会被分配到当前容器）
+  // 将指定的USB网络设备分配给Hext管理
   rpc ManageUSBNetwork(USBNetwork) returns (google.protobuf.Empty) {}
 }
 

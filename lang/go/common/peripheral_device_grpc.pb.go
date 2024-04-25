@@ -45,7 +45,7 @@ type PeripheralDeviceServiceClient interface {
 	MountArchive(ctx context.Context, in *MountArchiveRequest, opts ...grpc.CallOption) (PeripheralDeviceService_MountArchiveClient, error)
 	// 扫描插入的USB网络设备
 	ScanUSBNetwork(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*USBNetworks, error)
-	// 管理指定的USB网络设备(对应设备会被分配到当前容器）
+	// 将指定的USB网络设备分配给Hext管理
 	ManageUSBNetwork(ctx context.Context, in *USBNetwork, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -159,7 +159,7 @@ type PeripheralDeviceServiceServer interface {
 	MountArchive(*MountArchiveRequest, PeripheralDeviceService_MountArchiveServer) error
 	// 扫描插入的USB网络设备
 	ScanUSBNetwork(context.Context, *emptypb.Empty) (*USBNetworks, error)
-	// 管理指定的USB网络设备(对应设备会被分配到当前容器）
+	// 将指定的USB网络设备分配给Hext管理
 	ManageUSBNetwork(context.Context, *USBNetwork) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPeripheralDeviceServiceServer()
 }
