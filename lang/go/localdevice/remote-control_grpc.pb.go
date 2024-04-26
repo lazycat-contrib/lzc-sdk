@@ -35,6 +35,7 @@ const (
 	RemoteControl_SendMouseRightClick_FullMethodName     = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseRightClick"
 	RemoteControl_SendMouseMiddleClick_FullMethodName    = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseMiddleClick"
 	RemoteControl_SendMouseWheel_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseWheel"
+	RemoteControl_MouseWheelStream_FullMethodName        = "/cloud.lazycat.apis.localdevice.RemoteControl/MouseWheelStream"
 	RemoteControl_SendMouseDoubleClick_FullMethodName    = "/cloud.lazycat.apis.localdevice.RemoteControl/SendMouseDoubleClick"
 	RemoteControl_SetRemoteScreenRect_FullMethodName     = "/cloud.lazycat.apis.localdevice.RemoteControl/SetRemoteScreenRect"
 	RemoteControl_WriteClipboard_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/WriteClipboard"
@@ -78,6 +79,8 @@ type RemoteControlClient interface {
 	SendMouseMiddleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 发起鼠标滚动
 	SendMouseWheel(ctx context.Context, in *SendMouseWheelRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 建立流式鼠标滑动
+	MouseWheelStream(ctx context.Context, opts ...grpc.CallOption) (RemoteControl_MouseWheelStreamClient, error)
 	// 发起鼠标双击左键事件
 	SendMouseDoubleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 设置远程屏幕的宽高(用于计算鼠标，触控板移动的同比例偏移)
@@ -258,6 +261,40 @@ func (c *remoteControlClient) SendMouseWheel(ctx context.Context, in *SendMouseW
 	return out, nil
 }
 
+func (c *remoteControlClient) MouseWheelStream(ctx context.Context, opts ...grpc.CallOption) (RemoteControl_MouseWheelStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &RemoteControl_ServiceDesc.Streams[1], RemoteControl_MouseWheelStream_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &remoteControlMouseWheelStreamClient{stream}
+	return x, nil
+}
+
+type RemoteControl_MouseWheelStreamClient interface {
+	Send(*SendMouseWheelRequest) error
+	CloseAndRecv() (*emptypb.Empty, error)
+	grpc.ClientStream
+}
+
+type remoteControlMouseWheelStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *remoteControlMouseWheelStreamClient) Send(m *SendMouseWheelRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *remoteControlMouseWheelStreamClient) CloseAndRecv() (*emptypb.Empty, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(emptypb.Empty)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *remoteControlClient) SendMouseDoubleClick(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, RemoteControl_SendMouseDoubleClick_FullMethodName, in, out, opts...)
@@ -339,6 +376,8 @@ type RemoteControlServer interface {
 	SendMouseMiddleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 发起鼠标滚动
 	SendMouseWheel(context.Context, *SendMouseWheelRequest) (*emptypb.Empty, error)
+	// 建立流式鼠标滑动
+	MouseWheelStream(RemoteControl_MouseWheelStreamServer) error
 	// 发起鼠标双击左键事件
 	SendMouseDoubleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 设置远程屏幕的宽高(用于计算鼠标，触控板移动的同比例偏移)
@@ -400,6 +439,9 @@ func (UnimplementedRemoteControlServer) SendMouseMiddleClick(context.Context, *e
 }
 func (UnimplementedRemoteControlServer) SendMouseWheel(context.Context, *SendMouseWheelRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMouseWheel not implemented")
+}
+func (UnimplementedRemoteControlServer) MouseWheelStream(RemoteControl_MouseWheelStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method MouseWheelStream not implemented")
 }
 func (UnimplementedRemoteControlServer) SendMouseDoubleClick(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMouseDoubleClick not implemented")
@@ -707,6 +749,32 @@ func _RemoteControl_SendMouseWheel_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_MouseWheelStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(RemoteControlServer).MouseWheelStream(&remoteControlMouseWheelStreamServer{stream})
+}
+
+type RemoteControl_MouseWheelStreamServer interface {
+	SendAndClose(*emptypb.Empty) error
+	Recv() (*SendMouseWheelRequest, error)
+	grpc.ServerStream
+}
+
+type remoteControlMouseWheelStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *remoteControlMouseWheelStreamServer) SendAndClose(m *emptypb.Empty) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *remoteControlMouseWheelStreamServer) Recv() (*SendMouseWheelRequest, error) {
+	m := new(SendMouseWheelRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func _RemoteControl_SendMouseDoubleClick_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -885,6 +953,11 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "MouseMoveStream",
 			Handler:       _RemoteControl_MouseMoveStream_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "MouseWheelStream",
+			Handler:       _RemoteControl_MouseWheelStream_Handler,
 			ClientStreams: true,
 		},
 	},
