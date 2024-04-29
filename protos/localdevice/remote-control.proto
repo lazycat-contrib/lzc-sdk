@@ -133,6 +133,7 @@ message ListCardsResponse {
     CardProfile activeProfile = 3; 
     repeated CardProfile profiles = 4;  
   }
+  repeated Card cards = 1;
 }
 
 message SetDefaultSinkRequest {
