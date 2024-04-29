@@ -86,6 +86,86 @@ message ReadClipboardResponse {
   string text = 1;
 }
 
+// 声音
+message Volume {
+  // 左声道
+  int32 left = 1;
+  // 右声道
+  int32 right = 2;
+}
+
+message ListSinkInputsResponse {
+  message SinkInput {
+    int32 index = 1;
+    string name = 2;
+    int32 sink = 3;
+    bool muted = 4;
+    Volume volume = 5;
+  }
+  repeated SinkInput sinkInputs = 1;
+}
+
+message ListSinksRepsonse {
+  message Sink {
+    int32 index = 1;
+    string name = 2;
+    string description = 3;
+    bool muted = 4;
+    Volume volume = 5;
+    string cardIndex= 6;
+  }
+  repeated Sink sinks = 1;
+}
+
+message CardProfile {
+  string name = 1;
+  string description = 2;
+  bool available = 3;
+  int32 priority = 4;
+  int32 sinks = 5;
+  int32 sources = 6;
+}
+
+message ListCardsResponse {
+  message Card {
+    int32 index = 1;
+    string name = 2;
+    CardProfile activeProfile = 3; 
+    repeated CardProfile profiles = 4;  
+  }
+}
+
+message SetDefaultSinkRequest {
+  string sinkName = 1;
+}
+
+message SetCardProfileRequest {
+  int32 cardIndex = 1;
+  string profileName = 2;
+}
+
+message SinkRequest {
+   optional string sinkName = 1; 
+}
+
+message GetSinkMuteResponse {
+  bool muted = 1;
+}
+
+message SetSinkMuteRequest {
+  string sinkName = 1; 
+  bool mute = 2; 
+}
+
+message GetSinkVolumeResponse {
+  float volume = 1;
+}
+
+message ChangeSinkVolumeRequest {
+  optional string sinkName = 1;
+  int32 value = 2;
+}
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -131,4 +211,30 @@ service RemoteControl{
   rpc ReadClipboard(google.protobuf.Empty) returns (ReadClipboardResponse) {}
   // 粘贴
   rpc DoPaste(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+
+  // 音频管理
+  // sink 输入音频设备 (可用于播放音频的音频设备)
+  // sink-input 输入音频流 (正在播放音频的程序)
+  // card 声卡，对应到某个物理设备
+  // card profile 声音可用的配置(立体声、环绕声)，影响sink和source
+  // 列出正在播放的输出音频流
+  rpc ListSinkInputs(google.protobuf.Empty) returns (ListSinkInputsResponse) {}
+  // 列出当前输入音频设备
+  rpc ListSinks(google.protobuf.Empty) returns (ListSinksRepsonse) {}
+  // 列出当前可用的声卡
+  rpc ListCards(google.protobuf.Empty) returns (ListCardsResponse) {}
+  // 设置默认的输出音频设备
+  rpc SetDefaultSink(SetDefaultSinkRequest) returns (google.protobuf.Empty) {}
+  // 设置默认的输入音频设备
+  rpc SetCardProfile(SetCardProfileRequest) returns (google.protobuf.Empty) {}
+  // 获取Sink是否被静音
+  rpc GetSinkMute(SinkRequest) returns (GetSinkMuteResponse) {}
+  // 设置Sink静音
+  rpc SetSinkMute(SetSinkMuteRequest) returns (google.protobuf.Empty) {}
+  // 获取Sink音量
+  rpc GetSinkVolume(SinkRequest) returns (GetSinkVolumeResponse) {}
+  // 增加Sink音量
+  rpc IncreaseSinkVolume(ChangeSinkVolumeRequest) returns (google.protobuf.Empty) {}
+  // 减少Sink音量
+  rpc DecreaseSinkVolume(ChangeSinkVolumeRequest) returns (google.protobuf.Empty) {}
 } 
