@@ -148,7 +148,7 @@ message SinkRequest {
    optional string sinkName = 1; 
 }
 
-message GetSinkMuteResponse {
+message GetMuteResponse {
   bool muted = 1;
 }
 
@@ -161,9 +161,8 @@ message GetSinkVolumeResponse {
   float volume = 1;
 }
 
-message ChangeSinkVolumeRequest {
-  optional string sinkName = 1;
-  int32 value = 2;
+message ChangeVolumeRequest {
+  int32 value = 1;
 }
 
 service RemoteControl{
@@ -211,7 +210,6 @@ service RemoteControl{
   rpc ReadClipboard(google.protobuf.Empty) returns (ReadClipboardResponse) {}
   // 粘贴
   rpc DoPaste(google.protobuf.Empty) returns (google.protobuf.Empty) {}
-
   // 音频管理
   // sink 输入音频设备 (可用于播放音频的音频设备)
   // sink-input 输入音频流 (正在播放音频的程序)
@@ -227,14 +225,14 @@ service RemoteControl{
   rpc SetDefaultSink(SetDefaultSinkRequest) returns (google.protobuf.Empty) {}
   // 设置默认的输入音频设备
   rpc SetCardProfile(SetCardProfileRequest) returns (google.protobuf.Empty) {}
-  // 获取Sink是否被静音
-  rpc GetSinkMute(SinkRequest) returns (GetSinkMuteResponse) {}
-  // 设置Sink静音
-  rpc SetSinkMute(SetSinkMuteRequest) returns (google.protobuf.Empty) {}
-  // 获取Sink音量
-  rpc GetSinkVolume(SinkRequest) returns (GetSinkVolumeResponse) {}
-  // 增加Sink音量
-  rpc IncreaseSinkVolume(ChangeSinkVolumeRequest) returns (google.protobuf.Empty) {}
-  // 减少Sink音量
-  rpc DecreaseSinkVolume(ChangeSinkVolumeRequest) returns (google.protobuf.Empty) {}
+  // 获取是否被静音
+  rpc GetMute(google.protobuf.Empty) returns (GetMuteResponse) {}
+  // 切换静音状态
+  rpc ToggleMute(google.protobuf.Empty) returns (GetMuteResponse) {}
+  // 获取音量
+  rpc GetVolume(SinkRequest) returns (GetSinkVolumeResponse) {}
+  // 增加音量
+  rpc IncreaseVolume(ChangeVolumeRequest) returns (google.protobuf.Empty) {}
+  // 减少音量
+  rpc DecreaseVolume(ChangeVolumeRequest) returns (google.protobuf.Empty) {}
 } 

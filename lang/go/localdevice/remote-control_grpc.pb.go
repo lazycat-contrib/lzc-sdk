@@ -46,11 +46,11 @@ const (
 	RemoteControl_ListCards_FullMethodName               = "/cloud.lazycat.apis.localdevice.RemoteControl/ListCards"
 	RemoteControl_SetDefaultSink_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/SetDefaultSink"
 	RemoteControl_SetCardProfile_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/SetCardProfile"
-	RemoteControl_GetSinkMute_FullMethodName             = "/cloud.lazycat.apis.localdevice.RemoteControl/GetSinkMute"
-	RemoteControl_SetSinkMute_FullMethodName             = "/cloud.lazycat.apis.localdevice.RemoteControl/SetSinkMute"
-	RemoteControl_GetSinkVolume_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/GetSinkVolume"
-	RemoteControl_IncreaseSinkVolume_FullMethodName      = "/cloud.lazycat.apis.localdevice.RemoteControl/IncreaseSinkVolume"
-	RemoteControl_DecreaseSinkVolume_FullMethodName      = "/cloud.lazycat.apis.localdevice.RemoteControl/DecreaseSinkVolume"
+	RemoteControl_GetMute_FullMethodName                 = "/cloud.lazycat.apis.localdevice.RemoteControl/GetMute"
+	RemoteControl_ToggleMute_FullMethodName              = "/cloud.lazycat.apis.localdevice.RemoteControl/ToggleMute"
+	RemoteControl_GetVolume_FullMethodName               = "/cloud.lazycat.apis.localdevice.RemoteControl/GetVolume"
+	RemoteControl_IncreaseVolume_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/IncreaseVolume"
+	RemoteControl_DecreaseVolume_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/DecreaseVolume"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -116,16 +116,16 @@ type RemoteControlClient interface {
 	SetDefaultSink(ctx context.Context, in *SetDefaultSinkRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 设置默认的输入音频设备
 	SetCardProfile(ctx context.Context, in *SetCardProfileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 获取Sink是否被静音
-	GetSinkMute(ctx context.Context, in *SinkRequest, opts ...grpc.CallOption) (*GetSinkMuteResponse, error)
-	// 设置Sink静音
-	SetSinkMute(ctx context.Context, in *SetSinkMuteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 获取Sink音量
-	GetSinkVolume(ctx context.Context, in *SinkRequest, opts ...grpc.CallOption) (*GetSinkVolumeResponse, error)
-	// 增加Sink音量
-	IncreaseSinkVolume(ctx context.Context, in *ChangeSinkVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 减少Sink音量
-	DecreaseSinkVolume(ctx context.Context, in *ChangeSinkVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取是否被静音
+	GetMute(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetMuteResponse, error)
+	// 切换静音状态
+	ToggleMute(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetMuteResponse, error)
+	// 获取音量
+	GetVolume(ctx context.Context, in *SinkRequest, opts ...grpc.CallOption) (*GetSinkVolumeResponse, error)
+	// 增加音量
+	IncreaseVolume(ctx context.Context, in *ChangeVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 减少音量
+	DecreaseVolume(ctx context.Context, in *ChangeVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type remoteControlClient struct {
@@ -420,45 +420,45 @@ func (c *remoteControlClient) SetCardProfile(ctx context.Context, in *SetCardPro
 	return out, nil
 }
 
-func (c *remoteControlClient) GetSinkMute(ctx context.Context, in *SinkRequest, opts ...grpc.CallOption) (*GetSinkMuteResponse, error) {
-	out := new(GetSinkMuteResponse)
-	err := c.cc.Invoke(ctx, RemoteControl_GetSinkMute_FullMethodName, in, out, opts...)
+func (c *remoteControlClient) GetMute(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetMuteResponse, error) {
+	out := new(GetMuteResponse)
+	err := c.cc.Invoke(ctx, RemoteControl_GetMute_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *remoteControlClient) SetSinkMute(ctx context.Context, in *SetSinkMuteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, RemoteControl_SetSinkMute_FullMethodName, in, out, opts...)
+func (c *remoteControlClient) ToggleMute(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetMuteResponse, error) {
+	out := new(GetMuteResponse)
+	err := c.cc.Invoke(ctx, RemoteControl_ToggleMute_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *remoteControlClient) GetSinkVolume(ctx context.Context, in *SinkRequest, opts ...grpc.CallOption) (*GetSinkVolumeResponse, error) {
+func (c *remoteControlClient) GetVolume(ctx context.Context, in *SinkRequest, opts ...grpc.CallOption) (*GetSinkVolumeResponse, error) {
 	out := new(GetSinkVolumeResponse)
-	err := c.cc.Invoke(ctx, RemoteControl_GetSinkVolume_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, RemoteControl_GetVolume_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *remoteControlClient) IncreaseSinkVolume(ctx context.Context, in *ChangeSinkVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *remoteControlClient) IncreaseVolume(ctx context.Context, in *ChangeVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, RemoteControl_IncreaseSinkVolume_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, RemoteControl_IncreaseVolume_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *remoteControlClient) DecreaseSinkVolume(ctx context.Context, in *ChangeSinkVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *remoteControlClient) DecreaseVolume(ctx context.Context, in *ChangeVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, RemoteControl_DecreaseSinkVolume_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, RemoteControl_DecreaseVolume_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -528,16 +528,16 @@ type RemoteControlServer interface {
 	SetDefaultSink(context.Context, *SetDefaultSinkRequest) (*emptypb.Empty, error)
 	// 设置默认的输入音频设备
 	SetCardProfile(context.Context, *SetCardProfileRequest) (*emptypb.Empty, error)
-	// 获取Sink是否被静音
-	GetSinkMute(context.Context, *SinkRequest) (*GetSinkMuteResponse, error)
-	// 设置Sink静音
-	SetSinkMute(context.Context, *SetSinkMuteRequest) (*emptypb.Empty, error)
-	// 获取Sink音量
-	GetSinkVolume(context.Context, *SinkRequest) (*GetSinkVolumeResponse, error)
-	// 增加Sink音量
-	IncreaseSinkVolume(context.Context, *ChangeSinkVolumeRequest) (*emptypb.Empty, error)
-	// 减少Sink音量
-	DecreaseSinkVolume(context.Context, *ChangeSinkVolumeRequest) (*emptypb.Empty, error)
+	// 获取是否被静音
+	GetMute(context.Context, *emptypb.Empty) (*GetMuteResponse, error)
+	// 切换静音状态
+	ToggleMute(context.Context, *emptypb.Empty) (*GetMuteResponse, error)
+	// 获取音量
+	GetVolume(context.Context, *SinkRequest) (*GetSinkVolumeResponse, error)
+	// 增加音量
+	IncreaseVolume(context.Context, *ChangeVolumeRequest) (*emptypb.Empty, error)
+	// 减少音量
+	DecreaseVolume(context.Context, *ChangeVolumeRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -623,20 +623,20 @@ func (UnimplementedRemoteControlServer) SetDefaultSink(context.Context, *SetDefa
 func (UnimplementedRemoteControlServer) SetCardProfile(context.Context, *SetCardProfileRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetCardProfile not implemented")
 }
-func (UnimplementedRemoteControlServer) GetSinkMute(context.Context, *SinkRequest) (*GetSinkMuteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSinkMute not implemented")
+func (UnimplementedRemoteControlServer) GetMute(context.Context, *emptypb.Empty) (*GetMuteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMute not implemented")
 }
-func (UnimplementedRemoteControlServer) SetSinkMute(context.Context, *SetSinkMuteRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetSinkMute not implemented")
+func (UnimplementedRemoteControlServer) ToggleMute(context.Context, *emptypb.Empty) (*GetMuteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ToggleMute not implemented")
 }
-func (UnimplementedRemoteControlServer) GetSinkVolume(context.Context, *SinkRequest) (*GetSinkVolumeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSinkVolume not implemented")
+func (UnimplementedRemoteControlServer) GetVolume(context.Context, *SinkRequest) (*GetSinkVolumeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVolume not implemented")
 }
-func (UnimplementedRemoteControlServer) IncreaseSinkVolume(context.Context, *ChangeSinkVolumeRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method IncreaseSinkVolume not implemented")
+func (UnimplementedRemoteControlServer) IncreaseVolume(context.Context, *ChangeVolumeRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IncreaseVolume not implemented")
 }
-func (UnimplementedRemoteControlServer) DecreaseSinkVolume(context.Context, *ChangeSinkVolumeRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DecreaseSinkVolume not implemented")
+func (UnimplementedRemoteControlServer) DecreaseVolume(context.Context, *ChangeVolumeRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DecreaseVolume not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -1135,92 +1135,92 @@ func _RemoteControl_SetCardProfile_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RemoteControl_GetSinkMute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RemoteControl_GetMute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).GetMute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_GetMute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).GetMute(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_ToggleMute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).ToggleMute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_ToggleMute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).ToggleMute(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_GetVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SinkRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RemoteControlServer).GetSinkMute(ctx, in)
+		return srv.(RemoteControlServer).GetVolume(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RemoteControl_GetSinkMute_FullMethodName,
+		FullMethod: RemoteControl_GetVolume_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RemoteControlServer).GetSinkMute(ctx, req.(*SinkRequest))
+		return srv.(RemoteControlServer).GetVolume(ctx, req.(*SinkRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RemoteControl_SetSinkMute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetSinkMuteRequest)
+func _RemoteControl_IncreaseVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeVolumeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RemoteControlServer).SetSinkMute(ctx, in)
+		return srv.(RemoteControlServer).IncreaseVolume(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RemoteControl_SetSinkMute_FullMethodName,
+		FullMethod: RemoteControl_IncreaseVolume_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RemoteControlServer).SetSinkMute(ctx, req.(*SetSinkMuteRequest))
+		return srv.(RemoteControlServer).IncreaseVolume(ctx, req.(*ChangeVolumeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RemoteControl_GetSinkVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SinkRequest)
+func _RemoteControl_DecreaseVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeVolumeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RemoteControlServer).GetSinkVolume(ctx, in)
+		return srv.(RemoteControlServer).DecreaseVolume(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RemoteControl_GetSinkVolume_FullMethodName,
+		FullMethod: RemoteControl_DecreaseVolume_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RemoteControlServer).GetSinkVolume(ctx, req.(*SinkRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RemoteControl_IncreaseSinkVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ChangeSinkVolumeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RemoteControlServer).IncreaseSinkVolume(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RemoteControl_IncreaseSinkVolume_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RemoteControlServer).IncreaseSinkVolume(ctx, req.(*ChangeSinkVolumeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RemoteControl_DecreaseSinkVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ChangeSinkVolumeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RemoteControlServer).DecreaseSinkVolume(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RemoteControl_DecreaseSinkVolume_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RemoteControlServer).DecreaseSinkVolume(ctx, req.(*ChangeSinkVolumeRequest))
+		return srv.(RemoteControlServer).DecreaseVolume(ctx, req.(*ChangeVolumeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1329,24 +1329,24 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RemoteControl_SetCardProfile_Handler,
 		},
 		{
-			MethodName: "GetSinkMute",
-			Handler:    _RemoteControl_GetSinkMute_Handler,
+			MethodName: "GetMute",
+			Handler:    _RemoteControl_GetMute_Handler,
 		},
 		{
-			MethodName: "SetSinkMute",
-			Handler:    _RemoteControl_SetSinkMute_Handler,
+			MethodName: "ToggleMute",
+			Handler:    _RemoteControl_ToggleMute_Handler,
 		},
 		{
-			MethodName: "GetSinkVolume",
-			Handler:    _RemoteControl_GetSinkVolume_Handler,
+			MethodName: "GetVolume",
+			Handler:    _RemoteControl_GetVolume_Handler,
 		},
 		{
-			MethodName: "IncreaseSinkVolume",
-			Handler:    _RemoteControl_IncreaseSinkVolume_Handler,
+			MethodName: "IncreaseVolume",
+			Handler:    _RemoteControl_IncreaseVolume_Handler,
 		},
 		{
-			MethodName: "DecreaseSinkVolume",
-			Handler:    _RemoteControl_DecreaseSinkVolume_Handler,
+			MethodName: "DecreaseVolume",
+			Handler:    _RemoteControl_DecreaseVolume_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
