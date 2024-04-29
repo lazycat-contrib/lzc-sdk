@@ -86,21 +86,13 @@ message ReadClipboardResponse {
   string text = 1;
 }
 
-// 声音
-message Volume {
-  // 左声道
-  int32 left = 1;
-  // 右声道
-  int32 right = 2;
-}
-
 message ListSinkInputsResponse {
   message SinkInput {
     int32 index = 1;
     string name = 2;
     int32 sink = 3;
     bool muted = 4;
-    Volume volume = 5;
+    float volume = 5;
   }
   repeated SinkInput sinkInputs = 1;
 }
@@ -111,7 +103,7 @@ message ListSinksRepsonse {
     string name = 2;
     string description = 3;
     bool muted = 4;
-    Volume volume = 5;
+    float volume = 5;
     int32 cardIndex= 6;
   }
   repeated Sink sinks = 1;
