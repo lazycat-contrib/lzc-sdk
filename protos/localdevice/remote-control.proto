@@ -112,7 +112,7 @@ message ListSinksRepsonse {
     string description = 3;
     bool muted = 4;
     Volume volume = 5;
-    string cardIndex= 6;
+    int32 cardIndex= 6;
   }
   repeated Sink sinks = 1;
 }
