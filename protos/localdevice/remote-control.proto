@@ -122,8 +122,9 @@ message ListCardsResponse {
   message Card {
     int32 index = 1;
     string name = 2;
-    CardProfile activeProfile = 3; 
-    repeated CardProfile profiles = 4;  
+    string deviceName = 3;
+    CardProfile activeProfile = 4;
+    repeated CardProfile profiles = 5;
   }
   repeated Card cards = 1;
 }
