@@ -51,6 +51,7 @@ const (
 	RemoteControl_GetVolume_FullMethodName               = "/cloud.lazycat.apis.localdevice.RemoteControl/GetVolume"
 	RemoteControl_IncreaseVolume_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/IncreaseVolume"
 	RemoteControl_DecreaseVolume_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/DecreaseVolume"
+	RemoteControl_SetSinkInputVolume_FullMethodName      = "/cloud.lazycat.apis.localdevice.RemoteControl/SetSinkInputVolume"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -126,6 +127,8 @@ type RemoteControlClient interface {
 	IncreaseVolume(ctx context.Context, in *ChangeVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 减少音量
 	DecreaseVolume(ctx context.Context, in *ChangeVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 设置输入音频源音量
+	SetSinkInputVolume(ctx context.Context, in *SetSinkInputVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type remoteControlClient struct {
@@ -465,6 +468,15 @@ func (c *remoteControlClient) DecreaseVolume(ctx context.Context, in *ChangeVolu
 	return out, nil
 }
 
+func (c *remoteControlClient) SetSinkInputVolume(ctx context.Context, in *SetSinkInputVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SetSinkInputVolume_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -538,6 +550,8 @@ type RemoteControlServer interface {
 	IncreaseVolume(context.Context, *ChangeVolumeRequest) (*emptypb.Empty, error)
 	// 减少音量
 	DecreaseVolume(context.Context, *ChangeVolumeRequest) (*emptypb.Empty, error)
+	// 设置输入音频源音量
+	SetSinkInputVolume(context.Context, *SetSinkInputVolumeRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -637,6 +651,9 @@ func (UnimplementedRemoteControlServer) IncreaseVolume(context.Context, *ChangeV
 }
 func (UnimplementedRemoteControlServer) DecreaseVolume(context.Context, *ChangeVolumeRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DecreaseVolume not implemented")
+}
+func (UnimplementedRemoteControlServer) SetSinkInputVolume(context.Context, *SetSinkInputVolumeRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetSinkInputVolume not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -1225,6 +1242,24 @@ func _RemoteControl_DecreaseVolume_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_SetSinkInputVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetSinkInputVolumeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SetSinkInputVolume(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SetSinkInputVolume_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SetSinkInputVolume(ctx, req.(*SetSinkInputVolumeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1347,6 +1382,10 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DecreaseVolume",
 			Handler:    _RemoteControl_DecreaseVolume_Handler,
+		},
+		{
+			MethodName: "SetSinkInputVolume",
+			Handler:    _RemoteControl_SetSinkInputVolume_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

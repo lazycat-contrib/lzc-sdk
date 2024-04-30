@@ -158,6 +158,11 @@ message ChangeVolumeRequest {
   int32 value = 1;
 }
 
+message SetSinkInputVolumeRequest {
+  string sinkInput = 1;
+  float volume = 2;
+}
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -228,4 +233,6 @@ service RemoteControl{
   rpc IncreaseVolume(ChangeVolumeRequest) returns (google.protobuf.Empty) {}
   // 减少音量
   rpc DecreaseVolume(ChangeVolumeRequest) returns (google.protobuf.Empty) {}
+  // 设置输入音频源音量
+  rpc SetSinkInputVolume(SetSinkInputVolumeRequest) returns (google.protobuf.Empty) {}
 } 
