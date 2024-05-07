@@ -164,6 +164,21 @@ message SetSinkInputVolumeRequest {
   float volume = 2;
 }
 
+message SendMultiTouchRequest {
+  enum Action {
+    TouchDown = 0;
+    TouchUp = 1;
+    TouchMove = 2;
+  }
+  message MoveValue {
+    int32 x = 1;
+    int32 y = 2;
+  }
+  Action action = 1;
+  // action为TouchMove才需要传递
+  optional MoveValue value = 2;
+}
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -199,6 +214,8 @@ service RemoteControl{
   rpc SendMouseWheel(SendMouseWheelRequest) returns (google.protobuf.Empty) {}
   // 建立流式鼠标滑动
   rpc MouseWheelStream(stream SendMouseWheelRequest) returns (google.protobuf.Empty) {}
+  // 建立流式多点触控滑动
+  rpc MultiTouchStream(stream SendMultiTouchRequest) returns (google.protobuf.Empty) {}
   // 发起鼠标双击左键事件
   rpc SendMouseDoubleClick(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   // 设置远程屏幕的宽高(用于计算鼠标，触控板移动的同比例偏移)
