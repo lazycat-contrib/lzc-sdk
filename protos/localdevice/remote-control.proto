@@ -70,7 +70,7 @@ message SendMouseMoveRequest {
 
 message SendMouseWheelRequest {
   bool horizontal = 1;
-  int32 delta = 2;
+  float delta = 2;
 }
 
 message SetRemoteScreenRectRequest {

@@ -755,7 +755,7 @@ export const SendMouseWheelRequest = {
       writer.uint32(8).bool(message.horizontal);
     }
     if (message.delta !== 0) {
-      writer.uint32(16).int32(message.delta);
+      writer.uint32(21).float(message.delta);
     }
     return writer;
   },
@@ -775,11 +775,11 @@ export const SendMouseWheelRequest = {
           message.horizontal = reader.bool();
           continue;
         case 2:
-          if (tag !== 16) {
+          if (tag !== 21) {
             break;
           }
 
-          message.delta = reader.int32();
+          message.delta = reader.float();
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -803,7 +803,7 @@ export const SendMouseWheelRequest = {
       obj.horizontal = message.horizontal;
     }
     if (message.delta !== 0) {
-      obj.delta = Math.round(message.delta);
+      obj.delta = message.delta;
     }
     return obj;
   },
