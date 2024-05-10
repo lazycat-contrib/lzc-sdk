@@ -329,56 +329,6 @@ export interface SetSinkInputVolumeRequest {
   volume: number;
 }
 
-export interface SendMultiTouchRequest {
-  action: SendMultiTouchRequest_Action;
-  /** action为TouchMove才需要传递 */
-  value?: SendMultiTouchRequest_MoveValue | undefined;
-}
-
-export enum SendMultiTouchRequest_Action {
-  TouchDown = 0,
-  TouchUp = 1,
-  TouchMove = 2,
-  UNRECOGNIZED = -1,
-}
-
-export function sendMultiTouchRequest_ActionFromJSON(object: any): SendMultiTouchRequest_Action {
-  switch (object) {
-    case 0:
-    case "TouchDown":
-      return SendMultiTouchRequest_Action.TouchDown;
-    case 1:
-    case "TouchUp":
-      return SendMultiTouchRequest_Action.TouchUp;
-    case 2:
-    case "TouchMove":
-      return SendMultiTouchRequest_Action.TouchMove;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return SendMultiTouchRequest_Action.UNRECOGNIZED;
-  }
-}
-
-export function sendMultiTouchRequest_ActionToJSON(object: SendMultiTouchRequest_Action): string {
-  switch (object) {
-    case SendMultiTouchRequest_Action.TouchDown:
-      return "TouchDown";
-    case SendMultiTouchRequest_Action.TouchUp:
-      return "TouchUp";
-    case SendMultiTouchRequest_Action.TouchMove:
-      return "TouchMove";
-    case SendMultiTouchRequest_Action.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
-export interface SendMultiTouchRequest_MoveValue {
-  x: number;
-  y: number;
-}
-
 function createBaseSendKeyboardEventRequest(): SendKeyboardEventRequest {
   return { code: 0, state: 0 };
 }
@@ -2274,157 +2224,6 @@ export const SetSinkInputVolumeRequest = {
   },
 };
 
-function createBaseSendMultiTouchRequest(): SendMultiTouchRequest {
-  return { action: 0, value: undefined };
-}
-
-export const SendMultiTouchRequest = {
-  encode(message: SendMultiTouchRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.action !== 0) {
-      writer.uint32(8).int32(message.action);
-    }
-    if (message.value !== undefined) {
-      SendMultiTouchRequest_MoveValue.encode(message.value, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): SendMultiTouchRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSendMultiTouchRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.action = reader.int32() as any;
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.value = SendMultiTouchRequest_MoveValue.decode(reader, reader.uint32());
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): SendMultiTouchRequest {
-    return {
-      action: isSet(object.action) ? sendMultiTouchRequest_ActionFromJSON(object.action) : 0,
-      value: isSet(object.value) ? SendMultiTouchRequest_MoveValue.fromJSON(object.value) : undefined,
-    };
-  },
-
-  toJSON(message: SendMultiTouchRequest): unknown {
-    const obj: any = {};
-    if (message.action !== 0) {
-      obj.action = sendMultiTouchRequest_ActionToJSON(message.action);
-    }
-    if (message.value !== undefined) {
-      obj.value = SendMultiTouchRequest_MoveValue.toJSON(message.value);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<SendMultiTouchRequest>, I>>(base?: I): SendMultiTouchRequest {
-    return SendMultiTouchRequest.fromPartial(base ?? {});
-  },
-
-  fromPartial<I extends Exact<DeepPartial<SendMultiTouchRequest>, I>>(object: I): SendMultiTouchRequest {
-    const message = createBaseSendMultiTouchRequest();
-    message.action = object.action ?? 0;
-    message.value = (object.value !== undefined && object.value !== null)
-      ? SendMultiTouchRequest_MoveValue.fromPartial(object.value)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseSendMultiTouchRequest_MoveValue(): SendMultiTouchRequest_MoveValue {
-  return { x: 0, y: 0 };
-}
-
-export const SendMultiTouchRequest_MoveValue = {
-  encode(message: SendMultiTouchRequest_MoveValue, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.x !== 0) {
-      writer.uint32(8).int32(message.x);
-    }
-    if (message.y !== 0) {
-      writer.uint32(16).int32(message.y);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): SendMultiTouchRequest_MoveValue {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSendMultiTouchRequest_MoveValue();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.x = reader.int32();
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.y = reader.int32();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): SendMultiTouchRequest_MoveValue {
-    return { x: isSet(object.x) ? Number(object.x) : 0, y: isSet(object.y) ? Number(object.y) : 0 };
-  },
-
-  toJSON(message: SendMultiTouchRequest_MoveValue): unknown {
-    const obj: any = {};
-    if (message.x !== 0) {
-      obj.x = Math.round(message.x);
-    }
-    if (message.y !== 0) {
-      obj.y = Math.round(message.y);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<SendMultiTouchRequest_MoveValue>, I>>(base?: I): SendMultiTouchRequest_MoveValue {
-    return SendMultiTouchRequest_MoveValue.fromPartial(base ?? {});
-  },
-
-  fromPartial<I extends Exact<DeepPartial<SendMultiTouchRequest_MoveValue>, I>>(
-    object: I,
-  ): SendMultiTouchRequest_MoveValue {
-    const message = createBaseSendMultiTouchRequest_MoveValue();
-    message.x = object.x ?? 0;
-    message.y = object.y ?? 0;
-    return message;
-  },
-};
-
 export interface RemoteControl {
   /** 发送键盘输入事件 */
   SendKeyboardEvent(
@@ -2511,12 +2310,6 @@ export interface RemoteControl {
   /** 建立流式鼠标滑动 */
   MouseWheelStream(
     request: Observable<DeepPartial<SendMouseWheelRequest>>,
-    metadata?: grpc.Metadata,
-    abortSignal?: AbortSignal,
-  ): Promise<Empty>;
-  /** 建立流式多点触控滑动 */
-  MultiTouchStream(
-    request: Observable<DeepPartial<SendMultiTouchRequest>>,
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<Empty>;
@@ -2638,7 +2431,6 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.SendMouseMiddleClick = this.SendMouseMiddleClick.bind(this);
     this.SendMouseWheel = this.SendMouseWheel.bind(this);
     this.MouseWheelStream = this.MouseWheelStream.bind(this);
-    this.MultiTouchStream = this.MultiTouchStream.bind(this);
     this.SendMouseDoubleClick = this.SendMouseDoubleClick.bind(this);
     this.SetRemoteScreenRect = this.SetRemoteScreenRect.bind(this);
     this.WriteClipboard = this.WriteClipboard.bind(this);
@@ -2811,14 +2603,6 @@ export class RemoteControlClientImpl implements RemoteControl {
 
   MouseWheelStream(
     request: Observable<DeepPartial<SendMouseWheelRequest>>,
-    metadata?: grpc.Metadata,
-    abortSignal?: AbortSignal,
-  ): Promise<Empty> {
-    throw new Error("ts-proto does not yet support client streaming!");
-  }
-
-  MultiTouchStream(
-    request: Observable<DeepPartial<SendMultiTouchRequest>>,
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<Empty> {
