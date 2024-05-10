@@ -93,6 +93,14 @@ export const SAFE = {
         console.log(lzc_app_manager)
         const jsBridge = LzcAppSdk.useNative(lzc_app_manager)
         jsBridge.InstallLzcClient(url)
+    },
+    /**
+     * 设置状态栏颜色
+     * @param color 颜色以#开头
+     */
+    SetStatusBarColor(color: string) {
+        const jsBridge = LzcAppSdk.useNative(lzc_status_bar)
+        jsBridge.SetStatusBarColor(color)
     }
 }
 
