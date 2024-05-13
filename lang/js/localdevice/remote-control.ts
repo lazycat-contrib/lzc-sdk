@@ -2098,7 +2098,7 @@ function createBaseChangeVolumeRequest(): ChangeVolumeRequest {
 export const ChangeVolumeRequest = {
   encode(message: ChangeVolumeRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.value !== 0) {
-      writer.uint32(8).int32(message.value);
+      writer.uint32(13).float(message.value);
     }
     return writer;
   },
@@ -2111,11 +2111,11 @@ export const ChangeVolumeRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 8) {
+          if (tag !== 13) {
             break;
           }
 
-          message.value = reader.int32();
+          message.value = reader.float();
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -2133,7 +2133,7 @@ export const ChangeVolumeRequest = {
   toJSON(message: ChangeVolumeRequest): unknown {
     const obj: any = {};
     if (message.value !== 0) {
-      obj.value = Math.round(message.value);
+      obj.value = message.value;
     }
     return obj;
   },
