@@ -1,5 +1,6 @@
-import LzcAppSdk, {LzcAppPlatformType, LzcAppSdkManage, native} from "./base"
-import {IntentAction, intentActionFromJSON} from "../common/file_handler"
+import LzcAppSdk, { LzcAppPlatformType, LzcAppSdkManage, native } from "./base"
+import { IntentAction, intentActionFromJSON } from "../common/file_handler"
+import { ClientAuthorizationBaseStatus, ClientAuthorizationType } from './client_authorization';
 
 class AppCommon extends LzcAppSdkManage {
     /**
@@ -16,12 +17,12 @@ class AppCommon extends LzcAppSdkManage {
         setTimeout(() => window.open(url, "_blank"))
     }
 
-    @native(LzcAppPlatformType.IOS)
     /**
      * @description: IOS 测试函数
      * @deprecated: 该函数仅用于 IOS 测试
      * @return {*}
-     */
+    */
+    @native(LzcAppPlatformType.IOS)
     public static async ScriptHandlers(): Promise<string[]> {
         // const callback = await LzcAppSdk.useNative.ScriptHandlers()
         // console.log("LzcAppSdk.useNative", LzcAppSdk.useNative);
@@ -188,8 +189,8 @@ class AppCommon extends LzcAppSdkManage {
         if (idArray.length == 0) {
             throw Error("至少有一个id参数")
         }
-        if(LzcAppSdk.isAndroidWebShell()){
-            if(options.actionName.length == 0 || options.actionName.indexOf(":") < 0){
+        if (LzcAppSdk.isAndroidWebShell()) {
+            if (options.actionName.length == 0 || options.actionName.indexOf(":") < 0) {
                 throw Error("必须填写actionName")
             }
             const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
@@ -203,6 +204,56 @@ class AppCommon extends LzcAppSdkManage {
         }
     }
 
+    /**
+     * @description: 获取客户端授权状态
+     * @return {*}
+     */
+    @native(LzcAppPlatformType.IOS)
+    public static async GetClientAuthorizationStatus(type: ClientAuthorizationType | string): Promise<ClientAuthorizationBaseStatus> {
+        // 判断当前权限是否受支持
+        switch (type) {
+            case ClientAuthorizationType.PhotoLibrary:
+                break;
+            default:
+                console.warn(`the current lzc-sdk version does not support the ${type} permission type`);
+                return ClientAuthorizationBaseStatus.Unknown
+        }
+
+        // 调用各客户端具体实现
+        if (LzcAppSdk.isIosWebShell()) {
+            // 调用客户端 GetClientAuthorizationStatus 函数
+            const jsBridge = await LzcAppSdk.useNativeAsync()
+            return jsBridge.GetClientAuthorizationStatus(type)
+        }
+        return ClientAuthorizationBaseStatus.Unknown
+    }
+
+    /**
+     * @description: 申请客户端授权
+     * @return {*}
+     */
+    @native(LzcAppPlatformType.IOS)
+    public static async RequestClientAuthorization(type: ClientAuthorizationType | string): Promise<void> {
+        // 判断当前权限是否受支持
+        switch (type) {
+            case ClientAuthorizationType.PhotoLibrary:
+                break;
+            default:
+                console.warn(`the current lzc-sdk version does not support the ${type} permission type`);
+        }
+
+        // 调用各客户端具体实现
+        if (LzcAppSdk.isIosWebShell()) {
+            // 调用客户端 RequestClientAuthorization 函数
+            const jsBridge = await LzcAppSdk.useNativeAsync()
+            jsBridge.RequestClientAuthorization(type)
+            return
+        }
+
+        console.warn('the current client does not support');
+        
+    }
 }
 
-export {AppCommon}
+export * from './client_authorization'
+export { AppCommon }
