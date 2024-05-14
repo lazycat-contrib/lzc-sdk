@@ -14,6 +14,21 @@ type PageNavigate = {
 
 function AssetMetaReview(props: { meta: PhotoMeta, deletePhoto?: Function }) {
     const { meta: imageMeta, deletePhoto } = props;
+
+    function decodeThumbnailUrl(urlStr: string) {
+        try {
+            const url = new URL(urlStr);
+            if (!url.searchParams.has('size') || !(url.searchParams.has('width') || url.searchParams.has('height'))) {
+                // 不存在缩略图参数，添加默认参数
+                url.searchParams.set('width', '200');
+                url.searchParams.set('height', '200');
+            }
+            return url.toString()
+        } catch (error) {
+            return urlStr
+        }
+    }
+
     return <>
         <div>
             查询图片 <span style={{ width: 100 }}>({imageMeta.id})</span>:
@@ -21,7 +36,7 @@ function AssetMetaReview(props: { meta: PhotoMeta, deletePhoto?: Function }) {
                 查看原图
             </a>
             {'  '}
-            <a href={imageMeta.thumbnailUrl} target={'_blank'}>
+            <a href={decodeThumbnailUrl(imageMeta.thumbnailUrl)} target={'_blank'}>
                 缩略图
             </a>
             {'  '}
@@ -40,7 +55,10 @@ function AssetMetaReview(props: { meta: PhotoMeta, deletePhoto?: Function }) {
 
             <p>{imageMeta.fileName}</p>
             <div style={{ padding: 2, background: '#0001' }}>
-                <img style={{ width: 150 }} src={imageMeta.thumbnailUrl || imageMeta.photoUrl} />
+                <img style={{ width: 150 }} 
+                src={imageMeta.thumbnailUrl ? decodeThumbnailUrl(imageMeta.thumbnailUrl) : imageMeta.photoUrl} 
+                // src={imageMeta.photoUrl} 
+                />
             </div>
         </div>
     </>
@@ -500,11 +518,12 @@ function App() {
                                     }
                                 }}
                             >
-                                Get All Album
+                                Get All Album {`(${(images.current || []).length})`}
                             </button>
 
                             <button
                                 style={{ marginTop: 10 }}
+                                disabled={loadingImage}
                                 onClick={async () => {
                                     if (loadingImage) {
                                         return;
@@ -519,15 +538,14 @@ function App() {
                                         if (imageList.length < 1) {
                                             throw Error('相片数量过少');
                                         }
-
-                                        if (imageIndex.current > imageList.length - 1) {
-                                            imageIndex.current = 0;
-                                        }
                                         let image = await getImageDebug(imageList[imageIndex.current].id);
                                         // let image = await getImageDebug('1FC00A27-FF03-48DF-9DBB-5F30DCB26FAD/L0/001'); // IMG_0009.MOV
                                         // let image = await getImageDebug('32354'); // IMG_0088.HEIC
                                         setImageMeta(image);
                                         imageIndex.current += 1;
+                                        if (imageIndex.current > imageList.length - 1) {
+                                            imageIndex.current = 0;
+                                        }
 
                                         // let image = await getImageDebug('4D9CCB9F-0902-4572-95F2-BDB90F0A6E7F/L0/001');
                                         console.log('相片', imageIndex.current, image);
@@ -543,14 +561,33 @@ function App() {
                                 {loadingImage && <LoadingIcon size="1em" />}
                             </button>
 
-                            {/* <button
-						style={{ marginTop: 10 }}
-						onClick={() => {
-							putPhoto();
-						}}
-					>
-						Save Current Image
-					</button> */}
+                            <button
+                                style={{ marginTop: 10 }}
+                                disabled={loadingImage}
+                                onClick={async () => {
+                                    try {
+                                        setLoadingImage(true);
+                                        let imageList = images.current;
+                                        if (imageList.length < 1) {
+                                            throw Error('相片数量过少');
+                                        }
+
+                                        imageIndex.current -= 1;
+                                        if (imageIndex.current <= 0) {
+                                            imageIndex.current = images.current.length - 1;
+                                        }
+
+                                        let image = await getImageDebug(imageList[imageIndex.current].id);
+                                        setImageMeta(image);
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                    setLoadingImage(false);
+                                }}
+                            >
+                                Get Last Image
+                                {loadingImage && <LoadingIcon size="1em" />}
+                            </button>
 
                             <button
                                 style={{ marginTop: 10 }}
