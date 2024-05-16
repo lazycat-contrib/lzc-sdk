@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.sys;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
+
+
+message RunRequest {
+  string image = 1;
+}
+
+message StatusResponse {
+  bool ready = 1;
+}
+
+service TvOS {
+  // 启动
+  rpc Run(RunRequest) returns (google.protobuf.Empty) {}
+  // 状态
+  rpc Status(google.protobuf.Empty) returns (StatusResponse) {}
+  // 停止
+  rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+}
