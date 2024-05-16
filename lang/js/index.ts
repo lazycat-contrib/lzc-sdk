@@ -57,6 +57,8 @@ export class lzcAPIGateway {
     this.devopt = new DevOptServiceClientImpl(rpc)
 
     this.message = new MessageServiceClientImpl(rpc)
+
+    this.tvos = new TvOSClientImpl(rpc)
     dumpInfo(this.bo)
   }
 
@@ -71,6 +73,7 @@ export class lzcAPIGateway {
   public pkgm: PackageManager
   public users: UserManager
   public box: BoxService
+  public tvos: TvOS
 
   public ac: AccessControlerService
 
@@ -203,6 +206,7 @@ import pkg from "./package.json"
 import { DevOptService, DevOptServiceClientImpl } from "./sys/devopt"
 import { MessageServiceClientImpl } from "./common/message"
 import { RemoteControl, RemoteControlClientImpl } from "./localdevice/remote-control"
+import { TvOS, TvOSClientImpl } from "./sys/tvos"
 
 async function dumpInfo(bo: BrowserOnlyProxy) {
   function capsule(title, info) {

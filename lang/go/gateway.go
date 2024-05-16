@@ -26,6 +26,7 @@ type APIGateway struct {
 	Btrfs            sys.BtrfsUtilClient
 	DirMonitor       sys.DirMonitorClient
 	Message          common.MessageServiceClient
+	TvOS             sys.TvOSClient
 }
 
 type DeviceProxy struct {
@@ -111,6 +112,7 @@ func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
 		AccessControler: sys.NewAccessControlerServiceClient(conn),
 		Btrfs:           sys.NewBtrfsUtilClient(conn),
 		DirMonitor:      sys.NewDirMonitorClient(conn),
+		TvOS:            sys.NewTvOSClient(conn),
 
 		Box:              common.NewBoxServiceClient(conn),
 		Users:            common.NewUserManagerClient(conn),
