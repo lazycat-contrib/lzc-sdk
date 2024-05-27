@@ -24,6 +24,7 @@ const (
 	TvOS_Status_FullMethodName          = "/cloud.lazycat.apis.sys.TvOS/Status"
 	TvOS_Stop_FullMethodName            = "/cloud.lazycat.apis.sys.TvOS/Stop"
 	TvOS_IsHDMIConnected_FullMethodName = "/cloud.lazycat.apis.sys.TvOS/IsHDMIConnected"
+	TvOS_IsLoggedIn_FullMethodName      = "/cloud.lazycat.apis.sys.TvOS/IsLoggedIn"
 )
 
 // TvOSClient is the client API for TvOS service.
@@ -38,6 +39,8 @@ type TvOSClient interface {
 	Stop(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 是否连接HDMI
 	IsHDMIConnected(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*IsHDMIConnectedResponse, error)
+	// 是否已登录
+	IsLoggedIn(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*IsLoggedInResponse, error)
 }
 
 type tvOSClient struct {
@@ -84,6 +87,15 @@ func (c *tvOSClient) IsHDMIConnected(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
+func (c *tvOSClient) IsLoggedIn(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*IsLoggedInResponse, error) {
+	out := new(IsLoggedInResponse)
+	err := c.cc.Invoke(ctx, TvOS_IsLoggedIn_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TvOSServer is the server API for TvOS service.
 // All implementations must embed UnimplementedTvOSServer
 // for forward compatibility
@@ -96,6 +108,8 @@ type TvOSServer interface {
 	Stop(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 是否连接HDMI
 	IsHDMIConnected(context.Context, *emptypb.Empty) (*IsHDMIConnectedResponse, error)
+	// 是否已登录
+	IsLoggedIn(context.Context, *emptypb.Empty) (*IsLoggedInResponse, error)
 	mustEmbedUnimplementedTvOSServer()
 }
 
@@ -114,6 +128,9 @@ func (UnimplementedTvOSServer) Stop(context.Context, *emptypb.Empty) (*emptypb.E
 }
 func (UnimplementedTvOSServer) IsHDMIConnected(context.Context, *emptypb.Empty) (*IsHDMIConnectedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsHDMIConnected not implemented")
+}
+func (UnimplementedTvOSServer) IsLoggedIn(context.Context, *emptypb.Empty) (*IsLoggedInResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsLoggedIn not implemented")
 }
 func (UnimplementedTvOSServer) mustEmbedUnimplementedTvOSServer() {}
 
@@ -200,6 +217,24 @@ func _TvOS_IsHDMIConnected_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TvOS_IsLoggedIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TvOSServer).IsLoggedIn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TvOS_IsLoggedIn_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TvOSServer).IsLoggedIn(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TvOS_ServiceDesc is the grpc.ServiceDesc for TvOS service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -222,6 +257,10 @@ var TvOS_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsHDMIConnected",
 			Handler:    _TvOS_IsHDMIConnected_Handler,
+		},
+		{
+			MethodName: "IsLoggedIn",
+			Handler:    _TvOS_IsLoggedIn_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -19,6 +19,10 @@ message IsHDMIConnectedResponse {
   bool connected = 1;
 }
 
+message IsLoggedInResponse {
+  bool is_logged_in = 1;
+}
+
 service TvOS {
   // 启动
   rpc Run(RunRequest) returns (google.protobuf.Empty) {}
@@ -28,4 +32,6 @@ service TvOS {
   rpc Stop(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   // 是否连接HDMI
   rpc IsHDMIConnected(google.protobuf.Empty) returns (IsHDMIConnectedResponse) {}
+  // 是否已登录
+  rpc IsLoggedIn(google.protobuf.Empty) returns (IsLoggedInResponse) {}
 }
