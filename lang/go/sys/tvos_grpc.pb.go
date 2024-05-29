@@ -20,11 +20,15 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	TvOS_Run_FullMethodName             = "/cloud.lazycat.apis.sys.TvOS/Run"
-	TvOS_Status_FullMethodName          = "/cloud.lazycat.apis.sys.TvOS/Status"
-	TvOS_Stop_FullMethodName            = "/cloud.lazycat.apis.sys.TvOS/Stop"
-	TvOS_IsHDMIConnected_FullMethodName = "/cloud.lazycat.apis.sys.TvOS/IsHDMIConnected"
-	TvOS_IsLoggedIn_FullMethodName      = "/cloud.lazycat.apis.sys.TvOS/IsLoggedIn"
+	TvOS_Run_FullMethodName              = "/cloud.lazycat.apis.sys.TvOS/Run"
+	TvOS_Status_FullMethodName           = "/cloud.lazycat.apis.sys.TvOS/Status"
+	TvOS_Stop_FullMethodName             = "/cloud.lazycat.apis.sys.TvOS/Stop"
+	TvOS_IsHDMIConnected_FullMethodName  = "/cloud.lazycat.apis.sys.TvOS/IsHDMIConnected"
+	TvOS_IsLoggedIn_FullMethodName       = "/cloud.lazycat.apis.sys.TvOS/IsLoggedIn"
+	TvOS_AddBookmark_FullMethodName      = "/cloud.lazycat.apis.sys.TvOS/AddBookmark"
+	TvOS_ListBookmark_FullMethodName     = "/cloud.lazycat.apis.sys.TvOS/ListBookmark"
+	TvOS_DelBookmark_FullMethodName      = "/cloud.lazycat.apis.sys.TvOS/DelBookmark"
+	TvOS_ListBookmarkIcon_FullMethodName = "/cloud.lazycat.apis.sys.TvOS/ListBookmarkIcon"
 )
 
 // TvOSClient is the client API for TvOS service.
@@ -41,6 +45,14 @@ type TvOSClient interface {
 	IsHDMIConnected(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*IsHDMIConnectedResponse, error)
 	// 是否已登录
 	IsLoggedIn(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*IsLoggedInResponse, error)
+	// 添加书签
+	AddBookmark(ctx context.Context, in *AddBookmarkRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 列出书签
+	ListBookmark(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListBookmarkResponse, error)
+	// 删除书签
+	DelBookmark(ctx context.Context, in *DelBookmarkRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 列出书签icon
+	ListBookmarkIcon(ctx context.Context, in *ListBookmarkIconRequest, opts ...grpc.CallOption) (*ListBookmarkIconResponse, error)
 }
 
 type tvOSClient struct {
@@ -96,6 +108,42 @@ func (c *tvOSClient) IsLoggedIn(ctx context.Context, in *emptypb.Empty, opts ...
 	return out, nil
 }
 
+func (c *tvOSClient) AddBookmark(ctx context.Context, in *AddBookmarkRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, TvOS_AddBookmark_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tvOSClient) ListBookmark(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListBookmarkResponse, error) {
+	out := new(ListBookmarkResponse)
+	err := c.cc.Invoke(ctx, TvOS_ListBookmark_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tvOSClient) DelBookmark(ctx context.Context, in *DelBookmarkRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, TvOS_DelBookmark_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tvOSClient) ListBookmarkIcon(ctx context.Context, in *ListBookmarkIconRequest, opts ...grpc.CallOption) (*ListBookmarkIconResponse, error) {
+	out := new(ListBookmarkIconResponse)
+	err := c.cc.Invoke(ctx, TvOS_ListBookmarkIcon_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TvOSServer is the server API for TvOS service.
 // All implementations must embed UnimplementedTvOSServer
 // for forward compatibility
@@ -110,6 +158,14 @@ type TvOSServer interface {
 	IsHDMIConnected(context.Context, *emptypb.Empty) (*IsHDMIConnectedResponse, error)
 	// 是否已登录
 	IsLoggedIn(context.Context, *emptypb.Empty) (*IsLoggedInResponse, error)
+	// 添加书签
+	AddBookmark(context.Context, *AddBookmarkRequest) (*emptypb.Empty, error)
+	// 列出书签
+	ListBookmark(context.Context, *emptypb.Empty) (*ListBookmarkResponse, error)
+	// 删除书签
+	DelBookmark(context.Context, *DelBookmarkRequest) (*emptypb.Empty, error)
+	// 列出书签icon
+	ListBookmarkIcon(context.Context, *ListBookmarkIconRequest) (*ListBookmarkIconResponse, error)
 	mustEmbedUnimplementedTvOSServer()
 }
 
@@ -131,6 +187,18 @@ func (UnimplementedTvOSServer) IsHDMIConnected(context.Context, *emptypb.Empty) 
 }
 func (UnimplementedTvOSServer) IsLoggedIn(context.Context, *emptypb.Empty) (*IsLoggedInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsLoggedIn not implemented")
+}
+func (UnimplementedTvOSServer) AddBookmark(context.Context, *AddBookmarkRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddBookmark not implemented")
+}
+func (UnimplementedTvOSServer) ListBookmark(context.Context, *emptypb.Empty) (*ListBookmarkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListBookmark not implemented")
+}
+func (UnimplementedTvOSServer) DelBookmark(context.Context, *DelBookmarkRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DelBookmark not implemented")
+}
+func (UnimplementedTvOSServer) ListBookmarkIcon(context.Context, *ListBookmarkIconRequest) (*ListBookmarkIconResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListBookmarkIcon not implemented")
 }
 func (UnimplementedTvOSServer) mustEmbedUnimplementedTvOSServer() {}
 
@@ -235,6 +303,78 @@ func _TvOS_IsLoggedIn_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TvOS_AddBookmark_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddBookmarkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TvOSServer).AddBookmark(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TvOS_AddBookmark_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TvOSServer).AddBookmark(ctx, req.(*AddBookmarkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TvOS_ListBookmark_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TvOSServer).ListBookmark(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TvOS_ListBookmark_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TvOSServer).ListBookmark(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TvOS_DelBookmark_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelBookmarkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TvOSServer).DelBookmark(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TvOS_DelBookmark_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TvOSServer).DelBookmark(ctx, req.(*DelBookmarkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TvOS_ListBookmarkIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListBookmarkIconRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TvOSServer).ListBookmarkIcon(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TvOS_ListBookmarkIcon_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TvOSServer).ListBookmarkIcon(ctx, req.(*ListBookmarkIconRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TvOS_ServiceDesc is the grpc.ServiceDesc for TvOS service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -261,6 +401,22 @@ var TvOS_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsLoggedIn",
 			Handler:    _TvOS_IsLoggedIn_Handler,
+		},
+		{
+			MethodName: "AddBookmark",
+			Handler:    _TvOS_AddBookmark_Handler,
+		},
+		{
+			MethodName: "ListBookmark",
+			Handler:    _TvOS_ListBookmark_Handler,
+		},
+		{
+			MethodName: "DelBookmark",
+			Handler:    _TvOS_DelBookmark_Handler,
+		},
+		{
+			MethodName: "ListBookmarkIcon",
+			Handler:    _TvOS_ListBookmarkIcon_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
