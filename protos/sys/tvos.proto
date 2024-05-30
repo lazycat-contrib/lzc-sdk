@@ -24,7 +24,7 @@ message IsLoggedInResponse {
 }
 
 message AddBookmarkRequest {
-  repeated BookmarkWitoutIcon items = 1;
+  repeated Bookmark items = 1;
 }
 
 message ListBookmarkResponse {
