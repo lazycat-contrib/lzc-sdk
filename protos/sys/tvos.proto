@@ -71,4 +71,7 @@ service TvOS {
   rpc DelBookmark(DelBookmarkRequest) returns (google.protobuf.Empty) {}
   // 列出书签icon
   rpc ListBookmarkIcon(ListBookmarkIconRequest) returns (ListBookmarkIconResponse) {}
+  // 踢出当前登录的客户端
+  // 清理hportal-client缓存目录并重启容器
+  rpc KickLoggedIn(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }

@@ -29,6 +29,7 @@ const (
 	TvOS_ListBookmark_FullMethodName     = "/cloud.lazycat.apis.sys.TvOS/ListBookmark"
 	TvOS_DelBookmark_FullMethodName      = "/cloud.lazycat.apis.sys.TvOS/DelBookmark"
 	TvOS_ListBookmarkIcon_FullMethodName = "/cloud.lazycat.apis.sys.TvOS/ListBookmarkIcon"
+	TvOS_KickLoggedIn_FullMethodName     = "/cloud.lazycat.apis.sys.TvOS/KickLoggedIn"
 )
 
 // TvOSClient is the client API for TvOS service.
@@ -53,6 +54,9 @@ type TvOSClient interface {
 	DelBookmark(ctx context.Context, in *DelBookmarkRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列出书签icon
 	ListBookmarkIcon(ctx context.Context, in *ListBookmarkIconRequest, opts ...grpc.CallOption) (*ListBookmarkIconResponse, error)
+	// 踢出当前登录的客户端
+	// 清理hportal-client缓存目录并重启容器
+	KickLoggedIn(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type tvOSClient struct {
@@ -144,6 +148,15 @@ func (c *tvOSClient) ListBookmarkIcon(ctx context.Context, in *ListBookmarkIconR
 	return out, nil
 }
 
+func (c *tvOSClient) KickLoggedIn(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, TvOS_KickLoggedIn_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TvOSServer is the server API for TvOS service.
 // All implementations must embed UnimplementedTvOSServer
 // for forward compatibility
@@ -166,6 +179,9 @@ type TvOSServer interface {
 	DelBookmark(context.Context, *DelBookmarkRequest) (*emptypb.Empty, error)
 	// 列出书签icon
 	ListBookmarkIcon(context.Context, *ListBookmarkIconRequest) (*ListBookmarkIconResponse, error)
+	// 踢出当前登录的客户端
+	// 清理hportal-client缓存目录并重启容器
+	KickLoggedIn(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedTvOSServer()
 }
 
@@ -199,6 +215,9 @@ func (UnimplementedTvOSServer) DelBookmark(context.Context, *DelBookmarkRequest)
 }
 func (UnimplementedTvOSServer) ListBookmarkIcon(context.Context, *ListBookmarkIconRequest) (*ListBookmarkIconResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListBookmarkIcon not implemented")
+}
+func (UnimplementedTvOSServer) KickLoggedIn(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method KickLoggedIn not implemented")
 }
 func (UnimplementedTvOSServer) mustEmbedUnimplementedTvOSServer() {}
 
@@ -375,6 +394,24 @@ func _TvOS_ListBookmarkIcon_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TvOS_KickLoggedIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TvOSServer).KickLoggedIn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TvOS_KickLoggedIn_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TvOSServer).KickLoggedIn(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TvOS_ServiceDesc is the grpc.ServiceDesc for TvOS service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -417,6 +454,10 @@ var TvOS_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListBookmarkIcon",
 			Handler:    _TvOS_ListBookmarkIcon_Handler,
+		},
+		{
+			MethodName: "KickLoggedIn",
+			Handler:    _TvOS_KickLoggedIn_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
