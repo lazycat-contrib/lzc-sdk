@@ -72,8 +72,9 @@ class AppCommon extends LzcAppSdkManage {
 
         // tvos打开应用
         if (LzcAppSdk.isTvOsWebShell()) {
-            // @ts-ignore
             // mipcr支持的类型: https://gitee.com/linakesi/lzc-tvos/blob/master/client/src/preload.ts#L19
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             window.mipcr.LaunchApp(url, appid)
         }
     }
@@ -117,17 +118,17 @@ class AppCommon extends LzcAppSdkManage {
      * @return {*}
      */
     @native(LzcAppPlatformType.Android)
-    public static async ShareWith(boxName: string, webdav_url: string, appid: string): Promise<void> {
+    public static async ShareWith(boxName: string, path: string, appid: string): Promise<void> {
         // 在浏览器环境中
         if (!LzcAppSdk.isInApplication()) {
-            console.error("LaunchNativeApp 方法暂未实现。")
+            console.error("ShareWith 方法暂未实现。")
             return
         }
         // 在 Android 环境
         if (LzcAppSdk.isAndroidWebShell()) {
             const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
             const openApprequest = {
-                webdavUrl: webdav_url,
+                webdavUrl: path,
                 boxName: boxName,
                 appid: appid,
             }
@@ -135,22 +136,30 @@ class AppCommon extends LzcAppSdkManage {
             jsBridge.ShareWith(requestStr)
             return
         }
+
+        // 在 IOS 中仅需要 path 参数
+        if (LzcAppSdk.isIosWebShell()) {
+            const jsBridge = await LzcAppSdk.useNativeAsync()
+            await jsBridge.ShareWith(path)
+            return
+        }
+
         // TODO: 其他环境中待实现
-        console.error("LaunchNativeApp 方法暂未实现。")
+        console.error("ShareWith 方法暂未实现。")
     }
 
     @native(LzcAppPlatformType.Android)
-    public static async OpenWith(boxName: string, webdav_url: string, appid: string): Promise<void> {
+    public static async OpenWith(boxName: string, path: string, appid: string): Promise<void> {
         // 在浏览器环境中
         if (!LzcAppSdk.isInApplication()) {
-            console.error("LaunchNativeApp 方法暂未实现。")
+            console.error("OpenWith 方法暂未实现。")
             return
         }
         // 在 Android 环境
         if (LzcAppSdk.isAndroidWebShell()) {
             const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
             const openApprequest = {
-                webdavUrl: webdav_url,
+                webdavUrl: path,
                 boxName: boxName,
                 appid: appid,
             }
@@ -158,8 +167,16 @@ class AppCommon extends LzcAppSdkManage {
             jsBridge.OpenWith(requestStr)
             return
         }
+
+        // 在 IOS 中仅需要 path 参数
+        if (LzcAppSdk.isIosWebShell()) {
+            const jsBridge = await LzcAppSdk.useNativeAsync()
+            await jsBridge.OpenWith(path)
+            return
+        }
+
         // TODO: 其他环境中待实现
-        console.error("LaunchNativeApp 方法暂未实现。")
+        console.error("OpenWith 方法暂未实现。")
     }
 
     /**
@@ -251,7 +268,6 @@ class AppCommon extends LzcAppSdkManage {
         }
 
         console.warn('the current client does not support');
-        
     }
 }
 
