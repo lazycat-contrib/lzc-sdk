@@ -112,12 +112,11 @@ class AppCommon extends LzcAppSdkManage {
     /**
      * @description: 使用指定的原生应用打开在线文件
      * @param boxName 盒子名称
-     * @param {string} webdav_file_url webdav 文件地址
-     * @param {IntentAction} intentAction
-     * @param {string} appid 原生应用 id
+     * @param {string} path 文件路径
+     * @param {string} appid 原生应用 id (在 IOS 中此参数传空字符串)
      * @return {*}
      */
-    @native(LzcAppPlatformType.Android)
+    @native(LzcAppPlatformType.Android, LzcAppPlatformType.IOS)
     public static async ShareWith(boxName: string, path: string, appid: string): Promise<void> {
         // 在浏览器环境中
         if (!LzcAppSdk.isInApplication()) {
@@ -148,7 +147,14 @@ class AppCommon extends LzcAppSdkManage {
         console.error("ShareWith 方法暂未实现。")
     }
 
-    @native(LzcAppPlatformType.Android)
+    /**
+     * @description: 
+     * @param {string} boxName 盒子名称
+     * @param {string} path 文件路径
+     * @param {string} appid 原生应用 id (在 IOS 中此参数传空字符串)
+     * @return {*}
+     */
+    @native(LzcAppPlatformType.Android, LzcAppPlatformType.IOS)
     public static async OpenWith(boxName: string, path: string, appid: string): Promise<void> {
         // 在浏览器环境中
         if (!LzcAppSdk.isInApplication()) {
