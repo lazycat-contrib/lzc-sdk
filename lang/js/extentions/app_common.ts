@@ -202,29 +202,43 @@ class AppCommon extends LzcAppSdkManage {
             console.error("LaunchNativeApp 方法暂未实现。")
             return
         }
-        const idArray = []
-        if (options.ids && options.ids.length > 0) {
-            idArray.push(...options.ids)
-        }
-        if (options.id && options.id.length > 0) {
-            idArray.push(options.id)
-        }
-        if (idArray.length == 0) {
-            throw Error("至少有一个id参数")
-        }
+
         if (LzcAppSdk.isAndroidWebShell()) {
-            if (options.actionName.length == 0 || options.actionName.indexOf(":") < 0) {
-                throw Error("必须填写actionName")
+            const idArray = []
+            if (options.ids && options.ids.length > 0) {
+                idArray.push(...options.ids)
             }
-            const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
-            const openApprequest = {
-                appid: options.actionName,
-                ids: idArray.join(",")
+            if (options.id && options.id.length > 0) {
+                idArray.push(options.id)
             }
-            var requestStr = JSON.stringify(openApprequest)
-            jsBridge.ShareMedia(requestStr)
+            if (idArray.length == 0) {
+                throw Error("至少有一个id参数")
+            }
+            if (LzcAppSdk.isAndroidWebShell()) {
+                if (options.actionName.length == 0 || options.actionName.indexOf(":") < 0) {
+                    throw Error("必须填写actionName")
+                }
+                const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
+                const openApprequest = {
+                    appid: options.actionName,
+                    ids: idArray.join(",")
+                }
+                var requestStr = JSON.stringify(openApprequest)
+                jsBridge.ShareMedia(requestStr)
+                return
+            }
             return
         }
+
+        if (LzcAppSdk.isIosWebShell()) {
+            let ids = [options.id, ...options.ids];
+            const jsBridge = await LzcAppSdk.useNative()
+            jsBridge.ShareMedia(ids)
+            return
+        }
+
+        // TODO: 其他环境中待实现
+        console.error("Not supported ShareMedia on this platform")
     }
 
     /**
