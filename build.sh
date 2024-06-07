@@ -48,7 +48,7 @@ if [ "$1" = "gen-protos" ]; then
         PROTOC_ARGS+=(
             --swift_out=$OUT_SWIFT
             --swift_opt=Visibility=Public
-            --swift_opt=ProtoPathModuleMappings=$(pwd)/protos/swift_mappings.asciipb 
+            --swift_opt=ProtoPathModuleMappings=$(pwd)/protos/swift_mappings.asciipb
         )
     fi
     pushd protos
@@ -94,6 +94,10 @@ if [ "$1" = "gen-security-content-rules" ]; then
         ./localdevice/*.proto \
         ./common/*.proto
     popd
+    # 清理 swift 编译缓存
+    if [[ -d $(pwd)/lang/swift/.build ]]; then
+        rm -rf $(pwd)/lang/swift/.build
+    fi
     # 容器内总是 root，写入的文件 owner = root 导致外部的非 root 用户被 denied，这里修复。可以考虑 git config core.filemode false 避免 git 发疯
     chmod -R a+rw ./lang # 之前的 chown 设置一个不存在的 uid 在 macos 上的 docker 内出错
     exit
@@ -164,7 +168,7 @@ if [ "$1" = "push-java-lib" ]; then
     #EOF
     #echo "push java-lib complete"
     cd java_api_workspace/target
-    md5sum cloud-lazycat-apis-1.0.jar | cut -c-32 > cloud-lazycat-apis-1.0.jar.md5
-    scp -O -P 2022  cloud-lazycat-apis-1.0.jar cloud-lazycat-apis-1.0.jar.md5 root@192.168.1.189:/mnt/dl/sdk/
+    md5sum cloud-lazycat-apis-1.0.jar | cut -c-32 >cloud-lazycat-apis-1.0.jar.md5
+    scp -O -P 2022 cloud-lazycat-apis-1.0.jar cloud-lazycat-apis-1.0.jar.md5 root@192.168.1.189:/mnt/dl/sdk/
     exit
 fi
