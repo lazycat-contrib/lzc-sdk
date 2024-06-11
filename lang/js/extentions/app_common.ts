@@ -195,7 +195,8 @@ class AppCommon extends LzcAppSdkManage {
     @native(LzcAppPlatformType.Android, LzcAppPlatformType.IOS)
     public static async ShareMedia(options: {
         actionName?: string,
-        ids?: string[], id?: string
+        ids?: string[],
+        id?: string
     }): Promise<void> {
         // 在浏览器环境中
         if (!LzcAppSdk.isInApplication()) {
@@ -231,7 +232,11 @@ class AppCommon extends LzcAppSdkManage {
         }
 
         if (LzcAppSdk.isIosWebShell()) {
-            let ids = [options.id, ...options.ids];
+            const { ids: _ids = [] } = options
+            let ids = [..._ids];
+            if (options.id) {
+                ids.push(options.id)
+            }
             const jsBridge = await LzcAppSdk.useNative()
             jsBridge.ShareMedia(ids)
             return
