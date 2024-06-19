@@ -335,6 +335,61 @@ export interface SetSinkInputVolumeRequest {
   volume: number;
 }
 
+export interface BrowserActionRequest {
+  action: BrowserActionRequest_Action;
+}
+
+export enum BrowserActionRequest_Action {
+  CLOSE_TAB = 0,
+  NEW_TAB = 1,
+  REFRESH_TAB = 2,
+  BACKWARD_HISTORY = 3,
+  FORWARD_HISTORY = 4,
+  UNRECOGNIZED = -1,
+}
+
+export function browserActionRequest_ActionFromJSON(object: any): BrowserActionRequest_Action {
+  switch (object) {
+    case 0:
+    case "CLOSE_TAB":
+      return BrowserActionRequest_Action.CLOSE_TAB;
+    case 1:
+    case "NEW_TAB":
+      return BrowserActionRequest_Action.NEW_TAB;
+    case 2:
+    case "REFRESH_TAB":
+      return BrowserActionRequest_Action.REFRESH_TAB;
+    case 3:
+    case "BACKWARD_HISTORY":
+      return BrowserActionRequest_Action.BACKWARD_HISTORY;
+    case 4:
+    case "FORWARD_HISTORY":
+      return BrowserActionRequest_Action.FORWARD_HISTORY;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return BrowserActionRequest_Action.UNRECOGNIZED;
+  }
+}
+
+export function browserActionRequest_ActionToJSON(object: BrowserActionRequest_Action): string {
+  switch (object) {
+    case BrowserActionRequest_Action.CLOSE_TAB:
+      return "CLOSE_TAB";
+    case BrowserActionRequest_Action.NEW_TAB:
+      return "NEW_TAB";
+    case BrowserActionRequest_Action.REFRESH_TAB:
+      return "REFRESH_TAB";
+    case BrowserActionRequest_Action.BACKWARD_HISTORY:
+      return "BACKWARD_HISTORY";
+    case BrowserActionRequest_Action.FORWARD_HISTORY:
+      return "FORWARD_HISTORY";
+    case BrowserActionRequest_Action.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 function createBaseSendKeyboardEventRequest(): SendKeyboardEventRequest {
   return { code: 0, state: 0 };
 }
@@ -2230,6 +2285,64 @@ export const SetSinkInputVolumeRequest = {
   },
 };
 
+function createBaseBrowserActionRequest(): BrowserActionRequest {
+  return { action: 0 };
+}
+
+export const BrowserActionRequest = {
+  encode(message: BrowserActionRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.action !== 0) {
+      writer.uint32(8).int32(message.action);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): BrowserActionRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBrowserActionRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.action = reader.int32() as any;
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): BrowserActionRequest {
+    return { action: isSet(object.action) ? browserActionRequest_ActionFromJSON(object.action) : 0 };
+  },
+
+  toJSON(message: BrowserActionRequest): unknown {
+    const obj: any = {};
+    if (message.action !== 0) {
+      obj.action = browserActionRequest_ActionToJSON(message.action);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<BrowserActionRequest>, I>>(base?: I): BrowserActionRequest {
+    return BrowserActionRequest.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<BrowserActionRequest>, I>>(object: I): BrowserActionRequest {
+    const message = createBaseBrowserActionRequest();
+    message.action = object.action ?? 0;
+    return message;
+  },
+};
+
 export interface RemoteControl {
   /** 发送键盘输入事件 */
   SendKeyboardEvent(
@@ -2345,6 +2458,12 @@ export interface RemoteControl {
   ): Promise<ReadClipboardResponse>;
   /** 粘贴 */
   DoPaste(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
+  /** 浏览器操作 */
+  BrowserAction(
+    request: DeepPartial<BrowserActionRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<Empty>;
   /**
    * 音频管理
    * sink 输入音频设备 (可用于播放音频的音频设备)
@@ -2442,6 +2561,7 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.WriteClipboard = this.WriteClipboard.bind(this);
     this.ReadClipboard = this.ReadClipboard.bind(this);
     this.DoPaste = this.DoPaste.bind(this);
+    this.BrowserAction = this.BrowserAction.bind(this);
     this.ListSinkInputs = this.ListSinkInputs.bind(this);
     this.ListSinks = this.ListSinks.bind(this);
     this.ListCards = this.ListCards.bind(this);
@@ -2659,6 +2779,19 @@ export class RemoteControlClientImpl implements RemoteControl {
 
   DoPaste(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
     return this.rpc.unary(RemoteControlDoPasteDesc, Empty.fromPartial(request), metadata, abortSignal);
+  }
+
+  BrowserAction(
+    request: DeepPartial<BrowserActionRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<Empty> {
+    return this.rpc.unary(
+      RemoteControlBrowserActionDesc,
+      BrowserActionRequest.fromPartial(request),
+      metadata,
+      abortSignal,
+    );
   }
 
   ListSinkInputs(
@@ -3195,6 +3328,29 @@ export const RemoteControlDoPasteDesc: UnaryMethodDefinitionish = {
   requestType: {
     serializeBinary() {
       return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlBrowserActionDesc: UnaryMethodDefinitionish = {
+  methodName: "BrowserAction",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return BrowserActionRequest.encode(this).finish();
     },
   } as any,
   responseType: {

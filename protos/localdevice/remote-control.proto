@@ -165,6 +165,17 @@ message SetSinkInputVolumeRequest {
   float volume = 2;
 }
 
+message BrowserActionRequest {
+  enum Action {
+    CLOSE_TAB = 0;
+    NEW_TAB = 1;
+    REFRESH_TAB = 2;
+    BACKWARD_HISTORY = 3;
+    FORWARD_HISTORY =4 ;
+  }
+  Action action = 1;
+}
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -210,6 +221,8 @@ service RemoteControl{
   rpc ReadClipboard(google.protobuf.Empty) returns (ReadClipboardResponse) {}
   // 粘贴
   rpc DoPaste(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 浏览器操作
+  rpc BrowserAction(BrowserActionRequest) returns (google.protobuf.Empty) {}
   // 音频管理
   // sink 输入音频设备 (可用于播放音频的音频设备)
   // sink-input 输入音频流 (正在播放音频的程序)

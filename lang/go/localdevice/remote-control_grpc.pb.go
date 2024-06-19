@@ -41,6 +41,7 @@ const (
 	RemoteControl_WriteClipboard_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/WriteClipboard"
 	RemoteControl_ReadClipboard_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/ReadClipboard"
 	RemoteControl_DoPaste_FullMethodName                 = "/cloud.lazycat.apis.localdevice.RemoteControl/DoPaste"
+	RemoteControl_BrowserAction_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/BrowserAction"
 	RemoteControl_ListSinkInputs_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/ListSinkInputs"
 	RemoteControl_ListSinks_FullMethodName               = "/cloud.lazycat.apis.localdevice.RemoteControl/ListSinks"
 	RemoteControl_ListCards_FullMethodName               = "/cloud.lazycat.apis.localdevice.RemoteControl/ListCards"
@@ -102,6 +103,8 @@ type RemoteControlClient interface {
 	ReadClipboard(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ReadClipboardResponse, error)
 	// 粘贴
 	DoPaste(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 浏览器操作
+	BrowserAction(ctx context.Context, in *BrowserActionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 音频管理
 	// sink 输入音频设备 (可用于播放音频的音频设备)
 	// sink-input 输入音频流 (正在播放音频的程序)
@@ -378,6 +381,15 @@ func (c *remoteControlClient) DoPaste(ctx context.Context, in *emptypb.Empty, op
 	return out, nil
 }
 
+func (c *remoteControlClient) BrowserAction(ctx context.Context, in *BrowserActionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_BrowserAction_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *remoteControlClient) ListSinkInputs(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListSinkInputsResponse, error) {
 	out := new(ListSinkInputsResponse)
 	err := c.cc.Invoke(ctx, RemoteControl_ListSinkInputs_FullMethodName, in, out, opts...)
@@ -525,6 +537,8 @@ type RemoteControlServer interface {
 	ReadClipboard(context.Context, *emptypb.Empty) (*ReadClipboardResponse, error)
 	// 粘贴
 	DoPaste(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 浏览器操作
+	BrowserAction(context.Context, *BrowserActionRequest) (*emptypb.Empty, error)
 	// 音频管理
 	// sink 输入音频设备 (可用于播放音频的音频设备)
 	// sink-input 输入音频流 (正在播放音频的程序)
@@ -621,6 +635,9 @@ func (UnimplementedRemoteControlServer) ReadClipboard(context.Context, *emptypb.
 }
 func (UnimplementedRemoteControlServer) DoPaste(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DoPaste not implemented")
+}
+func (UnimplementedRemoteControlServer) BrowserAction(context.Context, *BrowserActionRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BrowserAction not implemented")
 }
 func (UnimplementedRemoteControlServer) ListSinkInputs(context.Context, *emptypb.Empty) (*ListSinkInputsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListSinkInputs not implemented")
@@ -1062,6 +1079,24 @@ func _RemoteControl_DoPaste_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_BrowserAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BrowserActionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).BrowserAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_BrowserAction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).BrowserAction(ctx, req.(*BrowserActionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RemoteControl_ListSinkInputs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -1342,6 +1377,10 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DoPaste",
 			Handler:    _RemoteControl_DoPaste_Handler,
+		},
+		{
+			MethodName: "BrowserAction",
+			Handler:    _RemoteControl_BrowserAction_Handler,
 		},
 		{
 			MethodName: "ListSinkInputs",
