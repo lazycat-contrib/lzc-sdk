@@ -176,6 +176,15 @@ message BrowserActionRequest {
   Action action = 1;
 }
 
+message BleDevice {
+    string MAC = 1;
+    string name = 2;
+}
+
+message BleScanDevicesResponse {
+  repeated BleDevice devices = 1;
+}
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -250,4 +259,12 @@ service RemoteControl{
   rpc DecreaseVolume(ChangeVolumeRequest) returns (google.protobuf.Empty) {}
   // 设置输入音频源音量
   rpc SetSinkInputVolume(SetSinkInputVolumeRequest) returns (google.protobuf.Empty) {}
+  
+  // 蓝牙管理
+  // 扫描蓝牙设备
+  rpc BleScanDevices(google.protobuf.Empty) returns (stream BleScanDevicesResponse) {}
+  // 连接蓝牙设备
+  rpc BleConnectDevice(BleDevice) returns (google.protobuf.Empty) {}
+  // 断开所有连接
+  rpc BleDisconnect(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 } 

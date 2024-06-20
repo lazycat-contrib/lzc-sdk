@@ -3,6 +3,7 @@ import { grpc } from "@improbable-eng/grpc-web";
 import { BrowserHeaders } from "browser-headers";
 import _m0 from "protobufjs/minimal";
 import { Observable } from "rxjs";
+import { share } from "rxjs/operators";
 import { Empty } from "../google/protobuf/empty";
 
 /** /usr/include/linux/input-event-codes.h */
@@ -388,6 +389,15 @@ export function browserActionRequest_ActionToJSON(object: BrowserActionRequest_A
     default:
       return "UNRECOGNIZED";
   }
+}
+
+export interface BleDevice {
+  MAC: string;
+  name: string;
+}
+
+export interface BleScanDevicesResponse {
+  devices: BleDevice[];
 }
 
 function createBaseSendKeyboardEventRequest(): SendKeyboardEventRequest {
@@ -2343,6 +2353,136 @@ export const BrowserActionRequest = {
   },
 };
 
+function createBaseBleDevice(): BleDevice {
+  return { MAC: "", name: "" };
+}
+
+export const BleDevice = {
+  encode(message: BleDevice, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.MAC !== "") {
+      writer.uint32(10).string(message.MAC);
+    }
+    if (message.name !== "") {
+      writer.uint32(18).string(message.name);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): BleDevice {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBleDevice();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.MAC = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): BleDevice {
+    return { MAC: isSet(object.MAC) ? String(object.MAC) : "", name: isSet(object.name) ? String(object.name) : "" };
+  },
+
+  toJSON(message: BleDevice): unknown {
+    const obj: any = {};
+    if (message.MAC !== "") {
+      obj.MAC = message.MAC;
+    }
+    if (message.name !== "") {
+      obj.name = message.name;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<BleDevice>, I>>(base?: I): BleDevice {
+    return BleDevice.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<BleDevice>, I>>(object: I): BleDevice {
+    const message = createBaseBleDevice();
+    message.MAC = object.MAC ?? "";
+    message.name = object.name ?? "";
+    return message;
+  },
+};
+
+function createBaseBleScanDevicesResponse(): BleScanDevicesResponse {
+  return { devices: [] };
+}
+
+export const BleScanDevicesResponse = {
+  encode(message: BleScanDevicesResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.devices) {
+      BleDevice.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): BleScanDevicesResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBleScanDevicesResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.devices.push(BleDevice.decode(reader, reader.uint32()));
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): BleScanDevicesResponse {
+    return { devices: Array.isArray(object?.devices) ? object.devices.map((e: any) => BleDevice.fromJSON(e)) : [] };
+  },
+
+  toJSON(message: BleScanDevicesResponse): unknown {
+    const obj: any = {};
+    if (message.devices?.length) {
+      obj.devices = message.devices.map((e) => BleDevice.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<BleScanDevicesResponse>, I>>(base?: I): BleScanDevicesResponse {
+    return BleScanDevicesResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<BleScanDevicesResponse>, I>>(object: I): BleScanDevicesResponse {
+    const message = createBaseBleScanDevicesResponse();
+    message.devices = object.devices?.map((e) => BleDevice.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 export interface RemoteControl {
   /** 发送键盘输入事件 */
   SendKeyboardEvent(
@@ -2533,6 +2673,23 @@ export interface RemoteControl {
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<Empty>;
+  /**
+   * 蓝牙管理
+   * 扫描蓝牙设备
+   */
+  BleScanDevices(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Observable<BleScanDevicesResponse>;
+  /** 连接蓝牙设备 */
+  BleConnectDevice(
+    request: DeepPartial<BleDevice>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<Empty>;
+  /** 断开所有连接 */
+  BleDisconnect(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
 }
 
 export class RemoteControlClientImpl implements RemoteControl {
@@ -2573,6 +2730,9 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.IncreaseVolume = this.IncreaseVolume.bind(this);
     this.DecreaseVolume = this.DecreaseVolume.bind(this);
     this.SetSinkInputVolume = this.SetSinkInputVolume.bind(this);
+    this.BleScanDevices = this.BleScanDevices.bind(this);
+    this.BleConnectDevice = this.BleConnectDevice.bind(this);
+    this.BleDisconnect = this.BleDisconnect.bind(this);
   }
 
   SendKeyboardEvent(
@@ -2901,6 +3061,26 @@ export class RemoteControlClientImpl implements RemoteControl {
       metadata,
       abortSignal,
     );
+  }
+
+  BleScanDevices(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Observable<BleScanDevicesResponse> {
+    return this.rpc.invoke(RemoteControlBleScanDevicesDesc, Empty.fromPartial(request), metadata, abortSignal);
+  }
+
+  BleConnectDevice(
+    request: DeepPartial<BleDevice>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<Empty> {
+    return this.rpc.unary(RemoteControlBleConnectDeviceDesc, BleDevice.fromPartial(request), metadata, abortSignal);
+  }
+
+  BleDisconnect(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
+    return this.rpc.unary(RemoteControlBleDisconnectDesc, Empty.fromPartial(request), metadata, abortSignal);
   }
 }
 
@@ -3619,6 +3799,75 @@ export const RemoteControlSetSinkInputVolumeDesc: UnaryMethodDefinitionish = {
   } as any,
 };
 
+export const RemoteControlBleScanDevicesDesc: UnaryMethodDefinitionish = {
+  methodName: "BleScanDevices",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: true,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = BleScanDevicesResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlBleConnectDeviceDesc: UnaryMethodDefinitionish = {
+  methodName: "BleConnectDevice",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return BleDevice.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlBleDisconnectDesc: UnaryMethodDefinitionish = {
+  methodName: "BleDisconnect",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
 interface UnaryMethodDefinitionishR extends grpc.UnaryMethodDefinition<any, any> {
   requestStream: any;
   responseStream: any;
@@ -3633,13 +3882,19 @@ interface Rpc {
     metadata: grpc.Metadata | undefined,
     abortSignal?: AbortSignal,
   ): Promise<any>;
+  invoke<T extends UnaryMethodDefinitionish>(
+    methodDesc: T,
+    request: any,
+    metadata: grpc.Metadata | undefined,
+    abortSignal?: AbortSignal,
+  ): Observable<any>;
 }
 
 export class GrpcWebImpl {
   private host: string;
   private options: {
     transport?: grpc.TransportFactory;
-
+    streamingTransport?: grpc.TransportFactory;
     debug?: boolean;
     metadata?: grpc.Metadata;
     upStreamRetryCodes?: number[];
@@ -3649,7 +3904,7 @@ export class GrpcWebImpl {
     host: string,
     options: {
       transport?: grpc.TransportFactory;
-
+      streamingTransport?: grpc.TransportFactory;
       debug?: boolean;
       metadata?: grpc.Metadata;
       upStreamRetryCodes?: number[];
@@ -3693,6 +3948,58 @@ export class GrpcWebImpl {
         });
       }
     });
+  }
+
+  invoke<T extends UnaryMethodDefinitionish>(
+    methodDesc: T,
+    _request: any,
+    metadata: grpc.Metadata | undefined,
+    abortSignal?: AbortSignal,
+  ): Observable<any> {
+    const upStreamCodes = this.options.upStreamRetryCodes ?? [];
+    const DEFAULT_TIMEOUT_TIME: number = 3_000;
+    const request = { ..._request, ...methodDesc.requestType };
+    const transport = this.options.streamingTransport ?? this.options.transport;
+    const maybeCombinedMetadata = metadata && this.options.metadata
+      ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
+      : metadata ?? this.options.metadata;
+    return new Observable((observer) => {
+      const upStream = () => {
+        const client = grpc.invoke(methodDesc, {
+          host: this.host,
+          request,
+          ...(transport !== undefined ? { transport } : {}),
+          metadata: maybeCombinedMetadata ?? {},
+          debug: this.options.debug ?? false,
+          onMessage: (next) => observer.next(next),
+          onEnd: (code: grpc.Code, message: string, trailers: grpc.Metadata) => {
+            if (code === 0) {
+              observer.complete();
+            } else if (upStreamCodes.includes(code)) {
+              setTimeout(upStream, DEFAULT_TIMEOUT_TIME);
+            } else {
+              const err = new Error(message) as any;
+              err.code = code;
+              err.metadata = trailers;
+              observer.error(err);
+            }
+          },
+        });
+        observer.add(() => {
+          if (!abortSignal || !abortSignal.aborted) {
+            return client.close();
+          }
+        });
+
+        if (abortSignal) {
+          abortSignal.addEventListener("abort", () => {
+            observer.error(abortSignal.reason);
+            client.close();
+          });
+        }
+      };
+      upStream();
+    }).pipe(share());
   }
 }
 

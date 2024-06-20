@@ -53,6 +53,9 @@ const (
 	RemoteControl_IncreaseVolume_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/IncreaseVolume"
 	RemoteControl_DecreaseVolume_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/DecreaseVolume"
 	RemoteControl_SetSinkInputVolume_FullMethodName      = "/cloud.lazycat.apis.localdevice.RemoteControl/SetSinkInputVolume"
+	RemoteControl_BleScanDevices_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/BleScanDevices"
+	RemoteControl_BleConnectDevice_FullMethodName        = "/cloud.lazycat.apis.localdevice.RemoteControl/BleConnectDevice"
+	RemoteControl_BleDisconnect_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/BleDisconnect"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -132,6 +135,13 @@ type RemoteControlClient interface {
 	DecreaseVolume(ctx context.Context, in *ChangeVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 设置输入音频源音量
 	SetSinkInputVolume(ctx context.Context, in *SetSinkInputVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 蓝牙管理
+	// 扫描蓝牙设备
+	BleScanDevices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (RemoteControl_BleScanDevicesClient, error)
+	// 连接蓝牙设备
+	BleConnectDevice(ctx context.Context, in *BleDevice, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 断开所有连接
+	BleDisconnect(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type remoteControlClient struct {
@@ -489,6 +499,56 @@ func (c *remoteControlClient) SetSinkInputVolume(ctx context.Context, in *SetSin
 	return out, nil
 }
 
+func (c *remoteControlClient) BleScanDevices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (RemoteControl_BleScanDevicesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &RemoteControl_ServiceDesc.Streams[2], RemoteControl_BleScanDevices_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &remoteControlBleScanDevicesClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type RemoteControl_BleScanDevicesClient interface {
+	Recv() (*BleScanDevicesResponse, error)
+	grpc.ClientStream
+}
+
+type remoteControlBleScanDevicesClient struct {
+	grpc.ClientStream
+}
+
+func (x *remoteControlBleScanDevicesClient) Recv() (*BleScanDevicesResponse, error) {
+	m := new(BleScanDevicesResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *remoteControlClient) BleConnectDevice(ctx context.Context, in *BleDevice, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_BleConnectDevice_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) BleDisconnect(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_BleDisconnect_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -566,6 +626,13 @@ type RemoteControlServer interface {
 	DecreaseVolume(context.Context, *ChangeVolumeRequest) (*emptypb.Empty, error)
 	// 设置输入音频源音量
 	SetSinkInputVolume(context.Context, *SetSinkInputVolumeRequest) (*emptypb.Empty, error)
+	// 蓝牙管理
+	// 扫描蓝牙设备
+	BleScanDevices(*emptypb.Empty, RemoteControl_BleScanDevicesServer) error
+	// 连接蓝牙设备
+	BleConnectDevice(context.Context, *BleDevice) (*emptypb.Empty, error)
+	// 断开所有连接
+	BleDisconnect(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -671,6 +738,15 @@ func (UnimplementedRemoteControlServer) DecreaseVolume(context.Context, *ChangeV
 }
 func (UnimplementedRemoteControlServer) SetSinkInputVolume(context.Context, *SetSinkInputVolumeRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetSinkInputVolume not implemented")
+}
+func (UnimplementedRemoteControlServer) BleScanDevices(*emptypb.Empty, RemoteControl_BleScanDevicesServer) error {
+	return status.Errorf(codes.Unimplemented, "method BleScanDevices not implemented")
+}
+func (UnimplementedRemoteControlServer) BleConnectDevice(context.Context, *BleDevice) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BleConnectDevice not implemented")
+}
+func (UnimplementedRemoteControlServer) BleDisconnect(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BleDisconnect not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -1295,6 +1371,63 @@ func _RemoteControl_SetSinkInputVolume_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_BleScanDevices_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(RemoteControlServer).BleScanDevices(m, &remoteControlBleScanDevicesServer{stream})
+}
+
+type RemoteControl_BleScanDevicesServer interface {
+	Send(*BleScanDevicesResponse) error
+	grpc.ServerStream
+}
+
+type remoteControlBleScanDevicesServer struct {
+	grpc.ServerStream
+}
+
+func (x *remoteControlBleScanDevicesServer) Send(m *BleScanDevicesResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _RemoteControl_BleConnectDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BleDevice)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).BleConnectDevice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_BleConnectDevice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).BleConnectDevice(ctx, req.(*BleDevice))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_BleDisconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).BleDisconnect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_BleDisconnect_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).BleDisconnect(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1426,6 +1559,14 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "SetSinkInputVolume",
 			Handler:    _RemoteControl_SetSinkInputVolume_Handler,
 		},
+		{
+			MethodName: "BleConnectDevice",
+			Handler:    _RemoteControl_BleConnectDevice_Handler,
+		},
+		{
+			MethodName: "BleDisconnect",
+			Handler:    _RemoteControl_BleDisconnect_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
@@ -1437,6 +1578,11 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "MouseWheelStream",
 			Handler:       _RemoteControl_MouseWheelStream_Handler,
 			ClientStreams: true,
+		},
+		{
+			StreamName:    "BleScanDevices",
+			Handler:       _RemoteControl_BleScanDevices_Handler,
+			ServerStreams: true,
 		},
 	},
 	Metadata: "localdevice/remote-control.proto",
