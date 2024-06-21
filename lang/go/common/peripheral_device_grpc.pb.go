@@ -20,6 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
+	PeripheralDeviceService_DeviceChanged_FullMethodName    = "/cloud.lazycat.apis.common.PeripheralDeviceService/DeviceChanged"
 	PeripheralDeviceService_ListFilesystems_FullMethodName  = "/cloud.lazycat.apis.common.PeripheralDeviceService/ListFilesystems"
 	PeripheralDeviceService_MountDisk_FullMethodName        = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountDisk"
 	PeripheralDeviceService_MountWebDav_FullMethodName      = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountWebDav"
@@ -33,7 +34,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PeripheralDeviceServiceClient interface {
-	// 列出当前盒子已挂载和可以挂载但未挂载的文件系统
+	// 如果有设备变动，就返回一下 Empty，使用方需要 ListFilesystems 来获取具体信息
+	DeviceChanged(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (PeripheralDeviceService_DeviceChangedClient, error)
+	// 列出当前盒子已挂载 和 可以挂载但未挂载的文件系统
 	ListFilesystems(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListFilesystemsReply, error)
 	// 挂载/卸载特定移动磁盘的某个分区到
 	// $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
@@ -55,6 +58,38 @@ type peripheralDeviceServiceClient struct {
 
 func NewPeripheralDeviceServiceClient(cc grpc.ClientConnInterface) PeripheralDeviceServiceClient {
 	return &peripheralDeviceServiceClient{cc}
+}
+
+func (c *peripheralDeviceServiceClient) DeviceChanged(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (PeripheralDeviceService_DeviceChangedClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PeripheralDeviceService_ServiceDesc.Streams[0], PeripheralDeviceService_DeviceChanged_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &peripheralDeviceServiceDeviceChangedClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PeripheralDeviceService_DeviceChangedClient interface {
+	Recv() (*emptypb.Empty, error)
+	grpc.ClientStream
+}
+
+type peripheralDeviceServiceDeviceChangedClient struct {
+	grpc.ClientStream
+}
+
+func (x *peripheralDeviceServiceDeviceChangedClient) Recv() (*emptypb.Empty, error) {
+	m := new(emptypb.Empty)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *peripheralDeviceServiceClient) ListFilesystems(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListFilesystemsReply, error) {
@@ -94,7 +129,7 @@ func (c *peripheralDeviceServiceClient) UmountFilesystem(ctx context.Context, in
 }
 
 func (c *peripheralDeviceServiceClient) MountArchive(ctx context.Context, in *MountArchiveRequest, opts ...grpc.CallOption) (PeripheralDeviceService_MountArchiveClient, error) {
-	stream, err := c.cc.NewStream(ctx, &PeripheralDeviceService_ServiceDesc.Streams[0], PeripheralDeviceService_MountArchive_FullMethodName, opts...)
+	stream, err := c.cc.NewStream(ctx, &PeripheralDeviceService_ServiceDesc.Streams[1], PeripheralDeviceService_MountArchive_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +182,9 @@ func (c *peripheralDeviceServiceClient) ManageUSBNetwork(ctx context.Context, in
 // All implementations must embed UnimplementedPeripheralDeviceServiceServer
 // for forward compatibility
 type PeripheralDeviceServiceServer interface {
-	// 列出当前盒子已挂载和可以挂载但未挂载的文件系统
+	// 如果有设备变动，就返回一下 Empty，使用方需要 ListFilesystems 来获取具体信息
+	DeviceChanged(*emptypb.Empty, PeripheralDeviceService_DeviceChangedServer) error
+	// 列出当前盒子已挂载 和 可以挂载但未挂载的文件系统
 	ListFilesystems(context.Context, *emptypb.Empty) (*ListFilesystemsReply, error)
 	// 挂载/卸载特定移动磁盘的某个分区到
 	// $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
@@ -168,6 +205,9 @@ type PeripheralDeviceServiceServer interface {
 type UnimplementedPeripheralDeviceServiceServer struct {
 }
 
+func (UnimplementedPeripheralDeviceServiceServer) DeviceChanged(*emptypb.Empty, PeripheralDeviceService_DeviceChangedServer) error {
+	return status.Errorf(codes.Unimplemented, "method DeviceChanged not implemented")
+}
 func (UnimplementedPeripheralDeviceServiceServer) ListFilesystems(context.Context, *emptypb.Empty) (*ListFilesystemsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListFilesystems not implemented")
 }
@@ -201,6 +241,27 @@ type UnsafePeripheralDeviceServiceServer interface {
 
 func RegisterPeripheralDeviceServiceServer(s grpc.ServiceRegistrar, srv PeripheralDeviceServiceServer) {
 	s.RegisterService(&PeripheralDeviceService_ServiceDesc, srv)
+}
+
+func _PeripheralDeviceService_DeviceChanged_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PeripheralDeviceServiceServer).DeviceChanged(m, &peripheralDeviceServiceDeviceChangedServer{stream})
+}
+
+type PeripheralDeviceService_DeviceChangedServer interface {
+	Send(*emptypb.Empty) error
+	grpc.ServerStream
+}
+
+type peripheralDeviceServiceDeviceChangedServer struct {
+	grpc.ServerStream
+}
+
+func (x *peripheralDeviceServiceDeviceChangedServer) Send(m *emptypb.Empty) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _PeripheralDeviceService_ListFilesystems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -365,6 +426,11 @@ var PeripheralDeviceService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "DeviceChanged",
+			Handler:       _PeripheralDeviceService_DeviceChanged_Handler,
+			ServerStreams: true,
+		},
 		{
 			StreamName:    "MountArchive",
 			Handler:       _PeripheralDeviceService_MountArchive_Handler,
