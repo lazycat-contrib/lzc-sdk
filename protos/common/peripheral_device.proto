@@ -9,7 +9,9 @@ import "google/protobuf/empty.proto";
 
 // 外围设备管理服务
 service PeripheralDeviceService {
-  // 列出当前盒子已挂载和可以挂载但未挂载的文件系统
+  // 如果有设备变动，就返回一下 Empty，使用方需要 ListFilesystems 来获取具体信息
+  rpc DeviceChanged(google.protobuf.Empty) returns (stream google.protobuf.Empty) {}
+  // 列出当前盒子已挂载 和 可以挂载但未挂载的文件系统
   rpc ListFilesystems(google.protobuf.Empty) returns (ListFilesystemsReply) {}
 
   // 挂载/卸载特定移动磁盘的某个分区到
