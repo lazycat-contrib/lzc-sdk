@@ -44,12 +44,14 @@ message ListBookmarkIconResponse {
 }
 
 message BookmarkWitoutIcon {
-    string domain = 1;
+  string url = 1;
+  string title = 2;
 }
 
 message Bookmark {
-  string domain = 1;
+  string url = 1;
   string icon = 2;
+  string title = 3;
 }
 
 service TvOS {
