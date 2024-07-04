@@ -38,6 +38,17 @@ app container的文件系统视角里，除了正常的linux rootfs外，还存�
 4. /tmp目录不放置到/lzcapp是考虑到大部分软件组件会假设/tmp的存在且由权限写入。
 
 
+应用services
+===========
+每个lzcapp都有一个名称为"app"的(隐藏)内置service作为入口。
+
+开发者可以定义额外的services来使用其他镜像环境。
+services在mainifest.yml中通过services字段定义，类似docker-compose的语法，但`挂载`等功能因为安全原因被限制。
+
+每个service都会分配一个固定(内部lzcdns)域名，格式是:`$service_name.$appid.lzcapp`，在lzcapp内部以及manifest.yml中
+都可以通过这个域名来访问对应services的服务。
+
+
 环境变量
 =======
 lzcapp内的任何容器都会设置以下环境变量
