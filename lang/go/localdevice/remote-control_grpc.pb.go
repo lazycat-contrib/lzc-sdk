@@ -56,6 +56,8 @@ const (
 	RemoteControl_BleScanDevices_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/BleScanDevices"
 	RemoteControl_BleConnectDevice_FullMethodName        = "/cloud.lazycat.apis.localdevice.RemoteControl/BleConnectDevice"
 	RemoteControl_BleDisconnect_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/BleDisconnect"
+	RemoteControl_SetScreenLayer_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/SetScreenLayer"
+	RemoteControl_GetScreenLayer_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/GetScreenLayer"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -142,6 +144,10 @@ type RemoteControlClient interface {
 	BleConnectDevice(ctx context.Context, in *BleDevice, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 断开所有连接
 	BleDisconnect(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 切换ScreenLayer
+	SetScreenLayer(ctx context.Context, in *ScreenLayer, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 返回当前的ScreenLayer
+	GetScreenLayer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ScreenLayer, error)
 }
 
 type remoteControlClient struct {
@@ -549,6 +555,24 @@ func (c *remoteControlClient) BleDisconnect(ctx context.Context, in *emptypb.Emp
 	return out, nil
 }
 
+func (c *remoteControlClient) SetScreenLayer(ctx context.Context, in *ScreenLayer, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_SetScreenLayer_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) GetScreenLayer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ScreenLayer, error) {
+	out := new(ScreenLayer)
+	err := c.cc.Invoke(ctx, RemoteControl_GetScreenLayer_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -633,6 +657,10 @@ type RemoteControlServer interface {
 	BleConnectDevice(context.Context, *BleDevice) (*emptypb.Empty, error)
 	// 断开所有连接
 	BleDisconnect(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 切换ScreenLayer
+	SetScreenLayer(context.Context, *ScreenLayer) (*emptypb.Empty, error)
+	// 返回当前的ScreenLayer
+	GetScreenLayer(context.Context, *emptypb.Empty) (*ScreenLayer, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -747,6 +775,12 @@ func (UnimplementedRemoteControlServer) BleConnectDevice(context.Context, *BleDe
 }
 func (UnimplementedRemoteControlServer) BleDisconnect(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BleDisconnect not implemented")
+}
+func (UnimplementedRemoteControlServer) SetScreenLayer(context.Context, *ScreenLayer) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetScreenLayer not implemented")
+}
+func (UnimplementedRemoteControlServer) GetScreenLayer(context.Context, *emptypb.Empty) (*ScreenLayer, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetScreenLayer not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -1428,6 +1462,42 @@ func _RemoteControl_BleDisconnect_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_SetScreenLayer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ScreenLayer)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).SetScreenLayer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_SetScreenLayer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).SetScreenLayer(ctx, req.(*ScreenLayer))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_GetScreenLayer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).GetScreenLayer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_GetScreenLayer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).GetScreenLayer(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1566,6 +1636,14 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BleDisconnect",
 			Handler:    _RemoteControl_BleDisconnect_Handler,
+		},
+		{
+			MethodName: "SetScreenLayer",
+			Handler:    _RemoteControl_SetScreenLayer_Handler,
+		},
+		{
+			MethodName: "GetScreenLayer",
+			Handler:    _RemoteControl_GetScreenLayer_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

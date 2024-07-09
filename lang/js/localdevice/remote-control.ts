@@ -209,6 +209,48 @@ export function touchEventToJSON(object: TouchEvent): string {
   }
 }
 
+export enum Layer {
+  /** NORMAL - 恢复默认 */
+  NORMAL = 0,
+  /** BLACK - 黑色背景 */
+  BLACK = 1,
+  /** CUSTOM - 自定义背景 */
+  CUSTOM = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function layerFromJSON(object: any): Layer {
+  switch (object) {
+    case 0:
+    case "NORMAL":
+      return Layer.NORMAL;
+    case 1:
+    case "BLACK":
+      return Layer.BLACK;
+    case 2:
+    case "CUSTOM":
+      return Layer.CUSTOM;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Layer.UNRECOGNIZED;
+  }
+}
+
+export function layerToJSON(object: Layer): string {
+  switch (object) {
+    case Layer.NORMAL:
+      return "NORMAL";
+    case Layer.BLACK:
+      return "BLACK";
+    case Layer.CUSTOM:
+      return "CUSTOM";
+    case Layer.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export interface SendKeyboardEventRequest {
   code: InputEvent;
   state: EventState;
@@ -398,6 +440,12 @@ export interface BleDevice {
 
 export interface BleScanDevicesResponse {
   devices: BleDevice[];
+}
+
+export interface ScreenLayer {
+  layer: Layer;
+  /** 如果screenlayer为custom需要传递这个参数 */
+  customPlayload?: string | undefined;
 }
 
 function createBaseSendKeyboardEventRequest(): SendKeyboardEventRequest {
@@ -2483,6 +2531,81 @@ export const BleScanDevicesResponse = {
   },
 };
 
+function createBaseScreenLayer(): ScreenLayer {
+  return { layer: 0, customPlayload: undefined };
+}
+
+export const ScreenLayer = {
+  encode(message: ScreenLayer, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.layer !== 0) {
+      writer.uint32(8).int32(message.layer);
+    }
+    if (message.customPlayload !== undefined) {
+      writer.uint32(18).string(message.customPlayload);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ScreenLayer {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseScreenLayer();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.layer = reader.int32() as any;
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.customPlayload = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ScreenLayer {
+    return {
+      layer: isSet(object.layer) ? layerFromJSON(object.layer) : 0,
+      customPlayload: isSet(object.customPlayload) ? String(object.customPlayload) : undefined,
+    };
+  },
+
+  toJSON(message: ScreenLayer): unknown {
+    const obj: any = {};
+    if (message.layer !== 0) {
+      obj.layer = layerToJSON(message.layer);
+    }
+    if (message.customPlayload !== undefined) {
+      obj.customPlayload = message.customPlayload;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<ScreenLayer>, I>>(base?: I): ScreenLayer {
+    return ScreenLayer.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<ScreenLayer>, I>>(object: I): ScreenLayer {
+    const message = createBaseScreenLayer();
+    message.layer = object.layer ?? 0;
+    message.customPlayload = object.customPlayload ?? undefined;
+    return message;
+  },
+};
+
 export interface RemoteControl {
   /** 发送键盘输入事件 */
   SendKeyboardEvent(
@@ -2690,6 +2813,18 @@ export interface RemoteControl {
   ): Promise<Empty>;
   /** 断开所有连接 */
   BleDisconnect(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
+  /** 切换ScreenLayer */
+  SetScreenLayer(
+    request: DeepPartial<ScreenLayer>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<Empty>;
+  /** 返回当前的ScreenLayer */
+  GetScreenLayer(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<ScreenLayer>;
 }
 
 export class RemoteControlClientImpl implements RemoteControl {
@@ -2733,6 +2868,8 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.BleScanDevices = this.BleScanDevices.bind(this);
     this.BleConnectDevice = this.BleConnectDevice.bind(this);
     this.BleDisconnect = this.BleDisconnect.bind(this);
+    this.SetScreenLayer = this.SetScreenLayer.bind(this);
+    this.GetScreenLayer = this.GetScreenLayer.bind(this);
   }
 
   SendKeyboardEvent(
@@ -3081,6 +3218,22 @@ export class RemoteControlClientImpl implements RemoteControl {
 
   BleDisconnect(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
     return this.rpc.unary(RemoteControlBleDisconnectDesc, Empty.fromPartial(request), metadata, abortSignal);
+  }
+
+  SetScreenLayer(
+    request: DeepPartial<ScreenLayer>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<Empty> {
+    return this.rpc.unary(RemoteControlSetScreenLayerDesc, ScreenLayer.fromPartial(request), metadata, abortSignal);
+  }
+
+  GetScreenLayer(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<ScreenLayer> {
+    return this.rpc.unary(RemoteControlGetScreenLayerDesc, Empty.fromPartial(request), metadata, abortSignal);
   }
 }
 
@@ -3858,6 +4011,52 @@ export const RemoteControlBleDisconnectDesc: UnaryMethodDefinitionish = {
   responseType: {
     deserializeBinary(data: Uint8Array) {
       const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlSetScreenLayerDesc: UnaryMethodDefinitionish = {
+  methodName: "SetScreenLayer",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return ScreenLayer.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlGetScreenLayerDesc: UnaryMethodDefinitionish = {
+  methodName: "GetScreenLayer",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = ScreenLayer.decode(data);
       return {
         ...value,
         toObject() {

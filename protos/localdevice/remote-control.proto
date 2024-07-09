@@ -185,6 +185,21 @@ message BleScanDevicesResponse {
   repeated BleDevice devices = 1;
 }
 
+enum Layer {
+  // 恢复默认
+  NORMAL = 0;
+  // 黑色背景
+  BLACK = 1;
+  // 自定义背景
+  CUSTOM = 2;
+}
+
+message ScreenLayer {
+  Layer layer = 1;
+  // 如果screenlayer为custom需要传递这个参数
+  optional string custom_playload = 2;
+}
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -267,4 +282,8 @@ service RemoteControl{
   rpc BleConnectDevice(BleDevice) returns (google.protobuf.Empty) {}
   // 断开所有连接
   rpc BleDisconnect(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 切换ScreenLayer
+  rpc SetScreenLayer(ScreenLayer) returns (google.protobuf.Empty) {}
+  // 返回当前的ScreenLayer
+  rpc GetScreenLayer(google.protobuf.Empty) returns (ScreenLayer) {}
 } 
