@@ -26,8 +26,6 @@ const (
 	PeripheralDeviceService_MountWebDav_FullMethodName      = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountWebDav"
 	PeripheralDeviceService_UmountFilesystem_FullMethodName = "/cloud.lazycat.apis.common.PeripheralDeviceService/UmountFilesystem"
 	PeripheralDeviceService_MountArchive_FullMethodName     = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountArchive"
-	PeripheralDeviceService_ScanUSBNetwork_FullMethodName   = "/cloud.lazycat.apis.common.PeripheralDeviceService/ScanUSBNetwork"
-	PeripheralDeviceService_ManageUSBNetwork_FullMethodName = "/cloud.lazycat.apis.common.PeripheralDeviceService/ManageUSBNetwork"
 )
 
 // PeripheralDeviceServiceClient is the client API for PeripheralDeviceService service.
@@ -46,10 +44,6 @@ type PeripheralDeviceServiceClient interface {
 	// 通过 uuid 或 mountpoint 卸载文件系统
 	UmountFilesystem(ctx context.Context, in *UmountFilesystemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MountArchive(ctx context.Context, in *MountArchiveRequest, opts ...grpc.CallOption) (PeripheralDeviceService_MountArchiveClient, error)
-	// 扫描插入的USB网络设备
-	ScanUSBNetwork(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*USBNetworks, error)
-	// 将指定的USB网络设备分配给Hext管理
-	ManageUSBNetwork(ctx context.Context, in *USBNetwork, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type peripheralDeviceServiceClient struct {
@@ -160,24 +154,6 @@ func (x *peripheralDeviceServiceMountArchiveClient) Recv() (*emptypb.Empty, erro
 	return m, nil
 }
 
-func (c *peripheralDeviceServiceClient) ScanUSBNetwork(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*USBNetworks, error) {
-	out := new(USBNetworks)
-	err := c.cc.Invoke(ctx, PeripheralDeviceService_ScanUSBNetwork_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *peripheralDeviceServiceClient) ManageUSBNetwork(ctx context.Context, in *USBNetwork, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PeripheralDeviceService_ManageUSBNetwork_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PeripheralDeviceServiceServer is the server API for PeripheralDeviceService service.
 // All implementations must embed UnimplementedPeripheralDeviceServiceServer
 // for forward compatibility
@@ -194,10 +170,6 @@ type PeripheralDeviceServiceServer interface {
 	// 通过 uuid 或 mountpoint 卸载文件系统
 	UmountFilesystem(context.Context, *UmountFilesystemRequest) (*emptypb.Empty, error)
 	MountArchive(*MountArchiveRequest, PeripheralDeviceService_MountArchiveServer) error
-	// 扫描插入的USB网络设备
-	ScanUSBNetwork(context.Context, *emptypb.Empty) (*USBNetworks, error)
-	// 将指定的USB网络设备分配给Hext管理
-	ManageUSBNetwork(context.Context, *USBNetwork) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPeripheralDeviceServiceServer()
 }
 
@@ -222,12 +194,6 @@ func (UnimplementedPeripheralDeviceServiceServer) UmountFilesystem(context.Conte
 }
 func (UnimplementedPeripheralDeviceServiceServer) MountArchive(*MountArchiveRequest, PeripheralDeviceService_MountArchiveServer) error {
 	return status.Errorf(codes.Unimplemented, "method MountArchive not implemented")
-}
-func (UnimplementedPeripheralDeviceServiceServer) ScanUSBNetwork(context.Context, *emptypb.Empty) (*USBNetworks, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ScanUSBNetwork not implemented")
-}
-func (UnimplementedPeripheralDeviceServiceServer) ManageUSBNetwork(context.Context, *USBNetwork) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ManageUSBNetwork not implemented")
 }
 func (UnimplementedPeripheralDeviceServiceServer) mustEmbedUnimplementedPeripheralDeviceServiceServer() {
 }
@@ -357,42 +323,6 @@ func (x *peripheralDeviceServiceMountArchiveServer) Send(m *emptypb.Empty) error
 	return x.ServerStream.SendMsg(m)
 }
 
-func _PeripheralDeviceService_ScanUSBNetwork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PeripheralDeviceServiceServer).ScanUSBNetwork(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PeripheralDeviceService_ScanUSBNetwork_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PeripheralDeviceServiceServer).ScanUSBNetwork(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PeripheralDeviceService_ManageUSBNetwork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(USBNetwork)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PeripheralDeviceServiceServer).ManageUSBNetwork(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PeripheralDeviceService_ManageUSBNetwork_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PeripheralDeviceServiceServer).ManageUSBNetwork(ctx, req.(*USBNetwork))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // PeripheralDeviceService_ServiceDesc is the grpc.ServiceDesc for PeripheralDeviceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -415,14 +345,6 @@ var PeripheralDeviceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UmountFilesystem",
 			Handler:    _PeripheralDeviceService_UmountFilesystem_Handler,
-		},
-		{
-			MethodName: "ScanUSBNetwork",
-			Handler:    _PeripheralDeviceService_ScanUSBNetwork_Handler,
-		},
-		{
-			MethodName: "ManageUSBNetwork",
-			Handler:    _PeripheralDeviceService_ManageUSBNetwork_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

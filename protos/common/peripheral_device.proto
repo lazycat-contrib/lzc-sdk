@@ -30,20 +30,6 @@ service PeripheralDeviceService {
 
   rpc MountArchive(MountArchiveRequest) returns (stream google.protobuf.Empty) {
   }
-
-  // 扫描插入的USB网络设备
-  rpc ScanUSBNetwork(google.protobuf.Empty) returns (USBNetworks) {}
-  // 将指定的USB网络设备分配给Hext管理
-  rpc ManageUSBNetwork(USBNetwork) returns (google.protobuf.Empty) {}
-}
-
-message USBNetwork {
-  string name = 1;
-  string vendor = 2;
-  string product = 3;
-}
-message USBNetworks {
-  repeated USBNetwork networks = 1;
 }
 
 message MountArchiveRequest {
