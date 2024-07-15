@@ -26,6 +26,7 @@ const (
 	PeripheralDeviceService_MountWebDav_FullMethodName      = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountWebDav"
 	PeripheralDeviceService_UmountFilesystem_FullMethodName = "/cloud.lazycat.apis.common.PeripheralDeviceService/UmountFilesystem"
 	PeripheralDeviceService_MountArchive_FullMethodName     = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountArchive"
+	PeripheralDeviceService_PowerOffDisk_FullMethodName     = "/cloud.lazycat.apis.common.PeripheralDeviceService/PowerOffDisk"
 )
 
 // PeripheralDeviceServiceClient is the client API for PeripheralDeviceService service.
@@ -44,6 +45,8 @@ type PeripheralDeviceServiceClient interface {
 	// 通过 uuid 或 mountpoint 卸载文件系统
 	UmountFilesystem(ctx context.Context, in *UmountFilesystemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MountArchive(ctx context.Context, in *MountArchiveRequest, opts ...grpc.CallOption) (PeripheralDeviceService_MountArchiveClient, error)
+	// 弹出外部存储设备
+	PowerOffDisk(ctx context.Context, in *PowerOffDiskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type peripheralDeviceServiceClient struct {
@@ -154,6 +157,15 @@ func (x *peripheralDeviceServiceMountArchiveClient) Recv() (*emptypb.Empty, erro
 	return m, nil
 }
 
+func (c *peripheralDeviceServiceClient) PowerOffDisk(ctx context.Context, in *PowerOffDiskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, PeripheralDeviceService_PowerOffDisk_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PeripheralDeviceServiceServer is the server API for PeripheralDeviceService service.
 // All implementations must embed UnimplementedPeripheralDeviceServiceServer
 // for forward compatibility
@@ -170,6 +182,8 @@ type PeripheralDeviceServiceServer interface {
 	// 通过 uuid 或 mountpoint 卸载文件系统
 	UmountFilesystem(context.Context, *UmountFilesystemRequest) (*emptypb.Empty, error)
 	MountArchive(*MountArchiveRequest, PeripheralDeviceService_MountArchiveServer) error
+	// 弹出外部存储设备
+	PowerOffDisk(context.Context, *PowerOffDiskRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPeripheralDeviceServiceServer()
 }
 
@@ -194,6 +208,9 @@ func (UnimplementedPeripheralDeviceServiceServer) UmountFilesystem(context.Conte
 }
 func (UnimplementedPeripheralDeviceServiceServer) MountArchive(*MountArchiveRequest, PeripheralDeviceService_MountArchiveServer) error {
 	return status.Errorf(codes.Unimplemented, "method MountArchive not implemented")
+}
+func (UnimplementedPeripheralDeviceServiceServer) PowerOffDisk(context.Context, *PowerOffDiskRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PowerOffDisk not implemented")
 }
 func (UnimplementedPeripheralDeviceServiceServer) mustEmbedUnimplementedPeripheralDeviceServiceServer() {
 }
@@ -323,6 +340,24 @@ func (x *peripheralDeviceServiceMountArchiveServer) Send(m *emptypb.Empty) error
 	return x.ServerStream.SendMsg(m)
 }
 
+func _PeripheralDeviceService_PowerOffDisk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PowerOffDiskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PeripheralDeviceServiceServer).PowerOffDisk(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PeripheralDeviceService_PowerOffDisk_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PeripheralDeviceServiceServer).PowerOffDisk(ctx, req.(*PowerOffDiskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PeripheralDeviceService_ServiceDesc is the grpc.ServiceDesc for PeripheralDeviceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -345,6 +380,10 @@ var PeripheralDeviceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UmountFilesystem",
 			Handler:    _PeripheralDeviceService_UmountFilesystem_Handler,
+		},
+		{
+			MethodName: "PowerOffDisk",
+			Handler:    _PeripheralDeviceService_PowerOffDisk_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

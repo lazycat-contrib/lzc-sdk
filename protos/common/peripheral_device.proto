@@ -30,6 +30,9 @@ service PeripheralDeviceService {
 
   rpc MountArchive(MountArchiveRequest) returns (stream google.protobuf.Empty) {
   }
+
+  // 弹出外部存储设备
+  rpc PowerOffDisk(PowerOffDiskRequest) returns (google.protobuf.Empty) {}
 }
 
 message MountArchiveRequest {
@@ -79,4 +82,7 @@ message UmountFilesystemRequest {
     string uuid = 1;
     string mountpoint = 2;
   }
+}
+
+message PowerOffDiskRequest {
 }
