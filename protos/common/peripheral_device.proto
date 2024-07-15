@@ -85,4 +85,5 @@ message UmountFilesystemRequest {
 }
 
 message PowerOffDiskRequest {
+  string source = 1;
 }
