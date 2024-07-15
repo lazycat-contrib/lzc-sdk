@@ -58,6 +58,7 @@ const (
 	RemoteControl_BleDisconnect_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/BleDisconnect"
 	RemoteControl_SetScreenLayer_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/SetScreenLayer"
 	RemoteControl_GetScreenLayer_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/GetScreenLayer"
+	RemoteControl_Logout_FullMethodName                  = "/cloud.lazycat.apis.localdevice.RemoteControl/Logout"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -148,6 +149,8 @@ type RemoteControlClient interface {
 	SetScreenLayer(ctx context.Context, in *ScreenLayer, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 返回当前的ScreenLayer
 	GetScreenLayer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ScreenLayer, error)
+	// 登出
+	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type remoteControlClient struct {
@@ -573,6 +576,15 @@ func (c *remoteControlClient) GetScreenLayer(ctx context.Context, in *emptypb.Em
 	return out, nil
 }
 
+func (c *remoteControlClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_Logout_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -661,6 +673,8 @@ type RemoteControlServer interface {
 	SetScreenLayer(context.Context, *ScreenLayer) (*emptypb.Empty, error)
 	// 返回当前的ScreenLayer
 	GetScreenLayer(context.Context, *emptypb.Empty) (*ScreenLayer, error)
+	// 登出
+	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -781,6 +795,9 @@ func (UnimplementedRemoteControlServer) SetScreenLayer(context.Context, *ScreenL
 }
 func (UnimplementedRemoteControlServer) GetScreenLayer(context.Context, *emptypb.Empty) (*ScreenLayer, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetScreenLayer not implemented")
+}
+func (UnimplementedRemoteControlServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -1498,6 +1515,24 @@ func _RemoteControl_GetScreenLayer_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_Logout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).Logout(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1644,6 +1679,10 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetScreenLayer",
 			Handler:    _RemoteControl_GetScreenLayer_Handler,
+		},
+		{
+			MethodName: "Logout",
+			Handler:    _RemoteControl_Logout_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

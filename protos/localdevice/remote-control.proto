@@ -286,4 +286,6 @@ service RemoteControl{
   rpc SetScreenLayer(ScreenLayer) returns (google.protobuf.Empty) {}
   // 返回当前的ScreenLayer
   rpc GetScreenLayer(google.protobuf.Empty) returns (ScreenLayer) {}
+  // 登出
+  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 } 

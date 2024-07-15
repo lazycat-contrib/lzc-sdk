@@ -2825,6 +2825,8 @@ export interface RemoteControl {
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<ScreenLayer>;
+  /** 登出 */
+  Logout(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
 }
 
 export class RemoteControlClientImpl implements RemoteControl {
@@ -2870,6 +2872,7 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.BleDisconnect = this.BleDisconnect.bind(this);
     this.SetScreenLayer = this.SetScreenLayer.bind(this);
     this.GetScreenLayer = this.GetScreenLayer.bind(this);
+    this.Logout = this.Logout.bind(this);
   }
 
   SendKeyboardEvent(
@@ -3234,6 +3237,10 @@ export class RemoteControlClientImpl implements RemoteControl {
     abortSignal?: AbortSignal,
   ): Promise<ScreenLayer> {
     return this.rpc.unary(RemoteControlGetScreenLayerDesc, Empty.fromPartial(request), metadata, abortSignal);
+  }
+
+  Logout(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
+    return this.rpc.unary(RemoteControlLogoutDesc, Empty.fromPartial(request), metadata, abortSignal);
   }
 }
 
@@ -4057,6 +4064,29 @@ export const RemoteControlGetScreenLayerDesc: UnaryMethodDefinitionish = {
   responseType: {
     deserializeBinary(data: Uint8Array) {
       const value = ScreenLayer.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlLogoutDesc: UnaryMethodDefinitionish = {
+  methodName: "Logout",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
       return {
         ...value,
         toObject() {
