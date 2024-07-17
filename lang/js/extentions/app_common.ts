@@ -169,7 +169,17 @@ class AppCommon extends LzcAppSdkManage {
 
         // 在 Android 环境
         if (LzcAppSdk.isAndroidWebShell()) {
-            // TODO: /
+            const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
+            const content = {
+                "filePath": []
+            }
+            if(path != null){
+                content.filePath.push(path)
+            }
+            if(paths != null){
+                content.filePath = content.filePath.concat(paths)
+            }
+            jsBridge.ShareWithFiles(JSON.stringify(content));
             return true
         }
 
