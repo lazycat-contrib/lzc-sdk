@@ -7,6 +7,7 @@ import { lzcAPIGateway, EndDeviceProxy } from '@lazycatcloud/sdk/index';
 import { ListAlbumsReply, PhotoMeta, ListAssetsSortType } from '@lazycatcloud/sdk/localdevice/photo';
 import { DeviceInfo } from '@lazycatcloud/sdk/localdevice/device';
 import { Permission } from '@lazycatcloud/sdk/localdevice/permission';
+import { AppCommon } from '@lazycatcloud/sdk/extentions/app_common';
 
 type PageNavigate = {
     setPageIndex: (index: number | undefined) => void;
@@ -55,8 +56,8 @@ function AssetMetaReview(props: { meta: PhotoMeta, deletePhoto?: Function }) {
 
             <p>{imageMeta.fileName}</p>
             <div style={{ padding: 2, background: '#0001' }}>
-                <img style={{ width: 150 }} 
-                src={imageMeta.thumbnailUrl ? decodeThumbnailUrl(imageMeta.thumbnailUrl) : imageMeta.photoUrl} 
+                <img style={{ width: 150 }}
+                    src={imageMeta.thumbnailUrl ? decodeThumbnailUrl(imageMeta.thumbnailUrl) : imageMeta.photoUrl}
                 // src={imageMeta.photoUrl} 
                 />
             </div>
@@ -442,6 +443,30 @@ function App() {
         }
     ];
 
+    async function deletePhotoFor500() {
+        try {
+            if (images.current.length < 500) {
+                console.log('deletePhotoFor500 failed', '数量不足');
+                return
+            }
+
+            // 获取 500 个资源
+            let list = images.current
+            list = list.splice(0, 500);
+            console.log('list', list);
+
+            const ids = list.map((i) => i.id)
+            const device = await getCurrentDevice();
+            const reply = await device.photolibrary.DeletePhoto({
+                id: ids,
+            });
+            console.log('reply.failedId', reply);
+
+        } catch (error) {
+            console.log('deletePhotoFor500 failed', error);
+        }
+    }
+
     return (
         <div className="App" style={{ width: '100%' }}>
             {pageIndex !== undefined && pageIndex < pageViews.length ? pageViews[pageIndex].view : (
@@ -724,6 +749,30 @@ function App() {
                                 }}
                             >
                                 PutPhoto
+                            </button>
+                            <button
+                                style={{ marginTop: 10 }}
+                                onClick={deletePhotoFor500}
+                            >
+                                deletePhotoFor500
+                            </button>
+                            <button
+                                style={{ marginTop: 10 }}
+                                onClick={async () => {
+                                    // let a = await AppCommon.ShareMedia({
+                                    //     id: '4FD65BF9-A838-405C-A476-1F71CACBD587/L0/001',
+                                    //     // ids: ['4FD65BF9-A838-405C-A476-1F71CACBD587/L0/001']
+                                    // })
+                                    // let a = await AppCommon.ShareWith("", "test", "")
+                                    // let a = await AppCommon.ShareWith("", "/private/var/mobile/Containers/Shared/AppGroup/05277D27-8A5D-464E-8FD2-A496A4D1582C/Documents/懒猫网盘离线/0o0/admin/兔子2.0.zip", "")
+                                    let ok = await AppCommon.ShareWithFiles(null, [
+                                        "/private/var/mobile/Containers/Shared/AppGroup/05277D27-8A5D-464E-8FD2-A496A4D1582C/Documents/懒猫网盘离线/0o0/admin/IMG_0127.PNG",
+                                        "/private/var/mobile/Containers/Shared/AppGroup/05277D27-8A5D-464E-8FD2-A496A4D1582C/Documents/懒猫网盘离线/0o0/admin/IMG_a0131.JPG"
+                                    ])
+                                    console.log('ShareWithFiles', ok);
+                                }}
+                            >
+                                ShareMedia
                             </button>
                         </div>
 

@@ -110,6 +110,7 @@ class AppCommon extends LzcAppSdkManage {
     }
 
     /**
+     * @deprecated 该接口已弃用，预计后续版本可能会被删除，请使用 `ShareWithFiles` 接口替代
      * @description: 使用指定的原生应用打开在线文件
      * @param boxName 盒子名称
      * @param {string} path 文件路径
@@ -145,6 +146,42 @@ class AppCommon extends LzcAppSdkManage {
 
         // TODO: 其他环境中待实现
         console.error("ShareWith 方法暂未实现。")
+    }
+
+    /**
+     * @description: 分享本地离线文件
+     * @param {string | null} path 文件路径
+     * @param {string[] | null} paths 分享多文件路径
+     * @return {boolean}
+     */
+    @native(LzcAppPlatformType.Android, LzcAppPlatformType.IOS)
+    public static async ShareWithFiles(path: string = null, paths: string[] = null): Promise<boolean> {
+        // 在浏览器环境中
+        if (!LzcAppSdk.isInApplication()) {
+            console.error("ShareWithFiles 方法暂未实现。")
+            return false
+        }
+
+        // 判断参数
+        if (path == null && paths == null) {
+            throw Error("path 和 paths 参数不能同时为空")
+        }
+
+        // 在 Android 环境
+        if (LzcAppSdk.isAndroidWebShell()) {
+            // TODO: /
+            return true
+        }
+
+        // 在 IOS 环境
+        if (LzcAppSdk.isIosWebShell()) {
+            const jsBridge = await LzcAppSdk.useNativeAsync()
+            return await jsBridge.ShareWith(path, paths)
+        }
+
+        // TODO: 其他环境中待实现
+        console.error("ShareWithFiles 方法暂未实现。")
+        return false
     }
 
     /**
