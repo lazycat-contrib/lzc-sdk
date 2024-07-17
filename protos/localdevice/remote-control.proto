@@ -4,6 +4,7 @@ package cloud.lazycat.apis.localdevice;
 
 option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 
 // /usr/include/linux/input-event-codes.h
@@ -200,6 +201,16 @@ message ScreenLayer {
   optional string custom_playload = 2;
 }
 
+message DebugTestRequest{
+  google.protobuf.Timestamp time = 1;
+}
+
+message DebugTestReply{
+  string delay = 1;
+  string pulseaudio = 2;
+  string top = 3;
+}
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -288,4 +299,6 @@ service RemoteControl{
   rpc GetScreenLayer(google.protobuf.Empty) returns (ScreenLayer) {}
   // 登出
   rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 调试测试
+  rpc DebugTest(DebugTestRequest) returns (stream DebugTestReply){}
 } 

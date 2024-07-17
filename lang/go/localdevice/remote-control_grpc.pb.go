@@ -59,6 +59,7 @@ const (
 	RemoteControl_SetScreenLayer_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/SetScreenLayer"
 	RemoteControl_GetScreenLayer_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/GetScreenLayer"
 	RemoteControl_Logout_FullMethodName                  = "/cloud.lazycat.apis.localdevice.RemoteControl/Logout"
+	RemoteControl_DebugTest_FullMethodName               = "/cloud.lazycat.apis.localdevice.RemoteControl/DebugTest"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -151,6 +152,8 @@ type RemoteControlClient interface {
 	GetScreenLayer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ScreenLayer, error)
 	// 登出
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 调试测试
+	DebugTest(ctx context.Context, in *DebugTestRequest, opts ...grpc.CallOption) (RemoteControl_DebugTestClient, error)
 }
 
 type remoteControlClient struct {
@@ -585,6 +588,38 @@ func (c *remoteControlClient) Logout(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
+func (c *remoteControlClient) DebugTest(ctx context.Context, in *DebugTestRequest, opts ...grpc.CallOption) (RemoteControl_DebugTestClient, error) {
+	stream, err := c.cc.NewStream(ctx, &RemoteControl_ServiceDesc.Streams[3], RemoteControl_DebugTest_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &remoteControlDebugTestClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type RemoteControl_DebugTestClient interface {
+	Recv() (*DebugTestReply, error)
+	grpc.ClientStream
+}
+
+type remoteControlDebugTestClient struct {
+	grpc.ClientStream
+}
+
+func (x *remoteControlDebugTestClient) Recv() (*DebugTestReply, error) {
+	m := new(DebugTestReply)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -675,6 +710,8 @@ type RemoteControlServer interface {
 	GetScreenLayer(context.Context, *emptypb.Empty) (*ScreenLayer, error)
 	// 登出
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 调试测试
+	DebugTest(*DebugTestRequest, RemoteControl_DebugTestServer) error
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -798,6 +835,9 @@ func (UnimplementedRemoteControlServer) GetScreenLayer(context.Context, *emptypb
 }
 func (UnimplementedRemoteControlServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedRemoteControlServer) DebugTest(*DebugTestRequest, RemoteControl_DebugTestServer) error {
+	return status.Errorf(codes.Unimplemented, "method DebugTest not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -1533,6 +1573,27 @@ func _RemoteControl_Logout_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_DebugTest_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(DebugTestRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(RemoteControlServer).DebugTest(m, &remoteControlDebugTestServer{stream})
+}
+
+type RemoteControl_DebugTestServer interface {
+	Send(*DebugTestReply) error
+	grpc.ServerStream
+}
+
+type remoteControlDebugTestServer struct {
+	grpc.ServerStream
+}
+
+func (x *remoteControlDebugTestServer) Send(m *DebugTestReply) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1699,6 +1760,11 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "BleScanDevices",
 			Handler:       _RemoteControl_BleScanDevices_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "DebugTest",
+			Handler:       _RemoteControl_DebugTest_Handler,
 			ServerStreams: true,
 		},
 	},

@@ -5,6 +5,7 @@ import _m0 from "protobufjs/minimal";
 import { Observable } from "rxjs";
 import { share } from "rxjs/operators";
 import { Empty } from "../google/protobuf/empty";
+import { Timestamp } from "../google/protobuf/timestamp";
 
 /** /usr/include/linux/input-event-codes.h */
 export enum InputEvent {
@@ -446,6 +447,16 @@ export interface ScreenLayer {
   layer: Layer;
   /** 如果screenlayer为custom需要传递这个参数 */
   customPlayload?: string | undefined;
+}
+
+export interface DebugTestRequest {
+  time: Date | undefined;
+}
+
+export interface DebugTestReply {
+  delay: string;
+  pulseaudio: string;
+  top: string;
 }
 
 function createBaseSendKeyboardEventRequest(): SendKeyboardEventRequest {
@@ -2606,6 +2617,154 @@ export const ScreenLayer = {
   },
 };
 
+function createBaseDebugTestRequest(): DebugTestRequest {
+  return { time: undefined };
+}
+
+export const DebugTestRequest = {
+  encode(message: DebugTestRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.time !== undefined) {
+      Timestamp.encode(toTimestamp(message.time), writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DebugTestRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDebugTestRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.time = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DebugTestRequest {
+    return { time: isSet(object.time) ? fromJsonTimestamp(object.time) : undefined };
+  },
+
+  toJSON(message: DebugTestRequest): unknown {
+    const obj: any = {};
+    if (message.time !== undefined) {
+      obj.time = message.time.toISOString();
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DebugTestRequest>, I>>(base?: I): DebugTestRequest {
+    return DebugTestRequest.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<DebugTestRequest>, I>>(object: I): DebugTestRequest {
+    const message = createBaseDebugTestRequest();
+    message.time = object.time ?? undefined;
+    return message;
+  },
+};
+
+function createBaseDebugTestReply(): DebugTestReply {
+  return { delay: "", pulseaudio: "", top: "" };
+}
+
+export const DebugTestReply = {
+  encode(message: DebugTestReply, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.delay !== "") {
+      writer.uint32(10).string(message.delay);
+    }
+    if (message.pulseaudio !== "") {
+      writer.uint32(18).string(message.pulseaudio);
+    }
+    if (message.top !== "") {
+      writer.uint32(26).string(message.top);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DebugTestReply {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDebugTestReply();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.delay = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.pulseaudio = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.top = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DebugTestReply {
+    return {
+      delay: isSet(object.delay) ? String(object.delay) : "",
+      pulseaudio: isSet(object.pulseaudio) ? String(object.pulseaudio) : "",
+      top: isSet(object.top) ? String(object.top) : "",
+    };
+  },
+
+  toJSON(message: DebugTestReply): unknown {
+    const obj: any = {};
+    if (message.delay !== "") {
+      obj.delay = message.delay;
+    }
+    if (message.pulseaudio !== "") {
+      obj.pulseaudio = message.pulseaudio;
+    }
+    if (message.top !== "") {
+      obj.top = message.top;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DebugTestReply>, I>>(base?: I): DebugTestReply {
+    return DebugTestReply.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<DebugTestReply>, I>>(object: I): DebugTestReply {
+    const message = createBaseDebugTestReply();
+    message.delay = object.delay ?? "";
+    message.pulseaudio = object.pulseaudio ?? "";
+    message.top = object.top ?? "";
+    return message;
+  },
+};
+
 export interface RemoteControl {
   /** 发送键盘输入事件 */
   SendKeyboardEvent(
@@ -2827,6 +2986,12 @@ export interface RemoteControl {
   ): Promise<ScreenLayer>;
   /** 登出 */
   Logout(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
+  /** 调试测试 */
+  DebugTest(
+    request: DeepPartial<DebugTestRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Observable<DebugTestReply>;
 }
 
 export class RemoteControlClientImpl implements RemoteControl {
@@ -2873,6 +3038,7 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.SetScreenLayer = this.SetScreenLayer.bind(this);
     this.GetScreenLayer = this.GetScreenLayer.bind(this);
     this.Logout = this.Logout.bind(this);
+    this.DebugTest = this.DebugTest.bind(this);
   }
 
   SendKeyboardEvent(
@@ -3241,6 +3407,14 @@ export class RemoteControlClientImpl implements RemoteControl {
 
   Logout(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
     return this.rpc.unary(RemoteControlLogoutDesc, Empty.fromPartial(request), metadata, abortSignal);
+  }
+
+  DebugTest(
+    request: DeepPartial<DebugTestRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Observable<DebugTestReply> {
+    return this.rpc.invoke(RemoteControlDebugTestDesc, DebugTestRequest.fromPartial(request), metadata, abortSignal);
   }
 }
 
@@ -4097,6 +4271,29 @@ export const RemoteControlLogoutDesc: UnaryMethodDefinitionish = {
   } as any,
 };
 
+export const RemoteControlDebugTestDesc: UnaryMethodDefinitionish = {
+  methodName: "DebugTest",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: true,
+  requestType: {
+    serializeBinary() {
+      return DebugTestRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = DebugTestReply.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
 interface UnaryMethodDefinitionishR extends grpc.UnaryMethodDefinition<any, any> {
   requestStream: any;
   responseStream: any;
@@ -4261,6 +4458,28 @@ type DeepPartial<T> = T extends Builtin ? T
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function toTimestamp(date: Date): Timestamp {
+  const seconds = date.getTime() / 1_000;
+  const nanos = (date.getTime() % 1_000) * 1_000_000;
+  return { seconds, nanos };
+}
+
+function fromTimestamp(t: Timestamp): Date {
+  let millis = (t.seconds || 0) * 1_000;
+  millis += (t.nanos || 0) / 1_000_000;
+  return new Date(millis);
+}
+
+function fromJsonTimestamp(o: any): Date {
+  if (o instanceof Date) {
+    return o;
+  } else if (typeof o === "string") {
+    return new Date(o);
+  } else {
+    return fromTimestamp(Timestamp.fromJSON(o));
+  }
+}
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
