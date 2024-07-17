@@ -449,12 +449,9 @@ export interface ScreenLayer {
   customPlayload?: string | undefined;
 }
 
-export interface DebugTestRequest {
-  time: Date | undefined;
-}
-
 export interface DebugTestReply {
   delay: string;
+  time: Date | undefined;
   pulseaudio: string;
   top: string;
 }
@@ -2617,66 +2614,8 @@ export const ScreenLayer = {
   },
 };
 
-function createBaseDebugTestRequest(): DebugTestRequest {
-  return { time: undefined };
-}
-
-export const DebugTestRequest = {
-  encode(message: DebugTestRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.time !== undefined) {
-      Timestamp.encode(toTimestamp(message.time), writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): DebugTestRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseDebugTestRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.time = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): DebugTestRequest {
-    return { time: isSet(object.time) ? fromJsonTimestamp(object.time) : undefined };
-  },
-
-  toJSON(message: DebugTestRequest): unknown {
-    const obj: any = {};
-    if (message.time !== undefined) {
-      obj.time = message.time.toISOString();
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<DebugTestRequest>, I>>(base?: I): DebugTestRequest {
-    return DebugTestRequest.fromPartial(base ?? {});
-  },
-
-  fromPartial<I extends Exact<DeepPartial<DebugTestRequest>, I>>(object: I): DebugTestRequest {
-    const message = createBaseDebugTestRequest();
-    message.time = object.time ?? undefined;
-    return message;
-  },
-};
-
 function createBaseDebugTestReply(): DebugTestReply {
-  return { delay: "", pulseaudio: "", top: "" };
+  return { delay: "", time: undefined, pulseaudio: "", top: "" };
 }
 
 export const DebugTestReply = {
@@ -2684,11 +2623,14 @@ export const DebugTestReply = {
     if (message.delay !== "") {
       writer.uint32(10).string(message.delay);
     }
+    if (message.time !== undefined) {
+      Timestamp.encode(toTimestamp(message.time), writer.uint32(18).fork()).ldelim();
+    }
     if (message.pulseaudio !== "") {
-      writer.uint32(18).string(message.pulseaudio);
+      writer.uint32(26).string(message.pulseaudio);
     }
     if (message.top !== "") {
-      writer.uint32(26).string(message.top);
+      writer.uint32(34).string(message.top);
     }
     return writer;
   },
@@ -2712,10 +2654,17 @@ export const DebugTestReply = {
             break;
           }
 
-          message.pulseaudio = reader.string();
+          message.time = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           continue;
         case 3:
           if (tag !== 26) {
+            break;
+          }
+
+          message.pulseaudio = reader.string();
+          continue;
+        case 4:
+          if (tag !== 34) {
             break;
           }
 
@@ -2733,6 +2682,7 @@ export const DebugTestReply = {
   fromJSON(object: any): DebugTestReply {
     return {
       delay: isSet(object.delay) ? String(object.delay) : "",
+      time: isSet(object.time) ? fromJsonTimestamp(object.time) : undefined,
       pulseaudio: isSet(object.pulseaudio) ? String(object.pulseaudio) : "",
       top: isSet(object.top) ? String(object.top) : "",
     };
@@ -2742,6 +2692,9 @@ export const DebugTestReply = {
     const obj: any = {};
     if (message.delay !== "") {
       obj.delay = message.delay;
+    }
+    if (message.time !== undefined) {
+      obj.time = message.time.toISOString();
     }
     if (message.pulseaudio !== "") {
       obj.pulseaudio = message.pulseaudio;
@@ -2759,6 +2712,7 @@ export const DebugTestReply = {
   fromPartial<I extends Exact<DeepPartial<DebugTestReply>, I>>(object: I): DebugTestReply {
     const message = createBaseDebugTestReply();
     message.delay = object.delay ?? "";
+    message.time = object.time ?? undefined;
     message.pulseaudio = object.pulseaudio ?? "";
     message.top = object.top ?? "";
     return message;
@@ -2988,7 +2942,7 @@ export interface RemoteControl {
   Logout(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
   /** 调试测试 */
   DebugTest(
-    request: DeepPartial<DebugTestRequest>,
+    request: DeepPartial<Empty>,
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Observable<DebugTestReply>;
@@ -3410,11 +3364,11 @@ export class RemoteControlClientImpl implements RemoteControl {
   }
 
   DebugTest(
-    request: DeepPartial<DebugTestRequest>,
+    request: DeepPartial<Empty>,
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Observable<DebugTestReply> {
-    return this.rpc.invoke(RemoteControlDebugTestDesc, DebugTestRequest.fromPartial(request), metadata, abortSignal);
+    return this.rpc.invoke(RemoteControlDebugTestDesc, Empty.fromPartial(request), metadata, abortSignal);
   }
 }
 
@@ -4278,7 +4232,7 @@ export const RemoteControlDebugTestDesc: UnaryMethodDefinitionish = {
   responseStream: true,
   requestType: {
     serializeBinary() {
-      return DebugTestRequest.encode(this).finish();
+      return Empty.encode(this).finish();
     },
   } as any,
   responseType: {

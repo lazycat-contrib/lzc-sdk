@@ -153,7 +153,7 @@ type RemoteControlClient interface {
 	// 登出
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 调试测试
-	DebugTest(ctx context.Context, in *DebugTestRequest, opts ...grpc.CallOption) (RemoteControl_DebugTestClient, error)
+	DebugTest(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (RemoteControl_DebugTestClient, error)
 }
 
 type remoteControlClient struct {
@@ -588,7 +588,7 @@ func (c *remoteControlClient) Logout(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
-func (c *remoteControlClient) DebugTest(ctx context.Context, in *DebugTestRequest, opts ...grpc.CallOption) (RemoteControl_DebugTestClient, error) {
+func (c *remoteControlClient) DebugTest(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (RemoteControl_DebugTestClient, error) {
 	stream, err := c.cc.NewStream(ctx, &RemoteControl_ServiceDesc.Streams[3], RemoteControl_DebugTest_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
@@ -711,7 +711,7 @@ type RemoteControlServer interface {
 	// 登出
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 调试测试
-	DebugTest(*DebugTestRequest, RemoteControl_DebugTestServer) error
+	DebugTest(*emptypb.Empty, RemoteControl_DebugTestServer) error
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -836,7 +836,7 @@ func (UnimplementedRemoteControlServer) GetScreenLayer(context.Context, *emptypb
 func (UnimplementedRemoteControlServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
-func (UnimplementedRemoteControlServer) DebugTest(*DebugTestRequest, RemoteControl_DebugTestServer) error {
+func (UnimplementedRemoteControlServer) DebugTest(*emptypb.Empty, RemoteControl_DebugTestServer) error {
 	return status.Errorf(codes.Unimplemented, "method DebugTest not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
@@ -1574,7 +1574,7 @@ func _RemoteControl_Logout_Handler(srv interface{}, ctx context.Context, dec fun
 }
 
 func _RemoteControl_DebugTest_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(DebugTestRequest)
+	m := new(emptypb.Empty)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}

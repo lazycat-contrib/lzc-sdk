@@ -201,14 +201,12 @@ message ScreenLayer {
   optional string custom_playload = 2;
 }
 
-message DebugTestRequest{
-  google.protobuf.Timestamp time = 1;
-}
 
 message DebugTestReply{
   string delay = 1;
-  string pulseaudio = 2;
-  string top = 3;
+  google.protobuf.Timestamp time = 2;  
+  string pulseaudio = 3;
+  string top = 4;
 }
 
 service RemoteControl{
@@ -300,5 +298,5 @@ service RemoteControl{
   // 登出
   rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   // 调试测试
-  rpc DebugTest(DebugTestRequest) returns (stream DebugTestReply){}
+  rpc DebugTest(google.protobuf.Empty) returns (stream DebugTestReply){}
 } 
