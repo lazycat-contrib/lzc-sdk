@@ -203,7 +203,6 @@ message ScreenLayer {
 
 
 message DebugTestReply{
-  string delay = 1;
   google.protobuf.Timestamp time = 2;  
   string pulseaudio = 3;
   string top = 4;

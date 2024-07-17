@@ -450,7 +450,6 @@ export interface ScreenLayer {
 }
 
 export interface DebugTestReply {
-  delay: string;
   time: Date | undefined;
   pulseaudio: string;
   top: string;
@@ -2615,14 +2614,11 @@ export const ScreenLayer = {
 };
 
 function createBaseDebugTestReply(): DebugTestReply {
-  return { delay: "", time: undefined, pulseaudio: "", top: "" };
+  return { time: undefined, pulseaudio: "", top: "" };
 }
 
 export const DebugTestReply = {
   encode(message: DebugTestReply, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.delay !== "") {
-      writer.uint32(10).string(message.delay);
-    }
     if (message.time !== undefined) {
       Timestamp.encode(toTimestamp(message.time), writer.uint32(18).fork()).ldelim();
     }
@@ -2642,13 +2638,6 @@ export const DebugTestReply = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.delay = reader.string();
-          continue;
         case 2:
           if (tag !== 18) {
             break;
@@ -2681,7 +2670,6 @@ export const DebugTestReply = {
 
   fromJSON(object: any): DebugTestReply {
     return {
-      delay: isSet(object.delay) ? String(object.delay) : "",
       time: isSet(object.time) ? fromJsonTimestamp(object.time) : undefined,
       pulseaudio: isSet(object.pulseaudio) ? String(object.pulseaudio) : "",
       top: isSet(object.top) ? String(object.top) : "",
@@ -2690,9 +2678,6 @@ export const DebugTestReply = {
 
   toJSON(message: DebugTestReply): unknown {
     const obj: any = {};
-    if (message.delay !== "") {
-      obj.delay = message.delay;
-    }
     if (message.time !== undefined) {
       obj.time = message.time.toISOString();
     }
@@ -2711,7 +2696,6 @@ export const DebugTestReply = {
 
   fromPartial<I extends Exact<DeepPartial<DebugTestReply>, I>>(object: I): DebugTestReply {
     const message = createBaseDebugTestReply();
-    message.delay = object.delay ?? "";
     message.time = object.time ?? undefined;
     message.pulseaudio = object.pulseaudio ?? "";
     message.top = object.top ?? "";
