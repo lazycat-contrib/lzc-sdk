@@ -1,6 +1,7 @@
 import LzcAppSdk, { LzcAppPlatformType, LzcAppSdkManage, native } from "./base"
 import { IntentAction, intentActionFromJSON } from "../common/file_handler"
 import { ClientAuthorizationBaseStatus, ClientAuthorizationType } from './client_authorization';
+import { VibrateType } from './vibrate_type';
 
 class AppCommon extends LzcAppSdkManage {
     /**
@@ -339,6 +340,24 @@ class AppCommon extends LzcAppSdkManage {
             return
         }
 
+        console.warn('the current client does not support');
+    }
+    /**
+     * @description: 使手机发起振动
+     * @return {*}
+     */
+    @native(LzcAppPlatformType.IOS)
+    public static async Vibrate(type: VibrateType): Promise<void> {
+        // 调用各客户端具体实现
+        if (LzcAppSdk.isIosWebShell()) {
+            // TODO
+            return
+        }
+        if (LzcAppSdk.isAndroidWebShell()) {
+            const jsBridge = await LzcAppSdk.useNativeAsync(lzc_vibrate)
+            jsBridge.Vibrate(type)
+            return
+        }
         console.warn('the current client does not support');
     }
 }
