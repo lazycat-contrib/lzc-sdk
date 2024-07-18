@@ -455,6 +455,10 @@ export interface DebugTestReply {
   top: string;
 }
 
+export interface GetBrowserURLResponse {
+  url: string;
+}
+
 function createBaseSendKeyboardEventRequest(): SendKeyboardEventRequest {
   return { code: 0, state: 0 };
 }
@@ -2703,6 +2707,64 @@ export const DebugTestReply = {
   },
 };
 
+function createBaseGetBrowserURLResponse(): GetBrowserURLResponse {
+  return { url: "" };
+}
+
+export const GetBrowserURLResponse = {
+  encode(message: GetBrowserURLResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.url !== "") {
+      writer.uint32(10).string(message.url);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetBrowserURLResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetBrowserURLResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.url = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetBrowserURLResponse {
+    return { url: isSet(object.url) ? String(object.url) : "" };
+  },
+
+  toJSON(message: GetBrowserURLResponse): unknown {
+    const obj: any = {};
+    if (message.url !== "") {
+      obj.url = message.url;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetBrowserURLResponse>, I>>(base?: I): GetBrowserURLResponse {
+    return GetBrowserURLResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GetBrowserURLResponse>, I>>(object: I): GetBrowserURLResponse {
+    const message = createBaseGetBrowserURLResponse();
+    message.url = object.url ?? "";
+    return message;
+  },
+};
+
 export interface RemoteControl {
   /** 发送键盘输入事件 */
   SendKeyboardEvent(
@@ -2930,6 +2992,12 @@ export interface RemoteControl {
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Observable<DebugTestReply>;
+  /** 获取浏览器当前url */
+  GetBrowserURL(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<GetBrowserURLResponse>;
 }
 
 export class RemoteControlClientImpl implements RemoteControl {
@@ -2977,6 +3045,7 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.GetScreenLayer = this.GetScreenLayer.bind(this);
     this.Logout = this.Logout.bind(this);
     this.DebugTest = this.DebugTest.bind(this);
+    this.GetBrowserURL = this.GetBrowserURL.bind(this);
   }
 
   SendKeyboardEvent(
@@ -3353,6 +3422,14 @@ export class RemoteControlClientImpl implements RemoteControl {
     abortSignal?: AbortSignal,
   ): Observable<DebugTestReply> {
     return this.rpc.invoke(RemoteControlDebugTestDesc, Empty.fromPartial(request), metadata, abortSignal);
+  }
+
+  GetBrowserURL(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<GetBrowserURLResponse> {
+    return this.rpc.unary(RemoteControlGetBrowserURLDesc, Empty.fromPartial(request), metadata, abortSignal);
   }
 }
 
@@ -4222,6 +4299,29 @@ export const RemoteControlDebugTestDesc: UnaryMethodDefinitionish = {
   responseType: {
     deserializeBinary(data: Uint8Array) {
       const value = DebugTestReply.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlGetBrowserURLDesc: UnaryMethodDefinitionish = {
+  methodName: "GetBrowserURL",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = GetBrowserURLResponse.decode(data);
       return {
         ...value,
         toObject() {

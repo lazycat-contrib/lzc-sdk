@@ -202,10 +202,14 @@ message ScreenLayer {
 }
 
 
-message DebugTestReply{
+message DebugTestReply {
   google.protobuf.Timestamp time = 2;  
   string pulseaudio = 3;
   string top = 4;
+}
+
+message GetBrowserURLResponse {
+  string url = 1;
 }
 
 service RemoteControl{
@@ -297,5 +301,7 @@ service RemoteControl{
   // 登出
   rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   // 调试测试
-  rpc DebugTest(google.protobuf.Empty) returns (stream DebugTestReply){}
+  rpc DebugTest(google.protobuf.Empty) returns (stream DebugTestReply) {}
+  // 获取浏览器当前url
+  rpc GetBrowserURL(google.protobuf.Empty) returns (GetBrowserURLResponse) {}
 } 
