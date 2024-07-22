@@ -18,6 +18,8 @@ service BoxService {
   rpc Shutdown(ShutdownRequest) returns (google.protobuf.Empty) {}
 
   rpc QueryDisksInfo(google.protobuf.Empty) returns (DisksInfo) {}
+
+  rpc ChangeDataDisksPassword(ChangeDataDisksPasswordRequest) returns (ChangeDataDisksPasswordResponse) {}
 }
 
 message BoxInfo {
@@ -133,4 +135,13 @@ message DiskInfo {
 
 message DisksInfo {
   repeated DiskInfo disks = 1;
+}
+
+message ChangeDataDisksPasswordRequest {
+  string old_password = 1;
+  string new_password = 2;
+}
+
+message ChangeDataDisksPasswordResponse {
+  bool ok = 1;
 }
