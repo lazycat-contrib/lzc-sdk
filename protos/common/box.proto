@@ -100,6 +100,8 @@ message DiskInfo {
   // 磁盘类型
   DiskType type = 1;
 
+  bool encrypted = 11;
+
   // 盘位（仅当 type 为 Data 时才有效）
   int32 slot = 2;
 
