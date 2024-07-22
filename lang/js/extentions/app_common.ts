@@ -150,13 +150,14 @@ class AppCommon extends LzcAppSdkManage {
     }
 
     /**
-     * @description: 分享本地离线文件
-     * @param {string | null} path 文件路径
-     * @param {string[] | null} paths 分享多文件路径
+     * @description: 分享本地离线文件或媒体资源
+     * @param {string | undefined} path 文件路径
+     * @param {string[] | undefined} paths 分享多文件路径
+     * @param {string[] | undefined} mediaIds 分享多文件路径
      * @return {boolean}
      */
     @native(LzcAppPlatformType.Android, LzcAppPlatformType.IOS)
-    public static async ShareWithFiles(path: string = null, paths: string[] = null): Promise<boolean> {
+    public static async ShareWithFiles(path: string = undefined, paths: string[] = undefined, mediaIds: string[] = undefined): Promise<boolean> {
         // 在浏览器环境中
         if (!LzcAppSdk.isInApplication()) {
             console.error("ShareWithFiles 方法暂未实现。")
@@ -164,8 +165,8 @@ class AppCommon extends LzcAppSdkManage {
         }
 
         // 判断参数
-        if (path == null && paths == null) {
-            throw Error("path 和 paths 参数不能同时为空")
+        if (path == undefined && paths == undefined && mediaIds == undefined) {
+            throw Error("path、paths 和 mediaIds 参数不能同时为空")
         }
 
         // 在 Android 环境
@@ -174,10 +175,10 @@ class AppCommon extends LzcAppSdkManage {
             const content = {
                 "filePath": []
             }
-            if(path != null){
+            if (path != undefined) {
                 content.filePath.push(path)
             }
-            if(paths != null){
+            if (paths != undefined) {
                 content.filePath = content.filePath.concat(paths)
             }
             jsBridge.ShareWithFiles(JSON.stringify(content));
@@ -187,7 +188,7 @@ class AppCommon extends LzcAppSdkManage {
         // 在 IOS 环境
         if (LzcAppSdk.isIosWebShell()) {
             const jsBridge = await LzcAppSdk.useNativeAsync()
-            return await jsBridge.ShareWith(path, paths)
+            return await jsBridge.ShareWith(path, paths, mediaIds)
         }
 
         // TODO: 其他环境中待实现
