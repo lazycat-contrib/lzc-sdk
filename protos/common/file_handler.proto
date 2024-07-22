@@ -117,40 +117,47 @@ message StatReply{
 
 // 同步文件夹请求
 message SyncFolderRequest{
+  string box_name = 1;
   // 服务器地址
-  string webdav_addr = 1;
+  string webdav_addr = 2;
   // 服务器用户名
-  string username = 2;
+  string username = 3;
   // 服务器密码
-  string password = 3;
+  string password = 4;
   // 设备文件夹路径
-  string device_path = 4;
-  string target_path = 5;
+  string device_path = 5;
+  string target_path = 6;
 }
 
 // 复制文件夹请求
 message CopyFolderRequest{
+  string box_name = 1;
   // 服务器地址
-  string webdav_addr = 1;
+  string webdav_addr = 2;
   // 服务器用户名
-  string username = 2;
+  string username = 3;
   // 服务器密码
-  string password = 3;
+  string password = 4;
   // 设备文件夹路径
-  string device_path = 4;
-  string target_path = 5;
+  string device_path = 5;
+  // 目标路径
+  string target_path = 6;
 }
 
 // 文件进度信息
 message FileProgress {
-  // 当前文件名
-  string file_name = 1;
-  // 当前文件同步进度
-  string progress = 2;
-  // 当前文件已经传输的体积
-  string transferred_file_size = 3;
-  // 当前文件同步的进度
-  string speed = 4;
+  // 已经传输完成的文件体积
+  int64  bytes = 1;
+  // 文件名称
+  string file_name = 2;
+  // 进度
+  int32 percentage = 3;
+  // 文件体积
+  int64 size = 4;
+  // 文件传输速度
+  float speed = 5;
+  // 文件传输平均速度
+  float speed_avg = 6;
 }
 
 //  整体的进度信息
@@ -159,17 +166,28 @@ message TaskProgressInfo {
   int32 code = 1;
   // 错误信息。
   string msg = 2;
-  // 需要需要同步/备份的文件数量
-  int32 total_file_count = 3;
-  // 需要需要同步/备份的体积
-  string total_file_size = 4;
-  // 已经传输的文件的文件数量
-  int32 transferred_file_count = 5;
-  // 已经传输的文件体积
-  string transferred_file_size = 6;
-  repeated FileProgress file_sync_progress = 7;
-  // 所有文件的速度
-  string total_file_sync_speed = 8;
-  // 正在检测的文件数量信息, 当有这个信息的时候，正在检测文件。
-  string checks = 9;
+  // 已经传输完的文件体积
+  int64 bytes = 3;
+  // 所有需要传输的文件体积;
+  int64 total_bytes  = 4;
+  // 已经传输完成的文件数量;
+  int64 transfers = 5;
+  // 所有要传输的文件数量;
+  int64  total_transfers = 6;
+  // 已经检查过的文件数量;
+  int64 checks = 7;
+  // 所有要检查的文件数量;
+  int64 total_checks = 8;
+  //  已经删除的目录数量
+  int64  deleted_dirs = 9;
+  // 已经删除的文件数量
+  int64 deletes = 10;
+  // 当前任务消耗的时间
+  float elapsedTime = 11;
+  // eta 预计该任务传输完成的时间
+  int32 eta = 12;
+  // 重命名文件的数量
+  int32 renames = 13;
+  // 传输速度
+  float speed = 14;
 }
