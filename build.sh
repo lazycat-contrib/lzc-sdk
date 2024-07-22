@@ -100,6 +100,7 @@ if [ "$1" = "gen-security-content-rules" ]; then
     fi
     # 容器内总是 root，写入的文件 owner = root 导致外部的非 root 用户被 denied，这里修复。可以考虑 git config core.filemode false 避免 git 发疯
     chmod -R a+rw ./lang # 之前的 chown 设置一个不存在的 uid 在 macos 上的 docker 内出错
+    # 如果是 docker rootless，可以考虑注释掉上一行
     exit
 fi
 
