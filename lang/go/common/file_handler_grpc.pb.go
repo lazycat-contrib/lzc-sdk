@@ -27,6 +27,8 @@ const (
 	FileHandler_WalkDirDuplex_FullMethodName   = "/cloud.lazycat.apis.common.FileHandler/walkDirDuplex"
 	FileHandler_CreateDir_FullMethodName       = "/cloud.lazycat.apis.common.FileHandler/createDir"
 	FileHandler_Stat_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/stat"
+	FileHandler_SyncFolder_FullMethodName      = "/cloud.lazycat.apis.common.FileHandler/syncFolder"
+	FileHandler_CopyFolder_FullMethodName      = "/cloud.lazycat.apis.common.FileHandler/copyFolder"
 )
 
 // FileHandlerClient is the client API for FileHandler service.
@@ -41,6 +43,16 @@ type FileHandlerClient interface {
 	WalkDirDuplex(ctx context.Context, opts ...grpc.CallOption) (FileHandler_WalkDirDuplexClient, error)
 	CreateDir(ctx context.Context, opts ...grpc.CallOption) (FileHandler_CreateDirClient, error)
 	Stat(ctx context.Context, in *StatRequest, opts ...grpc.CallOption) (*StatReply, error)
+	// 同步文件夹, 让target_path的内容和device_path内容一致.  device_path = target_path
+	//
+	//	sync A→B 的話
+	//	B=A
+	SyncFolder(ctx context.Context, in *SyncFolderRequest, opts ...grpc.CallOption) (FileHandler_SyncFolderClient, error)
+	// 备份文件夹, 让server_path的内容和设备上的某个文件夹保持一致.
+	//
+	//	copy A→B 的話
+	//	  B=A+B 原有檔案
+	CopyFolder(ctx context.Context, in *CopyFolderRequest, opts ...grpc.CallOption) (FileHandler_CopyFolderClient, error)
 }
 
 type fileHandlerClient struct {
@@ -184,6 +196,70 @@ func (c *fileHandlerClient) Stat(ctx context.Context, in *StatRequest, opts ...g
 	return out, nil
 }
 
+func (c *fileHandlerClient) SyncFolder(ctx context.Context, in *SyncFolderRequest, opts ...grpc.CallOption) (FileHandler_SyncFolderClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[3], FileHandler_SyncFolder_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &fileHandlerSyncFolderClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FileHandler_SyncFolderClient interface {
+	Recv() (*TaskProgressInfo, error)
+	grpc.ClientStream
+}
+
+type fileHandlerSyncFolderClient struct {
+	grpc.ClientStream
+}
+
+func (x *fileHandlerSyncFolderClient) Recv() (*TaskProgressInfo, error) {
+	m := new(TaskProgressInfo)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *fileHandlerClient) CopyFolder(ctx context.Context, in *CopyFolderRequest, opts ...grpc.CallOption) (FileHandler_CopyFolderClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[4], FileHandler_CopyFolder_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &fileHandlerCopyFolderClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FileHandler_CopyFolderClient interface {
+	Recv() (*TaskProgressInfo, error)
+	grpc.ClientStream
+}
+
+type fileHandlerCopyFolderClient struct {
+	grpc.ClientStream
+}
+
+func (x *fileHandlerCopyFolderClient) Recv() (*TaskProgressInfo, error) {
+	m := new(TaskProgressInfo)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // FileHandlerServer is the server API for FileHandler service.
 // All implementations must embed UnimplementedFileHandlerServer
 // for forward compatibility
@@ -196,6 +272,16 @@ type FileHandlerServer interface {
 	WalkDirDuplex(FileHandler_WalkDirDuplexServer) error
 	CreateDir(FileHandler_CreateDirServer) error
 	Stat(context.Context, *StatRequest) (*StatReply, error)
+	// 同步文件夹, 让target_path的内容和device_path内容一致.  device_path = target_path
+	//
+	//	sync A→B 的話
+	//	B=A
+	SyncFolder(*SyncFolderRequest, FileHandler_SyncFolderServer) error
+	// 备份文件夹, 让server_path的内容和设备上的某个文件夹保持一致.
+	//
+	//	copy A→B 的話
+	//	  B=A+B 原有檔案
+	CopyFolder(*CopyFolderRequest, FileHandler_CopyFolderServer) error
 	mustEmbedUnimplementedFileHandlerServer()
 }
 
@@ -223,6 +309,12 @@ func (UnimplementedFileHandlerServer) CreateDir(FileHandler_CreateDirServer) err
 }
 func (UnimplementedFileHandlerServer) Stat(context.Context, *StatRequest) (*StatReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Stat not implemented")
+}
+func (UnimplementedFileHandlerServer) SyncFolder(*SyncFolderRequest, FileHandler_SyncFolderServer) error {
+	return status.Errorf(codes.Unimplemented, "method SyncFolder not implemented")
+}
+func (UnimplementedFileHandlerServer) CopyFolder(*CopyFolderRequest, FileHandler_CopyFolderServer) error {
+	return status.Errorf(codes.Unimplemented, "method CopyFolder not implemented")
 }
 func (UnimplementedFileHandlerServer) mustEmbedUnimplementedFileHandlerServer() {}
 
@@ -382,6 +474,48 @@ func _FileHandler_Stat_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FileHandler_SyncFolder_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SyncFolderRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FileHandlerServer).SyncFolder(m, &fileHandlerSyncFolderServer{stream})
+}
+
+type FileHandler_SyncFolderServer interface {
+	Send(*TaskProgressInfo) error
+	grpc.ServerStream
+}
+
+type fileHandlerSyncFolderServer struct {
+	grpc.ServerStream
+}
+
+func (x *fileHandlerSyncFolderServer) Send(m *TaskProgressInfo) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _FileHandler_CopyFolder_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(CopyFolderRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FileHandlerServer).CopyFolder(m, &fileHandlerCopyFolderServer{stream})
+}
+
+type FileHandler_CopyFolderServer interface {
+	Send(*TaskProgressInfo) error
+	grpc.ServerStream
+}
+
+type fileHandlerCopyFolderServer struct {
+	grpc.ServerStream
+}
+
+func (x *fileHandlerCopyFolderServer) Send(m *TaskProgressInfo) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // FileHandler_ServiceDesc is the grpc.ServiceDesc for FileHandler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -422,6 +556,16 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "createDir",
 			Handler:       _FileHandler_CreateDir_Handler,
 			ClientStreams: true,
+		},
+		{
+			StreamName:    "syncFolder",
+			Handler:       _FileHandler_SyncFolder_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "copyFolder",
+			Handler:       _FileHandler_CopyFolder_Handler,
+			ServerStreams: true,
 		},
 	},
 	Metadata: "common/file_handler.proto",

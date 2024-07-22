@@ -16,6 +16,14 @@ service FileHandler {
   rpc walkDirDuplex(stream WalkDirRequest) returns (stream WalkDirReply) {}
   rpc createDir(stream CreateDirRequest) returns (google.protobuf.Empty) {}
   rpc stat(StatRequest) returns (StatReply) {}
+  // 同步文件夹, 让target_path的内容和device_path内容一致.  device_path = target_path
+  //  sync A→B 的話
+  //  B=A
+  rpc syncFolder(SyncFolderRequest) returns (stream TaskProgressInfo) {}
+  // 备份文件夹, 让server_path的内容和设备上的某个文件夹保持一致.
+  //    copy A→B 的話
+  //      B=A+B 原有檔案
+  rpc copyFolder(CopyFolderRequest) returns (stream TaskProgressInfo) {}
 }
 
 message WalkDirRequest {
@@ -105,4 +113,63 @@ message StatReply{
   uint32 mode = 3;
   google.protobuf.Timestamp modTime = 4;
   bool isDir = 5;
+}
+
+// 同步文件夹请求
+message SyncFolderRequest{
+  // 服务器地址
+  string webdav_addr = 1;
+  // 服务器用户名
+  string username = 2;
+  // 服务器密码
+  string password = 3;
+  // 设备文件夹路径
+  string device_path = 4;
+  string target_path = 5;
+}
+
+// 复制文件夹请求
+message CopyFolderRequest{
+  // 服务器地址
+  string webdav_addr = 1;
+  // 服务器用户名
+  string username = 2;
+  // 服务器密码
+  string password = 3;
+  // 设备文件夹路径
+  string device_path = 4;
+  string target_path = 5;
+}
+
+// 文件进度信息
+message FileProgress {
+  // 当前文件名
+  string file_name = 1;
+  // 当前文件同步进度
+  string progress = 2;
+  // 当前文件已经传输的体积
+  string transferred_file_size = 3;
+  // 当前文件同步的进度
+  string speed = 4;
+}
+
+//  整体的进度信息
+message TaskProgressInfo {
+  // 当code = 1, 任务完成。其他为异常退出
+  int32 code = 1;
+  // 错误信息。
+  string msg = 2;
+  // 需要需要同步/备份的文件数量
+  int32 total_file_count = 3;
+  // 需要需要同步/备份的体积
+  string total_file_size = 4;
+  // 已经传输的文件的文件数量
+  int32 transferred_file_count = 5;
+  // 已经传输的文件体积
+  string transferred_file_size = 6;
+  repeated FileProgress file_sync_progress = 7;
+  // 所有文件的速度
+  string total_file_sync_speed = 8;
+  // 正在检测的文件数量信息, 当有这个信息的时候，正在检测文件。
+  string checks = 9;
 }
