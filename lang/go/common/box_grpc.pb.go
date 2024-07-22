@@ -20,12 +20,13 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	BoxService_QueryInfo_FullMethodName         = "/cloud.lazycat.apis.common.BoxService/QueryInfo"
-	BoxService_ChangeDisplayName_FullMethodName = "/cloud.lazycat.apis.common.BoxService/ChangeDisplayName"
-	BoxService_ChangePowerLed_FullMethodName    = "/cloud.lazycat.apis.common.BoxService/ChangePowerLed"
-	BoxService_SetBootOption_FullMethodName     = "/cloud.lazycat.apis.common.BoxService/SetBootOption"
-	BoxService_Shutdown_FullMethodName          = "/cloud.lazycat.apis.common.BoxService/Shutdown"
-	BoxService_QueryDisksInfo_FullMethodName    = "/cloud.lazycat.apis.common.BoxService/QueryDisksInfo"
+	BoxService_QueryInfo_FullMethodName               = "/cloud.lazycat.apis.common.BoxService/QueryInfo"
+	BoxService_ChangeDisplayName_FullMethodName       = "/cloud.lazycat.apis.common.BoxService/ChangeDisplayName"
+	BoxService_ChangePowerLed_FullMethodName          = "/cloud.lazycat.apis.common.BoxService/ChangePowerLed"
+	BoxService_SetBootOption_FullMethodName           = "/cloud.lazycat.apis.common.BoxService/SetBootOption"
+	BoxService_Shutdown_FullMethodName                = "/cloud.lazycat.apis.common.BoxService/Shutdown"
+	BoxService_QueryDisksInfo_FullMethodName          = "/cloud.lazycat.apis.common.BoxService/QueryDisksInfo"
+	BoxService_ChangeDataDisksPassword_FullMethodName = "/cloud.lazycat.apis.common.BoxService/ChangeDataDisksPassword"
 )
 
 // BoxServiceClient is the client API for BoxService service.
@@ -38,6 +39,7 @@ type BoxServiceClient interface {
 	SetBootOption(ctx context.Context, in *BootOption, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Shutdown(ctx context.Context, in *ShutdownRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	QueryDisksInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DisksInfo, error)
+	ChangeDataDisksPassword(ctx context.Context, in *ChangeDataDisksPasswordRequest, opts ...grpc.CallOption) (*ChangeDataDisksPasswordResponse, error)
 }
 
 type boxServiceClient struct {
@@ -102,6 +104,15 @@ func (c *boxServiceClient) QueryDisksInfo(ctx context.Context, in *emptypb.Empty
 	return out, nil
 }
 
+func (c *boxServiceClient) ChangeDataDisksPassword(ctx context.Context, in *ChangeDataDisksPasswordRequest, opts ...grpc.CallOption) (*ChangeDataDisksPasswordResponse, error) {
+	out := new(ChangeDataDisksPasswordResponse)
+	err := c.cc.Invoke(ctx, BoxService_ChangeDataDisksPassword_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BoxServiceServer is the server API for BoxService service.
 // All implementations must embed UnimplementedBoxServiceServer
 // for forward compatibility
@@ -112,6 +123,7 @@ type BoxServiceServer interface {
 	SetBootOption(context.Context, *BootOption) (*emptypb.Empty, error)
 	Shutdown(context.Context, *ShutdownRequest) (*emptypb.Empty, error)
 	QueryDisksInfo(context.Context, *emptypb.Empty) (*DisksInfo, error)
+	ChangeDataDisksPassword(context.Context, *ChangeDataDisksPasswordRequest) (*ChangeDataDisksPasswordResponse, error)
 	mustEmbedUnimplementedBoxServiceServer()
 }
 
@@ -136,6 +148,9 @@ func (UnimplementedBoxServiceServer) Shutdown(context.Context, *ShutdownRequest)
 }
 func (UnimplementedBoxServiceServer) QueryDisksInfo(context.Context, *emptypb.Empty) (*DisksInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryDisksInfo not implemented")
+}
+func (UnimplementedBoxServiceServer) ChangeDataDisksPassword(context.Context, *ChangeDataDisksPasswordRequest) (*ChangeDataDisksPasswordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeDataDisksPassword not implemented")
 }
 func (UnimplementedBoxServiceServer) mustEmbedUnimplementedBoxServiceServer() {}
 
@@ -258,6 +273,24 @@ func _BoxService_QueryDisksInfo_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BoxService_ChangeDataDisksPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeDataDisksPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxServiceServer).ChangeDataDisksPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BoxService_ChangeDataDisksPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxServiceServer).ChangeDataDisksPassword(ctx, req.(*ChangeDataDisksPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BoxService_ServiceDesc is the grpc.ServiceDesc for BoxService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -288,6 +321,10 @@ var BoxService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QueryDisksInfo",
 			Handler:    _BoxService_QueryDisksInfo_Handler,
+		},
+		{
+			MethodName: "ChangeDataDisksPassword",
+			Handler:    _BoxService_ChangeDataDisksPassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
