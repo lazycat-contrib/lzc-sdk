@@ -26,6 +26,7 @@ message GetUserMediaMetaResponse {
     uint32 width = 2;
     uint32 height = 3;
     int64 datetime = 4;
+    map<string, string> exifData = 5;
 }
 
 service Thumbnail {
