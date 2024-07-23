@@ -149,7 +149,7 @@ message FileProgress {
   // 已经传输完成的文件体积
   int64  bytes = 1;
   // 文件名称
-  string file_name = 2;
+  string name = 2;
   // 进度
   int32 percentage = 3;
   // 文件体积
@@ -183,11 +183,13 @@ message TaskProgressInfo {
   // 已经删除的文件数量
   int64 deletes = 10;
   // 当前任务消耗的时间
-  float elapsedTime = 11;
+  float elapsed_time = 11;
   // eta 预计该任务传输完成的时间
   int32 eta = 12;
   // 重命名文件的数量
   int32 renames = 13;
   // 传输速度
   float speed = 14;
+
+  repeated FileProgress transferring = 15;
 }
