@@ -774,6 +774,31 @@ function App() {
                             >
                                 ShareMedia
                             </button>
+                            <button
+                                style={{ marginTop: 10 }}
+                                onClick={async () => {
+                                    const device = await lzcAPI.current.currentDevice;
+                                    device.fileHandler.copyFolder({
+                                        "boxName":"lnks888",
+                                        "devicePath":"/Users/mac/lzc-client-desktop",
+                                        "username":"meetsong",
+                                        "password":"",
+                                        targetPath:"/backup",
+                                        "webdavAddr": "https://file.lnks888.heiyu.space/dav/"
+                                    }).forEach(task => {
+                                        const on = JSON.stringify(task)
+                                        if(task.msg){
+                                            console.log("收到同步信息错误:"+task.msg)
+                                        }else{
+                                            console.log("收到同步信息:"+on)
+                                        }
+                                    }).catch(res => {
+                                        console.log("同步错误:"+res.toString())
+                                    })
+                                }}
+                            >
+                               SyncFolder
+                            </button>
                         </div>
 
                         <p>
