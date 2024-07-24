@@ -173,13 +173,17 @@ class AppCommon extends LzcAppSdkManage {
         if (LzcAppSdk.isAndroidWebShell()) {
             const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
             const content = {
-                "filePath": []
+                "filePath": [],
+                "mediaIds": [],
             }
             if (path != undefined) {
                 content.filePath.push(path)
             }
             if (paths != undefined) {
                 content.filePath = content.filePath.concat(paths)
+            }
+            if (mediaIds != undefined) {
+                content.mediaIds = content.mediaIds.concat(mediaIds)
             }
             jsBridge.ShareWithFiles(JSON.stringify(content));
             return true
@@ -347,7 +351,7 @@ class AppCommon extends LzcAppSdkManage {
      * @description: 使手机发起振动
      * @return {*}
      */
-    @native(LzcAppPlatformType.IOS)
+    @native(LzcAppPlatformType.IOS,LzcAppPlatformType.Android)
     public static async Vibrate(type: VibrateType): Promise<void> {
         // 调用各客户端具体实现
         if (LzcAppSdk.isIosWebShell()) {
