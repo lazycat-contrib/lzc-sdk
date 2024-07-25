@@ -23,12 +23,17 @@ message Contact {
     repeated string phones = 3;
 }
 
+message NewContact {
+    string name = 1;
+    repeated string phones = 2;
+}
+
 message ListContactsReply {
     repeated Contact contacts = 1;
 }
 
 message AddContactsRequest {
-    repeated string ids = 1;
+    repeated NewContact contacts = 1;
 }
 
 message AddContactsReply {
@@ -44,7 +49,7 @@ message DeleteContactsReply {
 }
 
 message UpdateContactsRequest {
-    repeated string ids = 1;
+    repeated Contact contacts = 1;
 }
 
 message UpdateContactsReply {

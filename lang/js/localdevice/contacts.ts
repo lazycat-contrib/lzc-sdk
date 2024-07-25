@@ -10,12 +10,17 @@ export interface Contact {
   phones: string[];
 }
 
+export interface NewContact {
+  name: string;
+  phones: string[];
+}
+
 export interface ListContactsReply {
   contacts: Contact[];
 }
 
 export interface AddContactsRequest {
-  ids: string[];
+  contacts: NewContact[];
 }
 
 export interface AddContactsReply {
@@ -31,7 +36,7 @@ export interface DeleteContactsReply {
 }
 
 export interface UpdateContactsRequest {
-  ids: string[];
+  contacts: Contact[];
 }
 
 export interface UpdateContactsReply {
@@ -129,6 +134,81 @@ export const Contact = {
   },
 };
 
+function createBaseNewContact(): NewContact {
+  return { name: "", phones: [] };
+}
+
+export const NewContact = {
+  encode(message: NewContact, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.name !== "") {
+      writer.uint32(10).string(message.name);
+    }
+    for (const v of message.phones) {
+      writer.uint32(18).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): NewContact {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseNewContact();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.phones.push(reader.string());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): NewContact {
+    return {
+      name: isSet(object.name) ? String(object.name) : "",
+      phones: Array.isArray(object?.phones) ? object.phones.map((e: any) => String(e)) : [],
+    };
+  },
+
+  toJSON(message: NewContact): unknown {
+    const obj: any = {};
+    if (message.name !== "") {
+      obj.name = message.name;
+    }
+    if (message.phones?.length) {
+      obj.phones = message.phones;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<NewContact>, I>>(base?: I): NewContact {
+    return NewContact.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<NewContact>, I>>(object: I): NewContact {
+    const message = createBaseNewContact();
+    message.name = object.name ?? "";
+    message.phones = object.phones?.map((e) => e) || [];
+    return message;
+  },
+};
+
 function createBaseListContactsReply(): ListContactsReply {
   return { contacts: [] };
 }
@@ -188,13 +268,13 @@ export const ListContactsReply = {
 };
 
 function createBaseAddContactsRequest(): AddContactsRequest {
-  return { ids: [] };
+  return { contacts: [] };
 }
 
 export const AddContactsRequest = {
   encode(message: AddContactsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    for (const v of message.ids) {
-      writer.uint32(10).string(v!);
+    for (const v of message.contacts) {
+      NewContact.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
@@ -211,7 +291,7 @@ export const AddContactsRequest = {
             break;
           }
 
-          message.ids.push(reader.string());
+          message.contacts.push(NewContact.decode(reader, reader.uint32()));
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -223,13 +303,13 @@ export const AddContactsRequest = {
   },
 
   fromJSON(object: any): AddContactsRequest {
-    return { ids: Array.isArray(object?.ids) ? object.ids.map((e: any) => String(e)) : [] };
+    return { contacts: Array.isArray(object?.contacts) ? object.contacts.map((e: any) => NewContact.fromJSON(e)) : [] };
   },
 
   toJSON(message: AddContactsRequest): unknown {
     const obj: any = {};
-    if (message.ids?.length) {
-      obj.ids = message.ids;
+    if (message.contacts?.length) {
+      obj.contacts = message.contacts.map((e) => NewContact.toJSON(e));
     }
     return obj;
   },
@@ -240,7 +320,7 @@ export const AddContactsRequest = {
 
   fromPartial<I extends Exact<DeepPartial<AddContactsRequest>, I>>(object: I): AddContactsRequest {
     const message = createBaseAddContactsRequest();
-    message.ids = object.ids?.map((e) => e) || [];
+    message.contacts = object.contacts?.map((e) => NewContact.fromPartial(e)) || [];
     return message;
   },
 };
@@ -406,13 +486,13 @@ export const DeleteContactsReply = {
 };
 
 function createBaseUpdateContactsRequest(): UpdateContactsRequest {
-  return { ids: [] };
+  return { contacts: [] };
 }
 
 export const UpdateContactsRequest = {
   encode(message: UpdateContactsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    for (const v of message.ids) {
-      writer.uint32(10).string(v!);
+    for (const v of message.contacts) {
+      Contact.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
@@ -429,7 +509,7 @@ export const UpdateContactsRequest = {
             break;
           }
 
-          message.ids.push(reader.string());
+          message.contacts.push(Contact.decode(reader, reader.uint32()));
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -441,13 +521,13 @@ export const UpdateContactsRequest = {
   },
 
   fromJSON(object: any): UpdateContactsRequest {
-    return { ids: Array.isArray(object?.ids) ? object.ids.map((e: any) => String(e)) : [] };
+    return { contacts: Array.isArray(object?.contacts) ? object.contacts.map((e: any) => Contact.fromJSON(e)) : [] };
   },
 
   toJSON(message: UpdateContactsRequest): unknown {
     const obj: any = {};
-    if (message.ids?.length) {
-      obj.ids = message.ids;
+    if (message.contacts?.length) {
+      obj.contacts = message.contacts.map((e) => Contact.toJSON(e));
     }
     return obj;
   },
@@ -458,7 +538,7 @@ export const UpdateContactsRequest = {
 
   fromPartial<I extends Exact<DeepPartial<UpdateContactsRequest>, I>>(object: I): UpdateContactsRequest {
     const message = createBaseUpdateContactsRequest();
-    message.ids = object.ids?.map((e) => e) || [];
+    message.contacts = object.contacts?.map((e) => Contact.fromPartial(e)) || [];
     return message;
   },
 };
