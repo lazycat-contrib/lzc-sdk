@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package cloud.lazycat.apis.localdevice;
+
+option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/localdevice";
+
+import "google/protobuf/empty.proto";
+
+service ContactsManager {
+    // 获取全部联系人列表
+    rpc ListContacts(google.protobuf.Empty) returns (ListContactsReply) {}
+    // 添加联系人到通讯录
+    rpc AddContacts(AddContactsRequest) returns (AddContactsReply) {}
+    // 从通讯录删除联系人
+    rpc DeleteContacts(DeleteContactsRequest) returns (DeleteContactsReply) {}
+    // 修改通讯录的联系人
+    rpc UpdateContacts(UpdateContactsRequest) returns (UpdateContactsReply) {}
+}
+
+message Contact {
+    string id = 1;
+    string name = 2;
+    repeated string phones = 3;
+}
+
+message ListContactsReply {
+    repeated Contact contacts = 1;
+}
+
+message AddContactsRequest {
+    repeated string ids = 1;
+}
+
+message AddContactsReply {
+}
+
+message DeleteContactsRequest {
+    repeated string ids = 1;
+}
+
+message DeleteContactsReply {
+    // 删除失败的 id
+    repeated string failed_ids = 1;
+}
+
+message UpdateContactsRequest {
+    repeated string ids = 1;
+}
+
+message UpdateContactsReply {
+    // 修改失败的 id
+    repeated string failed_ids = 1;
+}
+
