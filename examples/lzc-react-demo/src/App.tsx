@@ -482,7 +482,195 @@ function App() {
                     <h1>LzcAPI for React</h1>
                     <div className="card">
                         <div style={{ display: 'inline-grid', justifyContent: 'center' }}>
+
                             <button
+                                style={{ marginTop: 10 }}
+                                onClick={async () => {
+                                    try {
+                                        const currentDevice = await lzcAPI.current?.currentDevice
+                                        const device = currentDevice!;
+                                        let reply = await device.contacts.ListContacts({});
+                                        console.log('reply', reply);
+                                    } catch (error) {
+                                        // throw error;
+                                        console.error('ListContacts error', error);
+                                    }
+                                }}
+                            >
+                                ListContacts
+                            </button>
+
+                            <button
+                                style={{ marginTop: 10 }}
+                                onClick={async () => {
+                                    try {
+                                        const currentDevice = await lzcAPI.current?.currentDevice
+                                        const device = currentDevice!;
+                                        let reply = await device.contacts.AddContacts({
+                                            contacts: [
+                                                {
+                                                    name: 'tzbin001',
+                                                    phones: ['10086']
+                                                },
+                                                {
+                                                    name: 'tzbin002',
+                                                    phones: ['1008611']
+                                                }
+                                            ]
+                                        });
+                                        console.log('reply', reply);
+                                    } catch (error) {
+                                        // throw error;
+                                        console.error('ListContacts error', error);
+                                    }
+                                }}
+                            >
+                                AddContacts
+                            </button>
+
+                            <button
+                                style={{ marginTop: 10 }}
+                                onClick={async () => {
+                                    try {
+                                        const currentDevice = await lzcAPI.current?.currentDevice
+                                        const device = currentDevice!;
+                                        const { contacts } = await device.contacts.ListContacts({});
+                                        let newContacts = contacts.map((i) => {
+                                            if (i.name.includes('tzbin')) {
+                                                return {
+                                                    ...i,
+                                                    phones: ['1000011']
+                                                }
+                                            }
+                                        }).filter(i => i) as any[]
+                                        console.log('newContacts', newContacts);
+                                        let reply = await device.contacts.UpdateContacts({
+                                            contacts: newContacts
+                                        });
+                                        console.log('reply', reply);
+                                    } catch (error) {
+                                        // throw error;
+                                        console.error('ListContacts error', error);
+                                    }
+                                }}
+                            >
+                                UpdateContact
+                            </button>
+
+                            <button
+                                style={{ marginTop: 10 }}
+                                onClick={async () => {
+                                    try {
+                                        const currentDevice = await lzcAPI.current?.currentDevice
+                                        const device = currentDevice!;
+                                        const { contacts } = await device.contacts.ListContacts({});
+                                        let ids = contacts.map((i) => {
+                                            if (i.name.includes('tzbin')) {
+                                                return i.id
+                                            }
+                                        }).filter(i => i) as string[]
+                                        console.log('ids', ids);
+                                        let reply = await device.contacts.DeleteContacts({
+                                            ids: ids
+                                        });
+                                        console.log('reply', reply);
+                                    } catch (error) {
+                                        // throw error;
+                                        console.error('ListContacts error', error);
+                                    }
+                                }}
+                            >
+                                DeleteContacts
+                            </button>
+
+                            <button
+                                style={{ marginTop: 10 }}
+                                onClick={async () => {
+                                    const currentDevice = await lzcAPI.current?.currentDevice
+                                    setPageIndex(0); // 打开查询媒体资源页面
+                                }}
+                            >
+                                QueryAsset
+                            </button>
+
+                            <button
+                                style={{ marginTop: 10 }}
+                                onClick={async () => {
+                                    try {
+                                        const currentDevice = await lzcAPI.current?.currentDevice
+                                        const device = currentDevice!;
+                                        let reply = device.photolibrary.PutPhoto({
+                                            url: 'https://open.doc.cxkjedu.com/logo.svg',
+                                            // url: 'https://open.doc.cxkjedu.com/logo-with-shadow.png',
+                                            fileName: 'test.svg'
+                                        });
+                                        console.log('reply', reply);
+                                        await reply.forEach((item) => {
+                                            console.log('reply', item);
+                                        })
+                                    } catch (error) {
+                                        // throw error;
+                                        console.error('PutPhoto error', error);
+                                    }
+                                }}
+                            >
+                                PutPhoto
+                            </button>
+
+                            <button
+                                style={{ marginTop: 10 }}
+                                onClick={deletePhotoFor500}
+                            >
+                                deletePhotoFor500
+                            </button>
+
+                            <button
+                                style={{ marginTop: 10 }}
+                                onClick={async () => {
+                                    // let a = await AppCommon.ShareMedia({
+                                    //     id: '4FD65BF9-A838-405C-A476-1F71CACBD587/L0/001',
+                                    //     // ids: ['4FD65BF9-A838-405C-A476-1F71CACBD587/L0/001']
+                                    // })
+                                    // let a = await AppCommon.ShareWith("", "test", "")
+                                    // let a = await AppCommon.ShareWith("", "/private/var/mobile/Containers/Shared/AppGroup/05277D27-8A5D-464E-8FD2-A496A4D1582C/Documents/懒猫网盘离线/0o0/admin/兔子2.0.zip", "")
+                                    let ok = await AppCommon.ShareWithFiles(null, [
+                                        "/private/var/mobile/Containers/Shared/AppGroup/05277D27-8A5D-464E-8FD2-A496A4D1582C/Documents/懒猫网盘离线/0o0/admin/IMG_0127.PNG",
+                                        "/private/var/mobile/Containers/Shared/AppGroup/05277D27-8A5D-464E-8FD2-A496A4D1582C/Documents/懒猫网盘离线/0o0/admin/IMG_a0131.JPG"
+                                    ])
+                                    console.log('ShareWithFiles', ok);
+                                }}
+                            >
+                                ShareMedia
+                            </button>
+
+                            <button
+                                style={{ marginTop: 10 }}
+                                onClick={async () => {
+                                    const device = await lzcAPI.current.currentDevice;
+                                    device.fileHandler.copyFolder({
+                                        "boxName": "lnks888",
+                                        "devicePath": "/Users/mac/lzc-client-desktop",
+                                        "username": "meetsong",
+                                        "password": "",
+                                        targetPath: "/backup",
+                                        "webdavAddr": "https://file.lnks888.heiyu.space/dav/"
+                                    }).forEach(task => {
+                                        const on = JSON.stringify(task)
+                                        if (task.msg) {
+                                            console.log("收到同步信息错误:" + task.msg)
+                                        } else {
+                                            console.log("收到同步信息:" + on)
+                                        }
+                                    }).catch(res => {
+                                        console.log("同步错误:" + res.toString())
+                                    })
+                                }}
+                            >
+                                SyncFolder
+                            </button>
+
+                            <button
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
                                     if (loading) return;
                                     let net = '';
@@ -501,7 +689,7 @@ function App() {
                             >
                                 Get NetState {loading && <LoadingIcon size="1em" />}
                             </button>
-                            <div style={{ width: 20 }}></div>
+
                             <button
                                 style={{ marginTop: 10 }}
                                 onClick={async () => {
@@ -715,89 +903,6 @@ function App() {
                                 }}
                             >
                                 Get ListAssetStats
-                            </button>
-
-                            <button
-                                style={{ marginTop: 10 }}
-                                onClick={async () => {
-                                    const currentDevice = await lzcAPI.current?.currentDevice
-                                    setPageIndex(0); // 打开查询媒体资源页面
-                                }}
-                            >
-                                QueryAsset
-                            </button>
-
-                            <button
-                                style={{ marginTop: 10 }}
-                                onClick={async () => {
-                                    try {
-                                        const currentDevice = await lzcAPI.current?.currentDevice
-                                        const device = currentDevice!;
-                                        let reply = device.photolibrary.PutPhoto({
-                                            url: 'https://open.doc.cxkjedu.com/logo.svg',
-                                            // url: 'https://open.doc.cxkjedu.com/logo-with-shadow.png',
-                                            fileName: 'test.svg'
-                                        });
-                                        console.log('reply', reply);
-                                        await reply.forEach((item) => {
-                                            console.log('reply', item);
-                                        })
-                                    } catch (error) {
-                                        // throw error;
-                                        console.error('PutPhoto error', error);
-                                    }
-                                }}
-                            >
-                                PutPhoto
-                            </button>
-                            <button
-                                style={{ marginTop: 10 }}
-                                onClick={deletePhotoFor500}
-                            >
-                                deletePhotoFor500
-                            </button>
-                            <button
-                                style={{ marginTop: 10 }}
-                                onClick={async () => {
-                                    // let a = await AppCommon.ShareMedia({
-                                    //     id: '4FD65BF9-A838-405C-A476-1F71CACBD587/L0/001',
-                                    //     // ids: ['4FD65BF9-A838-405C-A476-1F71CACBD587/L0/001']
-                                    // })
-                                    // let a = await AppCommon.ShareWith("", "test", "")
-                                    // let a = await AppCommon.ShareWith("", "/private/var/mobile/Containers/Shared/AppGroup/05277D27-8A5D-464E-8FD2-A496A4D1582C/Documents/懒猫网盘离线/0o0/admin/兔子2.0.zip", "")
-                                    let ok = await AppCommon.ShareWithFiles(null, [
-                                        "/private/var/mobile/Containers/Shared/AppGroup/05277D27-8A5D-464E-8FD2-A496A4D1582C/Documents/懒猫网盘离线/0o0/admin/IMG_0127.PNG",
-                                        "/private/var/mobile/Containers/Shared/AppGroup/05277D27-8A5D-464E-8FD2-A496A4D1582C/Documents/懒猫网盘离线/0o0/admin/IMG_a0131.JPG"
-                                    ])
-                                    console.log('ShareWithFiles', ok);
-                                }}
-                            >
-                                ShareMedia
-                            </button>
-                            <button
-                                style={{ marginTop: 10 }}
-                                onClick={async () => {
-                                    const device = await lzcAPI.current.currentDevice;
-                                    device.fileHandler.copyFolder({
-                                        "boxName":"lnks888",
-                                        "devicePath":"/Users/mac/lzc-client-desktop",
-                                        "username":"meetsong",
-                                        "password":"",
-                                        targetPath:"/backup",
-                                        "webdavAddr": "https://file.lnks888.heiyu.space/dav/"
-                                    }).forEach(task => {
-                                        const on = JSON.stringify(task)
-                                        if(task.msg){
-                                            console.log("收到同步信息错误:"+task.msg)
-                                        }else{
-                                            console.log("收到同步信息:"+on)
-                                        }
-                                    }).catch(res => {
-                                        console.log("同步错误:"+res.toString())
-                                    })
-                                }}
-                            >
-                               SyncFolder
                             </button>
                         </div>
 

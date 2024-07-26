@@ -15,6 +15,7 @@ import { UserConfig, UserConfigClientImpl } from "./localdevice/config"
 import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clipboard"
 import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo"
 import { NetworkManagerClientImpl, NetworkManager } from "./localdevice/network"
+import { ContactsManager, ContactsManagerClientImpl } from "./localdevice/contacts"
 import { DeviceServiceClientImpl, DeviceService } from "./localdevice/device"
 import { PermissionManager as DevicePermissionManager, PermissionManagerClientImpl as DevicePermissionManagerClientImpl } from "./localdevice/permission"
 import { FileHandlerClientImpl, FileHandler } from "./common/file_handler"
@@ -24,6 +25,14 @@ import { Client, ClientClientImpl } from "./localdevice/client"
 import { Rim, RimClientImpl } from "./localdevice/remote-input-method"
 import { RemoteMediaPlayerService, RemoteMediaPlayerServiceClientImpl } from "./dlna/dlna"
 import { grpc } from "@improbable-eng/grpc-web"
+
+import pkg from "./package.json"
+import { DevOptService, DevOptServiceClientImpl } from "./sys/devopt"
+import { MessageServiceClientImpl } from "./common/message"
+import { RemoteControl, RemoteControlClientImpl } from "./localdevice/remote-control"
+import { TvOS, TvOSClientImpl } from "./sys/tvos"
+
+
 const opt = {
   transport: grpc.CrossBrowserHttpTransport({ withCredentials: true }),
   debug: false,
@@ -187,7 +196,9 @@ export class EndDeviceProxy {
     this.client = new ClientClientImpl(rpc)
     this.rim = new RimClientImpl(rpc)
     this.remoteControl = new RemoteControlClientImpl(rpc)
+    this.contacts = new ContactsManagerClientImpl(rpc)
   }
+
   public device: DeviceService
   public dialog: DialogManager
   public config: UserConfig
@@ -200,13 +211,8 @@ export class EndDeviceProxy {
   public client: Client
   public rim: Rim
   public remoteControl: RemoteControl
+  public contacts: ContactsManager
 }
-
-import pkg from "./package.json"
-import { DevOptService, DevOptServiceClientImpl } from "./sys/devopt"
-import { MessageServiceClientImpl } from "./common/message"
-import { RemoteControl, RemoteControlClientImpl } from "./localdevice/remote-control"
-import { TvOS, TvOSClientImpl } from "./sys/tvos"
 
 async function dumpInfo(bo: BrowserOnlyProxy) {
   function capsule(title, info) {
