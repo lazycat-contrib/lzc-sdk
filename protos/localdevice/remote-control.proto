@@ -141,7 +141,7 @@ message SetCardProfileRequest {
 }
 
 message SinkRequest {
-   optional string sinkName = 1; 
+  optional string sinkName = 1;
 }
 
 message GetMuteResponse {
@@ -149,8 +149,8 @@ message GetMuteResponse {
 }
 
 message SetSinkMuteRequest {
-  optional string sinkName = 1; 
-  bool mute = 2; 
+  optional string sinkName = 1;
+  bool mute = 2;
 }
 
 message GetSinkVolumeResponse {
@@ -178,9 +178,20 @@ message BrowserActionRequest {
 }
 
 message BleDevice {
-    string MAC = 1;
-    string name = 2;
+  string address = 1;
+  string name = 2;
+  string icon = 3;
+  bool paired = 4;
+  bool connected = 5;
+  bool trusted = 6;
+  int32 rssi = 7;
 }
+
+message BleConnectDeviceRequest {
+  string address = 1;
+  string name = 2;
+}
+
 
 message BleScanDevicesResponse {
   repeated BleDevice devices = 1;
@@ -203,7 +214,7 @@ message ScreenLayer {
 
 
 message DebugTestReply {
-  google.protobuf.Timestamp time = 2;  
+  google.protobuf.Timestamp time = 2;
   string pulseaudio = 3;
   string top = 4;
 }
@@ -286,12 +297,11 @@ service RemoteControl{
   rpc DecreaseVolume(ChangeVolumeRequest) returns (google.protobuf.Empty) {}
   // 设置输入音频源音量
   rpc SetSinkInputVolume(SetSinkInputVolumeRequest) returns (google.protobuf.Empty) {}
-  
   // 蓝牙管理
   // 扫描蓝牙设备
   rpc BleScanDevices(google.protobuf.Empty) returns (stream BleScanDevicesResponse) {}
   // 连接蓝牙设备
-  rpc BleConnectDevice(BleDevice) returns (google.protobuf.Empty) {}
+  rpc BleConnectDevice(BleConnectDeviceRequest) returns (google.protobuf.Empty) {}
   // 断开所有连接
   rpc BleDisconnect(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   // 切换ScreenLayer
@@ -304,4 +314,4 @@ service RemoteControl{
   rpc DebugTest(google.protobuf.Empty) returns (stream DebugTestReply) {}
   // 获取浏览器当前url
   rpc GetBrowserURL(google.protobuf.Empty) returns (GetBrowserURLResponse) {}
-} 
+}

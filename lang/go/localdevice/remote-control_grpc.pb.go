@@ -144,7 +144,7 @@ type RemoteControlClient interface {
 	// 扫描蓝牙设备
 	BleScanDevices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (RemoteControl_BleScanDevicesClient, error)
 	// 连接蓝牙设备
-	BleConnectDevice(ctx context.Context, in *BleDevice, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	BleConnectDevice(ctx context.Context, in *BleConnectDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 断开所有连接
 	BleDisconnect(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 切换ScreenLayer
@@ -546,7 +546,7 @@ func (x *remoteControlBleScanDevicesClient) Recv() (*BleScanDevicesResponse, err
 	return m, nil
 }
 
-func (c *remoteControlClient) BleConnectDevice(ctx context.Context, in *BleDevice, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *remoteControlClient) BleConnectDevice(ctx context.Context, in *BleConnectDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, RemoteControl_BleConnectDevice_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -713,7 +713,7 @@ type RemoteControlServer interface {
 	// 扫描蓝牙设备
 	BleScanDevices(*emptypb.Empty, RemoteControl_BleScanDevicesServer) error
 	// 连接蓝牙设备
-	BleConnectDevice(context.Context, *BleDevice) (*emptypb.Empty, error)
+	BleConnectDevice(context.Context, *BleConnectDeviceRequest) (*emptypb.Empty, error)
 	// 断开所有连接
 	BleDisconnect(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 切换ScreenLayer
@@ -835,7 +835,7 @@ func (UnimplementedRemoteControlServer) SetSinkInputVolume(context.Context, *Set
 func (UnimplementedRemoteControlServer) BleScanDevices(*emptypb.Empty, RemoteControl_BleScanDevicesServer) error {
 	return status.Errorf(codes.Unimplemented, "method BleScanDevices not implemented")
 }
-func (UnimplementedRemoteControlServer) BleConnectDevice(context.Context, *BleDevice) (*emptypb.Empty, error) {
+func (UnimplementedRemoteControlServer) BleConnectDevice(context.Context, *BleConnectDeviceRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BleConnectDevice not implemented")
 }
 func (UnimplementedRemoteControlServer) BleDisconnect(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
@@ -1501,7 +1501,7 @@ func (x *remoteControlBleScanDevicesServer) Send(m *BleScanDevicesResponse) erro
 }
 
 func _RemoteControl_BleConnectDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BleDevice)
+	in := new(BleConnectDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1513,7 +1513,7 @@ func _RemoteControl_BleConnectDevice_Handler(srv interface{}, ctx context.Contex
 		FullMethod: RemoteControl_BleConnectDevice_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RemoteControlServer).BleConnectDevice(ctx, req.(*BleDevice))
+		return srv.(RemoteControlServer).BleConnectDevice(ctx, req.(*BleConnectDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

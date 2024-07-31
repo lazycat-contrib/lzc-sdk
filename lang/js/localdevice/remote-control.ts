@@ -435,7 +435,17 @@ export function browserActionRequest_ActionToJSON(object: BrowserActionRequest_A
 }
 
 export interface BleDevice {
-  MAC: string;
+  address: string;
+  name: string;
+  icon: string;
+  paired: boolean;
+  connected: boolean;
+  trusted: boolean;
+  rssi: number;
+}
+
+export interface BleConnectDeviceRequest {
+  address: string;
   name: string;
 }
 
@@ -2413,16 +2423,31 @@ export const BrowserActionRequest = {
 };
 
 function createBaseBleDevice(): BleDevice {
-  return { MAC: "", name: "" };
+  return { address: "", name: "", icon: "", paired: false, connected: false, trusted: false, rssi: 0 };
 }
 
 export const BleDevice = {
   encode(message: BleDevice, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.MAC !== "") {
-      writer.uint32(10).string(message.MAC);
+    if (message.address !== "") {
+      writer.uint32(10).string(message.address);
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
+    }
+    if (message.icon !== "") {
+      writer.uint32(26).string(message.icon);
+    }
+    if (message.paired === true) {
+      writer.uint32(32).bool(message.paired);
+    }
+    if (message.connected === true) {
+      writer.uint32(40).bool(message.connected);
+    }
+    if (message.trusted === true) {
+      writer.uint32(48).bool(message.trusted);
+    }
+    if (message.rssi !== 0) {
+      writer.uint32(56).int32(message.rssi);
     }
     return writer;
   },
@@ -2439,7 +2464,142 @@ export const BleDevice = {
             break;
           }
 
-          message.MAC = reader.string();
+          message.address = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.icon = reader.string();
+          continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.paired = reader.bool();
+          continue;
+        case 5:
+          if (tag !== 40) {
+            break;
+          }
+
+          message.connected = reader.bool();
+          continue;
+        case 6:
+          if (tag !== 48) {
+            break;
+          }
+
+          message.trusted = reader.bool();
+          continue;
+        case 7:
+          if (tag !== 56) {
+            break;
+          }
+
+          message.rssi = reader.int32();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): BleDevice {
+    return {
+      address: isSet(object.address) ? String(object.address) : "",
+      name: isSet(object.name) ? String(object.name) : "",
+      icon: isSet(object.icon) ? String(object.icon) : "",
+      paired: isSet(object.paired) ? Boolean(object.paired) : false,
+      connected: isSet(object.connected) ? Boolean(object.connected) : false,
+      trusted: isSet(object.trusted) ? Boolean(object.trusted) : false,
+      rssi: isSet(object.rssi) ? Number(object.rssi) : 0,
+    };
+  },
+
+  toJSON(message: BleDevice): unknown {
+    const obj: any = {};
+    if (message.address !== "") {
+      obj.address = message.address;
+    }
+    if (message.name !== "") {
+      obj.name = message.name;
+    }
+    if (message.icon !== "") {
+      obj.icon = message.icon;
+    }
+    if (message.paired === true) {
+      obj.paired = message.paired;
+    }
+    if (message.connected === true) {
+      obj.connected = message.connected;
+    }
+    if (message.trusted === true) {
+      obj.trusted = message.trusted;
+    }
+    if (message.rssi !== 0) {
+      obj.rssi = Math.round(message.rssi);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<BleDevice>, I>>(base?: I): BleDevice {
+    return BleDevice.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<BleDevice>, I>>(object: I): BleDevice {
+    const message = createBaseBleDevice();
+    message.address = object.address ?? "";
+    message.name = object.name ?? "";
+    message.icon = object.icon ?? "";
+    message.paired = object.paired ?? false;
+    message.connected = object.connected ?? false;
+    message.trusted = object.trusted ?? false;
+    message.rssi = object.rssi ?? 0;
+    return message;
+  },
+};
+
+function createBaseBleConnectDeviceRequest(): BleConnectDeviceRequest {
+  return { address: "", name: "" };
+}
+
+export const BleConnectDeviceRequest = {
+  encode(message: BleConnectDeviceRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.address !== "") {
+      writer.uint32(10).string(message.address);
+    }
+    if (message.name !== "") {
+      writer.uint32(18).string(message.name);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): BleConnectDeviceRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBleConnectDeviceRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.address = reader.string();
           continue;
         case 2:
           if (tag !== 18) {
@@ -2457,14 +2617,17 @@ export const BleDevice = {
     return message;
   },
 
-  fromJSON(object: any): BleDevice {
-    return { MAC: isSet(object.MAC) ? String(object.MAC) : "", name: isSet(object.name) ? String(object.name) : "" };
+  fromJSON(object: any): BleConnectDeviceRequest {
+    return {
+      address: isSet(object.address) ? String(object.address) : "",
+      name: isSet(object.name) ? String(object.name) : "",
+    };
   },
 
-  toJSON(message: BleDevice): unknown {
+  toJSON(message: BleConnectDeviceRequest): unknown {
     const obj: any = {};
-    if (message.MAC !== "") {
-      obj.MAC = message.MAC;
+    if (message.address !== "") {
+      obj.address = message.address;
     }
     if (message.name !== "") {
       obj.name = message.name;
@@ -2472,13 +2635,13 @@ export const BleDevice = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<BleDevice>, I>>(base?: I): BleDevice {
-    return BleDevice.fromPartial(base ?? {});
+  create<I extends Exact<DeepPartial<BleConnectDeviceRequest>, I>>(base?: I): BleConnectDeviceRequest {
+    return BleConnectDeviceRequest.fromPartial(base ?? {});
   },
 
-  fromPartial<I extends Exact<DeepPartial<BleDevice>, I>>(object: I): BleDevice {
-    const message = createBaseBleDevice();
-    message.MAC = object.MAC ?? "";
+  fromPartial<I extends Exact<DeepPartial<BleConnectDeviceRequest>, I>>(object: I): BleConnectDeviceRequest {
+    const message = createBaseBleConnectDeviceRequest();
+    message.address = object.address ?? "";
     message.name = object.name ?? "";
     return message;
   },
@@ -2966,7 +3129,7 @@ export interface RemoteControl {
   ): Observable<BleScanDevicesResponse>;
   /** 连接蓝牙设备 */
   BleConnectDevice(
-    request: DeepPartial<BleDevice>,
+    request: DeepPartial<BleConnectDeviceRequest>,
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<Empty>;
@@ -3385,11 +3548,16 @@ export class RemoteControlClientImpl implements RemoteControl {
   }
 
   BleConnectDevice(
-    request: DeepPartial<BleDevice>,
+    request: DeepPartial<BleConnectDeviceRequest>,
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<Empty> {
-    return this.rpc.unary(RemoteControlBleConnectDeviceDesc, BleDevice.fromPartial(request), metadata, abortSignal);
+    return this.rpc.unary(
+      RemoteControlBleConnectDeviceDesc,
+      BleConnectDeviceRequest.fromPartial(request),
+      metadata,
+      abortSignal,
+    );
   }
 
   BleDisconnect(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
@@ -4178,7 +4346,7 @@ export const RemoteControlBleConnectDeviceDesc: UnaryMethodDefinitionish = {
   responseStream: false,
   requestType: {
     serializeBinary() {
-      return BleDevice.encode(this).finish();
+      return BleConnectDeviceRequest.encode(this).finish();
     },
   } as any,
   responseType: {
