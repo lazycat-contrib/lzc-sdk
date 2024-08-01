@@ -55,7 +55,8 @@ const (
 	RemoteControl_SetSinkInputVolume_FullMethodName      = "/cloud.lazycat.apis.localdevice.RemoteControl/SetSinkInputVolume"
 	RemoteControl_BleScanDevices_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/BleScanDevices"
 	RemoteControl_BleConnectDevice_FullMethodName        = "/cloud.lazycat.apis.localdevice.RemoteControl/BleConnectDevice"
-	RemoteControl_BleDisconnect_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/BleDisconnect"
+	RemoteControl_BleDisconnectDevice_FullMethodName     = "/cloud.lazycat.apis.localdevice.RemoteControl/BleDisconnectDevice"
+	RemoteControl_BleRemoveDevice_FullMethodName         = "/cloud.lazycat.apis.localdevice.RemoteControl/BleRemoveDevice"
 	RemoteControl_SetScreenLayer_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/SetScreenLayer"
 	RemoteControl_GetScreenLayer_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/GetScreenLayer"
 	RemoteControl_Logout_FullMethodName                  = "/cloud.lazycat.apis.localdevice.RemoteControl/Logout"
@@ -144,9 +145,11 @@ type RemoteControlClient interface {
 	// 扫描蓝牙设备
 	BleScanDevices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (RemoteControl_BleScanDevicesClient, error)
 	// 连接蓝牙设备
-	BleConnectDevice(ctx context.Context, in *BleConnectDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	BleConnectDevice(ctx context.Context, in *BleDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 断开所有连接
-	BleDisconnect(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	BleDisconnectDevice(ctx context.Context, in *BleDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 删除蓝牙设备
+	BleRemoveDevice(ctx context.Context, in *BleDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 切换ScreenLayer
 	SetScreenLayer(ctx context.Context, in *ScreenLayer, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 返回当前的ScreenLayer
@@ -546,7 +549,7 @@ func (x *remoteControlBleScanDevicesClient) Recv() (*BleScanDevicesResponse, err
 	return m, nil
 }
 
-func (c *remoteControlClient) BleConnectDevice(ctx context.Context, in *BleConnectDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *remoteControlClient) BleConnectDevice(ctx context.Context, in *BleDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, RemoteControl_BleConnectDevice_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -555,9 +558,18 @@ func (c *remoteControlClient) BleConnectDevice(ctx context.Context, in *BleConne
 	return out, nil
 }
 
-func (c *remoteControlClient) BleDisconnect(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *remoteControlClient) BleDisconnectDevice(ctx context.Context, in *BleDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, RemoteControl_BleDisconnect_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, RemoteControl_BleDisconnectDevice_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *remoteControlClient) BleRemoveDevice(ctx context.Context, in *BleDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_BleRemoveDevice_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -713,9 +725,11 @@ type RemoteControlServer interface {
 	// 扫描蓝牙设备
 	BleScanDevices(*emptypb.Empty, RemoteControl_BleScanDevicesServer) error
 	// 连接蓝牙设备
-	BleConnectDevice(context.Context, *BleConnectDeviceRequest) (*emptypb.Empty, error)
+	BleConnectDevice(context.Context, *BleDeviceRequest) (*emptypb.Empty, error)
 	// 断开所有连接
-	BleDisconnect(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	BleDisconnectDevice(context.Context, *BleDeviceRequest) (*emptypb.Empty, error)
+	// 删除蓝牙设备
+	BleRemoveDevice(context.Context, *BleDeviceRequest) (*emptypb.Empty, error)
 	// 切换ScreenLayer
 	SetScreenLayer(context.Context, *ScreenLayer) (*emptypb.Empty, error)
 	// 返回当前的ScreenLayer
@@ -835,11 +849,14 @@ func (UnimplementedRemoteControlServer) SetSinkInputVolume(context.Context, *Set
 func (UnimplementedRemoteControlServer) BleScanDevices(*emptypb.Empty, RemoteControl_BleScanDevicesServer) error {
 	return status.Errorf(codes.Unimplemented, "method BleScanDevices not implemented")
 }
-func (UnimplementedRemoteControlServer) BleConnectDevice(context.Context, *BleConnectDeviceRequest) (*emptypb.Empty, error) {
+func (UnimplementedRemoteControlServer) BleConnectDevice(context.Context, *BleDeviceRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BleConnectDevice not implemented")
 }
-func (UnimplementedRemoteControlServer) BleDisconnect(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BleDisconnect not implemented")
+func (UnimplementedRemoteControlServer) BleDisconnectDevice(context.Context, *BleDeviceRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BleDisconnectDevice not implemented")
+}
+func (UnimplementedRemoteControlServer) BleRemoveDevice(context.Context, *BleDeviceRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BleRemoveDevice not implemented")
 }
 func (UnimplementedRemoteControlServer) SetScreenLayer(context.Context, *ScreenLayer) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetScreenLayer not implemented")
@@ -1501,7 +1518,7 @@ func (x *remoteControlBleScanDevicesServer) Send(m *BleScanDevicesResponse) erro
 }
 
 func _RemoteControl_BleConnectDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BleConnectDeviceRequest)
+	in := new(BleDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1513,25 +1530,43 @@ func _RemoteControl_BleConnectDevice_Handler(srv interface{}, ctx context.Contex
 		FullMethod: RemoteControl_BleConnectDevice_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RemoteControlServer).BleConnectDevice(ctx, req.(*BleConnectDeviceRequest))
+		return srv.(RemoteControlServer).BleConnectDevice(ctx, req.(*BleDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RemoteControl_BleDisconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+func _RemoteControl_BleDisconnectDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BleDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RemoteControlServer).BleDisconnect(ctx, in)
+		return srv.(RemoteControlServer).BleDisconnectDevice(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RemoteControl_BleDisconnect_FullMethodName,
+		FullMethod: RemoteControl_BleDisconnectDevice_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RemoteControlServer).BleDisconnect(ctx, req.(*emptypb.Empty))
+		return srv.(RemoteControlServer).BleDisconnectDevice(ctx, req.(*BleDeviceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RemoteControl_BleRemoveDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BleDeviceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).BleRemoveDevice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_BleRemoveDevice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).BleRemoveDevice(ctx, req.(*BleDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1765,8 +1800,12 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RemoteControl_BleConnectDevice_Handler,
 		},
 		{
-			MethodName: "BleDisconnect",
-			Handler:    _RemoteControl_BleDisconnect_Handler,
+			MethodName: "BleDisconnectDevice",
+			Handler:    _RemoteControl_BleDisconnectDevice_Handler,
+		},
+		{
+			MethodName: "BleRemoveDevice",
+			Handler:    _RemoteControl_BleRemoveDevice_Handler,
 		},
 		{
 			MethodName: "SetScreenLayer",

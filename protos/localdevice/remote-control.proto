@@ -187,9 +187,8 @@ message BleDevice {
   int32 rssi = 7;
 }
 
-message BleConnectDeviceRequest {
+message BleDeviceRequest {
   string address = 1;
-  string name = 2;
 }
 
 
@@ -301,9 +300,11 @@ service RemoteControl{
   // 扫描蓝牙设备
   rpc BleScanDevices(google.protobuf.Empty) returns (stream BleScanDevicesResponse) {}
   // 连接蓝牙设备
-  rpc BleConnectDevice(BleConnectDeviceRequest) returns (google.protobuf.Empty) {}
+  rpc BleConnectDevice(BleDeviceRequest) returns (google.protobuf.Empty) {}
   // 断开所有连接
-  rpc BleDisconnect(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc BleDisconnectDevice(BleDeviceRequest) returns (google.protobuf.Empty) {}
+  // 删除蓝牙设备
+  rpc BleRemoveDevice(BleDeviceRequest) returns (google.protobuf.Empty) {}
   // 切换ScreenLayer
   rpc SetScreenLayer(ScreenLayer) returns (google.protobuf.Empty) {}
   // 返回当前的ScreenLayer

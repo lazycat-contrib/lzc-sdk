@@ -444,9 +444,8 @@ export interface BleDevice {
   rssi: number;
 }
 
-export interface BleConnectDeviceRequest {
+export interface BleDeviceRequest {
   address: string;
-  name: string;
 }
 
 export interface BleScanDevicesResponse {
@@ -2572,25 +2571,22 @@ export const BleDevice = {
   },
 };
 
-function createBaseBleConnectDeviceRequest(): BleConnectDeviceRequest {
-  return { address: "", name: "" };
+function createBaseBleDeviceRequest(): BleDeviceRequest {
+  return { address: "" };
 }
 
-export const BleConnectDeviceRequest = {
-  encode(message: BleConnectDeviceRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const BleDeviceRequest = {
+  encode(message: BleDeviceRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.address !== "") {
       writer.uint32(10).string(message.address);
-    }
-    if (message.name !== "") {
-      writer.uint32(18).string(message.name);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): BleConnectDeviceRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): BleDeviceRequest {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseBleConnectDeviceRequest();
+    const message = createBaseBleDeviceRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2601,13 +2597,6 @@ export const BleConnectDeviceRequest = {
 
           message.address = reader.string();
           continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.name = reader.string();
-          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -2617,32 +2606,25 @@ export const BleConnectDeviceRequest = {
     return message;
   },
 
-  fromJSON(object: any): BleConnectDeviceRequest {
-    return {
-      address: isSet(object.address) ? String(object.address) : "",
-      name: isSet(object.name) ? String(object.name) : "",
-    };
+  fromJSON(object: any): BleDeviceRequest {
+    return { address: isSet(object.address) ? String(object.address) : "" };
   },
 
-  toJSON(message: BleConnectDeviceRequest): unknown {
+  toJSON(message: BleDeviceRequest): unknown {
     const obj: any = {};
     if (message.address !== "") {
       obj.address = message.address;
     }
-    if (message.name !== "") {
-      obj.name = message.name;
-    }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<BleConnectDeviceRequest>, I>>(base?: I): BleConnectDeviceRequest {
-    return BleConnectDeviceRequest.fromPartial(base ?? {});
+  create<I extends Exact<DeepPartial<BleDeviceRequest>, I>>(base?: I): BleDeviceRequest {
+    return BleDeviceRequest.fromPartial(base ?? {});
   },
 
-  fromPartial<I extends Exact<DeepPartial<BleConnectDeviceRequest>, I>>(object: I): BleConnectDeviceRequest {
-    const message = createBaseBleConnectDeviceRequest();
+  fromPartial<I extends Exact<DeepPartial<BleDeviceRequest>, I>>(object: I): BleDeviceRequest {
+    const message = createBaseBleDeviceRequest();
     message.address = object.address ?? "";
-    message.name = object.name ?? "";
     return message;
   },
 };
@@ -3129,12 +3111,22 @@ export interface RemoteControl {
   ): Observable<BleScanDevicesResponse>;
   /** 连接蓝牙设备 */
   BleConnectDevice(
-    request: DeepPartial<BleConnectDeviceRequest>,
+    request: DeepPartial<BleDeviceRequest>,
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<Empty>;
   /** 断开所有连接 */
-  BleDisconnect(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
+  BleDisconnectDevice(
+    request: DeepPartial<BleDeviceRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<Empty>;
+  /** 删除蓝牙设备 */
+  BleRemoveDevice(
+    request: DeepPartial<BleDeviceRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<Empty>;
   /** 切换ScreenLayer */
   SetScreenLayer(
     request: DeepPartial<ScreenLayer>,
@@ -3203,7 +3195,8 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.SetSinkInputVolume = this.SetSinkInputVolume.bind(this);
     this.BleScanDevices = this.BleScanDevices.bind(this);
     this.BleConnectDevice = this.BleConnectDevice.bind(this);
-    this.BleDisconnect = this.BleDisconnect.bind(this);
+    this.BleDisconnectDevice = this.BleDisconnectDevice.bind(this);
+    this.BleRemoveDevice = this.BleRemoveDevice.bind(this);
     this.SetScreenLayer = this.SetScreenLayer.bind(this);
     this.GetScreenLayer = this.GetScreenLayer.bind(this);
     this.Logout = this.Logout.bind(this);
@@ -3548,20 +3541,42 @@ export class RemoteControlClientImpl implements RemoteControl {
   }
 
   BleConnectDevice(
-    request: DeepPartial<BleConnectDeviceRequest>,
+    request: DeepPartial<BleDeviceRequest>,
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<Empty> {
     return this.rpc.unary(
       RemoteControlBleConnectDeviceDesc,
-      BleConnectDeviceRequest.fromPartial(request),
+      BleDeviceRequest.fromPartial(request),
       metadata,
       abortSignal,
     );
   }
 
-  BleDisconnect(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
-    return this.rpc.unary(RemoteControlBleDisconnectDesc, Empty.fromPartial(request), metadata, abortSignal);
+  BleDisconnectDevice(
+    request: DeepPartial<BleDeviceRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<Empty> {
+    return this.rpc.unary(
+      RemoteControlBleDisconnectDeviceDesc,
+      BleDeviceRequest.fromPartial(request),
+      metadata,
+      abortSignal,
+    );
+  }
+
+  BleRemoveDevice(
+    request: DeepPartial<BleDeviceRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<Empty> {
+    return this.rpc.unary(
+      RemoteControlBleRemoveDeviceDesc,
+      BleDeviceRequest.fromPartial(request),
+      metadata,
+      abortSignal,
+    );
   }
 
   SetScreenLayer(
@@ -4346,7 +4361,7 @@ export const RemoteControlBleConnectDeviceDesc: UnaryMethodDefinitionish = {
   responseStream: false,
   requestType: {
     serializeBinary() {
-      return BleConnectDeviceRequest.encode(this).finish();
+      return BleDeviceRequest.encode(this).finish();
     },
   } as any,
   responseType: {
@@ -4362,14 +4377,37 @@ export const RemoteControlBleConnectDeviceDesc: UnaryMethodDefinitionish = {
   } as any,
 };
 
-export const RemoteControlBleDisconnectDesc: UnaryMethodDefinitionish = {
-  methodName: "BleDisconnect",
+export const RemoteControlBleDisconnectDeviceDesc: UnaryMethodDefinitionish = {
+  methodName: "BleDisconnectDevice",
   service: RemoteControlDesc,
   requestStream: false,
   responseStream: false,
   requestType: {
     serializeBinary() {
-      return Empty.encode(this).finish();
+      return BleDeviceRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlBleRemoveDeviceDesc: UnaryMethodDefinitionish = {
+  methodName: "BleRemoveDevice",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return BleDeviceRequest.encode(this).finish();
     },
   } as any,
   responseType: {
