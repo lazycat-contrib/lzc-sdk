@@ -133,7 +133,7 @@ message ListCardsResponse {
 }
 
 message SetDefaultSinkRequest {
-  string sinkName = 1;
+  int32 sinkIndex = 1;
 }
 
 message SetCardProfileRequest {

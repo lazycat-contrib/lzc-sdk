@@ -346,7 +346,7 @@ export interface ListCardsResponse_Card {
 }
 
 export interface SetDefaultSinkRequest {
-  sinkName: string;
+  sinkIndex: number;
 }
 
 export interface SetCardProfileRequest {
@@ -1867,13 +1867,13 @@ export const ListCardsResponse_Card = {
 };
 
 function createBaseSetDefaultSinkRequest(): SetDefaultSinkRequest {
-  return { sinkName: "" };
+  return { sinkIndex: 0 };
 }
 
 export const SetDefaultSinkRequest = {
   encode(message: SetDefaultSinkRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sinkName !== "") {
-      writer.uint32(10).string(message.sinkName);
+    if (message.sinkIndex !== 0) {
+      writer.uint32(8).int32(message.sinkIndex);
     }
     return writer;
   },
@@ -1886,11 +1886,11 @@ export const SetDefaultSinkRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.sinkName = reader.string();
+          message.sinkIndex = reader.int32();
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -1902,13 +1902,13 @@ export const SetDefaultSinkRequest = {
   },
 
   fromJSON(object: any): SetDefaultSinkRequest {
-    return { sinkName: isSet(object.sinkName) ? String(object.sinkName) : "" };
+    return { sinkIndex: isSet(object.sinkIndex) ? Number(object.sinkIndex) : 0 };
   },
 
   toJSON(message: SetDefaultSinkRequest): unknown {
     const obj: any = {};
-    if (message.sinkName !== "") {
-      obj.sinkName = message.sinkName;
+    if (message.sinkIndex !== 0) {
+      obj.sinkIndex = Math.round(message.sinkIndex);
     }
     return obj;
   },
@@ -1919,7 +1919,7 @@ export const SetDefaultSinkRequest = {
 
   fromPartial<I extends Exact<DeepPartial<SetDefaultSinkRequest>, I>>(object: I): SetDefaultSinkRequest {
     const message = createBaseSetDefaultSinkRequest();
-    message.sinkName = object.sinkName ?? "";
+    message.sinkIndex = object.sinkIndex ?? 0;
     return message;
   },
 };
