@@ -57,6 +57,7 @@ const (
 	RemoteControl_BleConnectDevice_FullMethodName        = "/cloud.lazycat.apis.localdevice.RemoteControl/BleConnectDevice"
 	RemoteControl_BleDisconnectDevice_FullMethodName     = "/cloud.lazycat.apis.localdevice.RemoteControl/BleDisconnectDevice"
 	RemoteControl_BleRemoveDevice_FullMethodName         = "/cloud.lazycat.apis.localdevice.RemoteControl/BleRemoveDevice"
+	RemoteControl_BleRefreshDevices_FullMethodName       = "/cloud.lazycat.apis.localdevice.RemoteControl/BleRefreshDevices"
 	RemoteControl_SetScreenLayer_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/SetScreenLayer"
 	RemoteControl_GetScreenLayer_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/GetScreenLayer"
 	RemoteControl_Logout_FullMethodName                  = "/cloud.lazycat.apis.localdevice.RemoteControl/Logout"
@@ -150,6 +151,8 @@ type RemoteControlClient interface {
 	BleDisconnectDevice(ctx context.Context, in *BleDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 删除蓝牙设备
 	BleRemoveDevice(ctx context.Context, in *BleDeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 刷新蓝牙设备列表
+	BleRefreshDevices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 切换ScreenLayer
 	SetScreenLayer(ctx context.Context, in *ScreenLayer, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 返回当前的ScreenLayer
@@ -576,6 +579,15 @@ func (c *remoteControlClient) BleRemoveDevice(ctx context.Context, in *BleDevice
 	return out, nil
 }
 
+func (c *remoteControlClient) BleRefreshDevices(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_BleRefreshDevices_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *remoteControlClient) SetScreenLayer(ctx context.Context, in *ScreenLayer, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, RemoteControl_SetScreenLayer_FullMethodName, in, out, opts...)
@@ -730,6 +742,8 @@ type RemoteControlServer interface {
 	BleDisconnectDevice(context.Context, *BleDeviceRequest) (*emptypb.Empty, error)
 	// 删除蓝牙设备
 	BleRemoveDevice(context.Context, *BleDeviceRequest) (*emptypb.Empty, error)
+	// 刷新蓝牙设备列表
+	BleRefreshDevices(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 切换ScreenLayer
 	SetScreenLayer(context.Context, *ScreenLayer) (*emptypb.Empty, error)
 	// 返回当前的ScreenLayer
@@ -857,6 +871,9 @@ func (UnimplementedRemoteControlServer) BleDisconnectDevice(context.Context, *Bl
 }
 func (UnimplementedRemoteControlServer) BleRemoveDevice(context.Context, *BleDeviceRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BleRemoveDevice not implemented")
+}
+func (UnimplementedRemoteControlServer) BleRefreshDevices(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BleRefreshDevices not implemented")
 }
 func (UnimplementedRemoteControlServer) SetScreenLayer(context.Context, *ScreenLayer) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetScreenLayer not implemented")
@@ -1571,6 +1588,24 @@ func _RemoteControl_BleRemoveDevice_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_BleRefreshDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).BleRefreshDevices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_BleRefreshDevices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).BleRefreshDevices(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RemoteControl_SetScreenLayer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ScreenLayer)
 	if err := dec(in); err != nil {
@@ -1806,6 +1841,10 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BleRemoveDevice",
 			Handler:    _RemoteControl_BleRemoveDevice_Handler,
+		},
+		{
+			MethodName: "BleRefreshDevices",
+			Handler:    _RemoteControl_BleRefreshDevices_Handler,
 		},
 		{
 			MethodName: "SetScreenLayer",

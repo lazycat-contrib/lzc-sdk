@@ -305,6 +305,8 @@ service RemoteControl{
   rpc BleDisconnectDevice(BleDeviceRequest) returns (google.protobuf.Empty) {}
   // 删除蓝牙设备
   rpc BleRemoveDevice(BleDeviceRequest) returns (google.protobuf.Empty) {}
+  // 刷新蓝牙设备列表
+  rpc BleRefreshDevices(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   // 切换ScreenLayer
   rpc SetScreenLayer(ScreenLayer) returns (google.protobuf.Empty) {}
   // 返回当前的ScreenLayer

@@ -3127,6 +3127,8 @@ export interface RemoteControl {
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<Empty>;
+  /** 刷新蓝牙设备列表 */
+  BleRefreshDevices(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
   /** 切换ScreenLayer */
   SetScreenLayer(
     request: DeepPartial<ScreenLayer>,
@@ -3197,6 +3199,7 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.BleConnectDevice = this.BleConnectDevice.bind(this);
     this.BleDisconnectDevice = this.BleDisconnectDevice.bind(this);
     this.BleRemoveDevice = this.BleRemoveDevice.bind(this);
+    this.BleRefreshDevices = this.BleRefreshDevices.bind(this);
     this.SetScreenLayer = this.SetScreenLayer.bind(this);
     this.GetScreenLayer = this.GetScreenLayer.bind(this);
     this.Logout = this.Logout.bind(this);
@@ -3577,6 +3580,10 @@ export class RemoteControlClientImpl implements RemoteControl {
       metadata,
       abortSignal,
     );
+  }
+
+  BleRefreshDevices(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
+    return this.rpc.unary(RemoteControlBleRefreshDevicesDesc, Empty.fromPartial(request), metadata, abortSignal);
   }
 
   SetScreenLayer(
@@ -4408,6 +4415,29 @@ export const RemoteControlBleRemoveDeviceDesc: UnaryMethodDefinitionish = {
   requestType: {
     serializeBinary() {
       return BleDeviceRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlBleRefreshDevicesDesc: UnaryMethodDefinitionish = {
+  methodName: "BleRefreshDevices",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
     },
   } as any,
   responseType: {
