@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import reactLogo from './assets/react.svg';
 import './App.css';
-import { LoadingIcon } from 'tdesign-icons-react';
+import {LoadingIcon} from 'tdesign-icons-react';
 // import { firstValueFrom } from 'rxjs';
-import { lzcAPIGateway, EndDeviceProxy } from '@lazycatcloud/sdk/index';
-import { ListAlbumsReply, PhotoMeta, ListAssetsSortType } from '@lazycatcloud/sdk/localdevice/photo';
-import { DeviceInfo } from '@lazycatcloud/sdk/localdevice/device';
-import { Permission } from '@lazycatcloud/sdk/localdevice/permission';
-import { AppCommon } from '@lazycatcloud/sdk/extentions/app_common';
+import {EndDeviceProxy, lzcAPIGateway} from '@lazycatcloud/sdk/index';
+import {ListAlbumsReply, ListAssetsSortType, PhotoMeta} from '@lazycatcloud/sdk/localdevice/photo';
+import {Permission} from '@lazycatcloud/sdk/localdevice/permission';
+import {AppCommon} from '@lazycatcloud/sdk/extentions/app_common';
 
 type PageNavigate = {
     setPageIndex: (index: number | undefined) => void;
 }
 
 function AssetMetaReview(props: { meta: PhotoMeta, deletePhoto?: Function }) {
-    const { meta: imageMeta, deletePhoto } = props;
+    const {meta: imageMeta, deletePhoto} = props;
 
     function decodeThumbnailUrl(urlStr: string) {
         try {
@@ -32,7 +31,7 @@ function AssetMetaReview(props: { meta: PhotoMeta, deletePhoto?: Function }) {
 
     return <>
         <div>
-            查询图片 <span style={{ width: 100 }}>({imageMeta.id})</span>:
+            查询图片 <span style={{width: 100}}>({imageMeta.id})</span>:
             <a href={imageMeta.photoUrl} target={'_blank'}>
                 查看原图
             </a>
@@ -55,10 +54,10 @@ function AssetMetaReview(props: { meta: PhotoMeta, deletePhoto?: Function }) {
             )}
 
             <p>{imageMeta.fileName}</p>
-            <div style={{ padding: 2, background: '#0001' }}>
-                <img style={{ width: 150 }}
-                    src={imageMeta.thumbnailUrl ? decodeThumbnailUrl(imageMeta.thumbnailUrl) : imageMeta.photoUrl}
-                // src={imageMeta.photoUrl} 
+            <div style={{padding: 2, background: '#0001'}}>
+                <img style={{width: 150}}
+                     src={imageMeta.thumbnailUrl ? decodeThumbnailUrl(imageMeta.thumbnailUrl) : imageMeta.photoUrl}
+                    // src={imageMeta.photoUrl}
                 />
             </div>
         </div>
@@ -66,7 +65,7 @@ function AssetMetaReview(props: { meta: PhotoMeta, deletePhoto?: Function }) {
 }
 
 function QueryAssetMatePage(props: { navigate: PageNavigate, device: EndDeviceProxy }) {
-    const { navigate, device } = props;
+    const {navigate, device} = props;
 
     const [assetInfo, setAssetInfo] = useState<{
         id: string,
@@ -85,7 +84,7 @@ function QueryAssetMatePage(props: { navigate: PageNavigate, device: EndDevicePr
         })
     }
 
-    return <div style={{ width: '100%' }}>
+    return <div style={{width: '100%'}}>
         <div style={{
             width: '100%',
             display: 'flex',
@@ -93,7 +92,7 @@ function QueryAssetMatePage(props: { navigate: PageNavigate, device: EndDevicePr
             marginBottom: 10
         }}>
             <button
-                style={{ marginRight: 10 }}
+                style={{marginRight: 10}}
                 onClick={async () => {
                     navigate.setPageIndex(undefined); // 返回主页
                 }}
@@ -103,24 +102,24 @@ function QueryAssetMatePage(props: { navigate: PageNavigate, device: EndDevicePr
             <p>通过媒体 ID 查询图片 Mate 信息</p>
         </div>
 
-        <div style={{ display: 'flex' }}>
-            <input value={assetInfo.id} style={{ flex: 1, background: '#F1F1F1', border: "none", borderRadius: 5 }}
-                onChange={(e) => {
-                    const { target } = e;
-                    if (target.value) {
-                        setAssetInfo({
-                            ...assetInfo,
-                            id: target.value
-                        })
-                    } else {
-                        setAssetInfo({
-                            ...assetInfo,
-                            id: ''
-                        })
-                    }
-                }}
+        <div style={{display: 'flex'}}>
+            <input value={assetInfo.id} style={{flex: 1, background: '#F1F1F1', border: "none", borderRadius: 5}}
+                   onChange={(e) => {
+                       const {target} = e;
+                       if (target.value) {
+                           setAssetInfo({
+                               ...assetInfo,
+                               id: target.value
+                           })
+                       } else {
+                           setAssetInfo({
+                               ...assetInfo,
+                               id: ''
+                           })
+                       }
+                   }}
             ></input>
-            <button style={{ marginLeft: 10 }} onClick={async () => {
+            <button style={{marginLeft: 10}} onClick={async () => {
                 if (!assetInfo.id || assetInfo.id == '') {
                     putMessage(`[错误] 媒体 ID 为空`)
                     return
@@ -128,7 +127,7 @@ function QueryAssetMatePage(props: { navigate: PageNavigate, device: EndDevicePr
 
                 console.log('id', assetInfo.id, device);
                 try {
-                    const photo = await device.photolibrary.QueryPhoto({ id: assetInfo.id })
+                    const photo = await device.photolibrary.QueryPhoto({id: assetInfo.id})
                     setAssetInfo({
                         ...assetInfo,
                         mate: photo,
@@ -138,10 +137,11 @@ function QueryAssetMatePage(props: { navigate: PageNavigate, device: EndDevicePr
                     putMessage(error)
                 }
 
-            }}>查询</button>
+            }}>查询
+            </button>
         </div>
 
-        <div style={{ marginTop: 10 }}>
+        <div style={{marginTop: 10}}>
 
             <p>其他测试项</p>
             <button
@@ -161,15 +161,15 @@ function QueryAssetMatePage(props: { navigate: PageNavigate, device: EndDevicePr
             </button>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', marginTop: 25 }}>
+        <div style={{display: 'flex', flexDirection: 'column', marginTop: 25}}>
             {assetInfo.message && (
                 <>
-                    <p style={{ textAlign: 'start' }}>查询结果</p>
-                    <textarea disabled value={assetInfo.message} style={{ marginBottom: 15, height: 150 }}></textarea>
+                    <p style={{textAlign: 'start'}}>查询结果</p>
+                    <textarea disabled value={assetInfo.message} style={{marginBottom: 15, height: 150}}></textarea>
                 </>
             )}
             {assetInfo.mate && (
-                <AssetMetaReview meta={assetInfo.mate} />
+                <AssetMetaReview meta={assetInfo.mate}/>
             )}
         </div>
     </div>
@@ -378,7 +378,7 @@ function App() {
     const putPhoto = async () => {
         try {
             const device = await getCurrentDevice();
-            const { albums } = await device?.photolibrary.ListAlbums({});
+            const {albums} = await device?.photolibrary.ListAlbums({});
             const album = albums[0];
             console.log('保存相册ID', album.title, album.id);
             if (!imageMeta) {
@@ -468,23 +468,23 @@ function App() {
     }
 
     return (
-        <div className="App" style={{ width: '100%' }}>
+        <div className="App" style={{width: '100%'}}>
             {pageIndex !== undefined && pageIndex < pageViews.length ? pageViews[pageIndex].view : (
                 <>
                     <div>
                         <a href="https://vitejs.dev" target="_blank">
-                            <img src="/vite.svg" className="logo" alt="Vite logo" />
+                            <img src="/vite.svg" className="logo" alt="Vite logo"/>
                         </a>
                         <a href="https://reactjs.org" target="_blank">
-                            <img src={reactLogo} className="logo react" alt="React logo" />
+                            <img src={reactLogo} className="logo react" alt="React logo"/>
                         </a>
                     </div>
                     <h1>LzcAPI for React</h1>
                     <div className="card">
-                        <div style={{ display: 'inline-grid', justifyContent: 'center' }}>
+                        <div style={{display: 'inline-grid', justifyContent: 'center'}}>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     try {
                                         const currentDevice = await lzcAPI.current?.currentDevice
@@ -501,7 +501,7 @@ function App() {
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     try {
                                         const currentDevice = await lzcAPI.current?.currentDevice
@@ -529,12 +529,12 @@ function App() {
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     try {
                                         const currentDevice = await lzcAPI.current?.currentDevice
                                         const device = currentDevice!;
-                                        const { contacts } = await device.contacts.ListContacts({});
+                                        const {contacts} = await device.contacts.ListContacts({});
                                         let newContacts = contacts.map((i) => {
                                             if (i.name.includes('tzbin')) {
                                                 return {
@@ -558,12 +558,12 @@ function App() {
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     try {
                                         const currentDevice = await lzcAPI.current?.currentDevice
                                         const device = currentDevice!;
-                                        const { contacts } = await device.contacts.ListContacts({});
+                                        const {contacts} = await device.contacts.ListContacts({});
                                         let ids = contacts.map((i) => {
                                             if (i.name.includes('tzbin')) {
                                                 return i.id
@@ -584,7 +584,7 @@ function App() {
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     const currentDevice = await lzcAPI.current?.currentDevice
                                     setPageIndex(0); // 打开查询媒体资源页面
@@ -594,7 +594,7 @@ function App() {
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     try {
                                         const currentDevice = await lzcAPI.current?.currentDevice
@@ -618,14 +618,14 @@ function App() {
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={deletePhotoFor500}
                             >
                                 deletePhotoFor500
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     // let a = await AppCommon.ShareMedia({
                                     //     id: '4FD65BF9-A838-405C-A476-1F71CACBD587/L0/001',
@@ -644,7 +644,7 @@ function App() {
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     const device = await lzcAPI.current.currentDevice;
                                     device.fileHandler.copyFolder({
@@ -670,7 +670,7 @@ function App() {
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     if (loading) return;
                                     let net = '';
@@ -687,11 +687,11 @@ function App() {
                                     setNetState(net);
                                 }}
                             >
-                                Get NetState {loading && <LoadingIcon size="1em" />}
+                                Get NetState {loading && <LoadingIcon size="1em"/>}
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     getAlbumsDebug();
                                 }}
@@ -699,7 +699,7 @@ function App() {
                                 Test Get Albums
                             </button>
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     try {
                                         const devices = await lzcAPI.current?.devices.ListEndDevices({
@@ -714,10 +714,10 @@ function App() {
                                 Get Device List
                             </button>
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     try {
-                                        let { albums } = (await getAlbumsDebug())!;
+                                        let {albums} = (await getAlbumsDebug())!;
                                         if (albums.length < 1) {
                                             throw Error('相册数量过少');
                                         }
@@ -735,7 +735,7 @@ function App() {
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 disabled={loadingImage}
                                 onClick={async () => {
                                     if (loadingImage) {
@@ -771,11 +771,11 @@ function App() {
                                 }}
                             >
                                 Get {imageIndex.current == 0 ? 'First' : 'Next'} Image{' '}
-                                {loadingImage && <LoadingIcon size="1em" />}
+                                {loadingImage && <LoadingIcon size="1em"/>}
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 disabled={loadingImage}
                                 onClick={async () => {
                                     try {
@@ -799,18 +799,18 @@ function App() {
                                 }}
                             >
                                 Get Last Image
-                                {loadingImage && <LoadingIcon size="1em" />}
+                                {loadingImage && <LoadingIcon size="1em"/>}
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     // const axiosClient = axios.create({
                                     // 	withCredentials: true,
                                     // });
 
                                     const image = await (
-                                        await fetch(imageMeta?.photoUrl || '', { credentials: 'omit', cache: 'no-cache' })
+                                        await fetch(imageMeta?.photoUrl || '', {credentials: 'omit', cache: 'no-cache'})
                                     ).blob();
 
                                     console.log('开始转换', image);
@@ -830,7 +830,7 @@ function App() {
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={() => {
                                     getFileOpenHandler();
                                 }}
@@ -839,7 +839,7 @@ function App() {
                             </button>
 
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     const currentDevice = await lzcAPI.current?.currentDevice
                                     console.log('currentDevice', currentDevice)
@@ -863,9 +863,16 @@ function App() {
                             >
                                 getCurrentDevice
                             </button>
-
                             <button
-                                style={{ marginTop: 10 }}
+                                style={{marginTop: 10}}
+                                onClick={async () => {
+                                    await AppCommon.Vibrate(0)
+                                }}
+                            >
+                                振动测试
+                            </button>
+                            <button
+                                style={{marginTop: 10}}
                                 onClick={async () => {
                                     const currentDevice = await lzcAPI.current?.currentDevice
                                     console.log('currentDevice', currentDevice)
@@ -916,7 +923,7 @@ function App() {
                         ) : null}
 
                         {imageMeta != null && (
-                            <AssetMetaReview meta={imageMeta} deletePhoto={deletePhoto} />
+                            <AssetMetaReview meta={imageMeta} deletePhoto={deletePhoto}/>
                         )}
                     </div>
                     <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
