@@ -109,6 +109,7 @@ message ListSinksRepsonse {
     int32 cardIndex= 6;
   }
   repeated Sink sinks = 1;
+  Sink defualtSink = 2;
 }
 
 message CardProfile {

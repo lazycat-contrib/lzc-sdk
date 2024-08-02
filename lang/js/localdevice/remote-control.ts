@@ -312,6 +312,7 @@ export interface ListSinkInputsResponse_SinkInput {
 
 export interface ListSinksRepsonse {
   sinks: ListSinksRepsonse_Sink[];
+  defualtSink: ListSinksRepsonse_Sink | undefined;
 }
 
 export interface ListSinksRepsonse_Sink {
@@ -1337,13 +1338,16 @@ export const ListSinkInputsResponse_SinkInput = {
 };
 
 function createBaseListSinksRepsonse(): ListSinksRepsonse {
-  return { sinks: [] };
+  return { sinks: [], defualtSink: undefined };
 }
 
 export const ListSinksRepsonse = {
   encode(message: ListSinksRepsonse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.sinks) {
       ListSinksRepsonse_Sink.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.defualtSink !== undefined) {
+      ListSinksRepsonse_Sink.encode(message.defualtSink, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -1362,6 +1366,13 @@ export const ListSinksRepsonse = {
 
           message.sinks.push(ListSinksRepsonse_Sink.decode(reader, reader.uint32()));
           continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.defualtSink = ListSinksRepsonse_Sink.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1374,6 +1385,7 @@ export const ListSinksRepsonse = {
   fromJSON(object: any): ListSinksRepsonse {
     return {
       sinks: Array.isArray(object?.sinks) ? object.sinks.map((e: any) => ListSinksRepsonse_Sink.fromJSON(e)) : [],
+      defualtSink: isSet(object.defualtSink) ? ListSinksRepsonse_Sink.fromJSON(object.defualtSink) : undefined,
     };
   },
 
@@ -1381,6 +1393,9 @@ export const ListSinksRepsonse = {
     const obj: any = {};
     if (message.sinks?.length) {
       obj.sinks = message.sinks.map((e) => ListSinksRepsonse_Sink.toJSON(e));
+    }
+    if (message.defualtSink !== undefined) {
+      obj.defualtSink = ListSinksRepsonse_Sink.toJSON(message.defualtSink);
     }
     return obj;
   },
@@ -1392,6 +1407,9 @@ export const ListSinksRepsonse = {
   fromPartial<I extends Exact<DeepPartial<ListSinksRepsonse>, I>>(object: I): ListSinksRepsonse {
     const message = createBaseListSinksRepsonse();
     message.sinks = object.sinks?.map((e) => ListSinksRepsonse_Sink.fromPartial(e)) || [];
+    message.defualtSink = (object.defualtSink !== undefined && object.defualtSink !== null)
+      ? ListSinksRepsonse_Sink.fromPartial(object.defualtSink)
+      : undefined;
     return message;
   },
 };
