@@ -469,6 +469,14 @@ export interface GetBrowserURLResponse {
   url: string;
 }
 
+export interface OcrActionClickRequest {
+  keywords: string[];
+}
+
+export interface OcrActionClickResponse {
+  successful: boolean;
+}
+
 function createBaseSendKeyboardEventRequest(): SendKeyboardEventRequest {
   return { code: 0, state: 0 };
 }
@@ -2928,6 +2936,122 @@ export const GetBrowserURLResponse = {
   },
 };
 
+function createBaseOcrActionClickRequest(): OcrActionClickRequest {
+  return { keywords: [] };
+}
+
+export const OcrActionClickRequest = {
+  encode(message: OcrActionClickRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.keywords) {
+      writer.uint32(10).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): OcrActionClickRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseOcrActionClickRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.keywords.push(reader.string());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): OcrActionClickRequest {
+    return { keywords: Array.isArray(object?.keywords) ? object.keywords.map((e: any) => String(e)) : [] };
+  },
+
+  toJSON(message: OcrActionClickRequest): unknown {
+    const obj: any = {};
+    if (message.keywords?.length) {
+      obj.keywords = message.keywords;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<OcrActionClickRequest>, I>>(base?: I): OcrActionClickRequest {
+    return OcrActionClickRequest.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<OcrActionClickRequest>, I>>(object: I): OcrActionClickRequest {
+    const message = createBaseOcrActionClickRequest();
+    message.keywords = object.keywords?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseOcrActionClickResponse(): OcrActionClickResponse {
+  return { successful: false };
+}
+
+export const OcrActionClickResponse = {
+  encode(message: OcrActionClickResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.successful === true) {
+      writer.uint32(8).bool(message.successful);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): OcrActionClickResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseOcrActionClickResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.successful = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): OcrActionClickResponse {
+    return { successful: isSet(object.successful) ? Boolean(object.successful) : false };
+  },
+
+  toJSON(message: OcrActionClickResponse): unknown {
+    const obj: any = {};
+    if (message.successful === true) {
+      obj.successful = message.successful;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<OcrActionClickResponse>, I>>(base?: I): OcrActionClickResponse {
+    return OcrActionClickResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<OcrActionClickResponse>, I>>(object: I): OcrActionClickResponse {
+    const message = createBaseOcrActionClickResponse();
+    message.successful = object.successful ?? false;
+    return message;
+  },
+};
+
 export interface RemoteControl {
   /** 发送键盘输入事件 */
   SendKeyboardEvent(
@@ -3173,6 +3297,12 @@ export interface RemoteControl {
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<GetBrowserURLResponse>;
+  /** Ocr点击操作 */
+  OcrActionClick(
+    request: DeepPartial<OcrActionClickRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<OcrActionClickResponse>;
 }
 
 export class RemoteControlClientImpl implements RemoteControl {
@@ -3223,6 +3353,7 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.Logout = this.Logout.bind(this);
     this.DebugTest = this.DebugTest.bind(this);
     this.GetBrowserURL = this.GetBrowserURL.bind(this);
+    this.OcrActionClick = this.OcrActionClick.bind(this);
   }
 
   SendKeyboardEvent(
@@ -3638,6 +3769,19 @@ export class RemoteControlClientImpl implements RemoteControl {
     abortSignal?: AbortSignal,
   ): Promise<GetBrowserURLResponse> {
     return this.rpc.unary(RemoteControlGetBrowserURLDesc, Empty.fromPartial(request), metadata, abortSignal);
+  }
+
+  OcrActionClick(
+    request: DeepPartial<OcrActionClickRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<OcrActionClickResponse> {
+    return this.rpc.unary(
+      RemoteControlOcrActionClickDesc,
+      OcrActionClickRequest.fromPartial(request),
+      metadata,
+      abortSignal,
+    );
   }
 }
 
@@ -4576,6 +4720,29 @@ export const RemoteControlGetBrowserURLDesc: UnaryMethodDefinitionish = {
   responseType: {
     deserializeBinary(data: Uint8Array) {
       const value = GetBrowserURLResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlOcrActionClickDesc: UnaryMethodDefinitionish = {
+  methodName: "OcrActionClick",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return OcrActionClickRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = OcrActionClickResponse.decode(data);
       return {
         ...value,
         toObject() {

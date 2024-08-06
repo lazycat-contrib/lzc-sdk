@@ -223,6 +223,14 @@ message GetBrowserURLResponse {
   string url = 1;
 }
 
+message OcrActionClickRequest {
+  repeated string keywords = 1;
+}
+
+message OcrActionClickResponse {
+  bool successful = 1;
+}
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -318,4 +326,6 @@ service RemoteControl{
   rpc DebugTest(google.protobuf.Empty) returns (stream DebugTestReply) {}
   // 获取浏览器当前url
   rpc GetBrowserURL(google.protobuf.Empty) returns (GetBrowserURLResponse) {}
+  // Ocr点击操作
+  rpc OcrActionClick(OcrActionClickRequest) returns (OcrActionClickResponse) {}
 }

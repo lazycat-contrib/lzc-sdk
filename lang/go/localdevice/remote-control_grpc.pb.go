@@ -63,6 +63,7 @@ const (
 	RemoteControl_Logout_FullMethodName                  = "/cloud.lazycat.apis.localdevice.RemoteControl/Logout"
 	RemoteControl_DebugTest_FullMethodName               = "/cloud.lazycat.apis.localdevice.RemoteControl/DebugTest"
 	RemoteControl_GetBrowserURL_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/GetBrowserURL"
+	RemoteControl_OcrActionClick_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/OcrActionClick"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -163,6 +164,8 @@ type RemoteControlClient interface {
 	DebugTest(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (RemoteControl_DebugTestClient, error)
 	// 获取浏览器当前url
 	GetBrowserURL(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetBrowserURLResponse, error)
+	// Ocr点击操作
+	OcrActionClick(ctx context.Context, in *OcrActionClickRequest, opts ...grpc.CallOption) (*OcrActionClickResponse, error)
 }
 
 type remoteControlClient struct {
@@ -656,6 +659,15 @@ func (c *remoteControlClient) GetBrowserURL(ctx context.Context, in *emptypb.Emp
 	return out, nil
 }
 
+func (c *remoteControlClient) OcrActionClick(ctx context.Context, in *OcrActionClickRequest, opts ...grpc.CallOption) (*OcrActionClickResponse, error) {
+	out := new(OcrActionClickResponse)
+	err := c.cc.Invoke(ctx, RemoteControl_OcrActionClick_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -754,6 +766,8 @@ type RemoteControlServer interface {
 	DebugTest(*emptypb.Empty, RemoteControl_DebugTestServer) error
 	// 获取浏览器当前url
 	GetBrowserURL(context.Context, *emptypb.Empty) (*GetBrowserURLResponse, error)
+	// Ocr点击操作
+	OcrActionClick(context.Context, *OcrActionClickRequest) (*OcrActionClickResponse, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -889,6 +903,9 @@ func (UnimplementedRemoteControlServer) DebugTest(*emptypb.Empty, RemoteControl_
 }
 func (UnimplementedRemoteControlServer) GetBrowserURL(context.Context, *emptypb.Empty) (*GetBrowserURLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBrowserURL not implemented")
+}
+func (UnimplementedRemoteControlServer) OcrActionClick(context.Context, *OcrActionClickRequest) (*OcrActionClickResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OcrActionClick not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -1699,6 +1716,24 @@ func _RemoteControl_GetBrowserURL_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_OcrActionClick_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OcrActionClickRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).OcrActionClick(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_OcrActionClick_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).OcrActionClick(ctx, req.(*OcrActionClickRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1861,6 +1896,10 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBrowserURL",
 			Handler:    _RemoteControl_GetBrowserURL_Handler,
+		},
+		{
+			MethodName: "OcrActionClick",
+			Handler:    _RemoteControl_OcrActionClick_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
