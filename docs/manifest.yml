@@ -14,11 +14,6 @@ permissions: #静态权限列表, 还在设计中，方向是权限定义以及�
   - CLOUD.LAZYCAT.APIS.USER_DOCUMENT
   - CLOUD.LAZYCAT.APIS.END_DEVICES
 
-
-runtime_dependencies: # 程序运行时依赖，目前支持系统版本和客户端版本的依赖说明。若运行环境不满足要求则app会提示用户进行更新等操作
-  os: "0.1.22-0"       # 目前仅支持设置最低版本号，版本号需为`git describe --tags`生成的格式或semver规定的格式
-  client: "0.3.3-0"    # 不支持使用"latest"等非semver规范的版本号
-
 unsupported_platforms: # 不支持的平台
   - linux
   - macos
@@ -124,4 +119,6 @@ services: #传统docker镜像启动方式，如果需要数据库等配套容器
       - /lzcapp/pkg/content/entrypoint.sh:/entrypoint.sh # 挂载lpk包内的文件
     entrypoint: /bin/sh -c
     command: "/usr/bin/nextcloud"
+    # network_mode 支持host模式,仅支持host模式
+    network_mode: "host"
     #depends_on:
