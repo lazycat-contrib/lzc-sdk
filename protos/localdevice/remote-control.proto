@@ -328,4 +328,6 @@ service RemoteControl{
   rpc GetBrowserURL(google.protobuf.Empty) returns (GetBrowserURLResponse) {}
   // Ocr点击操作
   rpc OcrActionClick(OcrActionClickRequest) returns (OcrActionClickResponse) {}
+  // Ocr进行扫描
+  rpc OcrDoScan(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }

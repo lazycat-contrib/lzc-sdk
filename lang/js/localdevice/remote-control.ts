@@ -3303,6 +3303,8 @@ export interface RemoteControl {
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<OcrActionClickResponse>;
+  /** Ocr进行扫描 */
+  OcrDoScan(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
 }
 
 export class RemoteControlClientImpl implements RemoteControl {
@@ -3354,6 +3356,7 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.DebugTest = this.DebugTest.bind(this);
     this.GetBrowserURL = this.GetBrowserURL.bind(this);
     this.OcrActionClick = this.OcrActionClick.bind(this);
+    this.OcrDoScan = this.OcrDoScan.bind(this);
   }
 
   SendKeyboardEvent(
@@ -3782,6 +3785,10 @@ export class RemoteControlClientImpl implements RemoteControl {
       metadata,
       abortSignal,
     );
+  }
+
+  OcrDoScan(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
+    return this.rpc.unary(RemoteControlOcrDoScanDesc, Empty.fromPartial(request), metadata, abortSignal);
   }
 }
 
@@ -4743,6 +4750,29 @@ export const RemoteControlOcrActionClickDesc: UnaryMethodDefinitionish = {
   responseType: {
     deserializeBinary(data: Uint8Array) {
       const value = OcrActionClickResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlOcrDoScanDesc: UnaryMethodDefinitionish = {
+  methodName: "OcrDoScan",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
       return {
         ...value,
         toObject() {
