@@ -477,6 +477,10 @@ export interface OcrActionClickResponse {
   successful: boolean;
 }
 
+export interface AsrRecordTimeRequest {
+  isStart: boolean;
+}
+
 function createBaseSendKeyboardEventRequest(): SendKeyboardEventRequest {
   return { code: 0, state: 0 };
 }
@@ -3052,6 +3056,64 @@ export const OcrActionClickResponse = {
   },
 };
 
+function createBaseAsrRecordTimeRequest(): AsrRecordTimeRequest {
+  return { isStart: false };
+}
+
+export const AsrRecordTimeRequest = {
+  encode(message: AsrRecordTimeRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.isStart === true) {
+      writer.uint32(8).bool(message.isStart);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): AsrRecordTimeRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseAsrRecordTimeRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.isStart = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): AsrRecordTimeRequest {
+    return { isStart: isSet(object.isStart) ? Boolean(object.isStart) : false };
+  },
+
+  toJSON(message: AsrRecordTimeRequest): unknown {
+    const obj: any = {};
+    if (message.isStart === true) {
+      obj.isStart = message.isStart;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<AsrRecordTimeRequest>, I>>(base?: I): AsrRecordTimeRequest {
+    return AsrRecordTimeRequest.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<AsrRecordTimeRequest>, I>>(object: I): AsrRecordTimeRequest {
+    const message = createBaseAsrRecordTimeRequest();
+    message.isStart = object.isStart ?? false;
+    return message;
+  },
+};
+
 export interface RemoteControl {
   /** 发送键盘输入事件 */
   SendKeyboardEvent(
@@ -3305,6 +3367,11 @@ export interface RemoteControl {
   ): Promise<OcrActionClickResponse>;
   /** Ocr进行扫描 */
   OcrDoScan(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
+  AsrRecordTime(
+    request: DeepPartial<AsrRecordTimeRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<Empty>;
 }
 
 export class RemoteControlClientImpl implements RemoteControl {
@@ -3357,6 +3424,7 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.GetBrowserURL = this.GetBrowserURL.bind(this);
     this.OcrActionClick = this.OcrActionClick.bind(this);
     this.OcrDoScan = this.OcrDoScan.bind(this);
+    this.AsrRecordTime = this.AsrRecordTime.bind(this);
   }
 
   SendKeyboardEvent(
@@ -3789,6 +3857,19 @@ export class RemoteControlClientImpl implements RemoteControl {
 
   OcrDoScan(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
     return this.rpc.unary(RemoteControlOcrDoScanDesc, Empty.fromPartial(request), metadata, abortSignal);
+  }
+
+  AsrRecordTime(
+    request: DeepPartial<AsrRecordTimeRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<Empty> {
+    return this.rpc.unary(
+      RemoteControlAsrRecordTimeDesc,
+      AsrRecordTimeRequest.fromPartial(request),
+      metadata,
+      abortSignal,
+    );
   }
 }
 
@@ -4768,6 +4849,29 @@ export const RemoteControlOcrDoScanDesc: UnaryMethodDefinitionish = {
   requestType: {
     serializeBinary() {
       return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlAsrRecordTimeDesc: UnaryMethodDefinitionish = {
+  methodName: "AsrRecordTime",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return AsrRecordTimeRequest.encode(this).finish();
     },
   } as any,
   responseType: {

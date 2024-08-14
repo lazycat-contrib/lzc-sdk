@@ -231,6 +231,10 @@ message OcrActionClickResponse {
   bool successful = 1;
 }
 
+message AsrRecordTimeRequest{
+  bool isStart = 1;
+}
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -330,4 +334,5 @@ service RemoteControl{
   rpc OcrActionClick(OcrActionClickRequest) returns (OcrActionClickResponse) {}
   // Ocr进行扫描
   rpc OcrDoScan(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc AsrRecordTime(AsrRecordTimeRequest) returns (google.protobuf.Empty) {}
 }

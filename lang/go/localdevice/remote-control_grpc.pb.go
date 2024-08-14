@@ -65,6 +65,7 @@ const (
 	RemoteControl_GetBrowserURL_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/GetBrowserURL"
 	RemoteControl_OcrActionClick_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/OcrActionClick"
 	RemoteControl_OcrDoScan_FullMethodName               = "/cloud.lazycat.apis.localdevice.RemoteControl/OcrDoScan"
+	RemoteControl_AsrRecordTime_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/AsrRecordTime"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -169,6 +170,7 @@ type RemoteControlClient interface {
 	OcrActionClick(ctx context.Context, in *OcrActionClickRequest, opts ...grpc.CallOption) (*OcrActionClickResponse, error)
 	// Ocr进行扫描
 	OcrDoScan(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	AsrRecordTime(ctx context.Context, in *AsrRecordTimeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type remoteControlClient struct {
@@ -680,6 +682,15 @@ func (c *remoteControlClient) OcrDoScan(ctx context.Context, in *emptypb.Empty, 
 	return out, nil
 }
 
+func (c *remoteControlClient) AsrRecordTime(ctx context.Context, in *AsrRecordTimeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, RemoteControl_AsrRecordTime_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -782,6 +793,7 @@ type RemoteControlServer interface {
 	OcrActionClick(context.Context, *OcrActionClickRequest) (*OcrActionClickResponse, error)
 	// Ocr进行扫描
 	OcrDoScan(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	AsrRecordTime(context.Context, *AsrRecordTimeRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -923,6 +935,9 @@ func (UnimplementedRemoteControlServer) OcrActionClick(context.Context, *OcrActi
 }
 func (UnimplementedRemoteControlServer) OcrDoScan(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OcrDoScan not implemented")
+}
+func (UnimplementedRemoteControlServer) AsrRecordTime(context.Context, *AsrRecordTimeRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AsrRecordTime not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -1769,6 +1784,24 @@ func _RemoteControl_OcrDoScan_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_AsrRecordTime_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AsrRecordTimeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).AsrRecordTime(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_AsrRecordTime_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).AsrRecordTime(ctx, req.(*AsrRecordTimeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1939,6 +1972,10 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OcrDoScan",
 			Handler:    _RemoteControl_OcrDoScan_Handler,
+		},
+		{
+			MethodName: "AsrRecordTime",
+			Handler:    _RemoteControl_AsrRecordTime_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
