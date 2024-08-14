@@ -365,6 +365,23 @@ class AppCommon extends LzcAppSdkManage {
         }
         console.warn('the current client does not support');
     }
+    /**
+     * @description: 发起扫码请求
+     * @return {*}
+     */
+    @native(LzcAppPlatformType.IOS,LzcAppPlatformType.Android)
+    public static async ScanQrCode(): Promise<void> {
+        if (LzcAppSdk.isIosWebShell()) {
+            // TODO
+            return
+        }
+        if (LzcAppSdk.isAndroidWebShell()) {
+            const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
+            await jsBridge.ScanQrCode()
+            return
+        }
+        console.warn('the current client does not support');
+    }
 }
 
 export * from './client_authorization'
