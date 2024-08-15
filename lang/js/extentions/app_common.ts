@@ -388,9 +388,11 @@ public static async ScanQrCode(): Promise<string> {
 
     if (LzcAppSdk.isAndroidWebShell()) {
         try {
-            const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service);
-            const result = await jsBridge.ScanQrCode(); // 获取结果
-            return result;
+            return new Promise<string>(async (resolve, reject) => {
+                const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service);
+                jsBridge.ScanQrCode();
+                resolve("")
+            })
         } catch (error) {
             console.error('Error scanning QR code on Android:', error);
             return 'Failed to scan QR code'; // 返回错误信息
