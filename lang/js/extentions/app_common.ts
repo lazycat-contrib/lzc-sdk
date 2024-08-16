@@ -40,7 +40,13 @@ class AppCommon extends LzcAppSdkManage {
      * @return {Promise<void>}
      */
     @native(LzcAppPlatformType.IOS, LzcAppPlatformType.Android, LzcAppPlatformType.PC, LzcAppPlatformType.Browser, LzcAppPlatformType.TvOs)
-    public static async LaunchApp(url: string, appid: string): Promise<void> {
+    public static async LaunchApp(
+        url: string,
+        appid: string,
+        options?: {
+            forcedRefresh?: boolean
+        }
+    ): Promise<void> {
         // 判断是否在浏览器中
         if (!LzcAppSdk.isInApplication()) {
             // window.open(url, '_blank')
@@ -62,7 +68,13 @@ class AppCommon extends LzcAppSdkManage {
 
         if (LzcAppSdk.isIosWebShell()) {
             const jsBridge = await LzcAppSdk.useNativeAsync()
-            jsBridge.LaunchApp(url, appid)
+            jsBridge.LaunchApp(
+                url,
+                appid,
+                {
+                    'forcedRefresh': options?.forcedRefresh ?? false
+                }
+            )
             return
         }
         // Electron launch app
@@ -241,8 +253,8 @@ class AppCommon extends LzcAppSdkManage {
     /**
      *
      * @param options
-     * actionName: 安卓必须填写 actionName 由packageName和classname组成, ios可以忽略
-     * ids/id 安卓或者ios 提供的文件id
+     * actionName: 安卓必须填写 actionName 由 packageName 和 classname 组成, ios 可以忽略
+     * ids/id 安卓或者 ios 提供的文件 id
      * @constructor
      */
     @native(LzcAppPlatformType.Android, LzcAppPlatformType.IOS)
@@ -347,6 +359,7 @@ class AppCommon extends LzcAppSdkManage {
 
         console.warn('the current client does not support');
     }
+
     /**
      * @description: 使手机发起振动
      * @return {*}
