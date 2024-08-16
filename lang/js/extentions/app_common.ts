@@ -123,6 +123,28 @@ class AppCommon extends LzcAppSdkManage {
     }
 
     /**
+     * @description: IOS 客户端打开应用临时窗口，用于应用跳转应用商店检查更新等场景
+     * @param {string} url
+     * @return {*}
+     */
+    @native(LzcAppPlatformType.IOS)
+    public static async OpenAppTemporaryWindow(url: string): Promise<void> {
+        // 在浏览器环境中
+        if (!LzcAppSdk.isInApplication()) {
+            console.error("OpenAppTemporaryWindow 方法暂未实现。")
+            return
+        }
+        // 在 IOS 环境
+        if (LzcAppSdk.isIosWebShell()) {
+            const jsBridge = await LzcAppSdk.useNativeAsync()
+            jsBridge.OpenAppTemporaryWindow(url)
+            return
+        }
+        // TODO: 其他环境中待实现
+        console.error("OpenAppTemporaryWindow 方法暂未实现。")
+    }
+
+    /**
      * @deprecated 该接口已弃用，预计后续版本可能会被删除，请使用 `ShareWithFiles` 接口替代
      * @description: 使用指定的原生应用打开在线文件
      * @param boxName 盒子名称
