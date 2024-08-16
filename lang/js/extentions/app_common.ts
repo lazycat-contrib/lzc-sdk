@@ -351,7 +351,7 @@ class AppCommon extends LzcAppSdkManage {
      * @description: 使手机发起振动
      * @return {*}
      */
-    @native(LzcAppPlatformType.IOS,LzcAppPlatformType.Android)
+    @native(LzcAppPlatformType.IOS, LzcAppPlatformType.Android)
     public static async Vibrate(type: VibrateType): Promise<void> {
         // 调用各客户端具体实现
         if (LzcAppSdk.isIosWebShell()) {
@@ -365,43 +365,44 @@ class AppCommon extends LzcAppSdkManage {
         }
         console.warn('the current client does not support');
     }
+
     /**
- * @description: 发起扫码请求
- * @return {Promise<string>} - 扫码结果的 Promise（字符串）
- */
-@native(LzcAppPlatformType.IOS, LzcAppPlatformType.Android)
-public static async ScanQrCode(): Promise<string> {
-    if (LzcAppSdk.isIosWebShell()) {
-        try {
-            const jsBridge = await LzcAppSdk.useNativeAsync();
-            const result = await new Promise<string>((resolve, reject) => {
-                jsBridge.ScanQrCode((scanResult: string) => {
-                    resolve(scanResult); // 将扫码结果作为 Promise 的解析值
+     * @description: 发起扫码请求
+     * @return {Promise<string>} - 扫码结果的 Promise（字符串）
+     */
+    @native(LzcAppPlatformType.IOS, LzcAppPlatformType.Android)
+    public static async ScanQrCode(): Promise<string> {
+        if (LzcAppSdk.isIosWebShell()) {
+            try {
+                const jsBridge = await LzcAppSdk.useNativeAsync();
+                const result = await new Promise<string>((resolve, reject) => {
+                    jsBridge.ScanQrCode((scanResult: string) => {
+                        resolve(scanResult); // 将扫码结果作为 Promise 的解析值
+                    });
                 });
-            });
-            return result;
-        } catch (error) {
-            console.error('Error scanning QR code on iOS:', error);
-            return 'Failed to scan QR code'; // 返回错误信息
+                return result;
+            } catch (error) {
+                console.error('Error scanning QR code on iOS:', error);
+                return 'Failed to scan QR code'; // 返回错误信息
+            }
         }
-    }
 
-    if (LzcAppSdk.isAndroidWebShell()) {
-        try {
-            return new Promise<string>(async (resolve, reject) => {
-                const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service);
-                jsBridge.ScanQrCode();
-                resolve("")
-            })
-        } catch (error) {
-            console.error('Error scanning QR code on Android:', error);
-            return 'Failed to scan QR code'; // 返回错误信息
+        if (LzcAppSdk.isAndroidWebShell()) {
+            try {
+                return new Promise<string>(async (resolve, reject) => {
+                    const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service);
+                    jsBridge.ScanQrCode();
+                    resolve("")
+                })
+            } catch (error) {
+                console.error('Error scanning QR code on Android:', error);
+                return 'Failed to scan QR code'; // 返回错误信息
+            }
         }
-    }
 
-    console.warn('The current client does not support');
-    return 'The current client does not support'; // 返回不支持的错误信息
-}
+        console.warn('The current client does not support');
+        return 'The current client does not support'; // 返回不支持的错误信息
+    }
 
 }
 
