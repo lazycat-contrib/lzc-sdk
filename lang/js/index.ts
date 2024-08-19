@@ -31,6 +31,7 @@ import { DevOptService, DevOptServiceClientImpl } from "./sys/devopt"
 import { MessageServiceClientImpl } from "./common/message"
 import { RemoteControl, RemoteControlClientImpl } from "./localdevice/remote-control"
 import { TvOS, TvOSClientImpl } from "./sys/tvos"
+import { VersionInfoService, VersionInfoServiceClientImpl } from "./sys/version"
 
 
 const opt = {
@@ -68,6 +69,9 @@ export class lzcAPIGateway {
     this.message = new MessageServiceClientImpl(rpc)
 
     this.tvos = new TvOSClientImpl(rpc)
+
+    this.version = new VersionInfoServiceClientImpl(rpc)
+
     dumpInfo(this.bo)
   }
 
@@ -93,6 +97,8 @@ export class lzcAPIGateway {
   public devices: EndDeviceService
 
   public message: MessageServiceClientImpl
+
+  public version: VersionInfoService
 
   public async openDevices() {
     return new Promise<void>((resolve, reject) => {
