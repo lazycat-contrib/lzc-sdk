@@ -409,13 +409,18 @@ class AppCommon extends LzcAppSdkManage {
     public static async ScanQrCode(): Promise<string> {
         if (LzcAppSdk.isIosWebShell()) {
             try {
-                const jsBridge = await LzcAppSdk.useNativeAsync();
-                const result = await new Promise<string>((resolve, reject) => {
-                    jsBridge.ScanQrCode((scanResult: string) => {
-                        resolve(scanResult); // 将扫码结果作为 Promise 的解析值
-                    });
-                });
-                return result;
+                // const result = await new Promise<string>((resolve, reject) => {
+                //     jsBridge.ScanQrCode((scanResult: string) => {
+                //         resolve(scanResult); // 将扫码结果作为 Promise 的解析值
+                //     });
+                // });
+                // return result;
+                return new Promise<string>(async (resolve, reject) => {
+                    const jsBridge = await LzcAppSdk.useNativeAsync();
+                    jsBridge.ScanQrCode();
+                    resolve("")
+                })
+                    
             } catch (error) {
                 console.error('Error scanning QR code on iOS:', error);
                 return 'Failed to scan QR code'; // 返回错误信息
