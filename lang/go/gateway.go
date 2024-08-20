@@ -27,6 +27,7 @@ type APIGateway struct {
 	DirMonitor       sys.DirMonitorClient
 	Message          common.MessageServiceClient
 	TvOS             sys.TvOSClient
+	Version          sys.VersionInfoServiceClient
 }
 
 type DeviceProxy struct {
@@ -121,6 +122,7 @@ func NewAPIGateway(ctx context.Context) (*APIGateway, error) {
 		PeripheralDevice: common.NewPeripheralDeviceServiceClient(conn),
 		FileTransfer:     common.NewFileTransferServiceClient(conn),
 		Message:          common.NewMessageServiceClient(conn),
+		Version:          sys.NewVersionInfoServiceClient(conn),
 	}, nil
 }
 
