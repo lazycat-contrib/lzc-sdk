@@ -3,6 +3,8 @@ LZCAPP运行时
 
 app container的文件系统视角里，除了正常的linux rootfs外，还存在一个特殊的/lzcapp/根目录，
 
+注意: 在构建docker image时千万不要存放任何内容到/lzcapp, lzcapp启动时这个目录下的内容会被覆盖
+
 - /lzcapp/run/
 
   - /lzcapp/run/appdomain  #app分配到的域名全称
@@ -47,7 +49,6 @@ services在mainifest.yml中通过services字段定义，类似docker-compose的�
 
 每个service都会分配一个固定(内部lzcdns)域名，格式是:`$service_name.$appid.lzcapp`，在lzcapp内部以及manifest.yml中
 都可以通过这个域名来访问对应services的服务。
-
 
 环境变量
 =======
