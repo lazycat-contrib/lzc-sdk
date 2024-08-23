@@ -95,7 +95,7 @@ message QueryRequest {
 message AppMetadata {
   string id = 1;
   bool system = 2;
-  bool userApp = 3;
+  bool mutliInstance = 3;
   string version = 4;
 }
 
