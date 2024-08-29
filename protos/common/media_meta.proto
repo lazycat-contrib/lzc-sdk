@@ -31,6 +31,8 @@ message GetUserMediaMetaResponse {
 
 service Thumbnail {
   rpc GenerateFileThumbnail(GenerateFileThumbnailRequest) returns (google.protobuf.Empty) {}
+  // 清理所有已生成的缩略图
+  rpc CleanAll(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }
 
 message GenerateFileThumbnailRequest {
