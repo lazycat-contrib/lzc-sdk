@@ -185,7 +185,6 @@ var MediaMeta_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	Thumbnail_GenerateFileThumbnail_FullMethodName = "/cloud.lazycat.apis.common.Thumbnail/GenerateFileThumbnail"
-	Thumbnail_CleanAll_FullMethodName              = "/cloud.lazycat.apis.common.Thumbnail/CleanAll"
 )
 
 // ThumbnailClient is the client API for Thumbnail service.
@@ -193,8 +192,6 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ThumbnailClient interface {
 	GenerateFileThumbnail(ctx context.Context, in *GenerateFileThumbnailRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 清理所有已生成的缩略图
-	CleanAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type thumbnailClient struct {
@@ -214,22 +211,11 @@ func (c *thumbnailClient) GenerateFileThumbnail(ctx context.Context, in *Generat
 	return out, nil
 }
 
-func (c *thumbnailClient) CleanAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Thumbnail_CleanAll_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ThumbnailServer is the server API for Thumbnail service.
 // All implementations must embed UnimplementedThumbnailServer
 // for forward compatibility
 type ThumbnailServer interface {
 	GenerateFileThumbnail(context.Context, *GenerateFileThumbnailRequest) (*emptypb.Empty, error)
-	// 清理所有已生成的缩略图
-	CleanAll(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedThumbnailServer()
 }
 
@@ -239,9 +225,6 @@ type UnimplementedThumbnailServer struct {
 
 func (UnimplementedThumbnailServer) GenerateFileThumbnail(context.Context, *GenerateFileThumbnailRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateFileThumbnail not implemented")
-}
-func (UnimplementedThumbnailServer) CleanAll(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CleanAll not implemented")
 }
 func (UnimplementedThumbnailServer) mustEmbedUnimplementedThumbnailServer() {}
 
@@ -274,24 +257,6 @@ func _Thumbnail_GenerateFileThumbnail_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Thumbnail_CleanAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ThumbnailServer).CleanAll(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Thumbnail_CleanAll_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ThumbnailServer).CleanAll(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Thumbnail_ServiceDesc is the grpc.ServiceDesc for Thumbnail service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -302,10 +267,6 @@ var Thumbnail_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateFileThumbnail",
 			Handler:    _Thumbnail_GenerateFileThumbnail_Handler,
-		},
-		{
-			MethodName: "CleanAll",
-			Handler:    _Thumbnail_CleanAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
