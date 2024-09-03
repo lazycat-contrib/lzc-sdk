@@ -32,7 +32,7 @@ import { MessageServiceClientImpl } from "./common/message"
 import { RemoteControl, RemoteControlClientImpl } from "./localdevice/remote-control"
 import { TvOS, TvOSClientImpl } from "./sys/tvos"
 import { VersionInfoService, VersionInfoServiceClientImpl } from "./sys/version"
-
+import { OnewaySync, OnewaySyncClientImpl } from "./localdevice/oneway-sync"
 
 const opt = {
   transport: grpc.CrossBrowserHttpTransport({ withCredentials: true }),
@@ -203,6 +203,7 @@ export class EndDeviceProxy {
     this.rim = new RimClientImpl(rpc)
     this.remoteControl = new RemoteControlClientImpl(rpc)
     this.contacts = new ContactsManagerClientImpl(rpc)
+    this.onewaysync = new OnewaySyncClientImpl(rpc)
   }
 
   public device: DeviceService
@@ -218,6 +219,7 @@ export class EndDeviceProxy {
   public rim: Rim
   public remoteControl: RemoteControl
   public contacts: ContactsManager
+  public onewaysync: OnewaySync
 }
 
 async function dumpInfo(bo: BrowserOnlyProxy) {
