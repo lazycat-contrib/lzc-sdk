@@ -1,17 +1,18 @@
+// @ts-nocheck
 if (window.lzc_bridge == undefined) {
   window.lzc_bridge = {}
 }
 
-async function warpIosBridge(func: string, argv = {}) {
+async function warpIosBridge(func: string, argv = "") {
   const key = Number(Math.random() * 10000000).toFixed()
   const handlerFuncName = `handler_${func}_${key}`
 
-  window.lzc_bridge[handlerFuncName] = function (v) {
+  window.lzc_bridge[handlerFuncName] = function (v: any) {
     console.log("v:", v)
     return v
   }
 
-  const proxyHandler = async func => {
+  const proxyHandler = async (func: Function) => {
     return new Promise(res => {
       const proxyFunc = new Proxy(func, {
         apply: (target, thisArg, argvlist) => {
