@@ -334,5 +334,8 @@ service RemoteControl{
   rpc OcrActionClick(OcrActionClickRequest) returns (OcrActionClickResponse) {}
   // Ocr进行扫描
   rpc OcrDoScan(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // Asr耗时记录
   rpc AsrRecordTime(AsrRecordTimeRequest) returns (google.protobuf.Empty) {}
+  // 重置显示画面
+  rpc ResetDisplay(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }

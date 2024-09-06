@@ -2515,7 +2515,7 @@ var file_localdevice_remote_control_proto_rawDesc = []byte{
 	0x06, 0x12, 0x0b, 0x0a, 0x07, 0x54, 0x6f, 0x75, 0x63, 0x68, 0x55, 0x70, 0x10, 0x07, 0x2a, 0x2a,
 	0x0a, 0x05, 0x4c, 0x61, 0x79, 0x65, 0x72, 0x12, 0x0a, 0x0a, 0x06, 0x4e, 0x4f, 0x52, 0x4d, 0x41,
 	0x4c, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x42, 0x4c, 0x41, 0x43, 0x4b, 0x10, 0x01, 0x12, 0x0a,
-	0x0a, 0x06, 0x43, 0x55, 0x53, 0x54, 0x4f, 0x4d, 0x10, 0x02, 0x32, 0xc5, 0x21, 0x0a, 0x0d, 0x52,
+	0x0a, 0x06, 0x43, 0x55, 0x53, 0x54, 0x4f, 0x4d, 0x10, 0x02, 0x32, 0x87, 0x22, 0x0a, 0x0d, 0x52,
 	0x65, 0x6d, 0x6f, 0x74, 0x65, 0x43, 0x6f, 0x6e, 0x74, 0x72, 0x6f, 0x6c, 0x12, 0x67, 0x0a, 0x11,
 	0x53, 0x65, 0x6e, 0x64, 0x4b, 0x65, 0x79, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x45, 0x76, 0x65, 0x6e,
 	0x74, 0x12, 0x38, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61,
@@ -2784,10 +2784,14 @@ var file_localdevice_remote_control_proto_rawDesc = []byte{
 	0x69, 0x63, 0x65, 0x2e, 0x41, 0x73, 0x72, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x54, 0x69, 0x6d,
 	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
 	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79,
-	0x22, 0x00, 0x42, 0x30, 0x5a, 0x2e, 0x67, 0x69, 0x74, 0x65, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
-	0x6c, 0x69, 0x6e, 0x61, 0x6b, 0x65, 0x73, 0x69, 0x2f, 0x6c, 0x7a, 0x63, 0x2d, 0x73, 0x64, 0x6b,
-	0x2f, 0x6c, 0x61, 0x6e, 0x67, 0x2f, 0x67, 0x6f, 0x2f, 0x6c, 0x6f, 0x63, 0x61, 0x6c, 0x64, 0x65,
-	0x76, 0x69, 0x63, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x22, 0x00, 0x12, 0x40, 0x0a, 0x0c, 0x52, 0x65, 0x73, 0x65, 0x74, 0x44, 0x69, 0x73, 0x70, 0x6c,
+	0x61, 0x79, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f,
+	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70,
+	0x74, 0x79, 0x22, 0x00, 0x42, 0x30, 0x5a, 0x2e, 0x67, 0x69, 0x74, 0x65, 0x65, 0x2e, 0x63, 0x6f,
+	0x6d, 0x2f, 0x6c, 0x69, 0x6e, 0x61, 0x6b, 0x65, 0x73, 0x69, 0x2f, 0x6c, 0x7a, 0x63, 0x2d, 0x73,
+	0x64, 0x6b, 0x2f, 0x6c, 0x61, 0x6e, 0x67, 0x2f, 0x67, 0x6f, 0x2f, 0x6c, 0x6f, 0x63, 0x61, 0x6c,
+	0x64, 0x65, 0x76, 0x69, 0x63, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -2910,54 +2914,56 @@ var file_localdevice_remote_control_proto_depIdxs = []int32{
 	34, // 58: cloud.lazycat.apis.localdevice.RemoteControl.OcrActionClick:input_type -> cloud.lazycat.apis.localdevice.OcrActionClickRequest
 	41, // 59: cloud.lazycat.apis.localdevice.RemoteControl.OcrDoScan:input_type -> google.protobuf.Empty
 	36, // 60: cloud.lazycat.apis.localdevice.RemoteControl.AsrRecordTime:input_type -> cloud.lazycat.apis.localdevice.AsrRecordTimeRequest
-	41, // 61: cloud.lazycat.apis.localdevice.RemoteControl.SendKeyboardEvent:output_type -> google.protobuf.Empty
-	41, // 62: cloud.lazycat.apis.localdevice.RemoteControl.SendTouchpadEvent:output_type -> google.protobuf.Empty
-	41, // 63: cloud.lazycat.apis.localdevice.RemoteControl.SendTouchpadClick:output_type -> google.protobuf.Empty
-	41, // 64: cloud.lazycat.apis.localdevice.RemoteControl.SendTouchpadRightClick:output_type -> google.protobuf.Empty
-	41, // 65: cloud.lazycat.apis.localdevice.RemoteControl.SendTouchpadDoubleClick:output_type -> google.protobuf.Empty
-	41, // 66: cloud.lazycat.apis.localdevice.RemoteControl.SendTouchpadMove:output_type -> google.protobuf.Empty
-	41, // 67: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseMoveLeft:output_type -> google.protobuf.Empty
-	41, // 68: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseMoveRight:output_type -> google.protobuf.Empty
-	41, // 69: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseMoveUp:output_type -> google.protobuf.Empty
-	41, // 70: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseMove:output_type -> google.protobuf.Empty
-	41, // 71: cloud.lazycat.apis.localdevice.RemoteControl.MouseMoveStream:output_type -> google.protobuf.Empty
-	41, // 72: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseLeftClick:output_type -> google.protobuf.Empty
-	41, // 73: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseRightClick:output_type -> google.protobuf.Empty
-	41, // 74: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseMiddleClick:output_type -> google.protobuf.Empty
-	41, // 75: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseWheel:output_type -> google.protobuf.Empty
-	41, // 76: cloud.lazycat.apis.localdevice.RemoteControl.MouseWheelStream:output_type -> google.protobuf.Empty
-	41, // 77: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseDoubleClick:output_type -> google.protobuf.Empty
-	41, // 78: cloud.lazycat.apis.localdevice.RemoteControl.SetRemoteScreenRect:output_type -> google.protobuf.Empty
-	41, // 79: cloud.lazycat.apis.localdevice.RemoteControl.WriteClipboard:output_type -> google.protobuf.Empty
-	14, // 80: cloud.lazycat.apis.localdevice.RemoteControl.ReadClipboard:output_type -> cloud.lazycat.apis.localdevice.ReadClipboardResponse
-	41, // 81: cloud.lazycat.apis.localdevice.RemoteControl.DoPaste:output_type -> google.protobuf.Empty
-	41, // 82: cloud.lazycat.apis.localdevice.RemoteControl.BrowserAction:output_type -> google.protobuf.Empty
-	15, // 83: cloud.lazycat.apis.localdevice.RemoteControl.ListSinkInputs:output_type -> cloud.lazycat.apis.localdevice.ListSinkInputsResponse
-	16, // 84: cloud.lazycat.apis.localdevice.RemoteControl.ListSinks:output_type -> cloud.lazycat.apis.localdevice.ListSinksRepsonse
-	18, // 85: cloud.lazycat.apis.localdevice.RemoteControl.ListCards:output_type -> cloud.lazycat.apis.localdevice.ListCardsResponse
-	41, // 86: cloud.lazycat.apis.localdevice.RemoteControl.SetDefaultSink:output_type -> google.protobuf.Empty
-	41, // 87: cloud.lazycat.apis.localdevice.RemoteControl.SetCardProfile:output_type -> google.protobuf.Empty
-	22, // 88: cloud.lazycat.apis.localdevice.RemoteControl.GetMute:output_type -> cloud.lazycat.apis.localdevice.GetMuteResponse
-	22, // 89: cloud.lazycat.apis.localdevice.RemoteControl.ToggleMute:output_type -> cloud.lazycat.apis.localdevice.GetMuteResponse
-	24, // 90: cloud.lazycat.apis.localdevice.RemoteControl.GetVolume:output_type -> cloud.lazycat.apis.localdevice.GetSinkVolumeResponse
-	41, // 91: cloud.lazycat.apis.localdevice.RemoteControl.IncreaseVolume:output_type -> google.protobuf.Empty
-	41, // 92: cloud.lazycat.apis.localdevice.RemoteControl.DecreaseVolume:output_type -> google.protobuf.Empty
-	41, // 93: cloud.lazycat.apis.localdevice.RemoteControl.SetSinkInputVolume:output_type -> google.protobuf.Empty
-	30, // 94: cloud.lazycat.apis.localdevice.RemoteControl.BleScanDevices:output_type -> cloud.lazycat.apis.localdevice.BleScanDevicesResponse
-	41, // 95: cloud.lazycat.apis.localdevice.RemoteControl.BleConnectDevice:output_type -> google.protobuf.Empty
-	41, // 96: cloud.lazycat.apis.localdevice.RemoteControl.BleDisconnectDevice:output_type -> google.protobuf.Empty
-	41, // 97: cloud.lazycat.apis.localdevice.RemoteControl.BleRemoveDevice:output_type -> google.protobuf.Empty
-	41, // 98: cloud.lazycat.apis.localdevice.RemoteControl.BleRefreshDevices:output_type -> google.protobuf.Empty
-	41, // 99: cloud.lazycat.apis.localdevice.RemoteControl.SetScreenLayer:output_type -> google.protobuf.Empty
-	31, // 100: cloud.lazycat.apis.localdevice.RemoteControl.GetScreenLayer:output_type -> cloud.lazycat.apis.localdevice.ScreenLayer
-	41, // 101: cloud.lazycat.apis.localdevice.RemoteControl.Logout:output_type -> google.protobuf.Empty
-	32, // 102: cloud.lazycat.apis.localdevice.RemoteControl.DebugTest:output_type -> cloud.lazycat.apis.localdevice.DebugTestReply
-	33, // 103: cloud.lazycat.apis.localdevice.RemoteControl.GetBrowserURL:output_type -> cloud.lazycat.apis.localdevice.GetBrowserURLResponse
-	35, // 104: cloud.lazycat.apis.localdevice.RemoteControl.OcrActionClick:output_type -> cloud.lazycat.apis.localdevice.OcrActionClickResponse
-	41, // 105: cloud.lazycat.apis.localdevice.RemoteControl.OcrDoScan:output_type -> google.protobuf.Empty
-	41, // 106: cloud.lazycat.apis.localdevice.RemoteControl.AsrRecordTime:output_type -> google.protobuf.Empty
-	61, // [61:107] is the sub-list for method output_type
-	15, // [15:61] is the sub-list for method input_type
+	41, // 61: cloud.lazycat.apis.localdevice.RemoteControl.ResetDisplay:input_type -> google.protobuf.Empty
+	41, // 62: cloud.lazycat.apis.localdevice.RemoteControl.SendKeyboardEvent:output_type -> google.protobuf.Empty
+	41, // 63: cloud.lazycat.apis.localdevice.RemoteControl.SendTouchpadEvent:output_type -> google.protobuf.Empty
+	41, // 64: cloud.lazycat.apis.localdevice.RemoteControl.SendTouchpadClick:output_type -> google.protobuf.Empty
+	41, // 65: cloud.lazycat.apis.localdevice.RemoteControl.SendTouchpadRightClick:output_type -> google.protobuf.Empty
+	41, // 66: cloud.lazycat.apis.localdevice.RemoteControl.SendTouchpadDoubleClick:output_type -> google.protobuf.Empty
+	41, // 67: cloud.lazycat.apis.localdevice.RemoteControl.SendTouchpadMove:output_type -> google.protobuf.Empty
+	41, // 68: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseMoveLeft:output_type -> google.protobuf.Empty
+	41, // 69: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseMoveRight:output_type -> google.protobuf.Empty
+	41, // 70: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseMoveUp:output_type -> google.protobuf.Empty
+	41, // 71: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseMove:output_type -> google.protobuf.Empty
+	41, // 72: cloud.lazycat.apis.localdevice.RemoteControl.MouseMoveStream:output_type -> google.protobuf.Empty
+	41, // 73: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseLeftClick:output_type -> google.protobuf.Empty
+	41, // 74: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseRightClick:output_type -> google.protobuf.Empty
+	41, // 75: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseMiddleClick:output_type -> google.protobuf.Empty
+	41, // 76: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseWheel:output_type -> google.protobuf.Empty
+	41, // 77: cloud.lazycat.apis.localdevice.RemoteControl.MouseWheelStream:output_type -> google.protobuf.Empty
+	41, // 78: cloud.lazycat.apis.localdevice.RemoteControl.SendMouseDoubleClick:output_type -> google.protobuf.Empty
+	41, // 79: cloud.lazycat.apis.localdevice.RemoteControl.SetRemoteScreenRect:output_type -> google.protobuf.Empty
+	41, // 80: cloud.lazycat.apis.localdevice.RemoteControl.WriteClipboard:output_type -> google.protobuf.Empty
+	14, // 81: cloud.lazycat.apis.localdevice.RemoteControl.ReadClipboard:output_type -> cloud.lazycat.apis.localdevice.ReadClipboardResponse
+	41, // 82: cloud.lazycat.apis.localdevice.RemoteControl.DoPaste:output_type -> google.protobuf.Empty
+	41, // 83: cloud.lazycat.apis.localdevice.RemoteControl.BrowserAction:output_type -> google.protobuf.Empty
+	15, // 84: cloud.lazycat.apis.localdevice.RemoteControl.ListSinkInputs:output_type -> cloud.lazycat.apis.localdevice.ListSinkInputsResponse
+	16, // 85: cloud.lazycat.apis.localdevice.RemoteControl.ListSinks:output_type -> cloud.lazycat.apis.localdevice.ListSinksRepsonse
+	18, // 86: cloud.lazycat.apis.localdevice.RemoteControl.ListCards:output_type -> cloud.lazycat.apis.localdevice.ListCardsResponse
+	41, // 87: cloud.lazycat.apis.localdevice.RemoteControl.SetDefaultSink:output_type -> google.protobuf.Empty
+	41, // 88: cloud.lazycat.apis.localdevice.RemoteControl.SetCardProfile:output_type -> google.protobuf.Empty
+	22, // 89: cloud.lazycat.apis.localdevice.RemoteControl.GetMute:output_type -> cloud.lazycat.apis.localdevice.GetMuteResponse
+	22, // 90: cloud.lazycat.apis.localdevice.RemoteControl.ToggleMute:output_type -> cloud.lazycat.apis.localdevice.GetMuteResponse
+	24, // 91: cloud.lazycat.apis.localdevice.RemoteControl.GetVolume:output_type -> cloud.lazycat.apis.localdevice.GetSinkVolumeResponse
+	41, // 92: cloud.lazycat.apis.localdevice.RemoteControl.IncreaseVolume:output_type -> google.protobuf.Empty
+	41, // 93: cloud.lazycat.apis.localdevice.RemoteControl.DecreaseVolume:output_type -> google.protobuf.Empty
+	41, // 94: cloud.lazycat.apis.localdevice.RemoteControl.SetSinkInputVolume:output_type -> google.protobuf.Empty
+	30, // 95: cloud.lazycat.apis.localdevice.RemoteControl.BleScanDevices:output_type -> cloud.lazycat.apis.localdevice.BleScanDevicesResponse
+	41, // 96: cloud.lazycat.apis.localdevice.RemoteControl.BleConnectDevice:output_type -> google.protobuf.Empty
+	41, // 97: cloud.lazycat.apis.localdevice.RemoteControl.BleDisconnectDevice:output_type -> google.protobuf.Empty
+	41, // 98: cloud.lazycat.apis.localdevice.RemoteControl.BleRemoveDevice:output_type -> google.protobuf.Empty
+	41, // 99: cloud.lazycat.apis.localdevice.RemoteControl.BleRefreshDevices:output_type -> google.protobuf.Empty
+	41, // 100: cloud.lazycat.apis.localdevice.RemoteControl.SetScreenLayer:output_type -> google.protobuf.Empty
+	31, // 101: cloud.lazycat.apis.localdevice.RemoteControl.GetScreenLayer:output_type -> cloud.lazycat.apis.localdevice.ScreenLayer
+	41, // 102: cloud.lazycat.apis.localdevice.RemoteControl.Logout:output_type -> google.protobuf.Empty
+	32, // 103: cloud.lazycat.apis.localdevice.RemoteControl.DebugTest:output_type -> cloud.lazycat.apis.localdevice.DebugTestReply
+	33, // 104: cloud.lazycat.apis.localdevice.RemoteControl.GetBrowserURL:output_type -> cloud.lazycat.apis.localdevice.GetBrowserURLResponse
+	35, // 105: cloud.lazycat.apis.localdevice.RemoteControl.OcrActionClick:output_type -> cloud.lazycat.apis.localdevice.OcrActionClickResponse
+	41, // 106: cloud.lazycat.apis.localdevice.RemoteControl.OcrDoScan:output_type -> google.protobuf.Empty
+	41, // 107: cloud.lazycat.apis.localdevice.RemoteControl.AsrRecordTime:output_type -> google.protobuf.Empty
+	41, // 108: cloud.lazycat.apis.localdevice.RemoteControl.ResetDisplay:output_type -> google.protobuf.Empty
+	62, // [62:109] is the sub-list for method output_type
+	15, // [15:62] is the sub-list for method input_type
 	15, // [15:15] is the sub-list for extension type_name
 	15, // [15:15] is the sub-list for extension extendee
 	0,  // [0:15] is the sub-list for field type_name

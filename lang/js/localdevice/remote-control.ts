@@ -3367,11 +3367,14 @@ export interface RemoteControl {
   ): Promise<OcrActionClickResponse>;
   /** Ocr进行扫描 */
   OcrDoScan(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
+  /** Asr耗时记录 */
   AsrRecordTime(
     request: DeepPartial<AsrRecordTimeRequest>,
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<Empty>;
+  /** 重置显示画面 */
+  ResetDisplay(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
 }
 
 export class RemoteControlClientImpl implements RemoteControl {
@@ -3425,6 +3428,7 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.OcrActionClick = this.OcrActionClick.bind(this);
     this.OcrDoScan = this.OcrDoScan.bind(this);
     this.AsrRecordTime = this.AsrRecordTime.bind(this);
+    this.ResetDisplay = this.ResetDisplay.bind(this);
   }
 
   SendKeyboardEvent(
@@ -3870,6 +3874,10 @@ export class RemoteControlClientImpl implements RemoteControl {
       metadata,
       abortSignal,
     );
+  }
+
+  ResetDisplay(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
+    return this.rpc.unary(RemoteControlResetDisplayDesc, Empty.fromPartial(request), metadata, abortSignal);
   }
 }
 
@@ -4872,6 +4880,29 @@ export const RemoteControlAsrRecordTimeDesc: UnaryMethodDefinitionish = {
   requestType: {
     serializeBinary() {
       return AsrRecordTimeRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlResetDisplayDesc: UnaryMethodDefinitionish = {
+  methodName: "ResetDisplay",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
     },
   } as any,
   responseType: {
