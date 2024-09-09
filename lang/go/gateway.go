@@ -46,6 +46,7 @@ type DeviceProxy struct {
 	FileHandler   common.FileHandlerClient
 	Rim           localdevice.RimClient
 	RemoteControl localdevice.RemoteControlClient
+	Contact       localdevice.ContactsManagerClient
 }
 
 func (d *DeviceProxy) GetAuthToken(ctx context.Context) (*AuthToken, error) {
@@ -85,6 +86,7 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 		FileHandler:   common.NewFileHandlerClient(conn),
 		Rim:           localdevice.NewRimClient(conn),
 		RemoteControl: localdevice.NewRemoteControlClient(conn),
+		Contact:       localdevice.NewContactsManagerClient(conn),
 	}, nil
 }
 
