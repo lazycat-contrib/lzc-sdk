@@ -20,10 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	ContactsManager_ListContacts_FullMethodName   = "/cloud.lazycat.apis.localdevice.ContactsManager/ListContacts"
-	ContactsManager_AddContacts_FullMethodName    = "/cloud.lazycat.apis.localdevice.ContactsManager/AddContacts"
-	ContactsManager_DeleteContacts_FullMethodName = "/cloud.lazycat.apis.localdevice.ContactsManager/DeleteContacts"
-	ContactsManager_UpdateContacts_FullMethodName = "/cloud.lazycat.apis.localdevice.ContactsManager/UpdateContacts"
+	ContactsManager_ListContacts_FullMethodName     = "/cloud.lazycat.apis.localdevice.ContactsManager/ListContacts"
+	ContactsManager_AddContacts_FullMethodName      = "/cloud.lazycat.apis.localdevice.ContactsManager/AddContacts"
+	ContactsManager_DeleteContacts_FullMethodName   = "/cloud.lazycat.apis.localdevice.ContactsManager/DeleteContacts"
+	ContactsManager_UpdateContacts_FullMethodName   = "/cloud.lazycat.apis.localdevice.ContactsManager/UpdateContacts"
+	ContactsManager_GetContactsCount_FullMethodName = "/cloud.lazycat.apis.localdevice.ContactsManager/GetContactsCount"
 )
 
 // ContactsManagerClient is the client API for ContactsManager service.
@@ -38,6 +39,8 @@ type ContactsManagerClient interface {
 	DeleteContacts(ctx context.Context, in *DeleteContactsRequest, opts ...grpc.CallOption) (*DeleteContactsReply, error)
 	// 修改通讯录的联系人
 	UpdateContacts(ctx context.Context, in *UpdateContactsRequest, opts ...grpc.CallOption) (*UpdateContactsReply, error)
+	// 获取联系人的数量
+	GetContactsCount(ctx context.Context, in *GetContactsCountRequest, opts ...grpc.CallOption) (*GetContactsCountReply, error)
 }
 
 type contactsManagerClient struct {
@@ -84,6 +87,15 @@ func (c *contactsManagerClient) UpdateContacts(ctx context.Context, in *UpdateCo
 	return out, nil
 }
 
+func (c *contactsManagerClient) GetContactsCount(ctx context.Context, in *GetContactsCountRequest, opts ...grpc.CallOption) (*GetContactsCountReply, error) {
+	out := new(GetContactsCountReply)
+	err := c.cc.Invoke(ctx, ContactsManager_GetContactsCount_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ContactsManagerServer is the server API for ContactsManager service.
 // All implementations must embed UnimplementedContactsManagerServer
 // for forward compatibility
@@ -96,6 +108,8 @@ type ContactsManagerServer interface {
 	DeleteContacts(context.Context, *DeleteContactsRequest) (*DeleteContactsReply, error)
 	// 修改通讯录的联系人
 	UpdateContacts(context.Context, *UpdateContactsRequest) (*UpdateContactsReply, error)
+	// 获取联系人的数量
+	GetContactsCount(context.Context, *GetContactsCountRequest) (*GetContactsCountReply, error)
 	mustEmbedUnimplementedContactsManagerServer()
 }
 
@@ -114,6 +128,9 @@ func (UnimplementedContactsManagerServer) DeleteContacts(context.Context, *Delet
 }
 func (UnimplementedContactsManagerServer) UpdateContacts(context.Context, *UpdateContactsRequest) (*UpdateContactsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateContacts not implemented")
+}
+func (UnimplementedContactsManagerServer) GetContactsCount(context.Context, *GetContactsCountRequest) (*GetContactsCountReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetContactsCount not implemented")
 }
 func (UnimplementedContactsManagerServer) mustEmbedUnimplementedContactsManagerServer() {}
 
@@ -200,6 +217,24 @@ func _ContactsManager_UpdateContacts_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ContactsManager_GetContactsCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetContactsCountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContactsManagerServer).GetContactsCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ContactsManager_GetContactsCount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContactsManagerServer).GetContactsCount(ctx, req.(*GetContactsCountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ContactsManager_ServiceDesc is the grpc.ServiceDesc for ContactsManager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -222,6 +257,10 @@ var ContactsManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateContacts",
 			Handler:    _ContactsManager_UpdateContacts_Handler,
+		},
+		{
+			MethodName: "GetContactsCount",
+			Handler:    _ContactsManager_GetContactsCount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

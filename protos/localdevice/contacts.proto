@@ -15,6 +15,8 @@ service ContactsManager {
     rpc DeleteContacts(DeleteContactsRequest) returns (DeleteContactsReply) {}
     // 修改通讯录的联系人
     rpc UpdateContacts(UpdateContactsRequest) returns (UpdateContactsReply) {}
+    // 获取联系人的数量
+    rpc GetContactsCount(GetContactsCountRequest) returns (GetContactsCountReply){}
 }
 
 message Contact {
@@ -57,3 +59,10 @@ message UpdateContactsReply {
     repeated string failed_ids = 1;
 }
 
+message GetContactsCountRequest {
+
+}
+
+message GetContactsCountReply {
+    int64 count = 1;
+}

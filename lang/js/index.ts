@@ -72,6 +72,8 @@ export class lzcAPIGateway {
 
     this.version = new VersionInfoServiceClientImpl(rpc)
 
+    this.contacts = new ContactsManagerClientImpl(rpc)
+
     dumpInfo(this.bo)
   }
 
@@ -99,6 +101,8 @@ export class lzcAPIGateway {
   public message: MessageServiceClientImpl
 
   public version: VersionInfoService
+
+  public contacts: ContactsManagerClientImpl
 
   public async openDevices() {
     return new Promise<void>((resolve, reject) => {
@@ -202,7 +206,7 @@ export class EndDeviceProxy {
     this.client = new ClientClientImpl(rpc)
     this.rim = new RimClientImpl(rpc)
     this.remoteControl = new RemoteControlClientImpl(rpc)
-    this.contacts = new ContactsManagerClientImpl(rpc)
+    this.contact = new ContactsManagerClientImpl(rpc)
     this.onewaysync = new OnewaySyncClientImpl(rpc)
   }
 
@@ -218,7 +222,7 @@ export class EndDeviceProxy {
   public client: Client
   public rim: Rim
   public remoteControl: RemoteControl
-  public contacts: ContactsManager
+  public contact: ContactsManager
   public onewaysync: OnewaySync
 }
 

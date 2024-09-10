@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { grpc } from "@improbable-eng/grpc-web";
 import { BrowserHeaders } from "browser-headers";
+import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { Empty } from "../google/protobuf/empty";
 
@@ -42,6 +43,13 @@ export interface UpdateContactsRequest {
 export interface UpdateContactsReply {
   /** 修改失败的 id */
   failedIds: string[];
+}
+
+export interface GetContactsCountRequest {
+}
+
+export interface GetContactsCountReply {
+  count: number;
 }
 
 function createBaseContact(): Contact {
@@ -601,6 +609,108 @@ export const UpdateContactsReply = {
   },
 };
 
+function createBaseGetContactsCountRequest(): GetContactsCountRequest {
+  return {};
+}
+
+export const GetContactsCountRequest = {
+  encode(_: GetContactsCountRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetContactsCountRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetContactsCountRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(_: any): GetContactsCountRequest {
+    return {};
+  },
+
+  toJSON(_: GetContactsCountRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetContactsCountRequest>, I>>(base?: I): GetContactsCountRequest {
+    return GetContactsCountRequest.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GetContactsCountRequest>, I>>(_: I): GetContactsCountRequest {
+    const message = createBaseGetContactsCountRequest();
+    return message;
+  },
+};
+
+function createBaseGetContactsCountReply(): GetContactsCountReply {
+  return { count: 0 };
+}
+
+export const GetContactsCountReply = {
+  encode(message: GetContactsCountReply, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.count !== 0) {
+      writer.uint32(8).int64(message.count);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetContactsCountReply {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetContactsCountReply();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.count = longToNumber(reader.int64() as Long);
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetContactsCountReply {
+    return { count: isSet(object.count) ? Number(object.count) : 0 };
+  },
+
+  toJSON(message: GetContactsCountReply): unknown {
+    const obj: any = {};
+    if (message.count !== 0) {
+      obj.count = Math.round(message.count);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetContactsCountReply>, I>>(base?: I): GetContactsCountReply {
+    return GetContactsCountReply.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GetContactsCountReply>, I>>(object: I): GetContactsCountReply {
+    const message = createBaseGetContactsCountReply();
+    message.count = object.count ?? 0;
+    return message;
+  },
+};
+
 export interface ContactsManager {
   /** 获取全部联系人列表 */
   ListContacts(
@@ -626,6 +736,12 @@ export interface ContactsManager {
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<UpdateContactsReply>;
+  /** 获取联系人的数量 */
+  GetContactsCount(
+    request: DeepPartial<GetContactsCountRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<GetContactsCountReply>;
 }
 
 export class ContactsManagerClientImpl implements ContactsManager {
@@ -637,6 +753,7 @@ export class ContactsManagerClientImpl implements ContactsManager {
     this.AddContacts = this.AddContacts.bind(this);
     this.DeleteContacts = this.DeleteContacts.bind(this);
     this.UpdateContacts = this.UpdateContacts.bind(this);
+    this.GetContactsCount = this.GetContactsCount.bind(this);
   }
 
   ListContacts(
@@ -681,6 +798,19 @@ export class ContactsManagerClientImpl implements ContactsManager {
     return this.rpc.unary(
       ContactsManagerUpdateContactsDesc,
       UpdateContactsRequest.fromPartial(request),
+      metadata,
+      abortSignal,
+    );
+  }
+
+  GetContactsCount(
+    request: DeepPartial<GetContactsCountRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<GetContactsCountReply> {
+    return this.rpc.unary(
+      ContactsManagerGetContactsCountDesc,
+      GetContactsCountRequest.fromPartial(request),
       metadata,
       abortSignal,
     );
@@ -771,6 +901,29 @@ export const ContactsManagerUpdateContactsDesc: UnaryMethodDefinitionish = {
   responseType: {
     deserializeBinary(data: Uint8Array) {
       const value = UpdateContactsReply.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const ContactsManagerGetContactsCountDesc: UnaryMethodDefinitionish = {
+  methodName: "GetContactsCount",
+  service: ContactsManagerDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return GetContactsCountRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = GetContactsCountReply.decode(data);
       return {
         ...value,
         toObject() {
@@ -887,6 +1040,18 @@ type DeepPartial<T> = T extends Builtin ? T
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new tsProtoGlobalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
+}
+
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
