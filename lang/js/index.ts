@@ -33,6 +33,7 @@ import { RemoteControl, RemoteControlClientImpl } from "./localdevice/remote-con
 import { TvOS, TvOSClientImpl } from "./sys/tvos"
 import { VersionInfoService, VersionInfoServiceClientImpl } from "./sys/version"
 import { OnewaySync, OnewaySyncClientImpl } from "./localdevice/oneway-sync"
+import {CloudDriver, CloudDriverClientImpl} from "./localdevice/cloud-driver";
 
 const opt = {
   transport: grpc.CrossBrowserHttpTransport({ withCredentials: true }),
@@ -207,6 +208,7 @@ export class EndDeviceProxy {
     this.rim = new RimClientImpl(rpc)
     this.remoteControl = new RemoteControlClientImpl(rpc)
     this.contact = new ContactsManagerClientImpl(rpc)
+    this.cloudDriver = new CloudDriverClientImpl(rpc)
     this.onewaysync = new OnewaySyncClientImpl(rpc)
   }
 
@@ -223,6 +225,7 @@ export class EndDeviceProxy {
   public rim: Rim
   public remoteControl: RemoteControl
   public contact: ContactsManager
+  public cloudDriver: CloudDriver
   public onewaysync: OnewaySync
 }
 
