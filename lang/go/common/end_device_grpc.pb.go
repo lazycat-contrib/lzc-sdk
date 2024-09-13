@@ -32,7 +32,7 @@ type EndDeviceServiceClient interface {
 	// 枚举当前登陆用户所有的设备信息
 	ListEndDevices(ctx context.Context, in *ListEndDeviceRequest, opts ...grpc.CallOption) (*ListEndDeviceReply, error)
 	// 将发起请求的设备与登陆用户的其他所有设备建立其虚拟网络隧道
-	// 以便发起请求的浏览器可以绕过盒子直接访问其他节点上的设备API，比如剪贴板、文件拷贝等
+	// 以便发起请求的faile浏览器可以绕过盒子直接访问其他节点上的设备API，比如剪贴板、文件拷贝等
 	// 后端代码本身就与任意设备建立好了虚拟网络隧道，因此不需要使用此API。
 	// 前端代码可以调用browseronly.proto:PairAllDeivce自动设置相关参数。
 	PairAllEndDevices_(ctx context.Context, in *PairEndDeviceRequest, opts ...grpc.CallOption) (EndDeviceService_PairAllEndDevices_Client, error)
@@ -105,7 +105,7 @@ type EndDeviceServiceServer interface {
 	// 枚举当前登陆用户所有的设备信息
 	ListEndDevices(context.Context, *ListEndDeviceRequest) (*ListEndDeviceReply, error)
 	// 将发起请求的设备与登陆用户的其他所有设备建立其虚拟网络隧道
-	// 以便发起请求的浏览器可以绕过盒子直接访问其他节点上的设备API，比如剪贴板、文件拷贝等
+	// 以便发起请求的faile浏览器可以绕过盒子直接访问其他节点上的设备API，比如剪贴板、文件拷贝等
 	// 后端代码本身就与任意设备建立好了虚拟网络隧道，因此不需要使用此API。
 	// 前端代码可以调用browseronly.proto:PairAllDeivce自动设置相关参数。
 	PairAllEndDevices_(*PairEndDeviceRequest, EndDeviceService_PairAllEndDevices_Server) error

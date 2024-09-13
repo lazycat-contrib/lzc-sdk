@@ -14,6 +14,7 @@ service FileHandler {
   // 列出目录结构
   rpc walkDir(WalkDirRequest) returns (stream WalkDirReply) {}
   rpc walkDirDuplex(stream WalkDirRequest) returns (stream WalkDirReply) {}
+  rpc dirTree(DirTreeRequest) returns (DirTreeResponse) {}
   rpc createDir(stream CreateDirRequest) returns (google.protobuf.Empty) {}
   rpc stat(StatRequest) returns (StatReply) {}
   // 同步文件夹, 让target_path的内容和device_path内容一致.  device_path = target_path
@@ -25,6 +26,24 @@ service FileHandler {
   //      B=A+B 原有檔案
   rpc copyFolder(CopyFolderRequest) returns (stream TaskProgressInfo) {}
 }
+message DirTreeRequest {
+  // 目录路径
+  string path = 1;
+}
+message DirTreeResponse {
+  message FileInfo {
+    // 文件/目录路径
+    string path = 1;
+    // 大小
+    int64 size = 2;
+    // 最后修改时间
+    google.protobuf.Timestamp mtime = 3;
+    // 是否为目录
+    bool isDir = 4; 
+  }
+  repeated FileInfo files = 1;
+}
+
 
 message WalkDirRequest {
   // 目录路径

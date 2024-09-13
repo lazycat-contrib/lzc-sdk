@@ -25,6 +25,7 @@ const (
 	FileHandler_OpenFileManager_FullMethodName = "/cloud.lazycat.apis.common.FileHandler/openFileManager"
 	FileHandler_WalkDir_FullMethodName         = "/cloud.lazycat.apis.common.FileHandler/walkDir"
 	FileHandler_WalkDirDuplex_FullMethodName   = "/cloud.lazycat.apis.common.FileHandler/walkDirDuplex"
+	FileHandler_DirTree_FullMethodName         = "/cloud.lazycat.apis.common.FileHandler/dirTree"
 	FileHandler_CreateDir_FullMethodName       = "/cloud.lazycat.apis.common.FileHandler/createDir"
 	FileHandler_Stat_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/stat"
 	FileHandler_SyncFolder_FullMethodName      = "/cloud.lazycat.apis.common.FileHandler/syncFolder"
@@ -41,6 +42,7 @@ type FileHandlerClient interface {
 	// 列出目录结构
 	WalkDir(ctx context.Context, in *WalkDirRequest, opts ...grpc.CallOption) (FileHandler_WalkDirClient, error)
 	WalkDirDuplex(ctx context.Context, opts ...grpc.CallOption) (FileHandler_WalkDirDuplexClient, error)
+	DirTree(ctx context.Context, in *DirTreeRequest, opts ...grpc.CallOption) (*DirTreeResponse, error)
 	CreateDir(ctx context.Context, opts ...grpc.CallOption) (FileHandler_CreateDirClient, error)
 	Stat(ctx context.Context, in *StatRequest, opts ...grpc.CallOption) (*StatReply, error)
 	// 同步文件夹, 让target_path的内容和device_path内容一致.  device_path = target_path
@@ -151,6 +153,15 @@ func (x *fileHandlerWalkDirDuplexClient) Recv() (*WalkDirReply, error) {
 		return nil, err
 	}
 	return m, nil
+}
+
+func (c *fileHandlerClient) DirTree(ctx context.Context, in *DirTreeRequest, opts ...grpc.CallOption) (*DirTreeResponse, error) {
+	out := new(DirTreeResponse)
+	err := c.cc.Invoke(ctx, FileHandler_DirTree_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *fileHandlerClient) CreateDir(ctx context.Context, opts ...grpc.CallOption) (FileHandler_CreateDirClient, error) {
@@ -270,6 +281,7 @@ type FileHandlerServer interface {
 	// 列出目录结构
 	WalkDir(*WalkDirRequest, FileHandler_WalkDirServer) error
 	WalkDirDuplex(FileHandler_WalkDirDuplexServer) error
+	DirTree(context.Context, *DirTreeRequest) (*DirTreeResponse, error)
 	CreateDir(FileHandler_CreateDirServer) error
 	Stat(context.Context, *StatRequest) (*StatReply, error)
 	// 同步文件夹, 让target_path的内容和device_path内容一致.  device_path = target_path
@@ -303,6 +315,9 @@ func (UnimplementedFileHandlerServer) WalkDir(*WalkDirRequest, FileHandler_WalkD
 }
 func (UnimplementedFileHandlerServer) WalkDirDuplex(FileHandler_WalkDirDuplexServer) error {
 	return status.Errorf(codes.Unimplemented, "method WalkDirDuplex not implemented")
+}
+func (UnimplementedFileHandlerServer) DirTree(context.Context, *DirTreeRequest) (*DirTreeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DirTree not implemented")
 }
 func (UnimplementedFileHandlerServer) CreateDir(FileHandler_CreateDirServer) error {
 	return status.Errorf(codes.Unimplemented, "method CreateDir not implemented")
@@ -430,6 +445,24 @@ func (x *fileHandlerWalkDirDuplexServer) Recv() (*WalkDirRequest, error) {
 	return m, nil
 }
 
+func _FileHandler_DirTree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DirTreeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileHandlerServer).DirTree(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FileHandler_DirTree_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileHandlerServer).DirTree(ctx, req.(*DirTreeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _FileHandler_CreateDir_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(FileHandlerServer).CreateDir(&fileHandlerCreateDirServer{stream})
 }
@@ -534,6 +567,10 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "openFileManager",
 			Handler:    _FileHandler_OpenFileManager_Handler,
+		},
+		{
+			MethodName: "dirTree",
+			Handler:    _FileHandler_DirTree_Handler,
 		},
 		{
 			MethodName: "stat",
