@@ -20,5 +20,6 @@ export enum ClientAuthorizationBaseStatus {
  * @return {ClientAuthorizationType}
  */
 export enum ClientAuthorizationType {
-    PhotoLibrary = 'photo_library' // 图片库权限
+    PhotoLibrary = 'photo_library', // 图片库权限
+    Contacts = 'contacts' //  联系人权限
 }

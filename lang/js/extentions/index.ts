@@ -22,6 +22,7 @@ declare global {
   const lzc_app_manager: any
   const lzc_status_bar: any
   const lzc_vibrate: any
+  const lzc_permission: any
 }
 export default LzcApp
 export { LzcAppPlatformType, LzcClient } from "./base"

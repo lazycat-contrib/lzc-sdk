@@ -330,21 +330,26 @@ class AppCommon extends LzcAppSdkManage {
    * @description: 获取客户端授权状态
    * @return {*}
    */
-  @native(LzcAppPlatformType.IOS)
+  @native(LzcAppPlatformType.IOS,LzcAppPlatformType.Android)
   public static async GetClientAuthorizationStatus(type: ClientAuthorizationType | string): Promise<ClientAuthorizationBaseStatus> {
     // 判断当前权限是否受支持
     switch (type) {
       case ClientAuthorizationType.PhotoLibrary:
         break
+      case ClientAuthorizationType.Contacts:
+        break
       default:
         console.warn(`the current lzc-sdk version does not support the ${type} permission type`)
         return ClientAuthorizationBaseStatus.Unknown
     }
-
     // 调用各客户端具体实现
     if (LzcAppSdk.isIosWebShell()) {
       // 调用客户端 GetClientAuthorizationStatus 函数
       const jsBridge = await LzcAppSdk.useNativeAsync()
+      return jsBridge.GetClientAuthorizationStatus(type)
+    }
+    if(LzcAppSdk.isAndroidWebShell()){
+      const jsBridge = await LzcAppSdk.useNative(lzc_permission)
       return jsBridge.GetClientAuthorizationStatus(type)
     }
     return ClientAuthorizationBaseStatus.Unknown
@@ -354,11 +359,13 @@ class AppCommon extends LzcAppSdkManage {
    * @description: 申请客户端授权
    * @return {*}
    */
-  @native(LzcAppPlatformType.IOS)
+  @native(LzcAppPlatformType.IOS,LzcAppPlatformType.Android)
   public static async RequestClientAuthorization(type: ClientAuthorizationType | string): Promise<void> {
     // 判断当前权限是否受支持
     switch (type) {
       case ClientAuthorizationType.PhotoLibrary:
+        break
+      case ClientAuthorizationType.Contacts:
         break
       default:
         console.warn(`the current lzc-sdk version does not support the ${type} permission type`)
@@ -371,7 +378,10 @@ class AppCommon extends LzcAppSdkManage {
       jsBridge.RequestClientAuthorization(type)
       return
     }
-
+    if (LzcAppSdk.isAndroidWebShell()) {
+      const jsBridge = await LzcAppSdk.useNativeAsync(lzc_permission)
+      return jsBridge.RequestClientAuthorization(type)
+    }
     console.warn("the current client does not support")
   }
 
