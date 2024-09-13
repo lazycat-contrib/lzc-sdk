@@ -6,7 +6,9 @@ import {LoadingIcon} from 'tdesign-icons-react';
 import {EndDeviceProxy, lzcAPIGateway} from '@lazycatcloud/sdk/index';
 import {ListAlbumsReply, ListAssetsSortType, PhotoMeta} from '@lazycatcloud/sdk/localdevice/photo';
 import {Permission} from '@lazycatcloud/sdk/localdevice/permission';
+import { ClientAuthorizationType} from '@lazycatcloud/sdk/extentions/client_authorization';
 import {AppCommon} from '@lazycatcloud/sdk/extentions/app_common';
+import {VibrateType} from "@lazycatcloud/sdk/extentions/vibrate_type";
 
 type PageNavigate = {
     setPageIndex: (index: number | undefined) => void;
@@ -866,7 +868,7 @@ function App() {
                             <button
                                 style={{marginTop: 10}}
                                 onClick={async () => {
-                                    await AppCommon.Vibrate(0)
+                                    await AppCommon.Vibrate(VibrateType.EFFECT_DOUBLE_CLICK)
                                 }}
                             >
                                 振动测试
@@ -887,10 +889,7 @@ function App() {
                                         await assetStats.forEach(async (item) => {
                                             assets.push(item);
                                         });
-
                                         console.log('assets', assets);
-
-
                                         let photosMeta: any[] = [];
                                         let ids = assets.map((item) => item.id)
                                         console.log('ids', ids);
@@ -914,17 +913,41 @@ function App() {
                         </div>
 
                         <p>
-                            当前网络状态: <code>{netState}</code>
+                            {/*当前网络状态: <code>{netstate}</code>*/}
                         </p>
                         {notImageUrl ? (
                             <p>
                                 第一个相册图片为空数量: <code>{notImageUrl}</code>
                             </p>
                         ) : null}
-
                         {imageMeta != null && (
                             <AssetMetaReview meta={imageMeta} deletePhoto={deletePhoto}/>
                         )}
+
+                    </div>
+                    <div>
+                        <button
+                            style={{marginTop: 10}}
+                            onClick={async () => {
+                                console.log("开始挂载!!!")
+                                 var clientAuthorizationBaseStatusPromise = AppCommon.GetClientAuthorizationStatus(ClientAuthorizationType.Contacts);
+                                 clientAuthorizationBaseStatusPromise.then(res => {
+                                    console.log(res)
+                                 })
+                            }}
+                        >
+                            获取联系人状态
+                        </button>
+                    </div>
+                    <div>
+                        <button
+                            style={{marginTop: 10}}
+                            onClick={async () => {
+                                await AppCommon.RequestClientAuthorization(ClientAuthorizationType.Contacts)
+                            }}
+                        >
+                            申请联系人状态
+                        </button>
                     </div>
                     <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
                 </>
