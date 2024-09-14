@@ -24,6 +24,7 @@ const (
 	FileHandler_Open_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/open"
 	FileHandler_OpenFileManager_FullMethodName = "/cloud.lazycat.apis.common.FileHandler/openFileManager"
 	FileHandler_WalkDir_FullMethodName         = "/cloud.lazycat.apis.common.FileHandler/walkDir"
+	FileHandler_CheckWalkDir_FullMethodName    = "/cloud.lazycat.apis.common.FileHandler/checkWalkDir"
 	FileHandler_WalkDirDuplex_FullMethodName   = "/cloud.lazycat.apis.common.FileHandler/walkDirDuplex"
 	FileHandler_DirTree_FullMethodName         = "/cloud.lazycat.apis.common.FileHandler/dirTree"
 	FileHandler_CreateDir_FullMethodName       = "/cloud.lazycat.apis.common.FileHandler/createDir"
@@ -41,6 +42,7 @@ type FileHandlerClient interface {
 	OpenFileManager(ctx context.Context, in *OpenFileManagerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列出目录结构
 	WalkDir(ctx context.Context, in *WalkDirRequest, opts ...grpc.CallOption) (FileHandler_WalkDirClient, error)
+	CheckWalkDir(ctx context.Context, in *CheckWalkDirRequest, opts ...grpc.CallOption) (*CheckWalkDirResponse, error)
 	WalkDirDuplex(ctx context.Context, opts ...grpc.CallOption) (FileHandler_WalkDirDuplexClient, error)
 	DirTree(ctx context.Context, in *DirTreeRequest, opts ...grpc.CallOption) (*DirTreeResponse, error)
 	CreateDir(ctx context.Context, opts ...grpc.CallOption) (FileHandler_CreateDirClient, error)
@@ -122,6 +124,15 @@ func (x *fileHandlerWalkDirClient) Recv() (*WalkDirReply, error) {
 		return nil, err
 	}
 	return m, nil
+}
+
+func (c *fileHandlerClient) CheckWalkDir(ctx context.Context, in *CheckWalkDirRequest, opts ...grpc.CallOption) (*CheckWalkDirResponse, error) {
+	out := new(CheckWalkDirResponse)
+	err := c.cc.Invoke(ctx, FileHandler_CheckWalkDir_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *fileHandlerClient) WalkDirDuplex(ctx context.Context, opts ...grpc.CallOption) (FileHandler_WalkDirDuplexClient, error) {
@@ -280,6 +291,7 @@ type FileHandlerServer interface {
 	OpenFileManager(context.Context, *OpenFileManagerRequest) (*emptypb.Empty, error)
 	// 列出目录结构
 	WalkDir(*WalkDirRequest, FileHandler_WalkDirServer) error
+	CheckWalkDir(context.Context, *CheckWalkDirRequest) (*CheckWalkDirResponse, error)
 	WalkDirDuplex(FileHandler_WalkDirDuplexServer) error
 	DirTree(context.Context, *DirTreeRequest) (*DirTreeResponse, error)
 	CreateDir(FileHandler_CreateDirServer) error
@@ -312,6 +324,9 @@ func (UnimplementedFileHandlerServer) OpenFileManager(context.Context, *OpenFile
 }
 func (UnimplementedFileHandlerServer) WalkDir(*WalkDirRequest, FileHandler_WalkDirServer) error {
 	return status.Errorf(codes.Unimplemented, "method WalkDir not implemented")
+}
+func (UnimplementedFileHandlerServer) CheckWalkDir(context.Context, *CheckWalkDirRequest) (*CheckWalkDirResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckWalkDir not implemented")
 }
 func (UnimplementedFileHandlerServer) WalkDirDuplex(FileHandler_WalkDirDuplexServer) error {
 	return status.Errorf(codes.Unimplemented, "method WalkDirDuplex not implemented")
@@ -417,6 +432,24 @@ type fileHandlerWalkDirServer struct {
 
 func (x *fileHandlerWalkDirServer) Send(m *WalkDirReply) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func _FileHandler_CheckWalkDir_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckWalkDirRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileHandlerServer).CheckWalkDir(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FileHandler_CheckWalkDir_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileHandlerServer).CheckWalkDir(ctx, req.(*CheckWalkDirRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _FileHandler_WalkDirDuplex_Handler(srv interface{}, stream grpc.ServerStream) error {
@@ -567,6 +600,10 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "openFileManager",
 			Handler:    _FileHandler_OpenFileManager_Handler,
+		},
+		{
+			MethodName: "checkWalkDir",
+			Handler:    _FileHandler_CheckWalkDir_Handler,
 		},
 		{
 			MethodName: "dirTree",

@@ -13,6 +13,7 @@ service FileHandler {
   rpc openFileManager(OpenFileManagerRequest) returns (google.protobuf.Empty) {}
   // 列出目录结构
   rpc walkDir(WalkDirRequest) returns (stream WalkDirReply) {}
+  rpc checkWalkDir(CheckWalkDirRequest) returns (CheckWalkDirResponse) {}
   rpc walkDirDuplex(stream WalkDirRequest) returns (stream WalkDirReply) {}
   rpc dirTree(DirTreeRequest) returns (DirTreeResponse) {}
   rpc createDir(stream CreateDirRequest) returns (google.protobuf.Empty) {}
@@ -54,6 +55,16 @@ message WalkDirRequest {
   optional int32 depth = 4;
 }
 
+message CheckWalkDirRequest {
+  bytes diffInfo = 1;
+}
+
+message CheckWalkDirResponse {
+  bool different = 1;
+  // 如果有不同，返回diffInfo信息
+  optional bytes diffInfo = 2;
+}
+
 message WalkDirReply {
   // 全路径 /home/lnks/hello.txt
   string path = 1;
@@ -65,6 +76,9 @@ message WalkDirReply {
   bool isDir = 4;
   // 文件修改时间
   google.protobuf.Timestamp mtime = 5;
+  // 给予服务端保存，代表本次walkdir结果的hash数据
+  // 服务端拿着diffInfo调用CheckWalkDir，判断是否需要真正的walk
+  optional bytes diffInfo = 6;
 }
 
 message CreateDirRequest {
