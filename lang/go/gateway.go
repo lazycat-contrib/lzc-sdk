@@ -47,7 +47,6 @@ type DeviceProxy struct {
 	Rim           localdevice.RimClient
 	RemoteControl localdevice.RemoteControlClient
 	Contact       localdevice.ContactsManagerClient
-	Helper        localdevice.HelperClient
 }
 
 func (d *DeviceProxy) GetAuthToken(ctx context.Context) (*AuthToken, error) {
@@ -88,7 +87,6 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 		Rim:           localdevice.NewRimClient(conn),
 		RemoteControl: localdevice.NewRemoteControlClient(conn),
 		Contact:       localdevice.NewContactsManagerClient(conn),
-		Helper:        localdevice.NewHelperClient(conn),
 	}, nil
 }
 
