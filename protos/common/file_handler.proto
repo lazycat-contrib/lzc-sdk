@@ -57,6 +57,8 @@ message WalkDirRequest {
 
 message CheckWalkDirRequest {
   bytes diffInfo = 1;
+  string path = 2;
+  optional int32 depth = 3;
 }
 
 message CheckWalkDirResponse {
