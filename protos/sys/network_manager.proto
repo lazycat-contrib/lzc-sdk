@@ -26,6 +26,9 @@ service NetworkManager {
   // 如果在上一个调用的duration时间范围内再次调用，则会取消上次调用时间到后对fallback_bssid的连接
   rpc WifiConnectTemp(WifiConnectTempInfo) returns (WifiConnectReply) {}
 
+  // 忘记一个 wifi 热点
+  rpc WifiForget(WifiForgetInfo) returns (google.protobuf.Empty) {}
+
   // 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
   rpc WifiConfigAdd(WifiConfigInfo) returns (WifiConnectReply) {}
 }
@@ -113,6 +116,10 @@ message WifiConnectTempInfo {
 
   // 连接持续时间（单位：秒），到时间后会自动连接回之前的 bssid
   int64 duration = 5;
+}
+
+message WifiForgetInfo {
+  string ssid = 1;
 }
 
 enum KeyMgmt {
