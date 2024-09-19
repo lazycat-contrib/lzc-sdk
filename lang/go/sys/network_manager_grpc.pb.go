@@ -25,6 +25,7 @@ const (
 	NetworkManager_WifiList_FullMethodName        = "/cloud.lazycat.apis.sys.NetworkManager/WifiList"
 	NetworkManager_WifiConnect_FullMethodName     = "/cloud.lazycat.apis.sys.NetworkManager/WifiConnect"
 	NetworkManager_WifiConnectTemp_FullMethodName = "/cloud.lazycat.apis.sys.NetworkManager/WifiConnectTemp"
+	NetworkManager_WifiForget_FullMethodName      = "/cloud.lazycat.apis.sys.NetworkManager/WifiForget"
 	NetworkManager_WifiConfigAdd_FullMethodName   = "/cloud.lazycat.apis.sys.NetworkManager/WifiConfigAdd"
 )
 
@@ -46,6 +47,8 @@ type NetworkManagerClient interface {
 	// 时间到了之后会Revert回指定的 wifi 热点
 	// 如果在上一个调用的duration时间范围内再次调用，则会取消上次调用时间到后对fallback_bssid的连接
 	WifiConnectTemp(ctx context.Context, in *WifiConnectTempInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
+	// 忘记一个 wifi 热点
+	WifiForget(ctx context.Context, in *WifiForgetInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
 	WifiConfigAdd(ctx context.Context, in *WifiConfigInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
 }
@@ -103,6 +106,15 @@ func (c *networkManagerClient) WifiConnectTemp(ctx context.Context, in *WifiConn
 	return out, nil
 }
 
+func (c *networkManagerClient) WifiForget(ctx context.Context, in *WifiForgetInfo, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, NetworkManager_WifiForget_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *networkManagerClient) WifiConfigAdd(ctx context.Context, in *WifiConfigInfo, opts ...grpc.CallOption) (*WifiConnectReply, error) {
 	out := new(WifiConnectReply)
 	err := c.cc.Invoke(ctx, NetworkManager_WifiConfigAdd_FullMethodName, in, out, opts...)
@@ -130,6 +142,8 @@ type NetworkManagerServer interface {
 	// 时间到了之后会Revert回指定的 wifi 热点
 	// 如果在上一个调用的duration时间范围内再次调用，则会取消上次调用时间到后对fallback_bssid的连接
 	WifiConnectTemp(context.Context, *WifiConnectTempInfo) (*WifiConnectReply, error)
+	// 忘记一个 wifi 热点
+	WifiForget(context.Context, *WifiForgetInfo) (*emptypb.Empty, error)
 	// 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
 	WifiConfigAdd(context.Context, *WifiConfigInfo) (*WifiConnectReply, error)
 	mustEmbedUnimplementedNetworkManagerServer()
@@ -153,6 +167,9 @@ func (UnimplementedNetworkManagerServer) WifiConnect(context.Context, *WifiConne
 }
 func (UnimplementedNetworkManagerServer) WifiConnectTemp(context.Context, *WifiConnectTempInfo) (*WifiConnectReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WifiConnectTemp not implemented")
+}
+func (UnimplementedNetworkManagerServer) WifiForget(context.Context, *WifiForgetInfo) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WifiForget not implemented")
 }
 func (UnimplementedNetworkManagerServer) WifiConfigAdd(context.Context, *WifiConfigInfo) (*WifiConnectReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WifiConfigAdd not implemented")
@@ -260,6 +277,24 @@ func _NetworkManager_WifiConnectTemp_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NetworkManager_WifiForget_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WifiForgetInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NetworkManagerServer).WifiForget(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NetworkManager_WifiForget_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NetworkManagerServer).WifiForget(ctx, req.(*WifiForgetInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _NetworkManager_WifiConfigAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WifiConfigInfo)
 	if err := dec(in); err != nil {
@@ -304,6 +339,10 @@ var NetworkManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "WifiConnectTemp",
 			Handler:    _NetworkManager_WifiConnectTemp_Handler,
+		},
+		{
+			MethodName: "WifiForget",
+			Handler:    _NetworkManager_WifiForget_Handler,
 		},
 		{
 			MethodName: "WifiConfigAdd",
