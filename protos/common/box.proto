@@ -35,6 +35,13 @@ message BoxInfo {
   // 盒子内部显示名称，可以随意修改，若不设置则为box_name
   string display_name = 4;
 
+  message MemorySpace {
+    int64 total = 1;
+
+    int64 free = 2;
+  }
+  MemorySpace memory_space = 8;
+
   message DiskSpace {
     int64 total = 1;
 
