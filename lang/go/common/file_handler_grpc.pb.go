@@ -31,7 +31,7 @@ const (
 	FileHandler_Stat_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/stat"
 	FileHandler_SyncFolder_FullMethodName      = "/cloud.lazycat.apis.common.FileHandler/syncFolder"
 	FileHandler_CopyFolder_FullMethodName      = "/cloud.lazycat.apis.common.FileHandler/copyFolder"
-	FileHandler_TarDir_FullMethodName          = "/cloud.lazycat.apis.common.FileHandler/tarDir"
+	FileHandler_ZipDir_FullMethodName          = "/cloud.lazycat.apis.common.FileHandler/zipDir"
 )
 
 // FileHandlerClient is the client API for FileHandler service.
@@ -58,8 +58,8 @@ type FileHandlerClient interface {
 	//	copy A→B 的話
 	//	  B=A+B 原有檔案
 	CopyFolder(ctx context.Context, in *CopyFolderRequest, opts ...grpc.CallOption) (FileHandler_CopyFolderClient, error)
-	// 打包某个目录为tar，流式地上传回来
-	TarDir(ctx context.Context, in *TarDirRequest, opts ...grpc.CallOption) (FileHandler_TarDirClient, error)
+	// 打包某个目录为zip，流式地上传回来
+	ZipDir(ctx context.Context, in *ZipDirRequest, opts ...grpc.CallOption) (FileHandler_ZipDirClient, error)
 }
 
 type fileHandlerClient struct {
@@ -285,12 +285,12 @@ func (x *fileHandlerCopyFolderClient) Recv() (*TaskProgressInfo, error) {
 	return m, nil
 }
 
-func (c *fileHandlerClient) TarDir(ctx context.Context, in *TarDirRequest, opts ...grpc.CallOption) (FileHandler_TarDirClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[5], FileHandler_TarDir_FullMethodName, opts...)
+func (c *fileHandlerClient) ZipDir(ctx context.Context, in *ZipDirRequest, opts ...grpc.CallOption) (FileHandler_ZipDirClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[5], FileHandler_ZipDir_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &fileHandlerTarDirClient{stream}
+	x := &fileHandlerZipDirClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -300,17 +300,17 @@ func (c *fileHandlerClient) TarDir(ctx context.Context, in *TarDirRequest, opts 
 	return x, nil
 }
 
-type FileHandler_TarDirClient interface {
-	Recv() (*TarDirReply, error)
+type FileHandler_ZipDirClient interface {
+	Recv() (*ZipDirReply, error)
 	grpc.ClientStream
 }
 
-type fileHandlerTarDirClient struct {
+type fileHandlerZipDirClient struct {
 	grpc.ClientStream
 }
 
-func (x *fileHandlerTarDirClient) Recv() (*TarDirReply, error) {
-	m := new(TarDirReply)
+func (x *fileHandlerZipDirClient) Recv() (*ZipDirReply, error) {
+	m := new(ZipDirReply)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -341,8 +341,8 @@ type FileHandlerServer interface {
 	//	copy A→B 的話
 	//	  B=A+B 原有檔案
 	CopyFolder(*CopyFolderRequest, FileHandler_CopyFolderServer) error
-	// 打包某个目录为tar，流式地上传回来
-	TarDir(*TarDirRequest, FileHandler_TarDirServer) error
+	// 打包某个目录为zip，流式地上传回来
+	ZipDir(*ZipDirRequest, FileHandler_ZipDirServer) error
 	mustEmbedUnimplementedFileHandlerServer()
 }
 
@@ -383,8 +383,8 @@ func (UnimplementedFileHandlerServer) SyncFolder(*SyncFolderRequest, FileHandler
 func (UnimplementedFileHandlerServer) CopyFolder(*CopyFolderRequest, FileHandler_CopyFolderServer) error {
 	return status.Errorf(codes.Unimplemented, "method CopyFolder not implemented")
 }
-func (UnimplementedFileHandlerServer) TarDir(*TarDirRequest, FileHandler_TarDirServer) error {
-	return status.Errorf(codes.Unimplemented, "method TarDir not implemented")
+func (UnimplementedFileHandlerServer) ZipDir(*ZipDirRequest, FileHandler_ZipDirServer) error {
+	return status.Errorf(codes.Unimplemented, "method ZipDir not implemented")
 }
 func (UnimplementedFileHandlerServer) mustEmbedUnimplementedFileHandlerServer() {}
 
@@ -622,24 +622,24 @@ func (x *fileHandlerCopyFolderServer) Send(m *TaskProgressInfo) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _FileHandler_TarDir_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(TarDirRequest)
+func _FileHandler_ZipDir_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ZipDirRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(FileHandlerServer).TarDir(m, &fileHandlerTarDirServer{stream})
+	return srv.(FileHandlerServer).ZipDir(m, &fileHandlerZipDirServer{stream})
 }
 
-type FileHandler_TarDirServer interface {
-	Send(*TarDirReply) error
+type FileHandler_ZipDirServer interface {
+	Send(*ZipDirReply) error
 	grpc.ServerStream
 }
 
-type fileHandlerTarDirServer struct {
+type fileHandlerZipDirServer struct {
 	grpc.ServerStream
 }
 
-func (x *fileHandlerTarDirServer) Send(m *TarDirReply) error {
+func (x *fileHandlerZipDirServer) Send(m *ZipDirReply) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -703,8 +703,8 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 		{
-			StreamName:    "tarDir",
-			Handler:       _FileHandler_TarDir_Handler,
+			StreamName:    "zipDir",
+			Handler:       _FileHandler_ZipDir_Handler,
 			ServerStreams: true,
 		},
 	},

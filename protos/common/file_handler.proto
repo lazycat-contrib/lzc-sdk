@@ -26,8 +26,8 @@ service FileHandler {
   //    copy A→B 的話
   //      B=A+B 原有檔案
   rpc copyFolder(CopyFolderRequest) returns (stream TaskProgressInfo) {}
-  // 打包某个目录为tar，流式地上传回来
-  rpc tarDir(TarDirRequest) returns (stream TarDirReply) {}
+  // 打包某个目录为zip，流式地上传回来
+  rpc zipDir(ZipDirRequest) returns (stream ZipDirReply) {}
 }
 message DirTreeRequest {
   // 目录路径
@@ -47,13 +47,13 @@ message DirTreeResponse {
   repeated FileInfo files = 1;
 }
 
-message TarDirRequest {
+message ZipDirRequest {
   // 目录路径
   string path = 1;
 }
 
-message TarDirReply {
-  bytes tar = 1;
+message ZipDirReply {
+  bytes data = 1;
 }
 
 message WalkDirRequest {
