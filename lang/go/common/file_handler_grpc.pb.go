@@ -31,6 +31,7 @@ const (
 	FileHandler_Stat_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/stat"
 	FileHandler_SyncFolder_FullMethodName      = "/cloud.lazycat.apis.common.FileHandler/syncFolder"
 	FileHandler_CopyFolder_FullMethodName      = "/cloud.lazycat.apis.common.FileHandler/copyFolder"
+	FileHandler_TarDir_FullMethodName          = "/cloud.lazycat.apis.common.FileHandler/tarDir"
 )
 
 // FileHandlerClient is the client API for FileHandler service.
@@ -57,6 +58,8 @@ type FileHandlerClient interface {
 	//	copy A→B 的話
 	//	  B=A+B 原有檔案
 	CopyFolder(ctx context.Context, in *CopyFolderRequest, opts ...grpc.CallOption) (FileHandler_CopyFolderClient, error)
+	// 打包某个目录为tar，流式地上传回来
+	TarDir(ctx context.Context, in *TarDirRequest, opts ...grpc.CallOption) (FileHandler_TarDirClient, error)
 }
 
 type fileHandlerClient struct {
@@ -282,6 +285,38 @@ func (x *fileHandlerCopyFolderClient) Recv() (*TaskProgressInfo, error) {
 	return m, nil
 }
 
+func (c *fileHandlerClient) TarDir(ctx context.Context, in *TarDirRequest, opts ...grpc.CallOption) (FileHandler_TarDirClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[5], FileHandler_TarDir_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &fileHandlerTarDirClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FileHandler_TarDirClient interface {
+	Recv() (*TarDirReply, error)
+	grpc.ClientStream
+}
+
+type fileHandlerTarDirClient struct {
+	grpc.ClientStream
+}
+
+func (x *fileHandlerTarDirClient) Recv() (*TarDirReply, error) {
+	m := new(TarDirReply)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // FileHandlerServer is the server API for FileHandler service.
 // All implementations must embed UnimplementedFileHandlerServer
 // for forward compatibility
@@ -306,6 +341,8 @@ type FileHandlerServer interface {
 	//	copy A→B 的話
 	//	  B=A+B 原有檔案
 	CopyFolder(*CopyFolderRequest, FileHandler_CopyFolderServer) error
+	// 打包某个目录为tar，流式地上传回来
+	TarDir(*TarDirRequest, FileHandler_TarDirServer) error
 	mustEmbedUnimplementedFileHandlerServer()
 }
 
@@ -345,6 +382,9 @@ func (UnimplementedFileHandlerServer) SyncFolder(*SyncFolderRequest, FileHandler
 }
 func (UnimplementedFileHandlerServer) CopyFolder(*CopyFolderRequest, FileHandler_CopyFolderServer) error {
 	return status.Errorf(codes.Unimplemented, "method CopyFolder not implemented")
+}
+func (UnimplementedFileHandlerServer) TarDir(*TarDirRequest, FileHandler_TarDirServer) error {
+	return status.Errorf(codes.Unimplemented, "method TarDir not implemented")
 }
 func (UnimplementedFileHandlerServer) mustEmbedUnimplementedFileHandlerServer() {}
 
@@ -582,6 +622,27 @@ func (x *fileHandlerCopyFolderServer) Send(m *TaskProgressInfo) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _FileHandler_TarDir_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(TarDirRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FileHandlerServer).TarDir(m, &fileHandlerTarDirServer{stream})
+}
+
+type FileHandler_TarDirServer interface {
+	Send(*TarDirReply) error
+	grpc.ServerStream
+}
+
+type fileHandlerTarDirServer struct {
+	grpc.ServerStream
+}
+
+func (x *fileHandlerTarDirServer) Send(m *TarDirReply) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // FileHandler_ServiceDesc is the grpc.ServiceDesc for FileHandler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -639,6 +700,11 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "copyFolder",
 			Handler:       _FileHandler_CopyFolder_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "tarDir",
+			Handler:       _FileHandler_TarDir_Handler,
 			ServerStreams: true,
 		},
 	},
