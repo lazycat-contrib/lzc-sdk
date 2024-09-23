@@ -63,6 +63,7 @@ if [ "$1" = "gen-protos" ]; then
     popd
     if [[ "$PROTOC_GEN_JS" -eq 1 ]]; then
         pushd lang/js/
+        # npm i # question: needs this?
         npm run build
         popd
     fi

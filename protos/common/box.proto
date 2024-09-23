@@ -13,6 +13,8 @@ service BoxService {
 
   rpc ChangePowerLed(ChangePowerLedRequest) returns (google.protobuf.Empty) {}
 
+  rpc ChangeTimeZone(ChangeTimeZoneRequest) returns (google.protobuf.Empty) {}
+
   rpc SetBootOption(BootOption) returns (google.protobuf.Empty) {}
 
   rpc Shutdown(ShutdownRequest) returns (google.protobuf.Empty) {}
@@ -61,6 +63,10 @@ message ChangeDisplayNameRequest {
 
 message ChangePowerLedRequest {
   bool power_led = 1;
+}
+
+message ChangeTimeZoneRequest {
+  string time_zone = 1;
 }
 
 message ShutdownRequest {
