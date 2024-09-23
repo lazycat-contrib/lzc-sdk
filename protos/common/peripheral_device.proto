@@ -67,7 +67,10 @@ message Filesystem {
   optional string mountpoint = 6;
 }
 
-message MountDiskRequest { string uuid = 1; }
+message MountDiskRequest {
+  string uuid = 1;
+  string name = 2; // can be empty
+}
 
 message MountWebDavRequest {
   string url = 1;
