@@ -453,6 +453,10 @@ export interface BleScanDevicesResponse {
   devices: BleDevice[];
 }
 
+export interface BleScanStatusResponse {
+  scanning: boolean;
+}
+
 export interface ScreenLayer {
   layer: Layer;
   /** 如果screenlayer为custom需要传递这个参数 */
@@ -2717,6 +2721,64 @@ export const BleScanDevicesResponse = {
   },
 };
 
+function createBaseBleScanStatusResponse(): BleScanStatusResponse {
+  return { scanning: false };
+}
+
+export const BleScanStatusResponse = {
+  encode(message: BleScanStatusResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.scanning === true) {
+      writer.uint32(8).bool(message.scanning);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): BleScanStatusResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBleScanStatusResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.scanning = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): BleScanStatusResponse {
+    return { scanning: isSet(object.scanning) ? Boolean(object.scanning) : false };
+  },
+
+  toJSON(message: BleScanStatusResponse): unknown {
+    const obj: any = {};
+    if (message.scanning === true) {
+      obj.scanning = message.scanning;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<BleScanStatusResponse>, I>>(base?: I): BleScanStatusResponse {
+    return BleScanStatusResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<BleScanStatusResponse>, I>>(object: I): BleScanStatusResponse {
+    const message = createBaseBleScanStatusResponse();
+    message.scanning = object.scanning ?? false;
+    return message;
+  },
+};
+
 function createBaseScreenLayer(): ScreenLayer {
   return { layer: 0, customPlayload: undefined };
 }
@@ -3306,8 +3368,18 @@ export interface RemoteControl {
   ): Promise<Empty>;
   /**
    * 蓝牙管理
-   * 扫描蓝牙设备
+   * 停止扫描蓝牙设备
    */
+  BleStopScan(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
+  /** 开始扫描蓝牙设备 */
+  BleStartScan(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
+  /** 蓝牙设备扫描状态 */
+  BleScanStatus(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<BleScanStatusResponse>;
+  /** 流式获取扫描蓝牙设备结果 */
   BleScanDevices(
     request: DeepPartial<Empty>,
     metadata?: grpc.Metadata,
@@ -3415,6 +3487,9 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.IncreaseVolume = this.IncreaseVolume.bind(this);
     this.DecreaseVolume = this.DecreaseVolume.bind(this);
     this.SetSinkInputVolume = this.SetSinkInputVolume.bind(this);
+    this.BleStopScan = this.BleStopScan.bind(this);
+    this.BleStartScan = this.BleStartScan.bind(this);
+    this.BleScanStatus = this.BleScanStatus.bind(this);
     this.BleScanDevices = this.BleScanDevices.bind(this);
     this.BleConnectDevice = this.BleConnectDevice.bind(this);
     this.BleDisconnectDevice = this.BleDisconnectDevice.bind(this);
@@ -3757,6 +3832,22 @@ export class RemoteControlClientImpl implements RemoteControl {
       metadata,
       abortSignal,
     );
+  }
+
+  BleStopScan(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
+    return this.rpc.unary(RemoteControlBleStopScanDesc, Empty.fromPartial(request), metadata, abortSignal);
+  }
+
+  BleStartScan(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
+    return this.rpc.unary(RemoteControlBleStartScanDesc, Empty.fromPartial(request), metadata, abortSignal);
+  }
+
+  BleScanStatus(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<BleScanStatusResponse> {
+    return this.rpc.unary(RemoteControlBleScanStatusDesc, Empty.fromPartial(request), metadata, abortSignal);
   }
 
   BleScanDevices(
@@ -4586,6 +4677,75 @@ export const RemoteControlSetSinkInputVolumeDesc: UnaryMethodDefinitionish = {
   responseType: {
     deserializeBinary(data: Uint8Array) {
       const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlBleStopScanDesc: UnaryMethodDefinitionish = {
+  methodName: "BleStopScan",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlBleStartScanDesc: UnaryMethodDefinitionish = {
+  methodName: "BleStartScan",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlBleScanStatusDesc: UnaryMethodDefinitionish = {
+  methodName: "BleScanStatus",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return Empty.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = BleScanStatusResponse.decode(data);
       return {
         ...value,
         toObject() {

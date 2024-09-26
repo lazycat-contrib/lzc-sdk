@@ -197,6 +197,10 @@ message BleScanDevicesResponse {
   repeated BleDevice devices = 1;
 }
 
+message BleScanStatusResponse {
+  bool scanning = 1;
+}
+
 enum Layer {
   // 恢复默认
   NORMAL = 0;
@@ -310,7 +314,13 @@ service RemoteControl{
   // 设置输入音频源音量
   rpc SetSinkInputVolume(SetSinkInputVolumeRequest) returns (google.protobuf.Empty) {}
   // 蓝牙管理
-  // 扫描蓝牙设备
+  // 停止扫描蓝牙设备
+  rpc BleStopScan(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 开始扫描蓝牙设备
+  rpc BleStartScan(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 蓝牙设备扫描状态
+  rpc BleScanStatus(google.protobuf.Empty) returns (BleScanStatusResponse) {}
+  // 流式获取扫描蓝牙设备结果
   rpc BleScanDevices(google.protobuf.Empty) returns (stream BleScanDevicesResponse) {}
   // 连接蓝牙设备
   rpc BleConnectDevice(BleDeviceRequest) returns (google.protobuf.Empty) {}
