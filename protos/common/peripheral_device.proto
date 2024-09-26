@@ -69,7 +69,6 @@ message Filesystem {
 
 message MountDiskRequest {
   string uuid = 1;
-  string name = 2; // can be empty
 }
 
 message MountWebDavRequest {
