@@ -24,6 +24,7 @@ const (
 	BoxService_ChangeDisplayName_FullMethodName       = "/cloud.lazycat.apis.common.BoxService/ChangeDisplayName"
 	BoxService_ChangePowerLed_FullMethodName          = "/cloud.lazycat.apis.common.BoxService/ChangePowerLed"
 	BoxService_ChangeTimeZone_FullMethodName          = "/cloud.lazycat.apis.common.BoxService/ChangeTimeZone"
+	BoxService_GetTimeZone_FullMethodName             = "/cloud.lazycat.apis.common.BoxService/GetTimeZone"
 	BoxService_SetBootOption_FullMethodName           = "/cloud.lazycat.apis.common.BoxService/SetBootOption"
 	BoxService_Shutdown_FullMethodName                = "/cloud.lazycat.apis.common.BoxService/Shutdown"
 	BoxService_QueryDisksInfo_FullMethodName          = "/cloud.lazycat.apis.common.BoxService/QueryDisksInfo"
@@ -38,6 +39,7 @@ type BoxServiceClient interface {
 	ChangeDisplayName(ctx context.Context, in *ChangeDisplayNameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ChangePowerLed(ctx context.Context, in *ChangePowerLedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ChangeTimeZone(ctx context.Context, in *ChangeTimeZoneRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetTimeZone(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTimeZoneResponse, error)
 	SetBootOption(ctx context.Context, in *BootOption, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Shutdown(ctx context.Context, in *ShutdownRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	QueryDisksInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DisksInfo, error)
@@ -88,6 +90,15 @@ func (c *boxServiceClient) ChangeTimeZone(ctx context.Context, in *ChangeTimeZon
 	return out, nil
 }
 
+func (c *boxServiceClient) GetTimeZone(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTimeZoneResponse, error) {
+	out := new(GetTimeZoneResponse)
+	err := c.cc.Invoke(ctx, BoxService_GetTimeZone_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *boxServiceClient) SetBootOption(ctx context.Context, in *BootOption, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, BoxService_SetBootOption_FullMethodName, in, out, opts...)
@@ -132,6 +143,7 @@ type BoxServiceServer interface {
 	ChangeDisplayName(context.Context, *ChangeDisplayNameRequest) (*emptypb.Empty, error)
 	ChangePowerLed(context.Context, *ChangePowerLedRequest) (*emptypb.Empty, error)
 	ChangeTimeZone(context.Context, *ChangeTimeZoneRequest) (*emptypb.Empty, error)
+	GetTimeZone(context.Context, *emptypb.Empty) (*GetTimeZoneResponse, error)
 	SetBootOption(context.Context, *BootOption) (*emptypb.Empty, error)
 	Shutdown(context.Context, *ShutdownRequest) (*emptypb.Empty, error)
 	QueryDisksInfo(context.Context, *emptypb.Empty) (*DisksInfo, error)
@@ -154,6 +166,9 @@ func (UnimplementedBoxServiceServer) ChangePowerLed(context.Context, *ChangePowe
 }
 func (UnimplementedBoxServiceServer) ChangeTimeZone(context.Context, *ChangeTimeZoneRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeTimeZone not implemented")
+}
+func (UnimplementedBoxServiceServer) GetTimeZone(context.Context, *emptypb.Empty) (*GetTimeZoneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTimeZone not implemented")
 }
 func (UnimplementedBoxServiceServer) SetBootOption(context.Context, *BootOption) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetBootOption not implemented")
@@ -252,6 +267,24 @@ func _BoxService_ChangeTimeZone_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BoxService_GetTimeZone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxServiceServer).GetTimeZone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BoxService_GetTimeZone_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxServiceServer).GetTimeZone(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BoxService_SetBootOption_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BootOption)
 	if err := dec(in); err != nil {
@@ -346,6 +379,10 @@ var BoxService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangeTimeZone",
 			Handler:    _BoxService_ChangeTimeZone_Handler,
+		},
+		{
+			MethodName: "GetTimeZone",
+			Handler:    _BoxService_GetTimeZone_Handler,
 		},
 		{
 			MethodName: "SetBootOption",
