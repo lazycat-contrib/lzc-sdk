@@ -70,6 +70,8 @@ message UserInfo {
   string avatar = 3;
   Role role = 4;
   repeated string phone_number = 5;
+
+  bool has_app_install_permission  = 6;
 }
 
 message ListUIDsRequest {
