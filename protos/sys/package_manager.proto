@@ -90,6 +90,9 @@ message InstallRequest {
   optional string appid = 1;
 
   optional string subdomain = 4;
+
+  // 反正就是标题，一般是用来暂存，可能可以填入任何东西，不一定和应用标题相等
+  optional string title = 5;
 }
 
 message UninstallRequest {
