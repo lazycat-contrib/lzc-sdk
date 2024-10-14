@@ -1,181 +1,16 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import reactLogo from './assets/react.svg';
 import './App.css';
-import {LoadingIcon} from 'tdesign-icons-react';
+import { LoadingIcon } from 'tdesign-icons-react';
 // import { firstValueFrom } from 'rxjs';
-import {EndDeviceProxy, lzcAPIGateway} from '@lazycatcloud/sdk/index';
-import {ListAlbumsReply, ListAssetsSortType, PhotoMeta} from '@lazycatcloud/sdk/localdevice/photo';
-import {Permission} from '@lazycatcloud/sdk/localdevice/permission';
-import { ClientAuthorizationType} from '@lazycatcloud/sdk/extentions/client_authorization';
-import {AppCommon} from '@lazycatcloud/sdk/extentions/app_common';
-import {VibrateType} from "@lazycatcloud/sdk/extentions/vibrate_type";
+import { EndDeviceProxy, lzcAPIGateway } from '@lazycatcloud/sdk/index';
+import { ListAlbumsReply, ListAssetsSortType, PhotoMeta } from '@lazycatcloud/sdk/localdevice/photo';
+import { Permission } from '@lazycatcloud/sdk/localdevice/permission';
+import { AppCommon } from '@lazycatcloud/sdk/extentions/app_common';
+// import {VibrateType} from "@lazycatcloud/sdk/extentions/vibrate_type";
 
-type PageNavigate = {
-    setPageIndex: (index: number | undefined) => void;
-}
-
-function AssetMetaReview(props: { meta: PhotoMeta, deletePhoto?: Function }) {
-    const {meta: imageMeta, deletePhoto} = props;
-
-    function decodeThumbnailUrl(urlStr: string) {
-        try {
-            const url = new URL(urlStr);
-            if (!url.searchParams.has('size') || !(url.searchParams.has('width') || url.searchParams.has('height'))) {
-                // 不存在缩略图参数，添加默认参数
-                url.searchParams.set('width', '200');
-                url.searchParams.set('height', '200');
-            }
-            return url.toString()
-        } catch (error) {
-            return urlStr
-        }
-    }
-
-    return <>
-        <div>
-            查询图片 <span style={{width: 100}}>({imageMeta.id})</span>:
-            <a href={imageMeta.photoUrl} target={'_blank'}>
-                查看原图
-            </a>
-            {'  '}
-            <a href={decodeThumbnailUrl(imageMeta.thumbnailUrl)} target={'_blank'}>
-                缩略图
-            </a>
-            {'  '}
-
-            {deletePhoto && (
-                <>
-                    <a
-                        onClick={() => {
-                            deletePhoto && deletePhoto([imageMeta.id]);
-                        }}
-                    >
-                        删除图片
-                    </a>{' '}
-                </>
-            )}
-
-            <p>{imageMeta.fileName}</p>
-            <div style={{padding: 2, background: '#0001'}}>
-                <img style={{width: 150}}
-                     src={imageMeta.thumbnailUrl ? decodeThumbnailUrl(imageMeta.thumbnailUrl) : imageMeta.photoUrl}
-                    // src={imageMeta.photoUrl}
-                />
-            </div>
-        </div>
-    </>
-}
-
-function QueryAssetMatePage(props: { navigate: PageNavigate, device: EndDeviceProxy }) {
-    const {navigate, device} = props;
-
-    const [assetInfo, setAssetInfo] = useState<{
-        id: string,
-        message: string,
-        mate?: PhotoMeta
-    }>({
-        id: '',
-        message: '',
-        mate: undefined,
-    })
-
-    function putMessage(msg: any) {
-        setAssetInfo({
-            ...assetInfo,
-            message: `${msg}`
-        })
-    }
-
-    return <div style={{width: '100%'}}>
-        <div style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            marginBottom: 10
-        }}>
-            <button
-                style={{marginRight: 10}}
-                onClick={async () => {
-                    navigate.setPageIndex(undefined); // 返回主页
-                }}
-            >
-                返回
-            </button>
-            <p>通过媒体 ID 查询图片 Mate 信息</p>
-        </div>
-
-        <div style={{display: 'flex'}}>
-            <input value={assetInfo.id} style={{flex: 1, background: '#F1F1F1', border: "none", borderRadius: 5}}
-                   onChange={(e) => {
-                       const {target} = e;
-                       if (target.value) {
-                           setAssetInfo({
-                               ...assetInfo,
-                               id: target.value
-                           })
-                       } else {
-                           setAssetInfo({
-                               ...assetInfo,
-                               id: ''
-                           })
-                       }
-                   }}
-            ></input>
-            <button style={{marginLeft: 10}} onClick={async () => {
-                if (!assetInfo.id || assetInfo.id == '') {
-                    putMessage(`[错误] 媒体 ID 为空`)
-                    return
-                }
-
-                console.log('id', assetInfo.id, device);
-                try {
-                    const photo = await device.photolibrary.QueryPhoto({id: assetInfo.id})
-                    setAssetInfo({
-                        ...assetInfo,
-                        mate: photo,
-                        message: JSON.stringify(photo, null, 2),
-                    })
-                } catch (error) {
-                    putMessage(error)
-                }
-
-            }}>查询
-            </button>
-        </div>
-
-        <div style={{marginTop: 10}}>
-
-            <p>其他测试项</p>
-            <button
-                onClick={async () => {
-                    console.log('currentDevice', device)
-                    try {
-                        let urls = await device.photolibrary.QueryAssetUrlPath({});
-                        console.log('debug image urls', urls);
-                        putMessage(`[QueryAssetUrlPath] ${JSON.stringify(urls, null, 2)}`)
-                    } catch (error) {
-                        putMessage(`[QueryAssetUrlPath 错误] ${error}`)
-                        throw error;
-                    }
-                }}
-            >
-                QueryAssetUrlPath
-            </button>
-        </div>
-
-        <div style={{display: 'flex', flexDirection: 'column', marginTop: 25}}>
-            {assetInfo.message && (
-                <>
-                    <p style={{textAlign: 'start'}}>查询结果</p>
-                    <textarea disabled value={assetInfo.message} style={{marginBottom: 15, height: 150}}></textarea>
-                </>
-            )}
-            {assetInfo.mate && (
-                <AssetMetaReview meta={assetInfo.mate}/>
-            )}
-        </div>
-    </div>
-}
+import { AssetMetaReview } from './components';
+import { PeripheralPage, DeviceContactsPage, QueryAssetMatePage } from './pages';
 
 function App() {
     const [loading, setLoading] = useState(false);
@@ -380,7 +215,7 @@ function App() {
     const putPhoto = async () => {
         try {
             const device = await getCurrentDevice();
-            const {albums} = await device?.photolibrary.ListAlbums({});
+            const { albums } = await device?.photolibrary.ListAlbums({});
             const album = albums[0];
             console.log('保存相册ID', album.title, album.id);
             if (!imageMeta) {
@@ -438,9 +273,30 @@ function App() {
                         navigate={{
                             setPageIndex,
                         }}
+                        gateway={lzcAPI.current!}
                         device={currentDevice.current!}
                     />
                 </>
+            )
+        },
+        {
+            view: (
+                <DeviceContactsPage
+                    navigate={{
+                        setPageIndex,
+                    }}
+                    gateway={lzcAPI.current!}
+                />
+            )
+        },
+        {
+            view: (
+                <PeripheralPage
+                    navigate={{
+                        setPageIndex,
+                    }}
+                    gateway={lzcAPI.current!}
+                />
             )
         }
     ];
@@ -470,133 +326,57 @@ function App() {
     }
 
     return (
-        <div className="App" style={{width: '100%'}}>
+        <div className="App" style={{ width: '100%' }}>
             {pageIndex !== undefined && pageIndex < pageViews.length ? pageViews[pageIndex].view : (
                 <>
                     <div>
                         <a href="https://vitejs.dev" target="_blank">
-                            <img src="/vite.svg" className="logo" alt="Vite logo"/>
+                            <img src="/vite.svg" className="logo" alt="Vite logo" />
                         </a>
                         <a href="https://reactjs.org" target="_blank">
-                            <img src={reactLogo} className="logo react" alt="React logo"/>
+                            <img src={reactLogo} className="logo react" alt="React logo" />
                         </a>
                     </div>
                     <h1>LzcAPI for React</h1>
                     <div className="card">
-                        <div style={{display: 'inline-grid', justifyContent: 'center'}}>
+                        <div style={{ display: 'inline-grid', justifyContent: 'center' }}>
+
+                            <p>--- box api test ---</p>
 
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
-                                    try {
-                                        const currentDevice = await lzcAPI.current?.currentDevice
-                                        const device = currentDevice!;
-                                        let reply = await device.contacts.ListContacts({});
-                                        console.log('reply', reply);
-                                    } catch (error) {
-                                        // throw error;
-                                        console.error('ListContacts error', error);
-                                    }
+                                    setPageIndex(2); // 打开测试盒子挂载外围设备接口页面
                                 }}
                             >
-                                ListContacts
+                                Box Peripheral Tests
+                            </button>
+
+                            <p style={{ marginTop: 55 }}>--- local device api test ---</p>
+
+                            <button
+                                style={{ marginTop: 10 }}
+                                onClick={async () => {
+                                    setPageIndex(1); // 打开测试当前设备联系人接口页面
+                                }}
+                            >
+                                Device Contacts Tests
                             </button>
 
                             <button
-                                style={{marginTop: 10}}
-                                onClick={async () => {
-                                    try {
-                                        const currentDevice = await lzcAPI.current?.currentDevice
-                                        const device = currentDevice!;
-                                        let reply = await device.contacts.AddContacts({
-                                            contacts: [
-                                                {
-                                                    name: 'tzbin001',
-                                                    phones: ['10086']
-                                                },
-                                                {
-                                                    name: 'tzbin002',
-                                                    phones: ['1008611']
-                                                }
-                                            ]
-                                        });
-                                        console.log('reply', reply);
-                                    } catch (error) {
-                                        // throw error;
-                                        console.error('ListContacts error', error);
-                                    }
-                                }}
-                            >
-                                AddContacts
-                            </button>
-
-                            <button
-                                style={{marginTop: 10}}
-                                onClick={async () => {
-                                    try {
-                                        const currentDevice = await lzcAPI.current?.currentDevice
-                                        const device = currentDevice!;
-                                        const {contacts} = await device.contacts.ListContacts({});
-                                        let newContacts = contacts.map((i) => {
-                                            if (i.name.includes('tzbin')) {
-                                                return {
-                                                    ...i,
-                                                    phones: ['1000011']
-                                                }
-                                            }
-                                        }).filter(i => i) as any[]
-                                        console.log('newContacts', newContacts);
-                                        let reply = await device.contacts.UpdateContacts({
-                                            contacts: newContacts
-                                        });
-                                        console.log('reply', reply);
-                                    } catch (error) {
-                                        // throw error;
-                                        console.error('ListContacts error', error);
-                                    }
-                                }}
-                            >
-                                UpdateContact
-                            </button>
-
-                            <button
-                                style={{marginTop: 10}}
-                                onClick={async () => {
-                                    try {
-                                        const currentDevice = await lzcAPI.current?.currentDevice
-                                        const device = currentDevice!;
-                                        const {contacts} = await device.contacts.ListContacts({});
-                                        let ids = contacts.map((i) => {
-                                            if (i.name.includes('tzbin')) {
-                                                return i.id
-                                            }
-                                        }).filter(i => i) as string[]
-                                        console.log('ids', ids);
-                                        let reply = await device.contacts.DeleteContacts({
-                                            ids: ids
-                                        });
-                                        console.log('reply', reply);
-                                    } catch (error) {
-                                        // throw error;
-                                        console.error('ListContacts error', error);
-                                    }
-                                }}
-                            >
-                                DeleteContacts
-                            </button>
-
-                            <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
                                     const currentDevice = await lzcAPI.current?.currentDevice
                                     setPageIndex(0); // 打开查询媒体资源页面
                                 }}
                             >
-                                QueryAsset
+                                Device QueryAsset Tests
                             </button>
 
+                            <p style={{ marginTop: 55 }}>--- other tests ---</p>
+
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
                                     try {
                                         const currentDevice = await lzcAPI.current?.currentDevice
@@ -620,14 +400,14 @@ function App() {
                             </button>
 
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={deletePhotoFor500}
                             >
                                 deletePhotoFor500
                             </button>
 
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
                                     // let a = await AppCommon.ShareMedia({
                                     //     id: '4FD65BF9-A838-405C-A476-1F71CACBD587/L0/001',
@@ -635,7 +415,7 @@ function App() {
                                     // })
                                     // let a = await AppCommon.ShareWith("", "test", "")
                                     // let a = await AppCommon.ShareWith("", "/private/var/mobile/Containers/Shared/AppGroup/05277D27-8A5D-464E-8FD2-A496A4D1582C/Documents/懒猫网盘离线/0o0/admin/兔子2.0.zip", "")
-                                    let ok = await AppCommon.ShareWithFiles(null, [
+                                    let ok = await AppCommon.ShareWithFiles(undefined, [
                                         "/private/var/mobile/Containers/Shared/AppGroup/05277D27-8A5D-464E-8FD2-A496A4D1582C/Documents/懒猫网盘离线/0o0/admin/IMG_0127.PNG",
                                         "/private/var/mobile/Containers/Shared/AppGroup/05277D27-8A5D-464E-8FD2-A496A4D1582C/Documents/懒猫网盘离线/0o0/admin/IMG_a0131.JPG"
                                     ])
@@ -646,9 +426,10 @@ function App() {
                             </button>
 
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
-                                    const device = await lzcAPI.current.currentDevice;
+                                    const device = await lzcAPI.current?.currentDevice;
+                                    if (!device) throw Error('device is null')
                                     device.fileHandler.copyFolder({
                                         "boxName": "lnks888",
                                         "devicePath": "/Users/mac/lzc-client-desktop",
@@ -672,7 +453,7 @@ function App() {
                             </button>
 
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
                                     if (loading) return;
                                     let net = '';
@@ -689,11 +470,11 @@ function App() {
                                     setNetState(net);
                                 }}
                             >
-                                Get NetState {loading && <LoadingIcon size="1em"/>}
+                                Get NetState {loading && <LoadingIcon size="1em" />}
                             </button>
 
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
                                     getAlbumsDebug();
                                 }}
@@ -701,7 +482,7 @@ function App() {
                                 Test Get Albums
                             </button>
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
                                     try {
                                         const devices = await lzcAPI.current?.devices.ListEndDevices({
@@ -716,10 +497,10 @@ function App() {
                                 Get Device List
                             </button>
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
                                     try {
-                                        let {albums} = (await getAlbumsDebug())!;
+                                        let { albums } = (await getAlbumsDebug())!;
                                         if (albums.length < 1) {
                                             throw Error('相册数量过少');
                                         }
@@ -737,7 +518,7 @@ function App() {
                             </button>
 
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 disabled={loadingImage}
                                 onClick={async () => {
                                     if (loadingImage) {
@@ -773,11 +554,11 @@ function App() {
                                 }}
                             >
                                 Get {imageIndex.current == 0 ? 'First' : 'Next'} Image{' '}
-                                {loadingImage && <LoadingIcon size="1em"/>}
+                                {loadingImage && <LoadingIcon size="1em" />}
                             </button>
 
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 disabled={loadingImage}
                                 onClick={async () => {
                                     try {
@@ -801,18 +582,18 @@ function App() {
                                 }}
                             >
                                 Get Last Image
-                                {loadingImage && <LoadingIcon size="1em"/>}
+                                {loadingImage && <LoadingIcon size="1em" />}
                             </button>
 
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
                                     // const axiosClient = axios.create({
                                     // 	withCredentials: true,
                                     // });
 
                                     const image = await (
-                                        await fetch(imageMeta?.photoUrl || '', {credentials: 'omit', cache: 'no-cache'})
+                                        await fetch(imageMeta?.photoUrl || '', { credentials: 'omit', cache: 'no-cache' })
                                     ).blob();
 
                                     console.log('开始转换', image);
@@ -832,7 +613,7 @@ function App() {
                             </button>
 
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={() => {
                                     getFileOpenHandler();
                                 }}
@@ -841,7 +622,7 @@ function App() {
                             </button>
 
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
                                     const currentDevice = await lzcAPI.current?.currentDevice
                                     console.log('currentDevice', currentDevice)
@@ -866,15 +647,15 @@ function App() {
                                 getCurrentDevice
                             </button>
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
-                                    await AppCommon.Vibrate(VibrateType.EFFECT_DOUBLE_CLICK)
+                                    // await AppCommon.Vibrate(VibrateType.EFFECT_DOUBLE_CLICK)
                                 }}
                             >
                                 振动测试
                             </button>
                             <button
-                                style={{marginTop: 10}}
+                                style={{ marginTop: 10 }}
                                 onClick={async () => {
                                     const currentDevice = await lzcAPI.current?.currentDevice
                                     console.log('currentDevice', currentDevice)
@@ -913,7 +694,7 @@ function App() {
                         </div>
 
                         <p>
-                            {/*当前网络状态: <code>{netstate}</code>*/}
+                            {/* 当前网络状态: <code>{netstate}</code> */}
                         </p>
                         {notImageUrl ? (
                             <p>
@@ -921,33 +702,9 @@ function App() {
                             </p>
                         ) : null}
                         {imageMeta != null && (
-                            <AssetMetaReview meta={imageMeta} deletePhoto={deletePhoto}/>
+                            <AssetMetaReview meta={imageMeta} deletePhoto={deletePhoto} />
                         )}
 
-                    </div>
-                    <div>
-                        <button
-                            style={{marginTop: 10}}
-                            onClick={async () => {
-                                console.log("开始挂载!!!")
-                                 var clientAuthorizationBaseStatusPromise = AppCommon.GetClientAuthorizationStatus(ClientAuthorizationType.Contacts);
-                                 clientAuthorizationBaseStatusPromise.then(res => {
-                                    console.log(res)
-                                 })
-                            }}
-                        >
-                            获取联系人状态
-                        </button>
-                    </div>
-                    <div>
-                        <button
-                            style={{marginTop: 10}}
-                            onClick={async () => {
-                                await AppCommon.RequestClientAuthorization(ClientAuthorizationType.Contacts)
-                            }}
-                        >
-                            申请联系人状态
-                        </button>
                     </div>
                     <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
                 </>
