@@ -341,7 +341,7 @@ function App() {
                     <div className="card">
                         <div style={{ display: 'inline-grid', justifyContent: 'center' }}>
 
-                            <p>--- box api test ---</p>
+                            <p>--- box api tests ---</p>
 
                             <button
                                 style={{ marginTop: 10 }}
@@ -352,7 +352,7 @@ function App() {
                                 Box Peripheral Tests
                             </button>
 
-                            <p style={{ marginTop: 55 }}>--- local device api test ---</p>
+                            <p style={{ marginTop: 55 }}>--- local device api tests ---</p>
 
                             <button
                                 style={{ marginTop: 10 }}
