@@ -33,6 +33,12 @@ service PackageManager {
   // 根据 AppId 清除缓存
   rpc ClearCache(Appid) returns (google.protobuf.Empty) {}
 
+  // 获取 AppCfg
+  rpc GetAppCfg(GetAppCfgRequest) returns (GetAppCfgResponse) {}
+
+  // 设置 AppCfg
+  rpc SetAppCfg(SetAppCfgRequest) returns (google.protobuf.Empty) {}
+
   // 查询用户安装的特定应用的详情
   rpc QueryApplication(QueryApplicationRequest) returns (QueryApplicationResponse) {}
 
@@ -158,6 +164,23 @@ message AppInfo {
   optional string error_reason = 10;
 
   repeated string unsupported_platforms = 11;
+}
+
+message AppCfg {
+  bool background_task = 1;
+}
+
+message GetAppCfgRequest {
+  string appid = 1;
+}
+
+message GetAppCfgResponse {
+  AppCfg cfg = 1;
+}
+
+message SetAppCfgRequest {
+  string appid = 1;
+  AppCfg cfg = 2;
 }
 
 message QueryApplicationRequest {
