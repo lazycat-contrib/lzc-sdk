@@ -25,6 +25,8 @@ const (
 	PackageManager_Pause_FullMethodName                = "/cloud.lazycat.apis.sys.PackageManager/Pause"
 	PackageManager_Resume_FullMethodName               = "/cloud.lazycat.apis.sys.PackageManager/Resume"
 	PackageManager_ClearCache_FullMethodName           = "/cloud.lazycat.apis.sys.PackageManager/ClearCache"
+	PackageManager_GetAppCfg_FullMethodName            = "/cloud.lazycat.apis.sys.PackageManager/GetAppCfg"
+	PackageManager_SetAppCfg_FullMethodName            = "/cloud.lazycat.apis.sys.PackageManager/SetAppCfg"
 	PackageManager_QueryApplication_FullMethodName     = "/cloud.lazycat.apis.sys.PackageManager/QueryApplication"
 	PackageManager_QueryAppStorageUsage_FullMethodName = "/cloud.lazycat.apis.sys.PackageManager/QueryAppStorageUsage"
 	PackageManager_SetUserPermissions_FullMethodName   = "/cloud.lazycat.apis.sys.PackageManager/SetUserPermissions"
@@ -48,6 +50,10 @@ type PackageManagerClient interface {
 	Resume(ctx context.Context, in *AppInstance, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 根据 AppId 清除缓存
 	ClearCache(ctx context.Context, in *Appid, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取 AppCfg
+	GetAppCfg(ctx context.Context, in *GetAppCfgRequest, opts ...grpc.CallOption) (*GetAppCfgResponse, error)
+	// 设置 AppCfg
+	SetAppCfg(ctx context.Context, in *SetAppCfgRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 查询用户安装的特定应用的详情
 	QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*QueryApplicationResponse, error)
 	// 获取应用占用的存储空间详情
@@ -111,6 +117,24 @@ func (c *packageManagerClient) Resume(ctx context.Context, in *AppInstance, opts
 func (c *packageManagerClient) ClearCache(ctx context.Context, in *Appid, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, PackageManager_ClearCache_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *packageManagerClient) GetAppCfg(ctx context.Context, in *GetAppCfgRequest, opts ...grpc.CallOption) (*GetAppCfgResponse, error) {
+	out := new(GetAppCfgResponse)
+	err := c.cc.Invoke(ctx, PackageManager_GetAppCfg_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *packageManagerClient) SetAppCfg(ctx context.Context, in *SetAppCfgRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, PackageManager_SetAppCfg_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -194,6 +218,10 @@ type PackageManagerServer interface {
 	Resume(context.Context, *AppInstance) (*emptypb.Empty, error)
 	// 根据 AppId 清除缓存
 	ClearCache(context.Context, *Appid) (*emptypb.Empty, error)
+	// 获取 AppCfg
+	GetAppCfg(context.Context, *GetAppCfgRequest) (*GetAppCfgResponse, error)
+	// 设置 AppCfg
+	SetAppCfg(context.Context, *SetAppCfgRequest) (*emptypb.Empty, error)
 	// 查询用户安装的特定应用的详情
 	QueryApplication(context.Context, *QueryApplicationRequest) (*QueryApplicationResponse, error)
 	// 获取应用占用的存储空间详情
@@ -229,6 +257,12 @@ func (UnimplementedPackageManagerServer) Resume(context.Context, *AppInstance) (
 }
 func (UnimplementedPackageManagerServer) ClearCache(context.Context, *Appid) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ClearCache not implemented")
+}
+func (UnimplementedPackageManagerServer) GetAppCfg(context.Context, *GetAppCfgRequest) (*GetAppCfgResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppCfg not implemented")
+}
+func (UnimplementedPackageManagerServer) SetAppCfg(context.Context, *SetAppCfgRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetAppCfg not implemented")
 }
 func (UnimplementedPackageManagerServer) QueryApplication(context.Context, *QueryApplicationRequest) (*QueryApplicationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryApplication not implemented")
@@ -350,6 +384,42 @@ func _PackageManager_ClearCache_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PackageManagerServer).ClearCache(ctx, req.(*Appid))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PackageManager_GetAppCfg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAppCfgRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).GetAppCfg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PackageManager_GetAppCfg_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).GetAppCfg(ctx, req.(*GetAppCfgRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PackageManager_SetAppCfg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetAppCfgRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).SetAppCfg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PackageManager_SetAppCfg_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).SetAppCfg(ctx, req.(*SetAppCfgRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -506,6 +576,14 @@ var PackageManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ClearCache",
 			Handler:    _PackageManager_ClearCache_Handler,
+		},
+		{
+			MethodName: "GetAppCfg",
+			Handler:    _PackageManager_GetAppCfg_Handler,
+		},
+		{
+			MethodName: "SetAppCfg",
+			Handler:    _PackageManager_SetAppCfg_Handler,
 		},
 		{
 			MethodName: "QueryApplication",

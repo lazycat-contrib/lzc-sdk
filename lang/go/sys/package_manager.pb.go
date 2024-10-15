@@ -596,6 +596,202 @@ func (x *AppInfo) GetUnsupportedPlatforms() []string {
 	return nil
 }
 
+type AppCfg struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	BackgroundTask bool `protobuf:"varint,1,opt,name=background_task,json=backgroundTask,proto3" json:"background_task,omitempty"`
+}
+
+func (x *AppCfg) Reset() {
+	*x = AppCfg{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_sys_package_manager_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AppCfg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppCfg) ProtoMessage() {}
+
+func (x *AppCfg) ProtoReflect() protoreflect.Message {
+	mi := &file_sys_package_manager_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppCfg.ProtoReflect.Descriptor instead.
+func (*AppCfg) Descriptor() ([]byte, []int) {
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *AppCfg) GetBackgroundTask() bool {
+	if x != nil {
+		return x.BackgroundTask
+	}
+	return false
+}
+
+type GetAppCfgRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Appid string `protobuf:"bytes,1,opt,name=appid,proto3" json:"appid,omitempty"`
+}
+
+func (x *GetAppCfgRequest) Reset() {
+	*x = GetAppCfgRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_sys_package_manager_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAppCfgRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAppCfgRequest) ProtoMessage() {}
+
+func (x *GetAppCfgRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_sys_package_manager_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAppCfgRequest.ProtoReflect.Descriptor instead.
+func (*GetAppCfgRequest) Descriptor() ([]byte, []int) {
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetAppCfgRequest) GetAppid() string {
+	if x != nil {
+		return x.Appid
+	}
+	return ""
+}
+
+type GetAppCfgResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Cfg *AppCfg `protobuf:"bytes,1,opt,name=cfg,proto3" json:"cfg,omitempty"`
+}
+
+func (x *GetAppCfgResponse) Reset() {
+	*x = GetAppCfgResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_sys_package_manager_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAppCfgResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAppCfgResponse) ProtoMessage() {}
+
+func (x *GetAppCfgResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_sys_package_manager_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAppCfgResponse.ProtoReflect.Descriptor instead.
+func (*GetAppCfgResponse) Descriptor() ([]byte, []int) {
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetAppCfgResponse) GetCfg() *AppCfg {
+	if x != nil {
+		return x.Cfg
+	}
+	return nil
+}
+
+type SetAppCfgRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Appid string  `protobuf:"bytes,1,opt,name=appid,proto3" json:"appid,omitempty"`
+	Cfg   *AppCfg `protobuf:"bytes,2,opt,name=cfg,proto3" json:"cfg,omitempty"`
+}
+
+func (x *SetAppCfgRequest) Reset() {
+	*x = SetAppCfgRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_sys_package_manager_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SetAppCfgRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetAppCfgRequest) ProtoMessage() {}
+
+func (x *SetAppCfgRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_sys_package_manager_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetAppCfgRequest.ProtoReflect.Descriptor instead.
+func (*SetAppCfgRequest) Descriptor() ([]byte, []int) {
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *SetAppCfgRequest) GetAppid() string {
+	if x != nil {
+		return x.Appid
+	}
+	return ""
+}
+
+func (x *SetAppCfgRequest) GetCfg() *AppCfg {
+	if x != nil {
+		return x.Cfg
+	}
+	return nil
+}
+
 type QueryApplicationRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -608,7 +804,7 @@ type QueryApplicationRequest struct {
 func (x *QueryApplicationRequest) Reset() {
 	*x = QueryApplicationRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[5]
+		mi := &file_sys_package_manager_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -621,7 +817,7 @@ func (x *QueryApplicationRequest) String() string {
 func (*QueryApplicationRequest) ProtoMessage() {}
 
 func (x *QueryApplicationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[5]
+	mi := &file_sys_package_manager_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -634,7 +830,7 @@ func (x *QueryApplicationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueryApplicationRequest.ProtoReflect.Descriptor instead.
 func (*QueryApplicationRequest) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{5}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *QueryApplicationRequest) GetAppidList() []string {
@@ -655,7 +851,7 @@ type QueryApplicationResponse struct {
 func (x *QueryApplicationResponse) Reset() {
 	*x = QueryApplicationResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[6]
+		mi := &file_sys_package_manager_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -668,7 +864,7 @@ func (x *QueryApplicationResponse) String() string {
 func (*QueryApplicationResponse) ProtoMessage() {}
 
 func (x *QueryApplicationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[6]
+	mi := &file_sys_package_manager_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -681,7 +877,7 @@ func (x *QueryApplicationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueryApplicationResponse.ProtoReflect.Descriptor instead.
 func (*QueryApplicationResponse) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{6}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *QueryApplicationResponse) GetInfoList() []*AppInfo {
@@ -708,7 +904,7 @@ type QueryAppStorageUsageRequest struct {
 func (x *QueryAppStorageUsageRequest) Reset() {
 	*x = QueryAppStorageUsageRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[7]
+		mi := &file_sys_package_manager_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -721,7 +917,7 @@ func (x *QueryAppStorageUsageRequest) String() string {
 func (*QueryAppStorageUsageRequest) ProtoMessage() {}
 
 func (x *QueryAppStorageUsageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[7]
+	mi := &file_sys_package_manager_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -734,7 +930,7 @@ func (x *QueryAppStorageUsageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueryAppStorageUsageRequest.ProtoReflect.Descriptor instead.
 func (*QueryAppStorageUsageRequest) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{7}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *QueryAppStorageUsageRequest) GetAppid() string {
@@ -807,7 +1003,7 @@ type AppStorageUsage struct {
 func (x *AppStorageUsage) Reset() {
 	*x = AppStorageUsage{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[8]
+		mi := &file_sys_package_manager_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -820,7 +1016,7 @@ func (x *AppStorageUsage) String() string {
 func (*AppStorageUsage) ProtoMessage() {}
 
 func (x *AppStorageUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[8]
+	mi := &file_sys_package_manager_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -833,7 +1029,7 @@ func (x *AppStorageUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppStorageUsage.ProtoReflect.Descriptor instead.
 func (*AppStorageUsage) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{8}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *AppStorageUsage) GetPkg() uint64 {
@@ -892,7 +1088,7 @@ type UserPermission struct {
 func (x *UserPermission) Reset() {
 	*x = UserPermission{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[9]
+		mi := &file_sys_package_manager_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -905,7 +1101,7 @@ func (x *UserPermission) String() string {
 func (*UserPermission) ProtoMessage() {}
 
 func (x *UserPermission) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[9]
+	mi := &file_sys_package_manager_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -918,7 +1114,7 @@ func (x *UserPermission) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserPermission.ProtoReflect.Descriptor instead.
 func (*UserPermission) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{9}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *UserPermission) GetUid() string {
@@ -947,7 +1143,7 @@ type GetUserPermissionsRequest struct {
 func (x *GetUserPermissionsRequest) Reset() {
 	*x = GetUserPermissionsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[10]
+		mi := &file_sys_package_manager_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -960,7 +1156,7 @@ func (x *GetUserPermissionsRequest) String() string {
 func (*GetUserPermissionsRequest) ProtoMessage() {}
 
 func (x *GetUserPermissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[10]
+	mi := &file_sys_package_manager_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -973,7 +1169,7 @@ func (x *GetUserPermissionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserPermissionsRequest.ProtoReflect.Descriptor instead.
 func (*GetUserPermissionsRequest) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{10}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetUserPermissionsRequest) GetUid() string {
@@ -994,7 +1190,7 @@ type Appid struct {
 func (x *Appid) Reset() {
 	*x = Appid{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[11]
+		mi := &file_sys_package_manager_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1007,7 +1203,7 @@ func (x *Appid) String() string {
 func (*Appid) ProtoMessage() {}
 
 func (x *Appid) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[11]
+	mi := &file_sys_package_manager_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1020,7 +1216,7 @@ func (x *Appid) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Appid.ProtoReflect.Descriptor instead.
 func (*Appid) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{11}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *Appid) GetAppid() string {
@@ -1043,7 +1239,7 @@ type GetActionURLRequest struct {
 func (x *GetActionURLRequest) Reset() {
 	*x = GetActionURLRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[12]
+		mi := &file_sys_package_manager_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1056,7 +1252,7 @@ func (x *GetActionURLRequest) String() string {
 func (*GetActionURLRequest) ProtoMessage() {}
 
 func (x *GetActionURLRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[12]
+	mi := &file_sys_package_manager_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1069,7 +1265,7 @@ func (x *GetActionURLRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActionURLRequest.ProtoReflect.Descriptor instead.
 func (*GetActionURLRequest) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{12}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *GetActionURLRequest) GetPath() string {
@@ -1104,7 +1300,7 @@ type GetActionURLResponse struct {
 func (x *GetActionURLResponse) Reset() {
 	*x = GetActionURLResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[13]
+		mi := &file_sys_package_manager_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1117,7 +1313,7 @@ func (x *GetActionURLResponse) String() string {
 func (*GetActionURLResponse) ProtoMessage() {}
 
 func (x *GetActionURLResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[13]
+	mi := &file_sys_package_manager_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1130,7 +1326,7 @@ func (x *GetActionURLResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActionURLResponse.ProtoReflect.Descriptor instead.
 func (*GetActionURLResponse) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{13}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetActionURLResponse) GetUrl() string {
@@ -1151,7 +1347,7 @@ type ListFileHandlerRequest struct {
 func (x *ListFileHandlerRequest) Reset() {
 	*x = ListFileHandlerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[14]
+		mi := &file_sys_package_manager_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1164,7 +1360,7 @@ func (x *ListFileHandlerRequest) String() string {
 func (*ListFileHandlerRequest) ProtoMessage() {}
 
 func (x *ListFileHandlerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[14]
+	mi := &file_sys_package_manager_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1177,7 +1373,7 @@ func (x *ListFileHandlerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFileHandlerRequest.ProtoReflect.Descriptor instead.
 func (*ListFileHandlerRequest) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{14}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ListFileHandlerRequest) GetMimetype() string {
@@ -1200,7 +1396,7 @@ type FileHandlerInfo struct {
 func (x *FileHandlerInfo) Reset() {
 	*x = FileHandlerInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[15]
+		mi := &file_sys_package_manager_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1213,7 +1409,7 @@ func (x *FileHandlerInfo) String() string {
 func (*FileHandlerInfo) ProtoMessage() {}
 
 func (x *FileHandlerInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[15]
+	mi := &file_sys_package_manager_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1226,7 +1422,7 @@ func (x *FileHandlerInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileHandlerInfo.ProtoReflect.Descriptor instead.
 func (*FileHandlerInfo) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{15}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *FileHandlerInfo) GetAppid() string {
@@ -1261,7 +1457,7 @@ type ListFileHandlerResponse struct {
 func (x *ListFileHandlerResponse) Reset() {
 	*x = ListFileHandlerResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[16]
+		mi := &file_sys_package_manager_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1274,7 +1470,7 @@ func (x *ListFileHandlerResponse) String() string {
 func (*ListFileHandlerResponse) ProtoMessage() {}
 
 func (x *ListFileHandlerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[16]
+	mi := &file_sys_package_manager_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1287,7 +1483,7 @@ func (x *ListFileHandlerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFileHandlerResponse.ProtoReflect.Descriptor instead.
 func (*ListFileHandlerResponse) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{16}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ListFileHandlerResponse) GetInfoList() []*FileHandlerInfo {
@@ -1309,7 +1505,7 @@ type AppInstance struct {
 func (x *AppInstance) Reset() {
 	*x = AppInstance{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_sys_package_manager_proto_msgTypes[17]
+		mi := &file_sys_package_manager_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1322,7 +1518,7 @@ func (x *AppInstance) String() string {
 func (*AppInstance) ProtoMessage() {}
 
 func (x *AppInstance) ProtoReflect() protoreflect.Message {
-	mi := &file_sys_package_manager_proto_msgTypes[17]
+	mi := &file_sys_package_manager_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1335,7 +1531,7 @@ func (x *AppInstance) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppInstance.ProtoReflect.Descriptor instead.
 func (*AppInstance) Descriptor() ([]byte, []int) {
-	return file_sys_package_manager_proto_rawDescGZIP(), []int{17}
+	return file_sys_package_manager_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *AppInstance) GetAppid() string {
@@ -1426,7 +1622,23 @@ var file_sys_package_manager_proto_rawDesc = []byte{
 	0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x42, 0x14, 0x0a, 0x12, 0x5f, 0x64, 0x6f, 0x77, 0x6e, 0x6c, 0x6f,
 	0x61, 0x64, 0x5f, 0x70, 0x72, 0x6f, 0x67, 0x72, 0x65, 0x73, 0x73, 0x42, 0x0a, 0x0a, 0x08, 0x5f,
 	0x62, 0x75, 0x69, 0x6c, 0x74, 0x69, 0x6e, 0x42, 0x0f, 0x0a, 0x0d, 0x5f, 0x65, 0x72, 0x72, 0x6f,
-	0x72, 0x5f, 0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x22, 0x38, 0x0a, 0x17, 0x51, 0x75, 0x65, 0x72,
+	0x72, 0x5f, 0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x22, 0x31, 0x0a, 0x06, 0x41, 0x70, 0x70, 0x43,
+	0x66, 0x67, 0x12, 0x27, 0x0a, 0x0f, 0x62, 0x61, 0x63, 0x6b, 0x67, 0x72, 0x6f, 0x75, 0x6e, 0x64,
+	0x5f, 0x74, 0x61, 0x73, 0x6b, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0e, 0x62, 0x61, 0x63,
+	0x6b, 0x67, 0x72, 0x6f, 0x75, 0x6e, 0x64, 0x54, 0x61, 0x73, 0x6b, 0x22, 0x28, 0x0a, 0x10, 0x47,
+	0x65, 0x74, 0x41, 0x70, 0x70, 0x43, 0x66, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x14, 0x0a, 0x05, 0x61, 0x70, 0x70, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
+	0x61, 0x70, 0x70, 0x69, 0x64, 0x22, 0x45, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x41, 0x70, 0x70, 0x43,
+	0x66, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x30, 0x0a, 0x03, 0x63, 0x66,
+	0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e,
+	0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73,
+	0x2e, 0x41, 0x70, 0x70, 0x43, 0x66, 0x67, 0x52, 0x03, 0x63, 0x66, 0x67, 0x22, 0x5a, 0x0a, 0x10,
+	0x53, 0x65, 0x74, 0x41, 0x70, 0x70, 0x43, 0x66, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x14, 0x0a, 0x05, 0x61, 0x70, 0x70, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x05, 0x61, 0x70, 0x70, 0x69, 0x64, 0x12, 0x30, 0x0a, 0x03, 0x63, 0x66, 0x67, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79,
+	0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x41, 0x70, 0x70,
+	0x43, 0x66, 0x67, 0x52, 0x03, 0x63, 0x66, 0x67, 0x22, 0x38, 0x0a, 0x17, 0x51, 0x75, 0x65, 0x72,
 	0x79, 0x41, 0x70, 0x70, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75,
 	0x65, 0x73, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x61, 0x70, 0x70, 0x69, 0x64, 0x5f, 0x6c, 0x69, 0x73,
 	0x74, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x09, 0x61, 0x70, 0x70, 0x69, 0x64, 0x4c, 0x69,
@@ -1521,7 +1733,7 @@ var file_sys_package_manager_proto_rawDesc = []byte{
 	0x61, 0x74, 0x75, 0x73, 0x5f, 0x52, 0x75, 0x6e, 0x6e, 0x69, 0x6e, 0x67, 0x10, 0x04, 0x2a, 0x29,
 	0x0a, 0x06, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x08, 0x0a, 0x04, 0x4f, 0x70, 0x65, 0x6e,
 	0x10, 0x00, 0x12, 0x07, 0x0a, 0x03, 0x4e, 0x65, 0x77, 0x10, 0x01, 0x12, 0x0c, 0x0a, 0x08, 0x44,
-	0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x10, 0x02, 0x32, 0x90, 0x09, 0x0a, 0x0e, 0x50, 0x61,
+	0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x10, 0x02, 0x32, 0xc5, 0x0a, 0x0a, 0x0e, 0x50, 0x61,
 	0x63, 0x6b, 0x61, 0x67, 0x65, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x12, 0x51, 0x0a, 0x07,
 	0x49, 0x6e, 0x73, 0x74, 0x61, 0x6c, 0x6c, 0x12, 0x26, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e,
 	0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73,
@@ -1546,58 +1758,70 @@ var file_sys_package_manager_proto_rawDesc = []byte{
 	0x43, 0x61, 0x63, 0x68, 0x65, 0x12, 0x1d, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61,
 	0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x41,
 	0x70, 0x70, 0x69, 0x64, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12, 0x77,
-	0x0a, 0x10, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x70, 0x70, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69,
-	0x6f, 0x6e, 0x12, 0x2f, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63,
-	0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x51, 0x75, 0x65, 0x72,
-	0x79, 0x41, 0x70, 0x70, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x1a, 0x30, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79,
-	0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x51, 0x75, 0x65,
-	0x72, 0x79, 0x41, 0x70, 0x70, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x76, 0x0a, 0x14, 0x51, 0x75, 0x65, 0x72, 0x79,
-	0x41, 0x70, 0x70, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x55, 0x73, 0x61, 0x67, 0x65, 0x12,
-	0x33, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e,
-	0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x70,
-	0x70, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x55, 0x73, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x1a, 0x27, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a,
-	0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x41, 0x70,
-	0x70, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x55, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12,
-	0x5c, 0x0a, 0x12, 0x53, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73,
-	0x73, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x26, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61,
-	0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x55,
-	0x73, 0x65, 0x72, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x1a, 0x16, 0x2e,
-	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e,
-	0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x06, 0x82, 0x97, 0x22, 0x02, 0x10, 0x02, 0x12, 0x77, 0x0a,
-	0x12, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69,
-	0x6f, 0x6e, 0x73, 0x12, 0x31, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79,
-	0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x47, 0x65, 0x74,
-	0x55, 0x73, 0x65, 0x72, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x73, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x26, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c,
-	0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e,
-	0x55, 0x73, 0x65, 0x72, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x22, 0x06,
-	0x82, 0x97, 0x22, 0x02, 0x10, 0x02, 0x12, 0x51, 0x0a, 0x10, 0x50, 0x61, 0x75, 0x73, 0x65, 0x41,
-	0x70, 0x70, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x12, 0x1d, 0x2e, 0x63, 0x6c, 0x6f,
-	0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e,
-	0x73, 0x79, 0x73, 0x2e, 0x41, 0x70, 0x70, 0x69, 0x64, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
+	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12, 0x62,
+	0x0a, 0x09, 0x47, 0x65, 0x74, 0x41, 0x70, 0x70, 0x43, 0x66, 0x67, 0x12, 0x28, 0x2e, 0x63, 0x6c,
+	0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73,
+	0x2e, 0x73, 0x79, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x70, 0x70, 0x43, 0x66, 0x67, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x29, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61,
+	0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x47,
+	0x65, 0x74, 0x41, 0x70, 0x70, 0x43, 0x66, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x00, 0x12, 0x4f, 0x0a, 0x09, 0x53, 0x65, 0x74, 0x41, 0x70, 0x70, 0x43, 0x66, 0x67, 0x12,
+	0x28, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e,
+	0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x53, 0x65, 0x74, 0x41, 0x70, 0x70, 0x43,
+	0x66, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
 	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74,
-	0x79, 0x22, 0x06, 0x82, 0x97, 0x22, 0x02, 0x08, 0x01, 0x12, 0x6b, 0x0a, 0x0c, 0x47, 0x65, 0x74,
-	0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x55, 0x52, 0x4c, 0x12, 0x2b, 0x2e, 0x63, 0x6c, 0x6f, 0x75,
+	0x79, 0x22, 0x00, 0x12, 0x77, 0x0a, 0x10, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x70, 0x70, 0x6c,
+	0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2f, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e,
+	0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73,
+	0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x70, 0x70, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x30, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64,
+	0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79,
+	0x73, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x70, 0x70, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x76, 0x0a, 0x14,
+	0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x70, 0x70, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x55,
+	0x73, 0x61, 0x67, 0x65, 0x12, 0x33, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a,
+	0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x51, 0x75,
+	0x65, 0x72, 0x79, 0x41, 0x70, 0x70, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x55, 0x73, 0x61,
+	0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x27, 0x2e, 0x63, 0x6c, 0x6f, 0x75,
 	0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73,
-	0x79, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x55, 0x52, 0x4c, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2c, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c,
-	0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e,
-	0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x55, 0x52, 0x4c, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x74, 0x0a, 0x0f, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x69,
-	0x6c, 0x65, 0x48, 0x61, 0x6e, 0x64, 0x6c, 0x65, 0x72, 0x12, 0x2e, 0x2e, 0x63, 0x6c, 0x6f, 0x75,
-	0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73,
-	0x79, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x6c, 0x65, 0x48, 0x61, 0x6e, 0x64, 0x6c,
-	0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2f, 0x2e, 0x63, 0x6c, 0x6f, 0x75,
-	0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73,
-	0x79, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x6c, 0x65, 0x48, 0x61, 0x6e, 0x64, 0x6c,
-	0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x28, 0x5a, 0x26,
-	0x67, 0x69, 0x74, 0x65, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6c, 0x69, 0x6e, 0x61, 0x6b, 0x65,
-	0x73, 0x69, 0x2f, 0x6c, 0x7a, 0x63, 0x2d, 0x73, 0x64, 0x6b, 0x2f, 0x6c, 0x61, 0x6e, 0x67, 0x2f,
-	0x67, 0x6f, 0x2f, 0x73, 0x79, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x79, 0x73, 0x2e, 0x41, 0x70, 0x70, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x55, 0x73, 0x61,
+	0x67, 0x65, 0x22, 0x00, 0x12, 0x5c, 0x0a, 0x12, 0x53, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x50,
+	0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x26, 0x2e, 0x63, 0x6c, 0x6f,
+	0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e,
+	0x73, 0x79, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69,
+	0x6f, 0x6e, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x06, 0x82, 0x97, 0x22, 0x02,
+	0x10, 0x02, 0x12, 0x77, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x50, 0x65, 0x72,
+	0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x31, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64,
+	0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79,
+	0x73, 0x2e, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73,
+	0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x26, 0x2e, 0x63, 0x6c,
+	0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73,
+	0x2e, 0x73, 0x79, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73,
+	0x69, 0x6f, 0x6e, 0x22, 0x06, 0x82, 0x97, 0x22, 0x02, 0x10, 0x02, 0x12, 0x51, 0x0a, 0x10, 0x50,
+	0x61, 0x75, 0x73, 0x65, 0x41, 0x70, 0x70, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x12,
+	0x1d, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e,
+	0x61, 0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x41, 0x70, 0x70, 0x69, 0x64, 0x1a, 0x16,
+	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
+	0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x06, 0x82, 0x97, 0x22, 0x02, 0x08, 0x01, 0x12, 0x6b,
+	0x0a, 0x0c, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x55, 0x52, 0x4c, 0x12, 0x2b,
+	0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61,
+	0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x6f,
+	0x6e, 0x55, 0x52, 0x4c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2c, 0x2e, 0x63, 0x6c,
+	0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73,
+	0x2e, 0x73, 0x79, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x55, 0x52,
+	0x4c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x74, 0x0a, 0x0f, 0x4c,
+	0x69, 0x73, 0x74, 0x46, 0x69, 0x6c, 0x65, 0x48, 0x61, 0x6e, 0x64, 0x6c, 0x65, 0x72, 0x12, 0x2e,
+	0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61,
+	0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x6c, 0x65,
+	0x48, 0x61, 0x6e, 0x64, 0x6c, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2f,
+	0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61,
+	0x70, 0x69, 0x73, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x6c, 0x65,
+	0x48, 0x61, 0x6e, 0x64, 0x6c, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x42, 0x28, 0x5a, 0x26, 0x67, 0x69, 0x74, 0x65, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6c,
+	0x69, 0x6e, 0x61, 0x6b, 0x65, 0x73, 0x69, 0x2f, 0x6c, 0x7a, 0x63, 0x2d, 0x73, 0x64, 0x6b, 0x2f,
+	0x6c, 0x61, 0x6e, 0x67, 0x2f, 0x67, 0x6f, 0x2f, 0x73, 0x79, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1613,7 +1837,7 @@ func file_sys_package_manager_proto_rawDescGZIP() []byte {
 }
 
 var file_sys_package_manager_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_sys_package_manager_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_sys_package_manager_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_sys_package_manager_proto_goTypes = []interface{}{
 	(AppStatus)(0),                      // 0: cloud.lazycat.apis.sys.AppStatus
 	(InstanceStatus)(0),                 // 1: cloud.lazycat.apis.sys.InstanceStatus
@@ -1623,59 +1847,69 @@ var file_sys_package_manager_proto_goTypes = []interface{}{
 	(*UninstallRequest)(nil),            // 5: cloud.lazycat.apis.sys.UninstallRequest
 	(*AppDownloadProgress)(nil),         // 6: cloud.lazycat.apis.sys.AppDownloadProgress
 	(*AppInfo)(nil),                     // 7: cloud.lazycat.apis.sys.AppInfo
-	(*QueryApplicationRequest)(nil),     // 8: cloud.lazycat.apis.sys.QueryApplicationRequest
-	(*QueryApplicationResponse)(nil),    // 9: cloud.lazycat.apis.sys.QueryApplicationResponse
-	(*QueryAppStorageUsageRequest)(nil), // 10: cloud.lazycat.apis.sys.QueryAppStorageUsageRequest
-	(*AppStorageUsage)(nil),             // 11: cloud.lazycat.apis.sys.AppStorageUsage
-	(*UserPermission)(nil),              // 12: cloud.lazycat.apis.sys.UserPermission
-	(*GetUserPermissionsRequest)(nil),   // 13: cloud.lazycat.apis.sys.GetUserPermissionsRequest
-	(*Appid)(nil),                       // 14: cloud.lazycat.apis.sys.Appid
-	(*GetActionURLRequest)(nil),         // 15: cloud.lazycat.apis.sys.GetActionURLRequest
-	(*GetActionURLResponse)(nil),        // 16: cloud.lazycat.apis.sys.GetActionURLResponse
-	(*ListFileHandlerRequest)(nil),      // 17: cloud.lazycat.apis.sys.ListFileHandlerRequest
-	(*FileHandlerInfo)(nil),             // 18: cloud.lazycat.apis.sys.FileHandlerInfo
-	(*ListFileHandlerResponse)(nil),     // 19: cloud.lazycat.apis.sys.ListFileHandlerResponse
-	(*AppInstance)(nil),                 // 20: cloud.lazycat.apis.sys.AppInstance
-	nil,                                 // 21: cloud.lazycat.apis.sys.AppStorageUsage.UserdataEntry
-	(*emptypb.Empty)(nil),               // 22: google.protobuf.Empty
+	(*AppCfg)(nil),                      // 8: cloud.lazycat.apis.sys.AppCfg
+	(*GetAppCfgRequest)(nil),            // 9: cloud.lazycat.apis.sys.GetAppCfgRequest
+	(*GetAppCfgResponse)(nil),           // 10: cloud.lazycat.apis.sys.GetAppCfgResponse
+	(*SetAppCfgRequest)(nil),            // 11: cloud.lazycat.apis.sys.SetAppCfgRequest
+	(*QueryApplicationRequest)(nil),     // 12: cloud.lazycat.apis.sys.QueryApplicationRequest
+	(*QueryApplicationResponse)(nil),    // 13: cloud.lazycat.apis.sys.QueryApplicationResponse
+	(*QueryAppStorageUsageRequest)(nil), // 14: cloud.lazycat.apis.sys.QueryAppStorageUsageRequest
+	(*AppStorageUsage)(nil),             // 15: cloud.lazycat.apis.sys.AppStorageUsage
+	(*UserPermission)(nil),              // 16: cloud.lazycat.apis.sys.UserPermission
+	(*GetUserPermissionsRequest)(nil),   // 17: cloud.lazycat.apis.sys.GetUserPermissionsRequest
+	(*Appid)(nil),                       // 18: cloud.lazycat.apis.sys.Appid
+	(*GetActionURLRequest)(nil),         // 19: cloud.lazycat.apis.sys.GetActionURLRequest
+	(*GetActionURLResponse)(nil),        // 20: cloud.lazycat.apis.sys.GetActionURLResponse
+	(*ListFileHandlerRequest)(nil),      // 21: cloud.lazycat.apis.sys.ListFileHandlerRequest
+	(*FileHandlerInfo)(nil),             // 22: cloud.lazycat.apis.sys.FileHandlerInfo
+	(*ListFileHandlerResponse)(nil),     // 23: cloud.lazycat.apis.sys.ListFileHandlerResponse
+	(*AppInstance)(nil),                 // 24: cloud.lazycat.apis.sys.AppInstance
+	nil,                                 // 25: cloud.lazycat.apis.sys.AppStorageUsage.UserdataEntry
+	(*emptypb.Empty)(nil),               // 26: google.protobuf.Empty
 }
 var file_sys_package_manager_proto_depIdxs = []int32{
 	0,  // 0: cloud.lazycat.apis.sys.AppInfo.status:type_name -> cloud.lazycat.apis.sys.AppStatus
 	1,  // 1: cloud.lazycat.apis.sys.AppInfo.instance_status:type_name -> cloud.lazycat.apis.sys.InstanceStatus
 	6,  // 2: cloud.lazycat.apis.sys.AppInfo.download_progress:type_name -> cloud.lazycat.apis.sys.AppDownloadProgress
-	7,  // 3: cloud.lazycat.apis.sys.QueryApplicationResponse.info_list:type_name -> cloud.lazycat.apis.sys.AppInfo
-	21, // 4: cloud.lazycat.apis.sys.AppStorageUsage.userdata:type_name -> cloud.lazycat.apis.sys.AppStorageUsage.UserdataEntry
-	2,  // 5: cloud.lazycat.apis.sys.GetActionURLRequest.action:type_name -> cloud.lazycat.apis.sys.Action
-	18, // 6: cloud.lazycat.apis.sys.ListFileHandlerResponse.info_list:type_name -> cloud.lazycat.apis.sys.FileHandlerInfo
-	4,  // 7: cloud.lazycat.apis.sys.PackageManager.Install:input_type -> cloud.lazycat.apis.sys.InstallRequest
-	5,  // 8: cloud.lazycat.apis.sys.PackageManager.Uninstall:input_type -> cloud.lazycat.apis.sys.UninstallRequest
-	20, // 9: cloud.lazycat.apis.sys.PackageManager.Pause:input_type -> cloud.lazycat.apis.sys.AppInstance
-	20, // 10: cloud.lazycat.apis.sys.PackageManager.Resume:input_type -> cloud.lazycat.apis.sys.AppInstance
-	14, // 11: cloud.lazycat.apis.sys.PackageManager.ClearCache:input_type -> cloud.lazycat.apis.sys.Appid
-	8,  // 12: cloud.lazycat.apis.sys.PackageManager.QueryApplication:input_type -> cloud.lazycat.apis.sys.QueryApplicationRequest
-	10, // 13: cloud.lazycat.apis.sys.PackageManager.QueryAppStorageUsage:input_type -> cloud.lazycat.apis.sys.QueryAppStorageUsageRequest
-	12, // 14: cloud.lazycat.apis.sys.PackageManager.SetUserPermissions:input_type -> cloud.lazycat.apis.sys.UserPermission
-	13, // 15: cloud.lazycat.apis.sys.PackageManager.GetUserPermissions:input_type -> cloud.lazycat.apis.sys.GetUserPermissionsRequest
-	14, // 16: cloud.lazycat.apis.sys.PackageManager.PauseAppDownload:input_type -> cloud.lazycat.apis.sys.Appid
-	15, // 17: cloud.lazycat.apis.sys.PackageManager.GetActionURL:input_type -> cloud.lazycat.apis.sys.GetActionURLRequest
-	17, // 18: cloud.lazycat.apis.sys.PackageManager.ListFileHandler:input_type -> cloud.lazycat.apis.sys.ListFileHandlerRequest
-	22, // 19: cloud.lazycat.apis.sys.PackageManager.Install:output_type -> google.protobuf.Empty
-	22, // 20: cloud.lazycat.apis.sys.PackageManager.Uninstall:output_type -> google.protobuf.Empty
-	22, // 21: cloud.lazycat.apis.sys.PackageManager.Pause:output_type -> google.protobuf.Empty
-	22, // 22: cloud.lazycat.apis.sys.PackageManager.Resume:output_type -> google.protobuf.Empty
-	22, // 23: cloud.lazycat.apis.sys.PackageManager.ClearCache:output_type -> google.protobuf.Empty
-	9,  // 24: cloud.lazycat.apis.sys.PackageManager.QueryApplication:output_type -> cloud.lazycat.apis.sys.QueryApplicationResponse
-	11, // 25: cloud.lazycat.apis.sys.PackageManager.QueryAppStorageUsage:output_type -> cloud.lazycat.apis.sys.AppStorageUsage
-	22, // 26: cloud.lazycat.apis.sys.PackageManager.SetUserPermissions:output_type -> google.protobuf.Empty
-	12, // 27: cloud.lazycat.apis.sys.PackageManager.GetUserPermissions:output_type -> cloud.lazycat.apis.sys.UserPermission
-	22, // 28: cloud.lazycat.apis.sys.PackageManager.PauseAppDownload:output_type -> google.protobuf.Empty
-	16, // 29: cloud.lazycat.apis.sys.PackageManager.GetActionURL:output_type -> cloud.lazycat.apis.sys.GetActionURLResponse
-	19, // 30: cloud.lazycat.apis.sys.PackageManager.ListFileHandler:output_type -> cloud.lazycat.apis.sys.ListFileHandlerResponse
-	19, // [19:31] is the sub-list for method output_type
-	7,  // [7:19] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	8,  // 3: cloud.lazycat.apis.sys.GetAppCfgResponse.cfg:type_name -> cloud.lazycat.apis.sys.AppCfg
+	8,  // 4: cloud.lazycat.apis.sys.SetAppCfgRequest.cfg:type_name -> cloud.lazycat.apis.sys.AppCfg
+	7,  // 5: cloud.lazycat.apis.sys.QueryApplicationResponse.info_list:type_name -> cloud.lazycat.apis.sys.AppInfo
+	25, // 6: cloud.lazycat.apis.sys.AppStorageUsage.userdata:type_name -> cloud.lazycat.apis.sys.AppStorageUsage.UserdataEntry
+	2,  // 7: cloud.lazycat.apis.sys.GetActionURLRequest.action:type_name -> cloud.lazycat.apis.sys.Action
+	22, // 8: cloud.lazycat.apis.sys.ListFileHandlerResponse.info_list:type_name -> cloud.lazycat.apis.sys.FileHandlerInfo
+	4,  // 9: cloud.lazycat.apis.sys.PackageManager.Install:input_type -> cloud.lazycat.apis.sys.InstallRequest
+	5,  // 10: cloud.lazycat.apis.sys.PackageManager.Uninstall:input_type -> cloud.lazycat.apis.sys.UninstallRequest
+	24, // 11: cloud.lazycat.apis.sys.PackageManager.Pause:input_type -> cloud.lazycat.apis.sys.AppInstance
+	24, // 12: cloud.lazycat.apis.sys.PackageManager.Resume:input_type -> cloud.lazycat.apis.sys.AppInstance
+	18, // 13: cloud.lazycat.apis.sys.PackageManager.ClearCache:input_type -> cloud.lazycat.apis.sys.Appid
+	9,  // 14: cloud.lazycat.apis.sys.PackageManager.GetAppCfg:input_type -> cloud.lazycat.apis.sys.GetAppCfgRequest
+	11, // 15: cloud.lazycat.apis.sys.PackageManager.SetAppCfg:input_type -> cloud.lazycat.apis.sys.SetAppCfgRequest
+	12, // 16: cloud.lazycat.apis.sys.PackageManager.QueryApplication:input_type -> cloud.lazycat.apis.sys.QueryApplicationRequest
+	14, // 17: cloud.lazycat.apis.sys.PackageManager.QueryAppStorageUsage:input_type -> cloud.lazycat.apis.sys.QueryAppStorageUsageRequest
+	16, // 18: cloud.lazycat.apis.sys.PackageManager.SetUserPermissions:input_type -> cloud.lazycat.apis.sys.UserPermission
+	17, // 19: cloud.lazycat.apis.sys.PackageManager.GetUserPermissions:input_type -> cloud.lazycat.apis.sys.GetUserPermissionsRequest
+	18, // 20: cloud.lazycat.apis.sys.PackageManager.PauseAppDownload:input_type -> cloud.lazycat.apis.sys.Appid
+	19, // 21: cloud.lazycat.apis.sys.PackageManager.GetActionURL:input_type -> cloud.lazycat.apis.sys.GetActionURLRequest
+	21, // 22: cloud.lazycat.apis.sys.PackageManager.ListFileHandler:input_type -> cloud.lazycat.apis.sys.ListFileHandlerRequest
+	26, // 23: cloud.lazycat.apis.sys.PackageManager.Install:output_type -> google.protobuf.Empty
+	26, // 24: cloud.lazycat.apis.sys.PackageManager.Uninstall:output_type -> google.protobuf.Empty
+	26, // 25: cloud.lazycat.apis.sys.PackageManager.Pause:output_type -> google.protobuf.Empty
+	26, // 26: cloud.lazycat.apis.sys.PackageManager.Resume:output_type -> google.protobuf.Empty
+	26, // 27: cloud.lazycat.apis.sys.PackageManager.ClearCache:output_type -> google.protobuf.Empty
+	10, // 28: cloud.lazycat.apis.sys.PackageManager.GetAppCfg:output_type -> cloud.lazycat.apis.sys.GetAppCfgResponse
+	26, // 29: cloud.lazycat.apis.sys.PackageManager.SetAppCfg:output_type -> google.protobuf.Empty
+	13, // 30: cloud.lazycat.apis.sys.PackageManager.QueryApplication:output_type -> cloud.lazycat.apis.sys.QueryApplicationResponse
+	15, // 31: cloud.lazycat.apis.sys.PackageManager.QueryAppStorageUsage:output_type -> cloud.lazycat.apis.sys.AppStorageUsage
+	26, // 32: cloud.lazycat.apis.sys.PackageManager.SetUserPermissions:output_type -> google.protobuf.Empty
+	16, // 33: cloud.lazycat.apis.sys.PackageManager.GetUserPermissions:output_type -> cloud.lazycat.apis.sys.UserPermission
+	26, // 34: cloud.lazycat.apis.sys.PackageManager.PauseAppDownload:output_type -> google.protobuf.Empty
+	20, // 35: cloud.lazycat.apis.sys.PackageManager.GetActionURL:output_type -> cloud.lazycat.apis.sys.GetActionURLResponse
+	23, // 36: cloud.lazycat.apis.sys.PackageManager.ListFileHandler:output_type -> cloud.lazycat.apis.sys.ListFileHandlerResponse
+	23, // [23:37] is the sub-list for method output_type
+	9,  // [9:23] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_sys_package_manager_proto_init() }
@@ -1745,7 +1979,7 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryApplicationRequest); i {
+			switch v := v.(*AppCfg); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1757,7 +1991,7 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryApplicationResponse); i {
+			switch v := v.(*GetAppCfgRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1769,7 +2003,7 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryAppStorageUsageRequest); i {
+			switch v := v.(*GetAppCfgResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1781,7 +2015,7 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AppStorageUsage); i {
+			switch v := v.(*SetAppCfgRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1793,7 +2027,7 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UserPermission); i {
+			switch v := v.(*QueryApplicationRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1805,7 +2039,7 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetUserPermissionsRequest); i {
+			switch v := v.(*QueryApplicationResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1817,7 +2051,7 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Appid); i {
+			switch v := v.(*QueryAppStorageUsageRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1829,7 +2063,7 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetActionURLRequest); i {
+			switch v := v.(*AppStorageUsage); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1841,7 +2075,7 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetActionURLResponse); i {
+			switch v := v.(*UserPermission); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1853,7 +2087,7 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListFileHandlerRequest); i {
+			switch v := v.(*GetUserPermissionsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1865,7 +2099,7 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FileHandlerInfo); i {
+			switch v := v.(*Appid); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1877,7 +2111,7 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListFileHandlerResponse); i {
+			switch v := v.(*GetActionURLRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1889,6 +2123,54 @@ func file_sys_package_manager_proto_init() {
 			}
 		}
 		file_sys_package_manager_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetActionURLResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_sys_package_manager_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListFileHandlerRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_sys_package_manager_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*FileHandlerInfo); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_sys_package_manager_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListFileHandlerResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_sys_package_manager_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AppInstance); i {
 			case 0:
 				return &v.state
@@ -1909,7 +2191,7 @@ func file_sys_package_manager_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_sys_package_manager_proto_rawDesc,
 			NumEnums:      3,
-			NumMessages:   19,
+			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
