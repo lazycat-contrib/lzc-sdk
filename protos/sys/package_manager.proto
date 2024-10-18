@@ -164,6 +164,8 @@ message AppInfo {
   optional string error_reason = 10;
 
   repeated string unsupported_platforms = 11;
+
+  optional bool multi_instance = 13;
 }
 
 message AppCfg {
