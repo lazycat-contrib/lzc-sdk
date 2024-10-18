@@ -165,7 +165,7 @@ message AppInfo {
 
   repeated string unsupported_platforms = 11;
 
-  optional bool multi_instance = 13;
+  bool multi_instance = 13;
 }
 
 message AppCfg {
