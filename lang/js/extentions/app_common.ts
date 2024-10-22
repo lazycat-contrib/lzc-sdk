@@ -45,7 +45,7 @@ class AppCommon extends LzcAppSdkManage {
     appid: string,
     options?: {
       forcedRefresh?: boolean
-    },
+    }
   ): Promise<void> {
     // 判断是否在浏览器中
     if (!LzcAppSdk.isInApplication()) {
@@ -329,7 +329,7 @@ class AppCommon extends LzcAppSdkManage {
    * @description: 获取客户端授权状态
    * @return {*}
    */
-  @native(LzcAppPlatformType.IOS,LzcAppPlatformType.Android)
+  @native(LzcAppPlatformType.IOS, LzcAppPlatformType.Android)
   public static async GetClientAuthorizationStatus(type: ClientAuthorizationType | string): Promise<ClientAuthorizationBaseStatus> {
     // 判断当前权限是否受支持
     switch (type) {
@@ -347,7 +347,7 @@ class AppCommon extends LzcAppSdkManage {
       const jsBridge = await LzcAppSdk.useNativeAsync()
       return jsBridge.GetClientAuthorizationStatus(type)
     }
-    if(LzcAppSdk.isAndroidWebShell()){
+    if (LzcAppSdk.isAndroidWebShell()) {
       const jsBridge = await LzcAppSdk.useNative(lzc_permission)
       return jsBridge.GetClientAuthorizationStatus(type)
     }
@@ -358,7 +358,7 @@ class AppCommon extends LzcAppSdkManage {
    * @description: 申请客户端授权
    * @return {*}
    */
-  @native(LzcAppPlatformType.IOS,LzcAppPlatformType.Android)
+  @native(LzcAppPlatformType.IOS, LzcAppPlatformType.Android)
   public static async RequestClientAuthorization(type: ClientAuthorizationType | string): Promise<void> {
     // 判断当前权限是否受支持
     switch (type) {
@@ -436,29 +436,23 @@ class AppCommon extends LzcAppSdkManage {
     return "The current client does not support" // 返回不支持的错误信息
   }
 
-   /**
-     * @description: 添加应用到主屏幕
-     * @param {string} url
-     * @param {string} appid
-     * @return {Promise<void>}
-     */
-   public static async AddAppToHomeScreen(
-    url: string,
-    appid: string
-): Promise<void> {
+  /**
+   * @description: 添加应用到主屏幕
+   * @param {string} url
+   * @param {string} appid
+   * @return {Promise<void>}
+   */
+  @native(LzcAppPlatformType.IOS)
+  public static async AddAppToHomeScreen(url: string, appid: string): Promise<void> {
     // 判断是否在 iOS 环境中
     if (LzcAppSdk.isIosWebShell()) {
-        const jsBridge = await LzcAppSdk.useNativeAsync() // 异步获取 JS bridge
-        jsBridge.addAppToHomeScreenHandler(
-            url,
-            appid
-        )
-        return
+      const jsBridge = await LzcAppSdk.useNativeAsync() // 异步获取 JS bridge
+      jsBridge.addAppToHomeScreenHandler(url, appid)
+      return
     }
 
     console.warn("当前环境不支持添加到主屏幕")
-}
-
+  }
 }
 
 export * from "./client_authorization"
