@@ -18,7 +18,6 @@ class AppCommon extends LzcAppSdkManage {
     // item.remove();
     setTimeout(() => window.open(url, "_blank"))
   }
-
   /**
    * @description: IOS 测试函数
    * @deprecated: 该函数仅用于 IOS 测试
@@ -436,6 +435,30 @@ class AppCommon extends LzcAppSdkManage {
     console.warn("The current client does not support")
     return "The current client does not support" // 返回不支持的错误信息
   }
+
+   /**
+     * @description: 添加应用到主屏幕
+     * @param {string} url
+     * @param {string} appid
+     * @return {Promise<void>}
+     */
+   public static async AddAppToHomeScreen(
+    url: string,
+    appid: string
+): Promise<void> {
+    // 判断是否在 iOS 环境中
+    if (LzcAppSdk.isIosWebShell()) {
+        const jsBridge = await LzcAppSdk.useNativeAsync() // 异步获取 JS bridge
+        jsBridge.addAppToHomeScreenHandler(
+            url,
+            appid
+        )
+        return
+    }
+
+    console.warn("当前环境不支持添加到主屏幕")
+}
+
 }
 
 export * from "./client_authorization"
