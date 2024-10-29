@@ -402,6 +402,7 @@ export enum BrowserActionRequest_Action {
   REFRESH_TAB = 2,
   BACKWARD_HISTORY = 3,
   FORWARD_HISTORY = 4,
+  SHOW_NUMBER_NAVIGATOR = 5,
   UNRECOGNIZED = -1,
 }
 
@@ -422,6 +423,9 @@ export function browserActionRequest_ActionFromJSON(object: any): BrowserActionR
     case 4:
     case "FORWARD_HISTORY":
       return BrowserActionRequest_Action.FORWARD_HISTORY;
+    case 5:
+    case "SHOW_NUMBER_NAVIGATOR":
+      return BrowserActionRequest_Action.SHOW_NUMBER_NAVIGATOR;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -441,6 +445,8 @@ export function browserActionRequest_ActionToJSON(object: BrowserActionRequest_A
       return "BACKWARD_HISTORY";
     case BrowserActionRequest_Action.FORWARD_HISTORY:
       return "FORWARD_HISTORY";
+    case BrowserActionRequest_Action.SHOW_NUMBER_NAVIGATOR:
+      return "SHOW_NUMBER_NAVIGATOR";
     case BrowserActionRequest_Action.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -495,6 +501,14 @@ export interface OcrActionClickResponse {
 
 export interface AsrRecordTimeRequest {
   isStart: boolean;
+}
+
+export interface UseNumberNavigatorRequest {
+  number: string;
+}
+
+export interface UseNumberNavigatorResponse {
+  successful: boolean;
 }
 
 function createBaseSendKeyboardEventRequest(): SendKeyboardEventRequest {
@@ -3188,6 +3202,122 @@ export const AsrRecordTimeRequest = {
   },
 };
 
+function createBaseUseNumberNavigatorRequest(): UseNumberNavigatorRequest {
+  return { number: "" };
+}
+
+export const UseNumberNavigatorRequest = {
+  encode(message: UseNumberNavigatorRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.number !== "") {
+      writer.uint32(10).string(message.number);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UseNumberNavigatorRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUseNumberNavigatorRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.number = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UseNumberNavigatorRequest {
+    return { number: isSet(object.number) ? String(object.number) : "" };
+  },
+
+  toJSON(message: UseNumberNavigatorRequest): unknown {
+    const obj: any = {};
+    if (message.number !== "") {
+      obj.number = message.number;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UseNumberNavigatorRequest>, I>>(base?: I): UseNumberNavigatorRequest {
+    return UseNumberNavigatorRequest.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UseNumberNavigatorRequest>, I>>(object: I): UseNumberNavigatorRequest {
+    const message = createBaseUseNumberNavigatorRequest();
+    message.number = object.number ?? "";
+    return message;
+  },
+};
+
+function createBaseUseNumberNavigatorResponse(): UseNumberNavigatorResponse {
+  return { successful: false };
+}
+
+export const UseNumberNavigatorResponse = {
+  encode(message: UseNumberNavigatorResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.successful === true) {
+      writer.uint32(8).bool(message.successful);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UseNumberNavigatorResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUseNumberNavigatorResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.successful = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UseNumberNavigatorResponse {
+    return { successful: isSet(object.successful) ? Boolean(object.successful) : false };
+  },
+
+  toJSON(message: UseNumberNavigatorResponse): unknown {
+    const obj: any = {};
+    if (message.successful === true) {
+      obj.successful = message.successful;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UseNumberNavigatorResponse>, I>>(base?: I): UseNumberNavigatorResponse {
+    return UseNumberNavigatorResponse.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UseNumberNavigatorResponse>, I>>(object: I): UseNumberNavigatorResponse {
+    const message = createBaseUseNumberNavigatorResponse();
+    message.successful = object.successful ?? false;
+    return message;
+  },
+};
+
 export interface RemoteControl {
   /** 发送键盘输入事件 */
   SendKeyboardEvent(
@@ -3459,6 +3589,12 @@ export interface RemoteControl {
   ): Promise<Empty>;
   /** 重置显示画面 */
   ResetDisplay(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
+  /** 选择某个数字导航点击 */
+  UseNumberNavigator(
+    request: DeepPartial<UseNumberNavigatorRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<UseNumberNavigatorResponse>;
 }
 
 export class RemoteControlClientImpl implements RemoteControl {
@@ -3516,6 +3652,7 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.OcrDoScan = this.OcrDoScan.bind(this);
     this.AsrRecordTime = this.AsrRecordTime.bind(this);
     this.ResetDisplay = this.ResetDisplay.bind(this);
+    this.UseNumberNavigator = this.UseNumberNavigator.bind(this);
   }
 
   SendKeyboardEvent(
@@ -3981,6 +4118,19 @@ export class RemoteControlClientImpl implements RemoteControl {
 
   ResetDisplay(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
     return this.rpc.unary(RemoteControlResetDisplayDesc, Empty.fromPartial(request), metadata, abortSignal);
+  }
+
+  UseNumberNavigator(
+    request: DeepPartial<UseNumberNavigatorRequest>,
+    metadata?: grpc.Metadata,
+    abortSignal?: AbortSignal,
+  ): Promise<UseNumberNavigatorResponse> {
+    return this.rpc.unary(
+      RemoteControlUseNumberNavigatorDesc,
+      UseNumberNavigatorRequest.fromPartial(request),
+      metadata,
+      abortSignal,
+    );
   }
 }
 
@@ -5080,6 +5230,29 @@ export const RemoteControlResetDisplayDesc: UnaryMethodDefinitionish = {
   responseType: {
     deserializeBinary(data: Uint8Array) {
       const value = Empty.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlUseNumberNavigatorDesc: UnaryMethodDefinitionish = {
+  methodName: "UseNumberNavigator",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return UseNumberNavigatorRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = UseNumberNavigatorResponse.decode(data);
       return {
         ...value,
         toObject() {

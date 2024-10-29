@@ -70,6 +70,7 @@ const (
 	RemoteControl_OcrDoScan_FullMethodName               = "/cloud.lazycat.apis.localdevice.RemoteControl/OcrDoScan"
 	RemoteControl_AsrRecordTime_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/AsrRecordTime"
 	RemoteControl_ResetDisplay_FullMethodName            = "/cloud.lazycat.apis.localdevice.RemoteControl/ResetDisplay"
+	RemoteControl_UseNumberNavigator_FullMethodName      = "/cloud.lazycat.apis.localdevice.RemoteControl/UseNumberNavigator"
 )
 
 // RemoteControlClient is the client API for RemoteControl service.
@@ -184,6 +185,8 @@ type RemoteControlClient interface {
 	AsrRecordTime(ctx context.Context, in *AsrRecordTimeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 重置显示画面
 	ResetDisplay(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 选择某个数字导航点击
+	UseNumberNavigator(ctx context.Context, in *UseNumberNavigatorRequest, opts ...grpc.CallOption) (*UseNumberNavigatorResponse, error)
 }
 
 type remoteControlClient struct {
@@ -740,6 +743,15 @@ func (c *remoteControlClient) ResetDisplay(ctx context.Context, in *emptypb.Empt
 	return out, nil
 }
 
+func (c *remoteControlClient) UseNumberNavigator(ctx context.Context, in *UseNumberNavigatorRequest, opts ...grpc.CallOption) (*UseNumberNavigatorResponse, error) {
+	out := new(UseNumberNavigatorResponse)
+	err := c.cc.Invoke(ctx, RemoteControl_UseNumberNavigator_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteControlServer is the server API for RemoteControl service.
 // All implementations must embed UnimplementedRemoteControlServer
 // for forward compatibility
@@ -852,6 +864,8 @@ type RemoteControlServer interface {
 	AsrRecordTime(context.Context, *AsrRecordTimeRequest) (*emptypb.Empty, error)
 	// 重置显示画面
 	ResetDisplay(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 选择某个数字导航点击
+	UseNumberNavigator(context.Context, *UseNumberNavigatorRequest) (*UseNumberNavigatorResponse, error)
 	mustEmbedUnimplementedRemoteControlServer()
 }
 
@@ -1008,6 +1022,9 @@ func (UnimplementedRemoteControlServer) AsrRecordTime(context.Context, *AsrRecor
 }
 func (UnimplementedRemoteControlServer) ResetDisplay(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetDisplay not implemented")
+}
+func (UnimplementedRemoteControlServer) UseNumberNavigator(context.Context, *UseNumberNavigatorRequest) (*UseNumberNavigatorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UseNumberNavigator not implemented")
 }
 func (UnimplementedRemoteControlServer) mustEmbedUnimplementedRemoteControlServer() {}
 
@@ -1944,6 +1961,24 @@ func _RemoteControl_ResetDisplay_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteControl_UseNumberNavigator_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UseNumberNavigatorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteControlServer).UseNumberNavigator(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteControl_UseNumberNavigator_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteControlServer).UseNumberNavigator(ctx, req.(*UseNumberNavigatorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteControl_ServiceDesc is the grpc.ServiceDesc for RemoteControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2134,6 +2169,10 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResetDisplay",
 			Handler:    _RemoteControl_ResetDisplay_Handler,
+		},
+		{
+			MethodName: "UseNumberNavigator",
+			Handler:    _RemoteControl_UseNumberNavigator_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

@@ -175,7 +175,8 @@ message BrowserActionRequest {
     NEW_TAB = 1;
     REFRESH_TAB = 2;
     BACKWARD_HISTORY = 3;
-    FORWARD_HISTORY =4 ;
+    FORWARD_HISTORY = 4;
+    SHOW_NUMBER_NAVIGATOR = 5;
   }
   Action action = 1;
 }
@@ -237,8 +238,16 @@ message OcrActionClickResponse {
   bool successful = 1;
 }
 
-message AsrRecordTimeRequest{
+message AsrRecordTimeRequest {
   bool isStart = 1;
+}
+
+message UseNumberNavigatorRequest {
+  string number = 1;
+}
+
+message UseNumberNavigatorResponse {
+  bool successful = 1;
 }
 
 service RemoteControl{
@@ -350,4 +359,6 @@ service RemoteControl{
   rpc AsrRecordTime(AsrRecordTimeRequest) returns (google.protobuf.Empty) {}
   // 重置显示画面
   rpc ResetDisplay(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  // 选择某个数字导航点击
+  rpc UseNumberNavigator(UseNumberNavigatorRequest) returns (UseNumberNavigatorResponse) {}
 }
