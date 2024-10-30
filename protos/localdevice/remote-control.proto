@@ -24,6 +24,8 @@ enum InputEvent {
   KEY_F10 = 12;
   KEY_HOMEPAGE = 13;
   KEY_END = 14;
+  KEY_PAUSE = 15;
+  KEY_PLAY = 16;
 }
 
 enum EventState {

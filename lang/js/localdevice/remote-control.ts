@@ -24,6 +24,8 @@ export enum InputEvent {
   KEY_F10 = 12,
   KEY_HOMEPAGE = 13,
   KEY_END = 14,
+  KEY_PAUSE = 15,
+  KEY_PLAY = 16,
   UNRECOGNIZED = -1,
 }
 
@@ -74,6 +76,12 @@ export function inputEventFromJSON(object: any): InputEvent {
     case 14:
     case "KEY_END":
       return InputEvent.KEY_END;
+    case 15:
+    case "KEY_PAUSE":
+      return InputEvent.KEY_PAUSE;
+    case 16:
+    case "KEY_PLAY":
+      return InputEvent.KEY_PLAY;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -113,6 +121,10 @@ export function inputEventToJSON(object: InputEvent): string {
       return "KEY_HOMEPAGE";
     case InputEvent.KEY_END:
       return "KEY_END";
+    case InputEvent.KEY_PAUSE:
+      return "KEY_PAUSE";
+    case InputEvent.KEY_PLAY:
+      return "KEY_PLAY";
     case InputEvent.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
