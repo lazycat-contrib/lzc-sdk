@@ -32,6 +32,7 @@ const (
 	FileHandler_SyncFolder_FullMethodName      = "/cloud.lazycat.apis.common.FileHandler/syncFolder"
 	FileHandler_CopyFolder_FullMethodName      = "/cloud.lazycat.apis.common.FileHandler/copyFolder"
 	FileHandler_ZipDir_FullMethodName          = "/cloud.lazycat.apis.common.FileHandler/zipDir"
+	FileHandler_CheckExists_FullMethodName     = "/cloud.lazycat.apis.common.FileHandler/checkExists"
 )
 
 // FileHandlerClient is the client API for FileHandler service.
@@ -60,6 +61,8 @@ type FileHandlerClient interface {
 	CopyFolder(ctx context.Context, in *CopyFolderRequest, opts ...grpc.CallOption) (FileHandler_CopyFolderClient, error)
 	// 打包某个目录为zip，流式地上传回来
 	ZipDir(ctx context.Context, in *ZipDirRequest, opts ...grpc.CallOption) (FileHandler_ZipDirClient, error)
+	// 检查目录是否存在
+	CheckExists(ctx context.Context, in *CheckExistsMessage, opts ...grpc.CallOption) (*CheckExistsMessage, error)
 }
 
 type fileHandlerClient struct {
@@ -317,6 +320,15 @@ func (x *fileHandlerZipDirClient) Recv() (*ZipDirReply, error) {
 	return m, nil
 }
 
+func (c *fileHandlerClient) CheckExists(ctx context.Context, in *CheckExistsMessage, opts ...grpc.CallOption) (*CheckExistsMessage, error) {
+	out := new(CheckExistsMessage)
+	err := c.cc.Invoke(ctx, FileHandler_CheckExists_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FileHandlerServer is the server API for FileHandler service.
 // All implementations must embed UnimplementedFileHandlerServer
 // for forward compatibility
@@ -343,6 +355,8 @@ type FileHandlerServer interface {
 	CopyFolder(*CopyFolderRequest, FileHandler_CopyFolderServer) error
 	// 打包某个目录为zip，流式地上传回来
 	ZipDir(*ZipDirRequest, FileHandler_ZipDirServer) error
+	// 检查目录是否存在
+	CheckExists(context.Context, *CheckExistsMessage) (*CheckExistsMessage, error)
 	mustEmbedUnimplementedFileHandlerServer()
 }
 
@@ -385,6 +399,9 @@ func (UnimplementedFileHandlerServer) CopyFolder(*CopyFolderRequest, FileHandler
 }
 func (UnimplementedFileHandlerServer) ZipDir(*ZipDirRequest, FileHandler_ZipDirServer) error {
 	return status.Errorf(codes.Unimplemented, "method ZipDir not implemented")
+}
+func (UnimplementedFileHandlerServer) CheckExists(context.Context, *CheckExistsMessage) (*CheckExistsMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckExists not implemented")
 }
 func (UnimplementedFileHandlerServer) mustEmbedUnimplementedFileHandlerServer() {}
 
@@ -643,6 +660,24 @@ func (x *fileHandlerZipDirServer) Send(m *ZipDirReply) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _FileHandler_CheckExists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckExistsMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileHandlerServer).CheckExists(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FileHandler_CheckExists_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileHandlerServer).CheckExists(ctx, req.(*CheckExistsMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FileHandler_ServiceDesc is the grpc.ServiceDesc for FileHandler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -673,6 +708,10 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "stat",
 			Handler:    _FileHandler_Stat_Handler,
+		},
+		{
+			MethodName: "checkExists",
+			Handler:    _FileHandler_CheckExists_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

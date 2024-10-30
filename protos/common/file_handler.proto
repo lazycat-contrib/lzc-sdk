@@ -28,7 +28,14 @@ service FileHandler {
   rpc copyFolder(CopyFolderRequest) returns (stream TaskProgressInfo) {}
   // 打包某个目录为zip，流式地上传回来
   rpc zipDir(ZipDirRequest) returns (stream ZipDirReply) {}
+  // 检查目录是否存在
+  rpc checkExists(CheckExistsMessage) returns (CheckExistsMessage) {}
 }
+
+message CheckExistsMessage {
+  repeated string paths = 1;
+}
+
 message DirTreeRequest {
   // 目录路径
   string path = 1;
