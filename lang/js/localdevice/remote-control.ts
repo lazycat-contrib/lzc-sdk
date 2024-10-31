@@ -415,6 +415,7 @@ export enum BrowserActionRequest_Action {
   BACKWARD_HISTORY = 3,
   FORWARD_HISTORY = 4,
   SHOW_NUMBER_NAVIGATOR = 5,
+  HIDDEN_NUMBER_NAVIGATOR = 6,
   UNRECOGNIZED = -1,
 }
 
@@ -438,6 +439,9 @@ export function browserActionRequest_ActionFromJSON(object: any): BrowserActionR
     case 5:
     case "SHOW_NUMBER_NAVIGATOR":
       return BrowserActionRequest_Action.SHOW_NUMBER_NAVIGATOR;
+    case 6:
+    case "HIDDEN_NUMBER_NAVIGATOR":
+      return BrowserActionRequest_Action.HIDDEN_NUMBER_NAVIGATOR;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -459,6 +463,8 @@ export function browserActionRequest_ActionToJSON(object: BrowserActionRequest_A
       return "FORWARD_HISTORY";
     case BrowserActionRequest_Action.SHOW_NUMBER_NAVIGATOR:
       return "SHOW_NUMBER_NAVIGATOR";
+    case BrowserActionRequest_Action.HIDDEN_NUMBER_NAVIGATOR:
+      return "HIDDEN_NUMBER_NAVIGATOR";
     case BrowserActionRequest_Action.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";

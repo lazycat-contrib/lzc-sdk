@@ -179,6 +179,7 @@ message BrowserActionRequest {
     BACKWARD_HISTORY = 3;
     FORWARD_HISTORY = 4;
     SHOW_NUMBER_NAVIGATOR = 5;
+    HIDDEN_NUMBER_NAVIGATOR = 6;
   }
   Action action = 1;
 }
