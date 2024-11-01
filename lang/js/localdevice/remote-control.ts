@@ -399,8 +399,7 @@ export interface ChangeVolumeRequest {
   value: number;
 }
 
-export interface SetSinkInputVolumeRequest {
-  sinkInput: string;
+export interface SetVolumeRequest {
   volume: number;
 }
 
@@ -2366,37 +2365,27 @@ export const ChangeVolumeRequest = {
   },
 };
 
-function createBaseSetSinkInputVolumeRequest(): SetSinkInputVolumeRequest {
-  return { sinkInput: "", volume: 0 };
+function createBaseSetVolumeRequest(): SetVolumeRequest {
+  return { volume: 0 };
 }
 
-export const SetSinkInputVolumeRequest = {
-  encode(message: SetSinkInputVolumeRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sinkInput !== "") {
-      writer.uint32(10).string(message.sinkInput);
-    }
+export const SetVolumeRequest = {
+  encode(message: SetVolumeRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.volume !== 0) {
-      writer.uint32(21).float(message.volume);
+      writer.uint32(13).float(message.volume);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): SetSinkInputVolumeRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): SetVolumeRequest {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSetSinkInputVolumeRequest();
+    const message = createBaseSetVolumeRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.sinkInput = reader.string();
-          continue;
-        case 2:
-          if (tag !== 21) {
+          if (tag !== 13) {
             break;
           }
 
@@ -2411,31 +2400,24 @@ export const SetSinkInputVolumeRequest = {
     return message;
   },
 
-  fromJSON(object: any): SetSinkInputVolumeRequest {
-    return {
-      sinkInput: isSet(object.sinkInput) ? String(object.sinkInput) : "",
-      volume: isSet(object.volume) ? Number(object.volume) : 0,
-    };
+  fromJSON(object: any): SetVolumeRequest {
+    return { volume: isSet(object.volume) ? Number(object.volume) : 0 };
   },
 
-  toJSON(message: SetSinkInputVolumeRequest): unknown {
+  toJSON(message: SetVolumeRequest): unknown {
     const obj: any = {};
-    if (message.sinkInput !== "") {
-      obj.sinkInput = message.sinkInput;
-    }
     if (message.volume !== 0) {
       obj.volume = message.volume;
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<SetSinkInputVolumeRequest>, I>>(base?: I): SetSinkInputVolumeRequest {
-    return SetSinkInputVolumeRequest.fromPartial(base ?? {});
+  create<I extends Exact<DeepPartial<SetVolumeRequest>, I>>(base?: I): SetVolumeRequest {
+    return SetVolumeRequest.fromPartial(base ?? {});
   },
 
-  fromPartial<I extends Exact<DeepPartial<SetSinkInputVolumeRequest>, I>>(object: I): SetSinkInputVolumeRequest {
-    const message = createBaseSetSinkInputVolumeRequest();
-    message.sinkInput = object.sinkInput ?? "";
+  fromPartial<I extends Exact<DeepPartial<SetVolumeRequest>, I>>(object: I): SetVolumeRequest {
+    const message = createBaseSetVolumeRequest();
     message.volume = object.volume ?? 0;
     return message;
   },
@@ -3520,9 +3502,9 @@ export interface RemoteControl {
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<Empty>;
-  /** 设置输入音频源音量 */
-  SetSinkInputVolume(
-    request: DeepPartial<SetSinkInputVolumeRequest>,
+  /** 设置默认音频输入源音量 */
+  SetVolume(
+    request: DeepPartial<SetVolumeRequest>,
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<Empty>;
@@ -3652,7 +3634,7 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.GetVolume = this.GetVolume.bind(this);
     this.IncreaseVolume = this.IncreaseVolume.bind(this);
     this.DecreaseVolume = this.DecreaseVolume.bind(this);
-    this.SetSinkInputVolume = this.SetSinkInputVolume.bind(this);
+    this.SetVolume = this.SetVolume.bind(this);
     this.BleStopScan = this.BleStopScan.bind(this);
     this.BleStartScan = this.BleStartScan.bind(this);
     this.BleScanStatus = this.BleScanStatus.bind(this);
@@ -3988,17 +3970,12 @@ export class RemoteControlClientImpl implements RemoteControl {
     );
   }
 
-  SetSinkInputVolume(
-    request: DeepPartial<SetSinkInputVolumeRequest>,
+  SetVolume(
+    request: DeepPartial<SetVolumeRequest>,
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<Empty> {
-    return this.rpc.unary(
-      RemoteControlSetSinkInputVolumeDesc,
-      SetSinkInputVolumeRequest.fromPartial(request),
-      metadata,
-      abortSignal,
-    );
+    return this.rpc.unary(RemoteControlSetVolumeDesc, SetVolumeRequest.fromPartial(request), metadata, abortSignal);
   }
 
   BleStopScan(request: DeepPartial<Empty>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
@@ -4844,14 +4821,14 @@ export const RemoteControlDecreaseVolumeDesc: UnaryMethodDefinitionish = {
   } as any,
 };
 
-export const RemoteControlSetSinkInputVolumeDesc: UnaryMethodDefinitionish = {
-  methodName: "SetSinkInputVolume",
+export const RemoteControlSetVolumeDesc: UnaryMethodDefinitionish = {
+  methodName: "SetVolume",
   service: RemoteControlDesc,
   requestStream: false,
   responseStream: false,
   requestType: {
     serializeBinary() {
-      return SetSinkInputVolumeRequest.encode(this).finish();
+      return SetVolumeRequest.encode(this).finish();
     },
   } as any,
   responseType: {

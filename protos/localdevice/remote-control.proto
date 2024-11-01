@@ -166,9 +166,8 @@ message ChangeVolumeRequest {
   float value = 1;
 }
 
-message SetSinkInputVolumeRequest {
-  string sinkInput = 1;
-  float volume = 2;
+message SetVolumeRequest {
+  float volume = 1;
 }
 
 message BrowserActionRequest {
@@ -325,8 +324,8 @@ service RemoteControl{
   rpc IncreaseVolume(ChangeVolumeRequest) returns (google.protobuf.Empty) {}
   // 减少音量
   rpc DecreaseVolume(ChangeVolumeRequest) returns (google.protobuf.Empty) {}
-  // 设置输入音频源音量
-  rpc SetSinkInputVolume(SetSinkInputVolumeRequest) returns (google.protobuf.Empty) {}
+  // 设置默认音频输入源音量
+  rpc SetVolume(SetVolumeRequest) returns (google.protobuf.Empty) {}
   // 蓝牙管理
   // 停止扫描蓝牙设备
   rpc BleStopScan(google.protobuf.Empty) returns (google.protobuf.Empty) {}

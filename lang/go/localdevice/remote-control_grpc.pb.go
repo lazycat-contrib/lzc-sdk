@@ -52,7 +52,7 @@ const (
 	RemoteControl_GetVolume_FullMethodName               = "/cloud.lazycat.apis.localdevice.RemoteControl/GetVolume"
 	RemoteControl_IncreaseVolume_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/IncreaseVolume"
 	RemoteControl_DecreaseVolume_FullMethodName          = "/cloud.lazycat.apis.localdevice.RemoteControl/DecreaseVolume"
-	RemoteControl_SetSinkInputVolume_FullMethodName      = "/cloud.lazycat.apis.localdevice.RemoteControl/SetSinkInputVolume"
+	RemoteControl_SetVolume_FullMethodName               = "/cloud.lazycat.apis.localdevice.RemoteControl/SetVolume"
 	RemoteControl_BleStopScan_FullMethodName             = "/cloud.lazycat.apis.localdevice.RemoteControl/BleStopScan"
 	RemoteControl_BleStartScan_FullMethodName            = "/cloud.lazycat.apis.localdevice.RemoteControl/BleStartScan"
 	RemoteControl_BleScanStatus_FullMethodName           = "/cloud.lazycat.apis.localdevice.RemoteControl/BleScanStatus"
@@ -148,8 +148,8 @@ type RemoteControlClient interface {
 	IncreaseVolume(ctx context.Context, in *ChangeVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 减少音量
 	DecreaseVolume(ctx context.Context, in *ChangeVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 设置输入音频源音量
-	SetSinkInputVolume(ctx context.Context, in *SetSinkInputVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 设置默认音频输入源音量
+	SetVolume(ctx context.Context, in *SetVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 蓝牙管理
 	// 停止扫描蓝牙设备
 	BleStopScan(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -535,9 +535,9 @@ func (c *remoteControlClient) DecreaseVolume(ctx context.Context, in *ChangeVolu
 	return out, nil
 }
 
-func (c *remoteControlClient) SetSinkInputVolume(ctx context.Context, in *SetSinkInputVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *remoteControlClient) SetVolume(ctx context.Context, in *SetVolumeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, RemoteControl_SetSinkInputVolume_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, RemoteControl_SetVolume_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -827,8 +827,8 @@ type RemoteControlServer interface {
 	IncreaseVolume(context.Context, *ChangeVolumeRequest) (*emptypb.Empty, error)
 	// 减少音量
 	DecreaseVolume(context.Context, *ChangeVolumeRequest) (*emptypb.Empty, error)
-	// 设置输入音频源音量
-	SetSinkInputVolume(context.Context, *SetSinkInputVolumeRequest) (*emptypb.Empty, error)
+	// 设置默认音频输入源音量
+	SetVolume(context.Context, *SetVolumeRequest) (*emptypb.Empty, error)
 	// 蓝牙管理
 	// 停止扫描蓝牙设备
 	BleStopScan(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
@@ -969,8 +969,8 @@ func (UnimplementedRemoteControlServer) IncreaseVolume(context.Context, *ChangeV
 func (UnimplementedRemoteControlServer) DecreaseVolume(context.Context, *ChangeVolumeRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DecreaseVolume not implemented")
 }
-func (UnimplementedRemoteControlServer) SetSinkInputVolume(context.Context, *SetSinkInputVolumeRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetSinkInputVolume not implemented")
+func (UnimplementedRemoteControlServer) SetVolume(context.Context, *SetVolumeRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetVolume not implemented")
 }
 func (UnimplementedRemoteControlServer) BleStopScan(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BleStopScan not implemented")
@@ -1631,20 +1631,20 @@ func _RemoteControl_DecreaseVolume_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RemoteControl_SetSinkInputVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetSinkInputVolumeRequest)
+func _RemoteControl_SetVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetVolumeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RemoteControlServer).SetSinkInputVolume(ctx, in)
+		return srv.(RemoteControlServer).SetVolume(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RemoteControl_SetSinkInputVolume_FullMethodName,
+		FullMethod: RemoteControl_SetVolume_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RemoteControlServer).SetSinkInputVolume(ctx, req.(*SetSinkInputVolumeRequest))
+		return srv.(RemoteControlServer).SetVolume(ctx, req.(*SetVolumeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2107,8 +2107,8 @@ var RemoteControl_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RemoteControl_DecreaseVolume_Handler,
 		},
 		{
-			MethodName: "SetSinkInputVolume",
-			Handler:    _RemoteControl_SetSinkInputVolume_Handler,
+			MethodName: "SetVolume",
+			Handler:    _RemoteControl_SetVolume_Handler,
 		},
 		{
 			MethodName: "BleStopScan",
