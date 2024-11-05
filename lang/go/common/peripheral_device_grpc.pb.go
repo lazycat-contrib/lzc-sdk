@@ -24,7 +24,6 @@ const (
 	PeripheralDeviceService_ListFilesystems_FullMethodName  = "/cloud.lazycat.apis.common.PeripheralDeviceService/ListFilesystems"
 	PeripheralDeviceService_MountDisk_FullMethodName        = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountDisk"
 	PeripheralDeviceService_MountRemoteDisk_FullMethodName  = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountRemoteDisk"
-	PeripheralDeviceService_MountWebDav_FullMethodName      = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountWebDav"
 	PeripheralDeviceService_UmountFilesystem_FullMethodName = "/cloud.lazycat.apis.common.PeripheralDeviceService/UmountFilesystem"
 	PeripheralDeviceService_MountArchive_FullMethodName     = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountArchive"
 	PeripheralDeviceService_PowerOffDisk_FullMethodName     = "/cloud.lazycat.apis.common.PeripheralDeviceService/PowerOffDisk"
@@ -41,10 +40,8 @@ type PeripheralDeviceServiceClient interface {
 	// 挂载/卸载特定移动磁盘的某个分区到
 	// $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
 	MountDisk(ctx context.Context, in *MountDiskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 挂载 Smb/NFS 到 $APPID/lzcapp/run/mnt/media/$mountpoint 目录下, 返回Maybe type的错误信息
+	// 挂载 Smb/NFS/WebDAV 到 $APPID/lzcapp/run/mnt/media/$uid/.remotefs/$mountpoint 目录下
 	MountRemoteDisk(ctx context.Context, in *MountRemoteDiskRequest, opts ...grpc.CallOption) (*MountRemoteDiskResp, error)
-	// 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home/$uid 目录下，具体路径可以指定
-	MountWebDav(ctx context.Context, in *MountWebDavRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 通过 uuid 或 mountpoint 卸载文件系统
 	UmountFilesystem(ctx context.Context, in *UmountFilesystemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MountArchive(ctx context.Context, in *MountArchiveRequest, opts ...grpc.CallOption) (PeripheralDeviceService_MountArchiveClient, error)
@@ -119,15 +116,6 @@ func (c *peripheralDeviceServiceClient) MountRemoteDisk(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *peripheralDeviceServiceClient) MountWebDav(ctx context.Context, in *MountWebDavRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PeripheralDeviceService_MountWebDav_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *peripheralDeviceServiceClient) UmountFilesystem(ctx context.Context, in *UmountFilesystemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, PeripheralDeviceService_UmountFilesystem_FullMethodName, in, out, opts...)
@@ -189,10 +177,8 @@ type PeripheralDeviceServiceServer interface {
 	// 挂载/卸载特定移动磁盘的某个分区到
 	// $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
 	MountDisk(context.Context, *MountDiskRequest) (*emptypb.Empty, error)
-	// 挂载 Smb/NFS 到 $APPID/lzcapp/run/mnt/media/$mountpoint 目录下, 返回Maybe type的错误信息
+	// 挂载 Smb/NFS/WebDAV 到 $APPID/lzcapp/run/mnt/media/$uid/.remotefs/$mountpoint 目录下
 	MountRemoteDisk(context.Context, *MountRemoteDiskRequest) (*MountRemoteDiskResp, error)
-	// 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home/$uid 目录下，具体路径可以指定
-	MountWebDav(context.Context, *MountWebDavRequest) (*emptypb.Empty, error)
 	// 通过 uuid 或 mountpoint 卸载文件系统
 	UmountFilesystem(context.Context, *UmountFilesystemRequest) (*emptypb.Empty, error)
 	MountArchive(*MountArchiveRequest, PeripheralDeviceService_MountArchiveServer) error
@@ -216,9 +202,6 @@ func (UnimplementedPeripheralDeviceServiceServer) MountDisk(context.Context, *Mo
 }
 func (UnimplementedPeripheralDeviceServiceServer) MountRemoteDisk(context.Context, *MountRemoteDiskRequest) (*MountRemoteDiskResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MountRemoteDisk not implemented")
-}
-func (UnimplementedPeripheralDeviceServiceServer) MountWebDav(context.Context, *MountWebDavRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MountWebDav not implemented")
 }
 func (UnimplementedPeripheralDeviceServiceServer) UmountFilesystem(context.Context, *UmountFilesystemRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UmountFilesystem not implemented")
@@ -318,24 +301,6 @@ func _PeripheralDeviceService_MountRemoteDisk_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PeripheralDeviceService_MountWebDav_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MountWebDavRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PeripheralDeviceServiceServer).MountWebDav(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PeripheralDeviceService_MountWebDav_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PeripheralDeviceServiceServer).MountWebDav(ctx, req.(*MountWebDavRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _PeripheralDeviceService_UmountFilesystem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UmountFilesystemRequest)
 	if err := dec(in); err != nil {
@@ -411,10 +376,6 @@ var PeripheralDeviceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MountRemoteDisk",
 			Handler:    _PeripheralDeviceService_MountRemoteDisk_Handler,
-		},
-		{
-			MethodName: "MountWebDav",
-			Handler:    _PeripheralDeviceService_MountWebDav_Handler,
 		},
 		{
 			MethodName: "UmountFilesystem",
