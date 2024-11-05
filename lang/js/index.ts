@@ -113,15 +113,15 @@ export class lzcAPIGateway {
       })
     })
   }
-  public async getDeviceProxy(udid: string): Promise<EndDeviceProxy> {
+  public async getDeviceProxy(udid: string, metadata: grpc.Metadata | undefined = undefined): Promise<EndDeviceProxy> {
     // 1. get device api url
     const apiUrl = (await this.getDeviceURL(udid)).toString().replace(/\/+$/, "")
     // 2. get auth token
     const authToken = await this.requestAuthToken(this, apiUrl)
     // 3. new grpc rpc
-    const metadata = new grpc.Metadata()
-    metadata.set("lzc_dapi_auth_token", authToken)
-    const rpc = new GrpcWebImpl(apiUrl, { ...opt, ...{ metadata: metadata } })
+    const rpcMetadata = metadata ?? new grpc.Metadata()
+    rpcMetadata.set("lzc_dapi_auth_token", authToken)
+    const rpc = new GrpcWebImpl(apiUrl, { ...opt, ...{ metadata: rpcMetadata } })
     // 4. return EndDeviceProxy grpc client
     return new EndDeviceProxy(rpc)
   }
@@ -250,3 +250,6 @@ async function dumpInfo(bo: BrowserOnlyProxy) {
 export function isWebShell() {
   return navigator.userAgent.indexOf("Lazycat") != -1
 }
+
+// export grpc declaration
+export { grpc }

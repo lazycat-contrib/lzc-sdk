@@ -34,7 +34,7 @@ yarn add @lazycatcloud/sdk
 import { lzcApiGateway } from '@lazycatcloud/sdk/dist/localdevice/device';
 
 const lzcApiGateway = new lzcAPIGateway();
-const currentDevice = lzcAPI.current?.currentDevice;
+const currentDevice = lzcApiGateway.currentDevice;
 console.log('currentDevice', currentDevice);
 ```
 
