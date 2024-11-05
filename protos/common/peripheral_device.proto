@@ -21,11 +21,8 @@ service PeripheralDeviceService {
         USER_DOCUMENT;
   }
 
-  // 挂载 Smb/NFS 到 $APPID/lzcapp/run/mnt/media/$mountpoint 目录下, 返回Maybe type的错误信息
+  // 挂载 Smb/NFS/WebDAV 到 $APPID/lzcapp/run/mnt/media/$uid/.remotefs/$mountpoint 目录下
   rpc MountRemoteDisk(MountRemoteDiskRequest) returns (MountRemoteDiskResp) {}
-
-  // 挂载 WebDav 服务到 $APPID/lzcapp/run/mnt/home/$uid 目录下，具体路径可以指定
-  rpc MountWebDav(MountWebDavRequest) returns (google.protobuf.Empty) {}
 
   // 通过 uuid 或 mountpoint 卸载文件系统
   rpc UmountFilesystem(UmountFilesystemRequest)
@@ -78,6 +75,7 @@ message MountDiskRequest {
 enum FsType {
   SAMBA = 0;
   NFS   = 1;
+  WEBDAV= 2;
 }
 
 message MountRemoteDiskRequest {
@@ -99,14 +97,6 @@ enum MountRemoteDiskStatus {
 
 message MountRemoteDiskResp {
   MountRemoteDiskStatus status = 1;
-}
-
-message MountWebDavRequest {
-  string url = 1;
-  // relative to webdav home root
-  string mountpoint = 2;
-  string username = 3;
-  string password = 4;
 }
 
 message UmountFilesystemRequest {
