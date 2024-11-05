@@ -40,7 +40,7 @@ type PeripheralDeviceServiceClient interface {
 	// 挂载/卸载特定移动磁盘的某个分区到
 	// $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
 	MountDisk(ctx context.Context, in *MountDiskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 挂载 Smb/NFS/WebDAV 到 $APPID/lzcapp/run/mnt/media/$uid/.remotefs/$mountpoint 目录下
+	// 挂载 Smb/NFS/WebDAV 到 $APPID/lzcapp/run/mnt/home/$uid/.remotefs/$mountpoint 目录下
 	MountRemoteDisk(ctx context.Context, in *MountRemoteDiskRequest, opts ...grpc.CallOption) (*MountRemoteDiskResp, error)
 	// 通过 uuid 或 mountpoint 卸载文件系统
 	UmountFilesystem(ctx context.Context, in *UmountFilesystemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)

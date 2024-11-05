@@ -21,7 +21,7 @@ service PeripheralDeviceService {
         USER_DOCUMENT;
   }
 
-  // 挂载 Smb/NFS/WebDAV 到 $APPID/lzcapp/run/mnt/media/$uid/.remotefs/$mountpoint 目录下
+  // 挂载 Smb/NFS/WebDAV 到 $APPID/lzcapp/run/mnt/home/$uid/.remotefs/$mountpoint 目录下
   rpc MountRemoteDisk(MountRemoteDiskRequest) returns (MountRemoteDiskResp) {}
 
   // 通过 uuid 或 mountpoint 卸载文件系统
