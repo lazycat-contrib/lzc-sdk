@@ -39,12 +39,10 @@ message BoxInfo {
   // 盒子内部显示名称，可以随意修改，若不设置则为box_name
   string display_name = 4;
 
-  bool no_space = 6;
-
   // 电源灯是否亮
   bool power_led = 7;
 
-  reserved 5, 8;
+  reserved 5, 6, 8;
 
   // 以下是一堆硬件信息。硬盘信息请用另一个接口
 
