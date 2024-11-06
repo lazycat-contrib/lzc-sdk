@@ -16,6 +16,8 @@ service HalService {
   rpc SetSLed(SLedState) returns (google.protobuf.Empty) {}
   // 最近 30s 内 Button 事件队列。同时 续命 Button 监测 到 当前时间 +5s
   rpc GetButtonEventQueue(google.protobuf.Empty) returns (ButtonEventQueue) {}
+  // 风扇转速
+  rpc GetFanRpm(google.protobuf.Empty) returns (FanRpm) {}
 }
 
 message PLedState {
@@ -58,4 +60,8 @@ message ButtonEventQueue {
     google.protobuf.Timestamp timestamp = 2;
   }
   repeated ButtonEvent queue = 1;
+}
+
+message FanRpm {
+  int64 rpm = 1;
 }
