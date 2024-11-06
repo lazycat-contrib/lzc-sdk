@@ -24,6 +24,7 @@ const (
 	HalService_GetPLed_FullMethodName             = "/cloud.lazycat.apis.sys.HalService/GetPLed"
 	HalService_SetSLed_FullMethodName             = "/cloud.lazycat.apis.sys.HalService/SetSLed"
 	HalService_GetButtonEventQueue_FullMethodName = "/cloud.lazycat.apis.sys.HalService/GetButtonEventQueue"
+	HalService_GetFanRpm_FullMethodName           = "/cloud.lazycat.apis.sys.HalService/GetFanRpm"
 )
 
 // HalServiceClient is the client API for HalService service.
@@ -38,6 +39,8 @@ type HalServiceClient interface {
 	SetSLed(ctx context.Context, in *SLedState, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 最近 30s 内 Button 事件队列。同时 续命 Button 监测 到 当前时间 +5s
 	GetButtonEventQueue(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ButtonEventQueue, error)
+	// 风扇转速
+	GetFanRpm(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FanRpm, error)
 }
 
 type halServiceClient struct {
@@ -84,6 +87,15 @@ func (c *halServiceClient) GetButtonEventQueue(ctx context.Context, in *emptypb.
 	return out, nil
 }
 
+func (c *halServiceClient) GetFanRpm(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FanRpm, error) {
+	out := new(FanRpm)
+	err := c.cc.Invoke(ctx, HalService_GetFanRpm_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HalServiceServer is the server API for HalService service.
 // All implementations must embed UnimplementedHalServiceServer
 // for forward compatibility
@@ -96,6 +108,8 @@ type HalServiceServer interface {
 	SetSLed(context.Context, *SLedState) (*emptypb.Empty, error)
 	// 最近 30s 内 Button 事件队列。同时 续命 Button 监测 到 当前时间 +5s
 	GetButtonEventQueue(context.Context, *emptypb.Empty) (*ButtonEventQueue, error)
+	// 风扇转速
+	GetFanRpm(context.Context, *emptypb.Empty) (*FanRpm, error)
 	mustEmbedUnimplementedHalServiceServer()
 }
 
@@ -114,6 +128,9 @@ func (UnimplementedHalServiceServer) SetSLed(context.Context, *SLedState) (*empt
 }
 func (UnimplementedHalServiceServer) GetButtonEventQueue(context.Context, *emptypb.Empty) (*ButtonEventQueue, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetButtonEventQueue not implemented")
+}
+func (UnimplementedHalServiceServer) GetFanRpm(context.Context, *emptypb.Empty) (*FanRpm, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFanRpm not implemented")
 }
 func (UnimplementedHalServiceServer) mustEmbedUnimplementedHalServiceServer() {}
 
@@ -200,6 +217,24 @@ func _HalService_GetButtonEventQueue_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HalService_GetFanRpm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HalServiceServer).GetFanRpm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HalService_GetFanRpm_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HalServiceServer).GetFanRpm(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HalService_ServiceDesc is the grpc.ServiceDesc for HalService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -222,6 +257,10 @@ var HalService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetButtonEventQueue",
 			Handler:    _HalService_GetButtonEventQueue_Handler,
+		},
+		{
+			MethodName: "GetFanRpm",
+			Handler:    _HalService_GetFanRpm_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
