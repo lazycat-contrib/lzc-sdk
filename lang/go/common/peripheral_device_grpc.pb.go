@@ -177,7 +177,7 @@ type PeripheralDeviceServiceServer interface {
 	// 挂载/卸载特定移动磁盘的某个分区到
 	// $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
 	MountDisk(context.Context, *MountDiskRequest) (*emptypb.Empty, error)
-	// 挂载 Smb/NFS/WebDAV 到 $APPID/lzcapp/run/mnt/media/$uid/.remotefs/$mountpoint 目录下
+	// 挂载 Smb/NFS/WebDAV 到 $APPID/lzcapp/run/mnt/home/$uid/.remotefs/$mountpoint 目录下
 	MountRemoteDisk(context.Context, *MountRemoteDiskRequest) (*MountRemoteDiskResp, error)
 	// 通过 uuid 或 mountpoint 卸载文件系统
 	UmountFilesystem(context.Context, *UmountFilesystemRequest) (*emptypb.Empty, error)
