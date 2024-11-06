@@ -39,24 +39,23 @@ message BoxInfo {
   // 盒子内部显示名称，可以随意修改，若不设置则为box_name
   string display_name = 4;
 
-  message Memory {
-    int64 total = 1;
-
-    int64 free = 2;
-  }
-  Memory memory = 8;
-
-  message DiskSpace {
-    int64 total = 1;
-
-    int64 free = 2;
-  }
-  DiskSpace disk_space = 5;
-
   bool no_space = 6;
 
   // 电源灯是否亮
   bool power_led = 7;
+
+  reserved 5, 8;
+
+  // 以下是一堆硬件信息。硬盘信息请用另一个接口
+
+  string cpu_name = 9;
+  int64 cpu_cores = 10;
+  int64 cpu_threads = 11;
+  string memory_vendor = 12;
+  int64 memory_total = 13;
+  int64 memory_free = 14;
+  int64 memory_speed = 15;
+  int64 fan_rpm = 16;
 }
 
 message ChangeDisplayNameRequest {
