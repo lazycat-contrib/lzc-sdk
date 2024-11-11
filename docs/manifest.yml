@@ -14,6 +14,7 @@ unsupported_platforms: # 不支持的平台
   - windows
   - android
   - ios
+  - tvos
 
 #application作为一个特殊的container运行，对应的service名称为固定的`app`，其他service可以通过此名称与app进行通讯
 application:
