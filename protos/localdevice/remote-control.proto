@@ -21,7 +21,7 @@ enum InputEvent {
   KEY_PAGEDOWN = 9;
   KEY_ENTER = 10;
   KEY_BACKSPACE = 11;
-  KEY_F10 = 12;
+  KEY_F9 = 12;
   KEY_HOMEPAGE = 13;
   KEY_END = 14;
   KEY_PAUSE = 15;
