@@ -216,7 +216,7 @@ func (x *DirTreeResponse) GetFiles() []*DirTreeResponse_FileInfo {
 	return nil
 }
 
-type ZipDirRequest struct {
+type TarDirRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -225,8 +225,8 @@ type ZipDirRequest struct {
 	Path string `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
 }
 
-func (x *ZipDirRequest) Reset() {
-	*x = ZipDirRequest{}
+func (x *TarDirRequest) Reset() {
+	*x = TarDirRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_common_file_handler_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -234,13 +234,13 @@ func (x *ZipDirRequest) Reset() {
 	}
 }
 
-func (x *ZipDirRequest) String() string {
+func (x *TarDirRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ZipDirRequest) ProtoMessage() {}
+func (*TarDirRequest) ProtoMessage() {}
 
-func (x *ZipDirRequest) ProtoReflect() protoreflect.Message {
+func (x *TarDirRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_common_file_handler_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -252,19 +252,19 @@ func (x *ZipDirRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ZipDirRequest.ProtoReflect.Descriptor instead.
-func (*ZipDirRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use TarDirRequest.ProtoReflect.Descriptor instead.
+func (*TarDirRequest) Descriptor() ([]byte, []int) {
 	return file_common_file_handler_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ZipDirRequest) GetPath() string {
+func (x *TarDirRequest) GetPath() string {
 	if x != nil {
 		return x.Path
 	}
 	return ""
 }
 
-type ZipDirReply struct {
+type TarDirReply struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -272,8 +272,8 @@ type ZipDirReply struct {
 	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 }
 
-func (x *ZipDirReply) Reset() {
-	*x = ZipDirReply{}
+func (x *TarDirReply) Reset() {
+	*x = TarDirReply{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_common_file_handler_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -281,13 +281,13 @@ func (x *ZipDirReply) Reset() {
 	}
 }
 
-func (x *ZipDirReply) String() string {
+func (x *TarDirReply) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ZipDirReply) ProtoMessage() {}
+func (*TarDirReply) ProtoMessage() {}
 
-func (x *ZipDirReply) ProtoReflect() protoreflect.Message {
+func (x *TarDirReply) ProtoReflect() protoreflect.Message {
 	mi := &file_common_file_handler_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -299,12 +299,12 @@ func (x *ZipDirReply) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ZipDirReply.ProtoReflect.Descriptor instead.
-func (*ZipDirReply) Descriptor() ([]byte, []int) {
+// Deprecated: Use TarDirReply.ProtoReflect.Descriptor instead.
+func (*TarDirReply) Descriptor() ([]byte, []int) {
 	return file_common_file_handler_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ZipDirReply) GetData() []byte {
+func (x *TarDirReply) GetData() []byte {
 	if x != nil {
 		return x.Data
 	}
@@ -1668,9 +1668,9 @@ var file_common_file_handler_proto_rawDesc = []byte{
 	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73,
 	0x74, 0x61, 0x6d, 0x70, 0x52, 0x05, 0x6d, 0x74, 0x69, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x69,
 	0x73, 0x44, 0x69, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x69, 0x73, 0x44, 0x69,
-	0x72, 0x22, 0x23, 0x0a, 0x0d, 0x5a, 0x69, 0x70, 0x44, 0x69, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x72, 0x22, 0x23, 0x0a, 0x0d, 0x54, 0x61, 0x72, 0x44, 0x69, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65,
 	0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x74, 0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x04, 0x70, 0x61, 0x74, 0x68, 0x22, 0x21, 0x0a, 0x0b, 0x5a, 0x69, 0x70, 0x44, 0x69, 0x72,
+	0x52, 0x04, 0x70, 0x61, 0x74, 0x68, 0x22, 0x21, 0x0a, 0x0b, 0x54, 0x61, 0x72, 0x44, 0x69, 0x72,
 	0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20,
 	0x01, 0x28, 0x0c, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x74, 0x0a, 0x0e, 0x57, 0x61, 0x6c,
 	0x6b, 0x44, 0x69, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x70,
@@ -1894,11 +1894,11 @@ var file_common_file_handler_proto_rawDesc = []byte{
 	0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73,
 	0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x54, 0x61, 0x73, 0x6b, 0x50, 0x72, 0x6f, 0x67,
 	0x72, 0x65, 0x73, 0x73, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x00, 0x30, 0x01, 0x12, 0x5e, 0x0a, 0x06,
-	0x7a, 0x69, 0x70, 0x44, 0x69, 0x72, 0x12, 0x28, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c,
+	0x74, 0x61, 0x72, 0x44, 0x69, 0x72, 0x12, 0x28, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c,
 	0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x63, 0x6f, 0x6d, 0x6d,
-	0x6f, 0x6e, 0x2e, 0x5a, 0x69, 0x70, 0x44, 0x69, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x6f, 0x6e, 0x2e, 0x54, 0x61, 0x72, 0x44, 0x69, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
 	0x1a, 0x26, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74,
-	0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x5a, 0x69, 0x70,
+	0x2e, 0x61, 0x70, 0x69, 0x73, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x54, 0x61, 0x72,
 	0x44, 0x69, 0x72, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x30, 0x01, 0x12, 0x6d, 0x0a, 0x0b,
 	0x63, 0x68, 0x65, 0x63, 0x6b, 0x45, 0x78, 0x69, 0x73, 0x74, 0x73, 0x12, 0x2d, 0x2e, 0x63, 0x6c,
 	0x6f, 0x75, 0x64, 0x2e, 0x6c, 0x61, 0x7a, 0x79, 0x63, 0x61, 0x74, 0x2e, 0x61, 0x70, 0x69, 0x73,
@@ -1931,8 +1931,8 @@ var file_common_file_handler_proto_goTypes = []interface{}{
 	(*CheckExistsMessage)(nil),       // 1: cloud.lazycat.apis.common.CheckExistsMessage
 	(*DirTreeRequest)(nil),           // 2: cloud.lazycat.apis.common.DirTreeRequest
 	(*DirTreeResponse)(nil),          // 3: cloud.lazycat.apis.common.DirTreeResponse
-	(*ZipDirRequest)(nil),            // 4: cloud.lazycat.apis.common.ZipDirRequest
-	(*ZipDirReply)(nil),              // 5: cloud.lazycat.apis.common.ZipDirReply
+	(*TarDirRequest)(nil),            // 4: cloud.lazycat.apis.common.TarDirRequest
+	(*TarDirReply)(nil),              // 5: cloud.lazycat.apis.common.TarDirReply
 	(*WalkDirRequest)(nil),           // 6: cloud.lazycat.apis.common.WalkDirRequest
 	(*CheckWalkDirRequest)(nil),      // 7: cloud.lazycat.apis.common.CheckWalkDirRequest
 	(*CheckWalkDirResponse)(nil),     // 8: cloud.lazycat.apis.common.CheckWalkDirResponse
@@ -1974,7 +1974,7 @@ var file_common_file_handler_proto_depIdxs = []int32{
 	17, // 16: cloud.lazycat.apis.common.FileHandler.stat:input_type -> cloud.lazycat.apis.common.StatRequest
 	19, // 17: cloud.lazycat.apis.common.FileHandler.syncFolder:input_type -> cloud.lazycat.apis.common.SyncFolderRequest
 	20, // 18: cloud.lazycat.apis.common.FileHandler.copyFolder:input_type -> cloud.lazycat.apis.common.CopyFolderRequest
-	4,  // 19: cloud.lazycat.apis.common.FileHandler.zipDir:input_type -> cloud.lazycat.apis.common.ZipDirRequest
+	4,  // 19: cloud.lazycat.apis.common.FileHandler.tarDir:input_type -> cloud.lazycat.apis.common.TarDirRequest
 	1,  // 20: cloud.lazycat.apis.common.FileHandler.checkExists:input_type -> cloud.lazycat.apis.common.CheckExistsMessage
 	15, // 21: cloud.lazycat.apis.common.FileHandler.query:output_type -> cloud.lazycat.apis.common.QueryReply
 	13, // 22: cloud.lazycat.apis.common.FileHandler.open:output_type -> cloud.lazycat.apis.common.OpenReply
@@ -1987,7 +1987,7 @@ var file_common_file_handler_proto_depIdxs = []int32{
 	18, // 29: cloud.lazycat.apis.common.FileHandler.stat:output_type -> cloud.lazycat.apis.common.StatReply
 	22, // 30: cloud.lazycat.apis.common.FileHandler.syncFolder:output_type -> cloud.lazycat.apis.common.TaskProgressInfo
 	22, // 31: cloud.lazycat.apis.common.FileHandler.copyFolder:output_type -> cloud.lazycat.apis.common.TaskProgressInfo
-	5,  // 32: cloud.lazycat.apis.common.FileHandler.zipDir:output_type -> cloud.lazycat.apis.common.ZipDirReply
+	5,  // 32: cloud.lazycat.apis.common.FileHandler.tarDir:output_type -> cloud.lazycat.apis.common.TarDirReply
 	1,  // 33: cloud.lazycat.apis.common.FileHandler.checkExists:output_type -> cloud.lazycat.apis.common.CheckExistsMessage
 	21, // [21:34] is the sub-list for method output_type
 	8,  // [8:21] is the sub-list for method input_type
@@ -2039,7 +2039,7 @@ func file_common_file_handler_proto_init() {
 			}
 		}
 		file_common_file_handler_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ZipDirRequest); i {
+			switch v := v.(*TarDirRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2051,7 +2051,7 @@ func file_common_file_handler_proto_init() {
 			}
 		}
 		file_common_file_handler_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ZipDirReply); i {
+			switch v := v.(*TarDirReply); i {
 			case 0:
 				return &v.state
 			case 1:

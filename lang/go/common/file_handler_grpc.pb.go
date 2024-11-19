@@ -31,7 +31,7 @@ const (
 	FileHandler_Stat_FullMethodName            = "/cloud.lazycat.apis.common.FileHandler/stat"
 	FileHandler_SyncFolder_FullMethodName      = "/cloud.lazycat.apis.common.FileHandler/syncFolder"
 	FileHandler_CopyFolder_FullMethodName      = "/cloud.lazycat.apis.common.FileHandler/copyFolder"
-	FileHandler_ZipDir_FullMethodName          = "/cloud.lazycat.apis.common.FileHandler/zipDir"
+	FileHandler_TarDir_FullMethodName          = "/cloud.lazycat.apis.common.FileHandler/tarDir"
 	FileHandler_CheckExists_FullMethodName     = "/cloud.lazycat.apis.common.FileHandler/checkExists"
 )
 
@@ -59,8 +59,8 @@ type FileHandlerClient interface {
 	//	copy A→B 的話
 	//	  B=A+B 原有檔案
 	CopyFolder(ctx context.Context, in *CopyFolderRequest, opts ...grpc.CallOption) (FileHandler_CopyFolderClient, error)
-	// 打包某个目录为zip，流式地上传回来
-	ZipDir(ctx context.Context, in *ZipDirRequest, opts ...grpc.CallOption) (FileHandler_ZipDirClient, error)
+	// 打包某个目录为Tar，流式地上传回来
+	TarDir(ctx context.Context, in *TarDirRequest, opts ...grpc.CallOption) (FileHandler_TarDirClient, error)
 	// 检查目录是否存在
 	CheckExists(ctx context.Context, in *CheckExistsMessage, opts ...grpc.CallOption) (*CheckExistsMessage, error)
 }
@@ -288,12 +288,12 @@ func (x *fileHandlerCopyFolderClient) Recv() (*TaskProgressInfo, error) {
 	return m, nil
 }
 
-func (c *fileHandlerClient) ZipDir(ctx context.Context, in *ZipDirRequest, opts ...grpc.CallOption) (FileHandler_ZipDirClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[5], FileHandler_ZipDir_FullMethodName, opts...)
+func (c *fileHandlerClient) TarDir(ctx context.Context, in *TarDirRequest, opts ...grpc.CallOption) (FileHandler_TarDirClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileHandler_ServiceDesc.Streams[5], FileHandler_TarDir_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &fileHandlerZipDirClient{stream}
+	x := &fileHandlerTarDirClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -303,17 +303,17 @@ func (c *fileHandlerClient) ZipDir(ctx context.Context, in *ZipDirRequest, opts 
 	return x, nil
 }
 
-type FileHandler_ZipDirClient interface {
-	Recv() (*ZipDirReply, error)
+type FileHandler_TarDirClient interface {
+	Recv() (*TarDirReply, error)
 	grpc.ClientStream
 }
 
-type fileHandlerZipDirClient struct {
+type fileHandlerTarDirClient struct {
 	grpc.ClientStream
 }
 
-func (x *fileHandlerZipDirClient) Recv() (*ZipDirReply, error) {
-	m := new(ZipDirReply)
+func (x *fileHandlerTarDirClient) Recv() (*TarDirReply, error) {
+	m := new(TarDirReply)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -353,8 +353,8 @@ type FileHandlerServer interface {
 	//	copy A→B 的話
 	//	  B=A+B 原有檔案
 	CopyFolder(*CopyFolderRequest, FileHandler_CopyFolderServer) error
-	// 打包某个目录为zip，流式地上传回来
-	ZipDir(*ZipDirRequest, FileHandler_ZipDirServer) error
+	// 打包某个目录为Tar，流式地上传回来
+	TarDir(*TarDirRequest, FileHandler_TarDirServer) error
 	// 检查目录是否存在
 	CheckExists(context.Context, *CheckExistsMessage) (*CheckExistsMessage, error)
 	mustEmbedUnimplementedFileHandlerServer()
@@ -397,8 +397,8 @@ func (UnimplementedFileHandlerServer) SyncFolder(*SyncFolderRequest, FileHandler
 func (UnimplementedFileHandlerServer) CopyFolder(*CopyFolderRequest, FileHandler_CopyFolderServer) error {
 	return status.Errorf(codes.Unimplemented, "method CopyFolder not implemented")
 }
-func (UnimplementedFileHandlerServer) ZipDir(*ZipDirRequest, FileHandler_ZipDirServer) error {
-	return status.Errorf(codes.Unimplemented, "method ZipDir not implemented")
+func (UnimplementedFileHandlerServer) TarDir(*TarDirRequest, FileHandler_TarDirServer) error {
+	return status.Errorf(codes.Unimplemented, "method TarDir not implemented")
 }
 func (UnimplementedFileHandlerServer) CheckExists(context.Context, *CheckExistsMessage) (*CheckExistsMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckExists not implemented")
@@ -639,24 +639,24 @@ func (x *fileHandlerCopyFolderServer) Send(m *TaskProgressInfo) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _FileHandler_ZipDir_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ZipDirRequest)
+func _FileHandler_TarDir_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(TarDirRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(FileHandlerServer).ZipDir(m, &fileHandlerZipDirServer{stream})
+	return srv.(FileHandlerServer).TarDir(m, &fileHandlerTarDirServer{stream})
 }
 
-type FileHandler_ZipDirServer interface {
-	Send(*ZipDirReply) error
+type FileHandler_TarDirServer interface {
+	Send(*TarDirReply) error
 	grpc.ServerStream
 }
 
-type fileHandlerZipDirServer struct {
+type fileHandlerTarDirServer struct {
 	grpc.ServerStream
 }
 
-func (x *fileHandlerZipDirServer) Send(m *ZipDirReply) error {
+func (x *fileHandlerTarDirServer) Send(m *TarDirReply) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -742,8 +742,8 @@ var FileHandler_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 		{
-			StreamName:    "zipDir",
-			Handler:       _FileHandler_ZipDir_Handler,
+			StreamName:    "tarDir",
+			Handler:       _FileHandler_TarDir_Handler,
 			ServerStreams: true,
 		},
 	},

@@ -26,8 +26,8 @@ service FileHandler {
   //    copy A→B 的話
   //      B=A+B 原有檔案
   rpc copyFolder(CopyFolderRequest) returns (stream TaskProgressInfo) {}
-  // 打包某个目录为zip，流式地上传回来
-  rpc zipDir(ZipDirRequest) returns (stream ZipDirReply) {}
+  // 打包某个目录为Tar，流式地上传回来
+  rpc tarDir(TarDirRequest) returns (stream TarDirReply) {}
   // 检查目录是否存在
   rpc checkExists(CheckExistsMessage) returns (CheckExistsMessage) {}
 }
@@ -54,12 +54,12 @@ message DirTreeResponse {
   repeated FileInfo files = 1;
 }
 
-message ZipDirRequest {
+message TarDirRequest {
   // 目录路径
   string path = 1;
 }
 
-message ZipDirReply {
+message TarDirReply {
   bytes data = 1;
 }
 
