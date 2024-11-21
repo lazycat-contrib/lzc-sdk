@@ -14,6 +14,9 @@ service PeripheralDeviceService {
   // 列出当前盒子已挂载 和 可以挂载但未挂载的文件系统
   rpc ListFilesystems(google.protobuf.Empty) returns (ListFilesystemsReply) {}
 
+  // 与物理磁盘的文件系统解耦, 仅提供远程挂载的文件系统
+  rpc ListRemoteFilesystems(google.protobuf.Empty) returns (ListRemoteFilesystemReply) {}
+
   // 挂载/卸载特定移动磁盘的某个分区到
   // $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
   rpc MountDisk(MountDiskRequest) returns (google.protobuf.Empty) {
@@ -67,6 +70,21 @@ message Filesystem {
   optional string mountpoint = 6;
 }
 
+message ListRemoteFilesystemReply {
+  repeated RemoteFilesystem fs = 1;
+}
+
+message RemoteFilesystem {
+  string source = 1;
+  FsType fstype = 2;
+  string name = 3;
+  string size = 4;
+  string path = 5;
+  string mountpoint = 6;
+  // remote connection healthy check
+  bool connected = 7;
+}
+
 message MountDiskRequest {
   string uuid = 1;
   string source = 2;
@@ -79,27 +97,20 @@ enum FsType {
 }
 
 message MountRemoteDiskRequest {
-  string remoteTarget = 1;
-  FsType fstype = 2;
-  string mountpoint = 3;
-  string port = 4;
-  string options = 5;
-  string username = 6;
-  string password = 7;
-}
-
-enum MountRemoteDiskStatus {
-  SUCCESS = 0;
-  INTERNAL = 1;
-  
-  NULLTARGET = 2;
-  NULLMOUNT = 3;
-  INVALCHAR = 4;
-  MOUNTED = 5;
+  string host = 1;
+  string path = 2;
+  FsType fstype = 3;
+  string mountpoint = 4;
+  string port = 5;
+  string options = 6;
+  string username = 7;
+  string password = 8;
 }
 
 message MountRemoteDiskResp {
-  MountRemoteDiskStatus status = 1;
+  bool success = 1;
+  repeated string key = 2;
+  string msg = 3;
 }
 
 message UmountFilesystemRequest {

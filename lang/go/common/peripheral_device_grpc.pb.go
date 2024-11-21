@@ -20,13 +20,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PeripheralDeviceService_DeviceChanged_FullMethodName    = "/cloud.lazycat.apis.common.PeripheralDeviceService/DeviceChanged"
-	PeripheralDeviceService_ListFilesystems_FullMethodName  = "/cloud.lazycat.apis.common.PeripheralDeviceService/ListFilesystems"
-	PeripheralDeviceService_MountDisk_FullMethodName        = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountDisk"
-	PeripheralDeviceService_MountRemoteDisk_FullMethodName  = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountRemoteDisk"
-	PeripheralDeviceService_UmountFilesystem_FullMethodName = "/cloud.lazycat.apis.common.PeripheralDeviceService/UmountFilesystem"
-	PeripheralDeviceService_MountArchive_FullMethodName     = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountArchive"
-	PeripheralDeviceService_PowerOffDisk_FullMethodName     = "/cloud.lazycat.apis.common.PeripheralDeviceService/PowerOffDisk"
+	PeripheralDeviceService_DeviceChanged_FullMethodName         = "/cloud.lazycat.apis.common.PeripheralDeviceService/DeviceChanged"
+	PeripheralDeviceService_ListFilesystems_FullMethodName       = "/cloud.lazycat.apis.common.PeripheralDeviceService/ListFilesystems"
+	PeripheralDeviceService_ListRemoteFilesystems_FullMethodName = "/cloud.lazycat.apis.common.PeripheralDeviceService/ListRemoteFilesystems"
+	PeripheralDeviceService_MountDisk_FullMethodName             = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountDisk"
+	PeripheralDeviceService_MountRemoteDisk_FullMethodName       = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountRemoteDisk"
+	PeripheralDeviceService_UmountFilesystem_FullMethodName      = "/cloud.lazycat.apis.common.PeripheralDeviceService/UmountFilesystem"
+	PeripheralDeviceService_MountArchive_FullMethodName          = "/cloud.lazycat.apis.common.PeripheralDeviceService/MountArchive"
+	PeripheralDeviceService_PowerOffDisk_FullMethodName          = "/cloud.lazycat.apis.common.PeripheralDeviceService/PowerOffDisk"
 )
 
 // PeripheralDeviceServiceClient is the client API for PeripheralDeviceService service.
@@ -37,6 +38,8 @@ type PeripheralDeviceServiceClient interface {
 	DeviceChanged(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (PeripheralDeviceService_DeviceChangedClient, error)
 	// 列出当前盒子已挂载 和 可以挂载但未挂载的文件系统
 	ListFilesystems(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListFilesystemsReply, error)
+	// 与物理磁盘的文件系统解耦, 仅提供远程挂载的文件系统
+	ListRemoteFilesystems(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListRemoteFilesystemReply, error)
 	// 挂载/卸载特定移动磁盘的某个分区到
 	// $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
 	MountDisk(ctx context.Context, in *MountDiskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -92,6 +95,15 @@ func (x *peripheralDeviceServiceDeviceChangedClient) Recv() (*emptypb.Empty, err
 func (c *peripheralDeviceServiceClient) ListFilesystems(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListFilesystemsReply, error) {
 	out := new(ListFilesystemsReply)
 	err := c.cc.Invoke(ctx, PeripheralDeviceService_ListFilesystems_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *peripheralDeviceServiceClient) ListRemoteFilesystems(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListRemoteFilesystemReply, error) {
+	out := new(ListRemoteFilesystemReply)
+	err := c.cc.Invoke(ctx, PeripheralDeviceService_ListRemoteFilesystems_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -174,6 +186,8 @@ type PeripheralDeviceServiceServer interface {
 	DeviceChanged(*emptypb.Empty, PeripheralDeviceService_DeviceChangedServer) error
 	// 列出当前盒子已挂载 和 可以挂载但未挂载的文件系统
 	ListFilesystems(context.Context, *emptypb.Empty) (*ListFilesystemsReply, error)
+	// 与物理磁盘的文件系统解耦, 仅提供远程挂载的文件系统
+	ListRemoteFilesystems(context.Context, *emptypb.Empty) (*ListRemoteFilesystemReply, error)
 	// 挂载/卸载特定移动磁盘的某个分区到
 	// $APPID/lzcapp/run/mnt/media/$partition_uuid 目录上
 	MountDisk(context.Context, *MountDiskRequest) (*emptypb.Empty, error)
@@ -196,6 +210,9 @@ func (UnimplementedPeripheralDeviceServiceServer) DeviceChanged(*emptypb.Empty, 
 }
 func (UnimplementedPeripheralDeviceServiceServer) ListFilesystems(context.Context, *emptypb.Empty) (*ListFilesystemsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListFilesystems not implemented")
+}
+func (UnimplementedPeripheralDeviceServiceServer) ListRemoteFilesystems(context.Context, *emptypb.Empty) (*ListRemoteFilesystemReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListRemoteFilesystems not implemented")
 }
 func (UnimplementedPeripheralDeviceServiceServer) MountDisk(context.Context, *MountDiskRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MountDisk not implemented")
@@ -261,6 +278,24 @@ func _PeripheralDeviceService_ListFilesystems_Handler(srv interface{}, ctx conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PeripheralDeviceServiceServer).ListFilesystems(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PeripheralDeviceService_ListRemoteFilesystems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PeripheralDeviceServiceServer).ListRemoteFilesystems(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PeripheralDeviceService_ListRemoteFilesystems_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PeripheralDeviceServiceServer).ListRemoteFilesystems(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -368,6 +403,10 @@ var PeripheralDeviceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListFilesystems",
 			Handler:    _PeripheralDeviceService_ListFilesystems_Handler,
+		},
+		{
+			MethodName: "ListRemoteFilesystems",
+			Handler:    _PeripheralDeviceService_ListRemoteFilesystems_Handler,
 		},
 		{
 			MethodName: "MountDisk",
