@@ -65,8 +65,12 @@ enum ListAssetsSortType {
   ASSETS_CREATE_DATE_ASC = 1;
   // 时间线降序
   ASSETS_TIMELINE_DATE_DESC = 2;
-  // 时间线降序
+  // 时间线升序
   ASSETS_TIMELINE_DATE_ASC = 3;
+  // 修改时间降序
+  ASSETS_MODIFIED_DATE_DESC = 4;
+  // 修改时间升序
+  ASSETS_MODIFIED_DATE_ASC = 5;
 }
 
 message QueryPhotoHashRequest {

@@ -96,6 +96,10 @@ export enum ListAssetsSortType {
   ASSETS_TIMELINE_DATE_DESC = 2,
   /** ASSETS_TIMELINE_DATE_ASC - 时间线降序 */
   ASSETS_TIMELINE_DATE_ASC = 3,
+  /** ASSETS_MODIFIED_DATE_DESC - 修改时间降序 */
+  ASSETS_MODIFIED_DATE_DESC = 4,
+  /** ASSETS_MODIFIED_DATE_ASC - 修改时间降序 */
+  ASSETS_MODIFIED_DATE_ASC = 5,
   UNRECOGNIZED = -1,
 }
 
@@ -113,6 +117,12 @@ export function listAssetsSortTypeFromJSON(object: any): ListAssetsSortType {
     case 3:
     case "ASSETS_TIMELINE_DATE_ASC":
       return ListAssetsSortType.ASSETS_TIMELINE_DATE_ASC;
+    case 4:
+    case "ASSETS_MODIFIED_DATE_DESC":
+      return ListAssetsSortType.ASSETS_MODIFIED_DATE_DESC;
+    case 5:
+    case "ASSETS_MODIFIED_DATE_ASC":
+      return ListAssetsSortType.ASSETS_MODIFIED_DATE_ASC;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -130,6 +140,10 @@ export function listAssetsSortTypeToJSON(object: ListAssetsSortType): string {
       return "ASSETS_TIMELINE_DATE_DESC";
     case ListAssetsSortType.ASSETS_TIMELINE_DATE_ASC:
       return "ASSETS_TIMELINE_DATE_ASC";
+    case ListAssetsSortType.ASSETS_MODIFIED_DATE_DESC:
+      return "ASSETS_MODIFIED_DATE_DESC";
+    case ListAssetsSortType.ASSETS_MODIFIED_DATE_ASC:
+      return "ASSETS_MODIFIED_DATE_ASC";
     case ListAssetsSortType.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
