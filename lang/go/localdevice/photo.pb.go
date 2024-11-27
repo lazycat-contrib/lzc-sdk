@@ -105,11 +105,11 @@ const (
 	ListAssetsSortType_ASSETS_CREATE_DATE_ASC ListAssetsSortType = 1
 	// 时间线降序
 	ListAssetsSortType_ASSETS_TIMELINE_DATE_DESC ListAssetsSortType = 2
-	// 时间线降序
+	// 时间线升序
 	ListAssetsSortType_ASSETS_TIMELINE_DATE_ASC ListAssetsSortType = 3
 	// 修改时间降序
 	ListAssetsSortType_ASSETS_MODIFIED_DATE_DESC ListAssetsSortType = 4
-	// 修改时间降序
+	// 修改时间升序
 	ListAssetsSortType_ASSETS_MODIFIED_DATE_ASC ListAssetsSortType = 5
 )
 
