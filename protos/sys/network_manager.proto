@@ -85,6 +85,9 @@ message NetworkDeviceStatusInfo {
   // 无线设备状态（已假设只有一块无线网卡）
   NetworkDeviceStatus WirelessDevice = 3;
 
+  // 网络协商速率
+  int64 link_speed = 5;
+
   // 若无线设备已连接，则该字段表示已连接的 wifi 的信息
   optional AccessPointInfo info = 4;
 }
