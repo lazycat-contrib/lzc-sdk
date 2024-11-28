@@ -3,7 +3,6 @@ package gohelper
 import (
 	"context"
 	"net/url"
-	"runtime/debug"
 
 	"gitee.com/linakesi/lzc-sdk/lang/go/common"
 	"gitee.com/linakesi/lzc-sdk/lang/go/localdevice"
@@ -66,8 +65,6 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	debug.PrintStack()
 
 	metaCred := newMetadataCredentials(parsedUrl.Host, gw.cred)
 	conn, err := grpc.Dial(parsedUrl.Host, grpc.WithPerRPCCredentials(metaCred), gw.cred)
