@@ -116,7 +116,8 @@ message DiskInfo {
   // 磁盘类型
   DiskType type = 1;
 
-  bool encrypted = 11;
+  // (已废弃)
+  bool encrypted = 11 [deprecated = true];
 
   // 盘位（仅当 type 为 Data 时才有效）
   int32 slot = 2;
@@ -130,8 +131,8 @@ message DiskInfo {
   // 磁盘容量（字节）（如果该值为 0，则表示该盘位未插盘）
   int64 size = 5;
 
-  // 剩余空间（字节）
-  int64 free = 6;
+  // 剩余空间（字节）(已废弃)
+  int64 free = 6 [deprecated = true];
 
   // 温度
   int32 temperature = 7;
@@ -153,6 +154,12 @@ message DiskInfo {
 
 message DisksInfo {
   repeated DiskInfo disks = 1;
+  bool data_disks_encrypted = 2;
+  bool data_disks_bcached = 3;
+  string data_disks_data_profile = 4;
+  string data_disks_metadata_profile = 5;
+  int64 data_disks_total_size = 6;
+  int64 data_disks_used_size = 7;
 }
 
 message ChangeDataDisksPasswordRequest {
