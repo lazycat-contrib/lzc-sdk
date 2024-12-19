@@ -107,16 +107,17 @@ message StatusInfo {
   enum StatusType {
     STOPPED = 0;
     STOPPING = 1;
-    BUILDING = 2;
-    DOWNLOADING = 3;
-    HOOKING = 4;
+    reserved 2; //BUILDING = 2;
+    reserved 3; //DOWNLOADING = 3;
+    reserved 4; //HOOKING = 4;
     STARTING = 5;
     RUNNING = 6;
-    INSUFFICIENT = 7;
+    reserved 7; //INSUFFICIENT = 7;
     PAUSED = 8;
-    DEAD = 9;
+    reserved 9; //DEAD = 9;
     ERROR = 10;
-    DISABLED = 11;
+    reserved 11; //DISABLED = 11;
+    NEED_SETUP = 12;
   }
   StatusType status = 1;
   string errMsg = 2;
