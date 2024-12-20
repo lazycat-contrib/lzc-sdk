@@ -54,6 +54,8 @@ message BoxInfo {
   int64 memory_free = 14;
   int64 memory_speed = 15;
   int64 fan_rpm = 16;
+  int64 data_mountpoint_total = 17;
+  int64 data_mountpoint_used = 18;
 }
 
 message ChangeDisplayNameRequest {
@@ -152,14 +154,26 @@ message DiskInfo {
   string health_reason = 10;
 }
 
+message DiskGroup {
+  enum GroupType {
+    Unknown = 0;
+    System = 1;
+    Data = 2;
+  }
+  GroupType type = 1;
+  repeated DiskInfo disks = 2;
+  bool encrypted = 3;
+  bool bcached = 4;
+  string data_profile = 5;
+  string metadata_profile = 6;
+  int64 total_size = 7;
+  int64 used_size = 8;
+  string mountpoint = 9;
+}
+
 message DisksInfo {
   repeated DiskInfo disks = 1;
-  bool data_disks_encrypted = 2;
-  bool data_disks_bcached = 3;
-  string data_disks_data_profile = 4;
-  string data_disks_metadata_profile = 5;
-  int64 data_disks_total_size = 6;
-  int64 data_disks_used_size = 7;
+  repeated DiskGroup groups = 2;
 }
 
 message ChangeDataDisksPasswordRequest {
