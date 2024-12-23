@@ -31,6 +31,9 @@ service NetworkManager {
 
   // 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
   rpc WifiConfigAdd(WifiConfigInfo) returns (WifiConnectReply) {}
+
+  // nmcli networking connectivity check
+  rpc GetConnectivity(google.protobuf.Empty) returns (GetConnectivityReply) {}
 }
 
 message AccessPointInfo {
@@ -147,4 +150,15 @@ enum WifiConnectResult {
 
 message WifiConnectReply {
     WifiConnectResult result = 1;
+}
+
+message GetConnectivityReply {
+  enum Connectivity {
+    None = 0;
+    Portal = 1;
+    Limited = 2;
+    Full = 3;
+    Unknown = 4;
+  }
+  Connectivity connectivity = 1;
 }
