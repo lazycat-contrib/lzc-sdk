@@ -167,6 +167,11 @@ message GetConnectivityReply {
 }
 
 message CustomConnection {
-  // 计划是用 json 然后特殊处理一下 bytes
-  string value = 1;
+  // nmcli connection add
+  string args = 2;
+  message Upload {
+    string filename = 1;
+    bytes content = 2;
+  }
+  repeated Upload uploads = 3;
 }
