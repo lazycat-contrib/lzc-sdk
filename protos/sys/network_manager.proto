@@ -36,7 +36,7 @@ service NetworkManager {
   rpc GetConnectivity(google.protobuf.Empty) returns (GetConnectivityReply) {}
 
   // 添加自定义的连接，可以用来添加企业 wifi 或者其他奇形怪状的配置
-  rpc AddCustomConnection(CustomConnection) returns (google.protobuf.Empty) {}
+  rpc AddCustomConnection(CustomConnection) returns (AddCustomConnectionReply) {}
 }
 
 message AccessPointInfo {
@@ -174,4 +174,9 @@ message CustomConnection {
     bytes content = 2;
   }
   repeated Upload uploads = 3;
+}
+
+message AddCustomConnectionReply {
+  // 命令的输出
+  string out = 1;
 }
