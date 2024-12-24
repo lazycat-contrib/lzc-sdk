@@ -168,7 +168,7 @@ message GetConnectivityReply {
 
 message CustomConnection {
   // nmcli connection add
-  string args = 2;
+  repeated string args = 2;
   message Upload {
     string filename = 1;
     bytes content = 2;
