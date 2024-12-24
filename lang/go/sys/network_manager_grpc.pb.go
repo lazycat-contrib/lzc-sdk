@@ -56,7 +56,7 @@ type NetworkManagerClient interface {
 	// nmcli networking connectivity check
 	GetConnectivity(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetConnectivityReply, error)
 	// 添加自定义的连接，可以用来添加企业 wifi 或者其他奇形怪状的配置
-	AddCustomConnection(ctx context.Context, in *CustomConnection, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	AddCustomConnection(ctx context.Context, in *CustomConnection, opts ...grpc.CallOption) (*AddCustomConnectionReply, error)
 }
 
 type networkManagerClient struct {
@@ -139,8 +139,8 @@ func (c *networkManagerClient) GetConnectivity(ctx context.Context, in *emptypb.
 	return out, nil
 }
 
-func (c *networkManagerClient) AddCustomConnection(ctx context.Context, in *CustomConnection, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *networkManagerClient) AddCustomConnection(ctx context.Context, in *CustomConnection, opts ...grpc.CallOption) (*AddCustomConnectionReply, error) {
+	out := new(AddCustomConnectionReply)
 	err := c.cc.Invoke(ctx, NetworkManager_AddCustomConnection_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -173,7 +173,7 @@ type NetworkManagerServer interface {
 	// nmcli networking connectivity check
 	GetConnectivity(context.Context, *emptypb.Empty) (*GetConnectivityReply, error)
 	// 添加自定义的连接，可以用来添加企业 wifi 或者其他奇形怪状的配置
-	AddCustomConnection(context.Context, *CustomConnection) (*emptypb.Empty, error)
+	AddCustomConnection(context.Context, *CustomConnection) (*AddCustomConnectionReply, error)
 	mustEmbedUnimplementedNetworkManagerServer()
 }
 
@@ -205,7 +205,7 @@ func (UnimplementedNetworkManagerServer) WifiConfigAdd(context.Context, *WifiCon
 func (UnimplementedNetworkManagerServer) GetConnectivity(context.Context, *emptypb.Empty) (*GetConnectivityReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConnectivity not implemented")
 }
-func (UnimplementedNetworkManagerServer) AddCustomConnection(context.Context, *CustomConnection) (*emptypb.Empty, error) {
+func (UnimplementedNetworkManagerServer) AddCustomConnection(context.Context, *CustomConnection) (*AddCustomConnectionReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddCustomConnection not implemented")
 }
 func (UnimplementedNetworkManagerServer) mustEmbedUnimplementedNetworkManagerServer() {}
