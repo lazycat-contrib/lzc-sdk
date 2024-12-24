@@ -20,14 +20,15 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	NetworkManager_Status_FullMethodName          = "/cloud.lazycat.apis.sys.NetworkManager/Status"
-	NetworkManager_WifiScan_FullMethodName        = "/cloud.lazycat.apis.sys.NetworkManager/WifiScan"
-	NetworkManager_WifiList_FullMethodName        = "/cloud.lazycat.apis.sys.NetworkManager/WifiList"
-	NetworkManager_WifiConnect_FullMethodName     = "/cloud.lazycat.apis.sys.NetworkManager/WifiConnect"
-	NetworkManager_WifiConnectTemp_FullMethodName = "/cloud.lazycat.apis.sys.NetworkManager/WifiConnectTemp"
-	NetworkManager_WifiForget_FullMethodName      = "/cloud.lazycat.apis.sys.NetworkManager/WifiForget"
-	NetworkManager_WifiConfigAdd_FullMethodName   = "/cloud.lazycat.apis.sys.NetworkManager/WifiConfigAdd"
-	NetworkManager_GetConnectivity_FullMethodName = "/cloud.lazycat.apis.sys.NetworkManager/GetConnectivity"
+	NetworkManager_Status_FullMethodName              = "/cloud.lazycat.apis.sys.NetworkManager/Status"
+	NetworkManager_WifiScan_FullMethodName            = "/cloud.lazycat.apis.sys.NetworkManager/WifiScan"
+	NetworkManager_WifiList_FullMethodName            = "/cloud.lazycat.apis.sys.NetworkManager/WifiList"
+	NetworkManager_WifiConnect_FullMethodName         = "/cloud.lazycat.apis.sys.NetworkManager/WifiConnect"
+	NetworkManager_WifiConnectTemp_FullMethodName     = "/cloud.lazycat.apis.sys.NetworkManager/WifiConnectTemp"
+	NetworkManager_WifiForget_FullMethodName          = "/cloud.lazycat.apis.sys.NetworkManager/WifiForget"
+	NetworkManager_WifiConfigAdd_FullMethodName       = "/cloud.lazycat.apis.sys.NetworkManager/WifiConfigAdd"
+	NetworkManager_GetConnectivity_FullMethodName     = "/cloud.lazycat.apis.sys.NetworkManager/GetConnectivity"
+	NetworkManager_AddCustomConnection_FullMethodName = "/cloud.lazycat.apis.sys.NetworkManager/AddCustomConnection"
 )
 
 // NetworkManagerClient is the client API for NetworkManager service.
@@ -54,6 +55,8 @@ type NetworkManagerClient interface {
 	WifiConfigAdd(ctx context.Context, in *WifiConfigInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
 	// nmcli networking connectivity check
 	GetConnectivity(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetConnectivityReply, error)
+	// 添加自定义的连接，可以用来添加企业 wifi 或者其他奇形怪状的配置
+	AddCustomConnection(ctx context.Context, in *CustomConnection, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type networkManagerClient struct {
@@ -136,6 +139,15 @@ func (c *networkManagerClient) GetConnectivity(ctx context.Context, in *emptypb.
 	return out, nil
 }
 
+func (c *networkManagerClient) AddCustomConnection(ctx context.Context, in *CustomConnection, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, NetworkManager_AddCustomConnection_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NetworkManagerServer is the server API for NetworkManager service.
 // All implementations must embed UnimplementedNetworkManagerServer
 // for forward compatibility
@@ -160,6 +172,8 @@ type NetworkManagerServer interface {
 	WifiConfigAdd(context.Context, *WifiConfigInfo) (*WifiConnectReply, error)
 	// nmcli networking connectivity check
 	GetConnectivity(context.Context, *emptypb.Empty) (*GetConnectivityReply, error)
+	// 添加自定义的连接，可以用来添加企业 wifi 或者其他奇形怪状的配置
+	AddCustomConnection(context.Context, *CustomConnection) (*emptypb.Empty, error)
 	mustEmbedUnimplementedNetworkManagerServer()
 }
 
@@ -190,6 +204,9 @@ func (UnimplementedNetworkManagerServer) WifiConfigAdd(context.Context, *WifiCon
 }
 func (UnimplementedNetworkManagerServer) GetConnectivity(context.Context, *emptypb.Empty) (*GetConnectivityReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConnectivity not implemented")
+}
+func (UnimplementedNetworkManagerServer) AddCustomConnection(context.Context, *CustomConnection) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddCustomConnection not implemented")
 }
 func (UnimplementedNetworkManagerServer) mustEmbedUnimplementedNetworkManagerServer() {}
 
@@ -348,6 +365,24 @@ func _NetworkManager_GetConnectivity_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NetworkManager_AddCustomConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomConnection)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NetworkManagerServer).AddCustomConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NetworkManager_AddCustomConnection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NetworkManagerServer).AddCustomConnection(ctx, req.(*CustomConnection))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // NetworkManager_ServiceDesc is the grpc.ServiceDesc for NetworkManager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -386,6 +421,10 @@ var NetworkManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetConnectivity",
 			Handler:    _NetworkManager_GetConnectivity_Handler,
+		},
+		{
+			MethodName: "AddCustomConnection",
+			Handler:    _NetworkManager_AddCustomConnection_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
