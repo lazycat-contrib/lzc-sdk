@@ -35,8 +35,8 @@ service NetworkManager {
   // nmcli networking connectivity check
   rpc GetConnectivity(google.protobuf.Empty) returns (GetConnectivityReply) {}
 
-  // 添加自定义的连接，可以用来添加企业 wifi 或者其他奇形怪状的配置
-  rpc AddCustomConnection(CustomConnection) returns (AddCustomConnectionReply) {}
+  // 直接调用 nmcli
+  rpc NmcliCall(NmcliCallRequest) returns (NmcliCallReply) {}
 }
 
 message AccessPointInfo {
@@ -166,7 +166,7 @@ message GetConnectivityReply {
   Connectivity connectivity = 1;
 }
 
-message CustomConnection {
+message NmcliCallRequest {
   // nmcli connection add
   repeated string args = 2;
   message Upload {
@@ -176,7 +176,7 @@ message CustomConnection {
   repeated Upload uploads = 3;
 }
 
-message AddCustomConnectionReply {
+message NmcliCallReply {
   // 命令的输出
   string out = 1;
 }
