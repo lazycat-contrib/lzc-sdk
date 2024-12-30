@@ -63,7 +63,7 @@ if [ "$1" = "gen-protos" ]; then
     popd
     if [[ "$PROTOC_GEN_JS" -eq 1 ]]; then
         pushd lang/js/
-        # npm i # question: needs this?
+        # npm i --registry=https://registry.npmmirror.com # question: needs this?
         npm run build
         popd
     fi
@@ -108,6 +108,7 @@ fi
 # generate all
 if [ "$1" = "gen" ]; then
     inner_builder="docker run -it --network host --rm -w $(pwd) -v $(pwd):$(pwd) $IMAGE"
+    # export PATH="$PATH:/mnt/c/misc/code/lzc-api-protoc_20241230/usr/bin"; inner_builder='' # 在无 docker 的环境中（例如 WSL1）使用
     $inner_builder env NPM_CONFIG_UPDATE_NOTIFIER=false PROTOC_GEN_GO=1 PROTOC_GEN_JS=1 PROTOC_GEN_SWIFT=1 PROTOC_GEN_JAVA=0 ENABLE_JAR=0 ./build.sh gen-protos
     # 必须先生成 lang/go 的内容后才能生成 security content rules
     GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-w -s" -o protoc-gen-lzc tools/protoc-gen-lzc/permgen.go
