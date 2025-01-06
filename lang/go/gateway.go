@@ -38,7 +38,6 @@ type DeviceProxy struct {
 
 	Config        localdevice.UserConfigClient
 	Device        localdevice.DeviceServiceClient
-	Clipboard     localdevice.ClipboardManagerClient
 	Dialog        localdevice.DialogManagerClient
 	PhotoLibrary  localdevice.PhotoLibraryClient
 	Network       localdevice.NetworkManagerClient
@@ -78,7 +77,6 @@ func (gw *APIGateway) NewDeviceProxy(apiurl string) (*DeviceProxy, error) {
 
 		Config:        localdevice.NewUserConfigClient(conn),
 		Device:        localdevice.NewDeviceServiceClient(conn),
-		Clipboard:     localdevice.NewClipboardManagerClient(conn),
 		Dialog:        localdevice.NewDialogManagerClient(conn),
 		PhotoLibrary:  localdevice.NewPhotoLibraryClient(conn),
 		Network:       localdevice.NewNetworkManagerClient(conn),

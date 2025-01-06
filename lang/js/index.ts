@@ -12,7 +12,6 @@ import { AccessControlerService, AccessControlerServiceClientImpl } from "./sys/
 
 import { DialogManagerClientImpl, DialogManager } from "./localdevice/dialog"
 import { UserConfig, UserConfigClientImpl } from "./localdevice/config"
-import { ClipboardManagerClientImpl, ClipboardManager } from "./localdevice/clipboard"
 import { PhotoLibraryClientImpl, PhotoLibrary } from "./localdevice/photo"
 import { NetworkManagerClientImpl, NetworkManager } from "./localdevice/network"
 import { ContactsManager, ContactsManagerClientImpl } from "./localdevice/contacts"
@@ -197,7 +196,6 @@ export class EndDeviceProxy {
   constructor(rpc: GrpcWebImpl) {
     this.dialog = new DialogManagerClientImpl(rpc)
     this.config = new UserConfigClientImpl(rpc)
-    this.clipboard = new ClipboardManagerClientImpl(rpc)
     this.photolibrary = new PhotoLibraryClientImpl(rpc)
     this.network = new NetworkManagerClientImpl(rpc)
     this.device = new DeviceServiceClientImpl(rpc)
@@ -215,7 +213,6 @@ export class EndDeviceProxy {
   public device: DeviceService
   public dialog: DialogManager
   public config: UserConfig
-  public clipboard: ClipboardManager
   public photolibrary: PhotoLibrary
   public network: NetworkManager
   public fileHandler: FileHandler

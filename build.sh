@@ -53,7 +53,6 @@ if [ "$1" = "gen-protos" ]; then
     fi
     pushd protos
     PROTOC_ARGS+=(
-        ./sys/*/*.proto
         ./sys/*.proto
         ./localdevice/*.proto
         ./dlna/*.proto
@@ -90,7 +89,6 @@ if [ "$1" = "gen-security-content-rules" ]; then
     pushd protos
     protoc -I . \
         --lzc_out=$OUT_LZC \
-        ./sys/*/*.proto \
         ./sys/*.proto \
         ./localdevice/*.proto \
         ./common/*.proto
