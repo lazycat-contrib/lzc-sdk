@@ -106,7 +106,9 @@ fi
 # generate all
 if [ "$1" = "gen" ]; then
     inner_builder="docker run -it --network host --rm -w $(pwd) -v $(pwd):$(pwd) $IMAGE"
-    # export PATH="$PATH:/mnt/c/misc/code/lzc-api-protoc_20241230/usr/bin"; inner_builder='' # 在无 docker 的环境中（例如 WSL1）使用
+    if [ "$(uname -r)" = "4.4.0-26100-Microsoft" ]; then
+        export PATH="$PATH:/mnt/c/misc/code/lzc-api-protoc_20241230/usr/bin"; inner_builder='' # 在无 docker 的环境中（例如 WSL1）使用
+    fi
     $inner_builder env NPM_CONFIG_UPDATE_NOTIFIER=false PROTOC_GEN_GO=1 PROTOC_GEN_JS=1 PROTOC_GEN_SWIFT=1 PROTOC_GEN_JAVA=0 ENABLE_JAR=0 ./build.sh gen-protos
     # 必须先生成 lang/go 的内容后才能生成 security content rules
     GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-w -s" -o protoc-gen-lzc tools/protoc-gen-lzc/permgen.go
