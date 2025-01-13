@@ -28,6 +28,7 @@ const (
 	NetworkManager_WifiForget_FullMethodName      = "/cloud.lazycat.apis.sys.NetworkManager/WifiForget"
 	NetworkManager_WifiConfigAdd_FullMethodName   = "/cloud.lazycat.apis.sys.NetworkManager/WifiConfigAdd"
 	NetworkManager_GetConnectivity_FullMethodName = "/cloud.lazycat.apis.sys.NetworkManager/GetConnectivity"
+	NetworkManager_Connectivity_FullMethodName    = "/cloud.lazycat.apis.sys.NetworkManager/Connectivity"
 	NetworkManager_NmcliCall_FullMethodName       = "/cloud.lazycat.apis.sys.NetworkManager/NmcliCall"
 )
 
@@ -53,8 +54,10 @@ type NetworkManagerClient interface {
 	WifiForget(ctx context.Context, in *WifiForgetInfo, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
 	WifiConfigAdd(ctx context.Context, in *WifiConfigInfo, opts ...grpc.CallOption) (*WifiConnectReply, error)
-	// 假装自己是 nmcli networking connectivity check
-	GetConnectivity(ctx context.Context, in *GetConnectivityRequest, opts ...grpc.CallOption) (*GetConnectivityReply, error)
+	// (不建议使用) nmcli networking connectivity check
+	GetConnectivity(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetConnectivityReply, error)
+	// 自己实现的，返回格式和 nmcli networking connectivity check 一样
+	Connectivity(ctx context.Context, in *ConnectivityRequest, opts ...grpc.CallOption) (*ConnectivityReply, error)
 	// 直接调用 nmcli
 	NmcliCall(ctx context.Context, in *NmcliCallRequest, opts ...grpc.CallOption) (*NmcliCallReply, error)
 }
@@ -130,9 +133,18 @@ func (c *networkManagerClient) WifiConfigAdd(ctx context.Context, in *WifiConfig
 	return out, nil
 }
 
-func (c *networkManagerClient) GetConnectivity(ctx context.Context, in *GetConnectivityRequest, opts ...grpc.CallOption) (*GetConnectivityReply, error) {
+func (c *networkManagerClient) GetConnectivity(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetConnectivityReply, error) {
 	out := new(GetConnectivityReply)
 	err := c.cc.Invoke(ctx, NetworkManager_GetConnectivity_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *networkManagerClient) Connectivity(ctx context.Context, in *ConnectivityRequest, opts ...grpc.CallOption) (*ConnectivityReply, error) {
+	out := new(ConnectivityReply)
+	err := c.cc.Invoke(ctx, NetworkManager_Connectivity_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -170,8 +182,10 @@ type NetworkManagerServer interface {
 	WifiForget(context.Context, *WifiForgetInfo) (*emptypb.Empty, error)
 	// 手动添加和连接一个 wifi 热点配置（用于连接隐藏网络）
 	WifiConfigAdd(context.Context, *WifiConfigInfo) (*WifiConnectReply, error)
-	// 假装自己是 nmcli networking connectivity check
-	GetConnectivity(context.Context, *GetConnectivityRequest) (*GetConnectivityReply, error)
+	// (不建议使用) nmcli networking connectivity check
+	GetConnectivity(context.Context, *emptypb.Empty) (*GetConnectivityReply, error)
+	// 自己实现的，返回格式和 nmcli networking connectivity check 一样
+	Connectivity(context.Context, *ConnectivityRequest) (*ConnectivityReply, error)
 	// 直接调用 nmcli
 	NmcliCall(context.Context, *NmcliCallRequest) (*NmcliCallReply, error)
 	mustEmbedUnimplementedNetworkManagerServer()
@@ -202,8 +216,11 @@ func (UnimplementedNetworkManagerServer) WifiForget(context.Context, *WifiForget
 func (UnimplementedNetworkManagerServer) WifiConfigAdd(context.Context, *WifiConfigInfo) (*WifiConnectReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WifiConfigAdd not implemented")
 }
-func (UnimplementedNetworkManagerServer) GetConnectivity(context.Context, *GetConnectivityRequest) (*GetConnectivityReply, error) {
+func (UnimplementedNetworkManagerServer) GetConnectivity(context.Context, *emptypb.Empty) (*GetConnectivityReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConnectivity not implemented")
+}
+func (UnimplementedNetworkManagerServer) Connectivity(context.Context, *ConnectivityRequest) (*ConnectivityReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Connectivity not implemented")
 }
 func (UnimplementedNetworkManagerServer) NmcliCall(context.Context, *NmcliCallRequest) (*NmcliCallReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NmcliCall not implemented")
@@ -348,7 +365,7 @@ func _NetworkManager_WifiConfigAdd_Handler(srv interface{}, ctx context.Context,
 }
 
 func _NetworkManager_GetConnectivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetConnectivityRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -360,7 +377,25 @@ func _NetworkManager_GetConnectivity_Handler(srv interface{}, ctx context.Contex
 		FullMethod: NetworkManager_GetConnectivity_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NetworkManagerServer).GetConnectivity(ctx, req.(*GetConnectivityRequest))
+		return srv.(NetworkManagerServer).GetConnectivity(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NetworkManager_Connectivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConnectivityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NetworkManagerServer).Connectivity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NetworkManager_Connectivity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NetworkManagerServer).Connectivity(ctx, req.(*ConnectivityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -421,6 +456,10 @@ var NetworkManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetConnectivity",
 			Handler:    _NetworkManager_GetConnectivity_Handler,
+		},
+		{
+			MethodName: "Connectivity",
+			Handler:    _NetworkManager_Connectivity_Handler,
 		},
 		{
 			MethodName: "NmcliCall",
