@@ -16,6 +16,19 @@ unsupported_platforms: # 不支持的平台, 不写则表示全平台支持. lpk
   - ios
   - tvos
 
+locales:
+  zh:
+    name: "测试abc"
+    description: "简单易用的英语学习软件"
+  zh_CN:
+    name: "测试abc/zh_CN"
+    description: "简单易用的英语学习软件/zh_CN"
+  en:
+    name: "test abc"
+    description: "simple and easy-to-use english learning software"
+  ja:
+    name: "テストABC"
+    description: "シンプルで使いやすい英語学習ソフト"
 
 #application作为一个特殊的container运行，对应的service名称为固定的`app`，其他service可以通过此名称与app进行通讯
 application:
@@ -81,7 +94,6 @@ application:
     error_page_templates:
       502: /lzcapp/pkg/content/errors/502.html.tpl
       404: /lzcapp/pkg/content/errors/404.html.tpl
-
 
 
 services: #传统docker镜像启动方式，如果需要数据库等配套容器一起运行则可以在这里申明。传统app如nextcloud、aria2c也可以使用这种方式进行兼容运行
