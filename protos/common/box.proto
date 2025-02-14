@@ -58,6 +58,8 @@ message BoxInfo {
   int64 fan_rpm = 16;
   int64 data_mountpoint_total = 17;
   int64 data_mountpoint_used = 18;
+  uint64 disks_read_bytes = 21;
+  uint64 disks_write_bytes = 22;
 }
 
 message ChangeDisplayNameRequest {
