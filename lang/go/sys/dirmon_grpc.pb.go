@@ -19,14 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	DirMonitor_FindNew_FullMethodName = "/cloud.lazycat.apis.sys.DirMonitor/FindNew"
+	DirMonitor_FindNew_FullMethodName       = "/cloud.lazycat.apis.sys.DirMonitor/FindNew"
+	DirMonitor_FindNewStream_FullMethodName = "/cloud.lazycat.apis.sys.DirMonitor/FindNewStream"
 )
 
 // DirMonitorClient is the client API for DirMonitor service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DirMonitorClient interface {
-	FindNew(ctx context.Context, in *DirMonitorFindNewRequest, opts ...grpc.CallOption) (DirMonitor_FindNewClient, error)
+	FindNew(ctx context.Context, in *DirMonitorFindNewRequest, opts ...grpc.CallOption) (*DirMonitorFindNewResponse, error)
+	FindNewStream(ctx context.Context, in *DirMonitorFindNewRequest, opts ...grpc.CallOption) (DirMonitor_FindNewStreamClient, error)
 }
 
 type dirMonitorClient struct {
@@ -37,12 +39,21 @@ func NewDirMonitorClient(cc grpc.ClientConnInterface) DirMonitorClient {
 	return &dirMonitorClient{cc}
 }
 
-func (c *dirMonitorClient) FindNew(ctx context.Context, in *DirMonitorFindNewRequest, opts ...grpc.CallOption) (DirMonitor_FindNewClient, error) {
-	stream, err := c.cc.NewStream(ctx, &DirMonitor_ServiceDesc.Streams[0], DirMonitor_FindNew_FullMethodName, opts...)
+func (c *dirMonitorClient) FindNew(ctx context.Context, in *DirMonitorFindNewRequest, opts ...grpc.CallOption) (*DirMonitorFindNewResponse, error) {
+	out := new(DirMonitorFindNewResponse)
+	err := c.cc.Invoke(ctx, DirMonitor_FindNew_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &dirMonitorFindNewClient{stream}
+	return out, nil
+}
+
+func (c *dirMonitorClient) FindNewStream(ctx context.Context, in *DirMonitorFindNewRequest, opts ...grpc.CallOption) (DirMonitor_FindNewStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &DirMonitor_ServiceDesc.Streams[0], DirMonitor_FindNewStream_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &dirMonitorFindNewStreamClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -52,17 +63,17 @@ func (c *dirMonitorClient) FindNew(ctx context.Context, in *DirMonitorFindNewReq
 	return x, nil
 }
 
-type DirMonitor_FindNewClient interface {
-	Recv() (*DirMonitorFindNewResponse, error)
+type DirMonitor_FindNewStreamClient interface {
+	Recv() (*StreamDirMonitorFindNewResp, error)
 	grpc.ClientStream
 }
 
-type dirMonitorFindNewClient struct {
+type dirMonitorFindNewStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *dirMonitorFindNewClient) Recv() (*DirMonitorFindNewResponse, error) {
-	m := new(DirMonitorFindNewResponse)
+func (x *dirMonitorFindNewStreamClient) Recv() (*StreamDirMonitorFindNewResp, error) {
+	m := new(StreamDirMonitorFindNewResp)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -73,7 +84,8 @@ func (x *dirMonitorFindNewClient) Recv() (*DirMonitorFindNewResponse, error) {
 // All implementations must embed UnimplementedDirMonitorServer
 // for forward compatibility
 type DirMonitorServer interface {
-	FindNew(*DirMonitorFindNewRequest, DirMonitor_FindNewServer) error
+	FindNew(context.Context, *DirMonitorFindNewRequest) (*DirMonitorFindNewResponse, error)
+	FindNewStream(*DirMonitorFindNewRequest, DirMonitor_FindNewStreamServer) error
 	mustEmbedUnimplementedDirMonitorServer()
 }
 
@@ -81,8 +93,11 @@ type DirMonitorServer interface {
 type UnimplementedDirMonitorServer struct {
 }
 
-func (UnimplementedDirMonitorServer) FindNew(*DirMonitorFindNewRequest, DirMonitor_FindNewServer) error {
-	return status.Errorf(codes.Unimplemented, "method FindNew not implemented")
+func (UnimplementedDirMonitorServer) FindNew(context.Context, *DirMonitorFindNewRequest) (*DirMonitorFindNewResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindNew not implemented")
+}
+func (UnimplementedDirMonitorServer) FindNewStream(*DirMonitorFindNewRequest, DirMonitor_FindNewStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method FindNewStream not implemented")
 }
 func (UnimplementedDirMonitorServer) mustEmbedUnimplementedDirMonitorServer() {}
 
@@ -97,24 +112,42 @@ func RegisterDirMonitorServer(s grpc.ServiceRegistrar, srv DirMonitorServer) {
 	s.RegisterService(&DirMonitor_ServiceDesc, srv)
 }
 
-func _DirMonitor_FindNew_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _DirMonitor_FindNew_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DirMonitorFindNewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DirMonitorServer).FindNew(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DirMonitor_FindNew_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DirMonitorServer).FindNew(ctx, req.(*DirMonitorFindNewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DirMonitor_FindNewStream_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(DirMonitorFindNewRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(DirMonitorServer).FindNew(m, &dirMonitorFindNewServer{stream})
+	return srv.(DirMonitorServer).FindNewStream(m, &dirMonitorFindNewStreamServer{stream})
 }
 
-type DirMonitor_FindNewServer interface {
-	Send(*DirMonitorFindNewResponse) error
+type DirMonitor_FindNewStreamServer interface {
+	Send(*StreamDirMonitorFindNewResp) error
 	grpc.ServerStream
 }
 
-type dirMonitorFindNewServer struct {
+type dirMonitorFindNewStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *dirMonitorFindNewServer) Send(m *DirMonitorFindNewResponse) error {
+func (x *dirMonitorFindNewStreamServer) Send(m *StreamDirMonitorFindNewResp) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -124,11 +157,16 @@ func (x *dirMonitorFindNewServer) Send(m *DirMonitorFindNewResponse) error {
 var DirMonitor_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "cloud.lazycat.apis.sys.DirMonitor",
 	HandlerType: (*DirMonitorServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "FindNew",
+			Handler:    _DirMonitor_FindNew_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "FindNew",
-			Handler:       _DirMonitor_FindNew_Handler,
+			StreamName:    "FindNewStream",
+			Handler:       _DirMonitor_FindNewStream_Handler,
 			ServerStreams: true,
 		},
 	},
