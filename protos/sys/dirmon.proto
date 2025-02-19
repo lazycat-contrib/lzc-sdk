@@ -29,9 +29,6 @@ message StreamDirMonitorFindNewResp {
     // 与DirMonitorFindNewResponse相同
     // 但是为了应对过多文件传输超出grpc传输
     // 上限, 因此改为stream传输
-    string files = 1;
-    // 返回剩余的文件数量
-    int64 remains = 2;
-    // 节省传输开销, 仅在第一次传输
-    optional bytes token = 3;
+    repeated string files = 1;
+    bytes token = 2;
 }
