@@ -20,18 +20,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	DevOptService_GetDeveloperOptions_FullMethodName = "/cloud.lazycat.apis.sys.DevOptService/GetDeveloperOptions"
-	DevOptService_SetDeveloperOptions_FullMethodName = "/cloud.lazycat.apis.sys.DevOptService/SetDeveloperOptions"
-	DevOptService_SshdEnable_FullMethodName          = "/cloud.lazycat.apis.sys.DevOptService/SshdEnable"
-	DevOptService_SshdEnabled_FullMethodName         = "/cloud.lazycat.apis.sys.DevOptService/SshdEnabled"
+	DevOptService_SshdEnable_FullMethodName  = "/cloud.lazycat.apis.sys.DevOptService/SshdEnable"
+	DevOptService_SshdEnabled_FullMethodName = "/cloud.lazycat.apis.sys.DevOptService/SshdEnabled"
 )
 
 // DevOptServiceClient is the client API for DevOptService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DevOptServiceClient interface {
-	GetDeveloperOptions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DeveloperOptions, error)
-	SetDeveloperOptions(ctx context.Context, in *DeveloperOptions, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SshdEnable(ctx context.Context, in *SshdEnableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SshdEnabled(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*EnableSshdResponse, error)
 }
@@ -42,24 +38,6 @@ type devOptServiceClient struct {
 
 func NewDevOptServiceClient(cc grpc.ClientConnInterface) DevOptServiceClient {
 	return &devOptServiceClient{cc}
-}
-
-func (c *devOptServiceClient) GetDeveloperOptions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DeveloperOptions, error) {
-	out := new(DeveloperOptions)
-	err := c.cc.Invoke(ctx, DevOptService_GetDeveloperOptions_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *devOptServiceClient) SetDeveloperOptions(ctx context.Context, in *DeveloperOptions, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, DevOptService_SetDeveloperOptions_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *devOptServiceClient) SshdEnable(ctx context.Context, in *SshdEnableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
@@ -84,8 +62,6 @@ func (c *devOptServiceClient) SshdEnabled(ctx context.Context, in *emptypb.Empty
 // All implementations must embed UnimplementedDevOptServiceServer
 // for forward compatibility
 type DevOptServiceServer interface {
-	GetDeveloperOptions(context.Context, *emptypb.Empty) (*DeveloperOptions, error)
-	SetDeveloperOptions(context.Context, *DeveloperOptions) (*emptypb.Empty, error)
 	SshdEnable(context.Context, *SshdEnableRequest) (*emptypb.Empty, error)
 	SshdEnabled(context.Context, *emptypb.Empty) (*EnableSshdResponse, error)
 	mustEmbedUnimplementedDevOptServiceServer()
@@ -95,12 +71,6 @@ type DevOptServiceServer interface {
 type UnimplementedDevOptServiceServer struct {
 }
 
-func (UnimplementedDevOptServiceServer) GetDeveloperOptions(context.Context, *emptypb.Empty) (*DeveloperOptions, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDeveloperOptions not implemented")
-}
-func (UnimplementedDevOptServiceServer) SetDeveloperOptions(context.Context, *DeveloperOptions) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetDeveloperOptions not implemented")
-}
 func (UnimplementedDevOptServiceServer) SshdEnable(context.Context, *SshdEnableRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SshdEnable not implemented")
 }
@@ -118,42 +88,6 @@ type UnsafeDevOptServiceServer interface {
 
 func RegisterDevOptServiceServer(s grpc.ServiceRegistrar, srv DevOptServiceServer) {
 	s.RegisterService(&DevOptService_ServiceDesc, srv)
-}
-
-func _DevOptService_GetDeveloperOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DevOptServiceServer).GetDeveloperOptions(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DevOptService_GetDeveloperOptions_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DevOptServiceServer).GetDeveloperOptions(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DevOptService_SetDeveloperOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeveloperOptions)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DevOptServiceServer).SetDeveloperOptions(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DevOptService_SetDeveloperOptions_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DevOptServiceServer).SetDeveloperOptions(ctx, req.(*DeveloperOptions))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _DevOptService_SshdEnable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -199,14 +133,6 @@ var DevOptService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "cloud.lazycat.apis.sys.DevOptService",
 	HandlerType: (*DevOptServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "GetDeveloperOptions",
-			Handler:    _DevOptService_GetDeveloperOptions_Handler,
-		},
-		{
-			MethodName: "SetDeveloperOptions",
-			Handler:    _DevOptService_SetDeveloperOptions_Handler,
-		},
 		{
 			MethodName: "SshdEnable",
 			Handler:    _DevOptService_SshdEnable_Handler,

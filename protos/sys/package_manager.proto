@@ -65,6 +65,17 @@ service PackageManager {
 
   // 列出可以打开指定 MIME 类型的应用
   rpc ListFileHandler(ListFileHandlerRequest) returns (ListFileHandlerResponse) {}
+
+  // 请求停止自身的lzcapp实例，仅lzcapp内部可调用，多实例仅停止自身实例
+  rpc StopMySelf(StopMySelfRequest) returns (RestartMySelfResponse) {}
+}
+
+message StopMySelfRequest {
+  // 停止后是否重新拉起
+  bool need_restart = 1;
+}
+
+message RestartMySelfResponse {
 }
 
 message PkgURL {

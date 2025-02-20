@@ -34,6 +34,7 @@ const (
 	PackageManager_PauseAppDownload_FullMethodName     = "/cloud.lazycat.apis.sys.PackageManager/PauseAppDownload"
 	PackageManager_GetActionURL_FullMethodName         = "/cloud.lazycat.apis.sys.PackageManager/GetActionURL"
 	PackageManager_ListFileHandler_FullMethodName      = "/cloud.lazycat.apis.sys.PackageManager/ListFileHandler"
+	PackageManager_StopMySelf_FullMethodName           = "/cloud.lazycat.apis.sys.PackageManager/StopMySelf"
 )
 
 // PackageManagerClient is the client API for PackageManager service.
@@ -68,6 +69,8 @@ type PackageManagerClient interface {
 	GetActionURL(ctx context.Context, in *GetActionURLRequest, opts ...grpc.CallOption) (*GetActionURLResponse, error)
 	// 列出可以打开指定 MIME 类型的应用
 	ListFileHandler(ctx context.Context, in *ListFileHandlerRequest, opts ...grpc.CallOption) (*ListFileHandlerResponse, error)
+	// 请求停止自身的lzcapp实例，仅lzcapp内部可调用，多实例仅停止自身实例
+	StopMySelf(ctx context.Context, in *StopMySelfRequest, opts ...grpc.CallOption) (*RestartMySelfResponse, error)
 }
 
 type packageManagerClient struct {
@@ -204,6 +207,15 @@ func (c *packageManagerClient) ListFileHandler(ctx context.Context, in *ListFile
 	return out, nil
 }
 
+func (c *packageManagerClient) StopMySelf(ctx context.Context, in *StopMySelfRequest, opts ...grpc.CallOption) (*RestartMySelfResponse, error) {
+	out := new(RestartMySelfResponse)
+	err := c.cc.Invoke(ctx, PackageManager_StopMySelf_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PackageManagerServer is the server API for PackageManager service.
 // All implementations must embed UnimplementedPackageManagerServer
 // for forward compatibility
@@ -236,6 +248,8 @@ type PackageManagerServer interface {
 	GetActionURL(context.Context, *GetActionURLRequest) (*GetActionURLResponse, error)
 	// 列出可以打开指定 MIME 类型的应用
 	ListFileHandler(context.Context, *ListFileHandlerRequest) (*ListFileHandlerResponse, error)
+	// 请求停止自身的lzcapp实例，仅lzcapp内部可调用，多实例仅停止自身实例
+	StopMySelf(context.Context, *StopMySelfRequest) (*RestartMySelfResponse, error)
 	mustEmbedUnimplementedPackageManagerServer()
 }
 
@@ -284,6 +298,9 @@ func (UnimplementedPackageManagerServer) GetActionURL(context.Context, *GetActio
 }
 func (UnimplementedPackageManagerServer) ListFileHandler(context.Context, *ListFileHandlerRequest) (*ListFileHandlerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListFileHandler not implemented")
+}
+func (UnimplementedPackageManagerServer) StopMySelf(context.Context, *StopMySelfRequest) (*RestartMySelfResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StopMySelf not implemented")
 }
 func (UnimplementedPackageManagerServer) mustEmbedUnimplementedPackageManagerServer() {}
 
@@ -550,6 +567,24 @@ func _PackageManager_ListFileHandler_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PackageManager_StopMySelf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StopMySelfRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).StopMySelf(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PackageManager_StopMySelf_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).StopMySelf(ctx, req.(*StopMySelfRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PackageManager_ServiceDesc is the grpc.ServiceDesc for PackageManager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -612,6 +647,10 @@ var PackageManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListFileHandler",
 			Handler:    _PackageManager_ListFileHandler_Handler,
+		},
+		{
+			MethodName: "StopMySelf",
+			Handler:    _PackageManager_StopMySelf_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
