@@ -156,6 +156,9 @@ message DiskInfo {
 
   // 健康状态理由
   string health_reason = 10;
+
+  // 可以是 single、dup、raid0、raid1 等等
+  string btrfs_profile = 12;
 }
 
 message DiskGroup {
