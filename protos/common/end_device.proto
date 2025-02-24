@@ -49,6 +49,14 @@ message EndDevice {
 
   // 本次登录的时间戳(如果is_online=true)
   google.protobuf.Timestamp login_time = 10;
+
+  // 设备设置的语言(e.g. zh-Hans)
+  // https://www.rfc-editor.org/rfc/rfc5646
+  string lang = 11;
+
+  // 设备设置的市区
+  // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  string time_zone = 12;
 }
 
 message ListEndDeviceRequest {
