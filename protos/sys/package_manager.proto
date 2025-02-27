@@ -42,6 +42,15 @@ service PackageManager {
   // 查询用户安装的特定应用的详情
   rpc QueryApplication(QueryApplicationRequest) returns (QueryApplicationResponse) {}
 
+  // 类似QueryApplication，但是不包含AppDownloadProgress等频繁变化的值
+  rpc ApplicationInfo(ApplicationInfoRequest) returns (ApplicationInfoResponse) {}
+
+  // 监听应用安装，卸载事件
+  rpc SubscribeAppChange(SubscribeAppChangeRequest) returns (stream SubscribeAppChangeResponse) {}
+
+  // 获取应用下载进度
+  rpc GetAppDownloadProgress(GetAppDownloadProgressRequest) returns (GetAppDownloadProgressResponse) {}
+
   // 获取应用占用的存储空间详情
   rpc QueryAppStorageUsage(QueryAppStorageUsageRequest) returns (AppStorageUsage) {}
 
@@ -287,4 +296,63 @@ message ListFileHandlerResponse {
 message AppInstance {
   string appid = 1;
   string uid = 2;
+}
+
+message ApplicationInfoRequest {
+  // 需要查询的 AppId 的列表，如果列表为空，则查询所有的应用
+  repeated string appid_list = 1;
+}
+
+message ApplicationInfoResponse {
+  repeated ApplicationInfo info_list = 1;
+}
+
+message ApplicationInfo {
+  string appid = 1;
+
+  // 应用当前的安装状态
+  AppStatus status = 2;
+
+  // 应用当前的运行状态
+  InstanceStatus instance_status = 3;
+
+  bool multi_instance = 4;
+
+  optional string title = 5;
+
+  optional string version = 6;
+
+  optional string description = 7;
+
+  // 应用图标所在的 url，如 https://$boxdomain/sys/icons/$appid.png
+  // 若应用无图标，则为空
+  optional string icon = 8;
+
+  // 应用所在的域名，如 app.box.heiyu.space
+  optional string domain = 9;
+
+  // 应用是否是预装应用（预装应用不可卸载）
+  optional bool builtin = 10;
+
+  // 如果应用状态为安装失败，失败的原因（如果状态不是失败则为空）
+  optional string error_reason = 11;
+
+  repeated string unsupported_platforms = 12;
+}
+
+message SubscribeAppChangeRequest {
+  // 需要查询的 AppId 的列表，如果列表为空，则查询所有的应用
+  repeated string appid_list = 1;
+}
+
+message SubscribeAppChangeResponse {
+}
+
+message GetAppDownloadProgressRequest {
+  // 需要查询的 AppId 的列表，如果列表为空，则查询所有的应用
+  repeated string appid_list = 1;
+}
+
+message GetAppDownloadProgressResponse {
+  map <string, AppDownloadProgress> progresses = 1;
 }

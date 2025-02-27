@@ -20,21 +20,24 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PackageManager_Install_FullMethodName              = "/cloud.lazycat.apis.sys.PackageManager/Install"
-	PackageManager_Uninstall_FullMethodName            = "/cloud.lazycat.apis.sys.PackageManager/Uninstall"
-	PackageManager_Pause_FullMethodName                = "/cloud.lazycat.apis.sys.PackageManager/Pause"
-	PackageManager_Resume_FullMethodName               = "/cloud.lazycat.apis.sys.PackageManager/Resume"
-	PackageManager_ClearCache_FullMethodName           = "/cloud.lazycat.apis.sys.PackageManager/ClearCache"
-	PackageManager_GetAppCfg_FullMethodName            = "/cloud.lazycat.apis.sys.PackageManager/GetAppCfg"
-	PackageManager_SetAppCfg_FullMethodName            = "/cloud.lazycat.apis.sys.PackageManager/SetAppCfg"
-	PackageManager_QueryApplication_FullMethodName     = "/cloud.lazycat.apis.sys.PackageManager/QueryApplication"
-	PackageManager_QueryAppStorageUsage_FullMethodName = "/cloud.lazycat.apis.sys.PackageManager/QueryAppStorageUsage"
-	PackageManager_SetUserPermissions_FullMethodName   = "/cloud.lazycat.apis.sys.PackageManager/SetUserPermissions"
-	PackageManager_GetUserPermissions_FullMethodName   = "/cloud.lazycat.apis.sys.PackageManager/GetUserPermissions"
-	PackageManager_PauseAppDownload_FullMethodName     = "/cloud.lazycat.apis.sys.PackageManager/PauseAppDownload"
-	PackageManager_GetActionURL_FullMethodName         = "/cloud.lazycat.apis.sys.PackageManager/GetActionURL"
-	PackageManager_ListFileHandler_FullMethodName      = "/cloud.lazycat.apis.sys.PackageManager/ListFileHandler"
-	PackageManager_StopMySelf_FullMethodName           = "/cloud.lazycat.apis.sys.PackageManager/StopMySelf"
+	PackageManager_Install_FullMethodName                = "/cloud.lazycat.apis.sys.PackageManager/Install"
+	PackageManager_Uninstall_FullMethodName              = "/cloud.lazycat.apis.sys.PackageManager/Uninstall"
+	PackageManager_Pause_FullMethodName                  = "/cloud.lazycat.apis.sys.PackageManager/Pause"
+	PackageManager_Resume_FullMethodName                 = "/cloud.lazycat.apis.sys.PackageManager/Resume"
+	PackageManager_ClearCache_FullMethodName             = "/cloud.lazycat.apis.sys.PackageManager/ClearCache"
+	PackageManager_GetAppCfg_FullMethodName              = "/cloud.lazycat.apis.sys.PackageManager/GetAppCfg"
+	PackageManager_SetAppCfg_FullMethodName              = "/cloud.lazycat.apis.sys.PackageManager/SetAppCfg"
+	PackageManager_QueryApplication_FullMethodName       = "/cloud.lazycat.apis.sys.PackageManager/QueryApplication"
+	PackageManager_ApplicationInfo_FullMethodName        = "/cloud.lazycat.apis.sys.PackageManager/ApplicationInfo"
+	PackageManager_SubscribeAppChange_FullMethodName     = "/cloud.lazycat.apis.sys.PackageManager/SubscribeAppChange"
+	PackageManager_GetAppDownloadProgress_FullMethodName = "/cloud.lazycat.apis.sys.PackageManager/GetAppDownloadProgress"
+	PackageManager_QueryAppStorageUsage_FullMethodName   = "/cloud.lazycat.apis.sys.PackageManager/QueryAppStorageUsage"
+	PackageManager_SetUserPermissions_FullMethodName     = "/cloud.lazycat.apis.sys.PackageManager/SetUserPermissions"
+	PackageManager_GetUserPermissions_FullMethodName     = "/cloud.lazycat.apis.sys.PackageManager/GetUserPermissions"
+	PackageManager_PauseAppDownload_FullMethodName       = "/cloud.lazycat.apis.sys.PackageManager/PauseAppDownload"
+	PackageManager_GetActionURL_FullMethodName           = "/cloud.lazycat.apis.sys.PackageManager/GetActionURL"
+	PackageManager_ListFileHandler_FullMethodName        = "/cloud.lazycat.apis.sys.PackageManager/ListFileHandler"
+	PackageManager_StopMySelf_FullMethodName             = "/cloud.lazycat.apis.sys.PackageManager/StopMySelf"
 )
 
 // PackageManagerClient is the client API for PackageManager service.
@@ -57,6 +60,12 @@ type PackageManagerClient interface {
 	SetAppCfg(ctx context.Context, in *SetAppCfgRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 查询用户安装的特定应用的详情
 	QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*QueryApplicationResponse, error)
+	// 类似QueryApplication，但是不包含AppDownloadProgress等频繁变化的值
+	ApplicationInfo(ctx context.Context, in *ApplicationInfoRequest, opts ...grpc.CallOption) (*ApplicationInfoResponse, error)
+	// 监听应用安装，卸载事件
+	SubscribeAppChange(ctx context.Context, in *SubscribeAppChangeRequest, opts ...grpc.CallOption) (PackageManager_SubscribeAppChangeClient, error)
+	// 获取应用下载进度
+	GetAppDownloadProgress(ctx context.Context, in *GetAppDownloadProgressRequest, opts ...grpc.CallOption) (*GetAppDownloadProgressResponse, error)
 	// 获取应用占用的存储空间详情
 	QueryAppStorageUsage(ctx context.Context, in *QueryAppStorageUsageRequest, opts ...grpc.CallOption) (*AppStorageUsage, error)
 	// 设置某个用户是否可以安装应用
@@ -153,6 +162,56 @@ func (c *packageManagerClient) QueryApplication(ctx context.Context, in *QueryAp
 	return out, nil
 }
 
+func (c *packageManagerClient) ApplicationInfo(ctx context.Context, in *ApplicationInfoRequest, opts ...grpc.CallOption) (*ApplicationInfoResponse, error) {
+	out := new(ApplicationInfoResponse)
+	err := c.cc.Invoke(ctx, PackageManager_ApplicationInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *packageManagerClient) SubscribeAppChange(ctx context.Context, in *SubscribeAppChangeRequest, opts ...grpc.CallOption) (PackageManager_SubscribeAppChangeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PackageManager_ServiceDesc.Streams[0], PackageManager_SubscribeAppChange_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &packageManagerSubscribeAppChangeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PackageManager_SubscribeAppChangeClient interface {
+	Recv() (*SubscribeAppChangeResponse, error)
+	grpc.ClientStream
+}
+
+type packageManagerSubscribeAppChangeClient struct {
+	grpc.ClientStream
+}
+
+func (x *packageManagerSubscribeAppChangeClient) Recv() (*SubscribeAppChangeResponse, error) {
+	m := new(SubscribeAppChangeResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *packageManagerClient) GetAppDownloadProgress(ctx context.Context, in *GetAppDownloadProgressRequest, opts ...grpc.CallOption) (*GetAppDownloadProgressResponse, error) {
+	out := new(GetAppDownloadProgressResponse)
+	err := c.cc.Invoke(ctx, PackageManager_GetAppDownloadProgress_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *packageManagerClient) QueryAppStorageUsage(ctx context.Context, in *QueryAppStorageUsageRequest, opts ...grpc.CallOption) (*AppStorageUsage, error) {
 	out := new(AppStorageUsage)
 	err := c.cc.Invoke(ctx, PackageManager_QueryAppStorageUsage_FullMethodName, in, out, opts...)
@@ -236,6 +295,12 @@ type PackageManagerServer interface {
 	SetAppCfg(context.Context, *SetAppCfgRequest) (*emptypb.Empty, error)
 	// 查询用户安装的特定应用的详情
 	QueryApplication(context.Context, *QueryApplicationRequest) (*QueryApplicationResponse, error)
+	// 类似QueryApplication，但是不包含AppDownloadProgress等频繁变化的值
+	ApplicationInfo(context.Context, *ApplicationInfoRequest) (*ApplicationInfoResponse, error)
+	// 监听应用安装，卸载事件
+	SubscribeAppChange(*SubscribeAppChangeRequest, PackageManager_SubscribeAppChangeServer) error
+	// 获取应用下载进度
+	GetAppDownloadProgress(context.Context, *GetAppDownloadProgressRequest) (*GetAppDownloadProgressResponse, error)
 	// 获取应用占用的存储空间详情
 	QueryAppStorageUsage(context.Context, *QueryAppStorageUsageRequest) (*AppStorageUsage, error)
 	// 设置某个用户是否可以安装应用
@@ -280,6 +345,15 @@ func (UnimplementedPackageManagerServer) SetAppCfg(context.Context, *SetAppCfgRe
 }
 func (UnimplementedPackageManagerServer) QueryApplication(context.Context, *QueryApplicationRequest) (*QueryApplicationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryApplication not implemented")
+}
+func (UnimplementedPackageManagerServer) ApplicationInfo(context.Context, *ApplicationInfoRequest) (*ApplicationInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApplicationInfo not implemented")
+}
+func (UnimplementedPackageManagerServer) SubscribeAppChange(*SubscribeAppChangeRequest, PackageManager_SubscribeAppChangeServer) error {
+	return status.Errorf(codes.Unimplemented, "method SubscribeAppChange not implemented")
+}
+func (UnimplementedPackageManagerServer) GetAppDownloadProgress(context.Context, *GetAppDownloadProgressRequest) (*GetAppDownloadProgressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppDownloadProgress not implemented")
 }
 func (UnimplementedPackageManagerServer) QueryAppStorageUsage(context.Context, *QueryAppStorageUsageRequest) (*AppStorageUsage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryAppStorageUsage not implemented")
@@ -459,6 +533,63 @@ func _PackageManager_QueryApplication_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PackageManager_ApplicationInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApplicationInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).ApplicationInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PackageManager_ApplicationInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).ApplicationInfo(ctx, req.(*ApplicationInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PackageManager_SubscribeAppChange_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SubscribeAppChangeRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PackageManagerServer).SubscribeAppChange(m, &packageManagerSubscribeAppChangeServer{stream})
+}
+
+type PackageManager_SubscribeAppChangeServer interface {
+	Send(*SubscribeAppChangeResponse) error
+	grpc.ServerStream
+}
+
+type packageManagerSubscribeAppChangeServer struct {
+	grpc.ServerStream
+}
+
+func (x *packageManagerSubscribeAppChangeServer) Send(m *SubscribeAppChangeResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _PackageManager_GetAppDownloadProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAppDownloadProgressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageManagerServer).GetAppDownloadProgress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PackageManager_GetAppDownloadProgress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageManagerServer).GetAppDownloadProgress(ctx, req.(*GetAppDownloadProgressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PackageManager_QueryAppStorageUsage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryAppStorageUsageRequest)
 	if err := dec(in); err != nil {
@@ -625,6 +756,14 @@ var PackageManager_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PackageManager_QueryApplication_Handler,
 		},
 		{
+			MethodName: "ApplicationInfo",
+			Handler:    _PackageManager_ApplicationInfo_Handler,
+		},
+		{
+			MethodName: "GetAppDownloadProgress",
+			Handler:    _PackageManager_GetAppDownloadProgress_Handler,
+		},
+		{
 			MethodName: "QueryAppStorageUsage",
 			Handler:    _PackageManager_QueryAppStorageUsage_Handler,
 		},
@@ -653,6 +792,12 @@ var PackageManager_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PackageManager_StopMySelf_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "SubscribeAppChange",
+			Handler:       _PackageManager_SubscribeAppChange_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "sys/package_manager.proto",
 }
