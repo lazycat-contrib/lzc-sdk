@@ -28,7 +28,6 @@ const (
 	PackageManager_GetAppCfg_FullMethodName              = "/cloud.lazycat.apis.sys.PackageManager/GetAppCfg"
 	PackageManager_SetAppCfg_FullMethodName              = "/cloud.lazycat.apis.sys.PackageManager/SetAppCfg"
 	PackageManager_QueryApplication_FullMethodName       = "/cloud.lazycat.apis.sys.PackageManager/QueryApplication"
-	PackageManager_ApplicationInfo_FullMethodName        = "/cloud.lazycat.apis.sys.PackageManager/ApplicationInfo"
 	PackageManager_SubscribeAppChange_FullMethodName     = "/cloud.lazycat.apis.sys.PackageManager/SubscribeAppChange"
 	PackageManager_GetAppDownloadProgress_FullMethodName = "/cloud.lazycat.apis.sys.PackageManager/GetAppDownloadProgress"
 	PackageManager_QueryAppStorageUsage_FullMethodName   = "/cloud.lazycat.apis.sys.PackageManager/QueryAppStorageUsage"
@@ -60,8 +59,6 @@ type PackageManagerClient interface {
 	SetAppCfg(ctx context.Context, in *SetAppCfgRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 查询用户安装的特定应用的详情
 	QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*QueryApplicationResponse, error)
-	// 类似QueryApplication，但是不包含AppDownloadProgress等频繁变化的值
-	ApplicationInfo(ctx context.Context, in *ApplicationInfoRequest, opts ...grpc.CallOption) (*ApplicationInfoResponse, error)
 	// 监听应用安装，卸载事件
 	SubscribeAppChange(ctx context.Context, in *SubscribeAppChangeRequest, opts ...grpc.CallOption) (PackageManager_SubscribeAppChangeClient, error)
 	// 获取应用下载进度
@@ -156,15 +153,6 @@ func (c *packageManagerClient) SetAppCfg(ctx context.Context, in *SetAppCfgReque
 func (c *packageManagerClient) QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*QueryApplicationResponse, error) {
 	out := new(QueryApplicationResponse)
 	err := c.cc.Invoke(ctx, PackageManager_QueryApplication_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *packageManagerClient) ApplicationInfo(ctx context.Context, in *ApplicationInfoRequest, opts ...grpc.CallOption) (*ApplicationInfoResponse, error) {
-	out := new(ApplicationInfoResponse)
-	err := c.cc.Invoke(ctx, PackageManager_ApplicationInfo_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -295,8 +283,6 @@ type PackageManagerServer interface {
 	SetAppCfg(context.Context, *SetAppCfgRequest) (*emptypb.Empty, error)
 	// 查询用户安装的特定应用的详情
 	QueryApplication(context.Context, *QueryApplicationRequest) (*QueryApplicationResponse, error)
-	// 类似QueryApplication，但是不包含AppDownloadProgress等频繁变化的值
-	ApplicationInfo(context.Context, *ApplicationInfoRequest) (*ApplicationInfoResponse, error)
 	// 监听应用安装，卸载事件
 	SubscribeAppChange(*SubscribeAppChangeRequest, PackageManager_SubscribeAppChangeServer) error
 	// 获取应用下载进度
@@ -345,9 +331,6 @@ func (UnimplementedPackageManagerServer) SetAppCfg(context.Context, *SetAppCfgRe
 }
 func (UnimplementedPackageManagerServer) QueryApplication(context.Context, *QueryApplicationRequest) (*QueryApplicationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryApplication not implemented")
-}
-func (UnimplementedPackageManagerServer) ApplicationInfo(context.Context, *ApplicationInfoRequest) (*ApplicationInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ApplicationInfo not implemented")
 }
 func (UnimplementedPackageManagerServer) SubscribeAppChange(*SubscribeAppChangeRequest, PackageManager_SubscribeAppChangeServer) error {
 	return status.Errorf(codes.Unimplemented, "method SubscribeAppChange not implemented")
@@ -529,24 +512,6 @@ func _PackageManager_QueryApplication_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PackageManagerServer).QueryApplication(ctx, req.(*QueryApplicationRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PackageManager_ApplicationInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ApplicationInfoRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PackageManagerServer).ApplicationInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PackageManager_ApplicationInfo_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PackageManagerServer).ApplicationInfo(ctx, req.(*ApplicationInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -754,10 +719,6 @@ var PackageManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QueryApplication",
 			Handler:    _PackageManager_QueryApplication_Handler,
-		},
-		{
-			MethodName: "ApplicationInfo",
-			Handler:    _PackageManager_ApplicationInfo_Handler,
 		},
 		{
 			MethodName: "GetAppDownloadProgress",
