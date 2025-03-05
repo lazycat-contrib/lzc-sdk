@@ -9,6 +9,8 @@ option go_package = "gitee.com/linakesi/lzc-sdk/lang/go/sys";
 
 message RunRequest {
   string image = 1;
+  string timezone = 2;
+  string language = 3;
 }
 
 message StatusResponse {
