@@ -57,6 +57,10 @@ message EndDevice {
   // 设备设置的市区
   // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   string time_zone = 12;
+
+  // 当前设备是否是Wifi连接
+  // 目前仅移动端实现了此接口，桌面端平台未实现
+  optional bool is_wifi = 13;
 }
 
 message ListEndDeviceRequest {
