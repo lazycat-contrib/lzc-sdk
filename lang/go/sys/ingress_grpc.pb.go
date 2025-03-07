@@ -192,7 +192,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserSessionServiceClient interface {
-	SubscribeEvent(ctx context.Context, in *SubscribeEventRequest, opts ...grpc.CallOption) (*SubscribeEventResponse, error)
+	SubscribeEvent(ctx context.Context, in *SubscribeEventRequest, opts ...grpc.CallOption) (UserSessionService_SubscribeEventClient, error)
 }
 
 type userSessionServiceClient struct {
@@ -203,20 +203,43 @@ func NewUserSessionServiceClient(cc grpc.ClientConnInterface) UserSessionService
 	return &userSessionServiceClient{cc}
 }
 
-func (c *userSessionServiceClient) SubscribeEvent(ctx context.Context, in *SubscribeEventRequest, opts ...grpc.CallOption) (*SubscribeEventResponse, error) {
-	out := new(SubscribeEventResponse)
-	err := c.cc.Invoke(ctx, UserSessionService_SubscribeEvent_FullMethodName, in, out, opts...)
+func (c *userSessionServiceClient) SubscribeEvent(ctx context.Context, in *SubscribeEventRequest, opts ...grpc.CallOption) (UserSessionService_SubscribeEventClient, error) {
+	stream, err := c.cc.NewStream(ctx, &UserSessionService_ServiceDesc.Streams[0], UserSessionService_SubscribeEvent_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &userSessionServiceSubscribeEventClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type UserSessionService_SubscribeEventClient interface {
+	Recv() (*SubscribeEventResponse, error)
+	grpc.ClientStream
+}
+
+type userSessionServiceSubscribeEventClient struct {
+	grpc.ClientStream
+}
+
+func (x *userSessionServiceSubscribeEventClient) Recv() (*SubscribeEventResponse, error) {
+	m := new(SubscribeEventResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // UserSessionServiceServer is the server API for UserSessionService service.
 // All implementations must embed UnimplementedUserSessionServiceServer
 // for forward compatibility
 type UserSessionServiceServer interface {
-	SubscribeEvent(context.Context, *SubscribeEventRequest) (*SubscribeEventResponse, error)
+	SubscribeEvent(*SubscribeEventRequest, UserSessionService_SubscribeEventServer) error
 	mustEmbedUnimplementedUserSessionServiceServer()
 }
 
@@ -224,8 +247,8 @@ type UserSessionServiceServer interface {
 type UnimplementedUserSessionServiceServer struct {
 }
 
-func (UnimplementedUserSessionServiceServer) SubscribeEvent(context.Context, *SubscribeEventRequest) (*SubscribeEventResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SubscribeEvent not implemented")
+func (UnimplementedUserSessionServiceServer) SubscribeEvent(*SubscribeEventRequest, UserSessionService_SubscribeEventServer) error {
+	return status.Errorf(codes.Unimplemented, "method SubscribeEvent not implemented")
 }
 func (UnimplementedUserSessionServiceServer) mustEmbedUnimplementedUserSessionServiceServer() {}
 
@@ -240,22 +263,25 @@ func RegisterUserSessionServiceServer(s grpc.ServiceRegistrar, srv UserSessionSe
 	s.RegisterService(&UserSessionService_ServiceDesc, srv)
 }
 
-func _UserSessionService_SubscribeEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubscribeEventRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+func _UserSessionService_SubscribeEvent_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SubscribeEventRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(UserSessionServiceServer).SubscribeEvent(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserSessionService_SubscribeEvent_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserSessionServiceServer).SubscribeEvent(ctx, req.(*SubscribeEventRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(UserSessionServiceServer).SubscribeEvent(m, &userSessionServiceSubscribeEventServer{stream})
+}
+
+type UserSessionService_SubscribeEventServer interface {
+	Send(*SubscribeEventResponse) error
+	grpc.ServerStream
+}
+
+type userSessionServiceSubscribeEventServer struct {
+	grpc.ServerStream
+}
+
+func (x *userSessionServiceSubscribeEventServer) Send(m *SubscribeEventResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 // UserSessionService_ServiceDesc is the grpc.ServiceDesc for UserSessionService service.
@@ -264,12 +290,13 @@ func _UserSessionService_SubscribeEvent_Handler(srv interface{}, ctx context.Con
 var UserSessionService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "cloud.lazycat.apis.sys.UserSessionService",
 	HandlerType: (*UserSessionServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "SubscribeEvent",
-			Handler:    _UserSessionService_SubscribeEvent_Handler,
+			StreamName:    "SubscribeEvent",
+			Handler:       _UserSessionService_SubscribeEvent_Handler,
+			ServerStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "sys/ingress.proto",
 }

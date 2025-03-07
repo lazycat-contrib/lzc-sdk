@@ -14,7 +14,7 @@ service AccessControlerService {
 }
 
 service UserSessionService {
-  rpc SubscribeEvent(SubscribeEventRequest) returns (SubscribeEventResponse);
+  rpc SubscribeEvent(SubscribeEventRequest) returns (stream SubscribeEventResponse);
 }
 
 message AppAccessPolicyRequest {
