@@ -453,6 +453,34 @@ class AppCommon extends LzcAppSdkManage {
 
     console.warn("当前环境不支持添加到主屏幕")
   }
+
+  /**
+   * @description: 刷新应用
+   * @param {string} url
+   * @param {string} appid
+   * @return {Promise<void>}
+   */
+  @native(LzcAppPlatformType.IOS, LzcAppPlatformType.Android)
+  public static async RefreshLightApp(appid: string): Promise<void> {
+    // 在 Android 环境中
+    if (LzcAppSdk.isAndroidWebShell()) {
+      const jsBridge = await LzcAppSdk.useNativeAsync(android_launch_service)
+      jsBridge.RefreshLightApp(
+        JSON.stringify({
+          appid: appid,
+        })
+      )
+      return
+    }
+
+    if (LzcAppSdk.isIosWebShell()) {
+      const jsBridge = await LzcAppSdk.useNativeAsync()
+      jsBridge.RefreshLightApp(appid)
+      return
+    }
+
+    console.warn("当前环境不支持刷新应用")
+  }
 }
 
 export * from "./client_authorization"
