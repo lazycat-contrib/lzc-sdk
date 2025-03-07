@@ -183,3 +183,93 @@ var AccessControlerService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "sys/ingress.proto",
 }
+
+const (
+	UserSessionService_SubscribeEvent_FullMethodName = "/cloud.lazycat.apis.sys.UserSessionService/SubscribeEvent"
+)
+
+// UserSessionServiceClient is the client API for UserSessionService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type UserSessionServiceClient interface {
+	SubscribeEvent(ctx context.Context, in *SubscribeEventRequest, opts ...grpc.CallOption) (*SubscribeEventResponse, error)
+}
+
+type userSessionServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewUserSessionServiceClient(cc grpc.ClientConnInterface) UserSessionServiceClient {
+	return &userSessionServiceClient{cc}
+}
+
+func (c *userSessionServiceClient) SubscribeEvent(ctx context.Context, in *SubscribeEventRequest, opts ...grpc.CallOption) (*SubscribeEventResponse, error) {
+	out := new(SubscribeEventResponse)
+	err := c.cc.Invoke(ctx, UserSessionService_SubscribeEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UserSessionServiceServer is the server API for UserSessionService service.
+// All implementations must embed UnimplementedUserSessionServiceServer
+// for forward compatibility
+type UserSessionServiceServer interface {
+	SubscribeEvent(context.Context, *SubscribeEventRequest) (*SubscribeEventResponse, error)
+	mustEmbedUnimplementedUserSessionServiceServer()
+}
+
+// UnimplementedUserSessionServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedUserSessionServiceServer struct {
+}
+
+func (UnimplementedUserSessionServiceServer) SubscribeEvent(context.Context, *SubscribeEventRequest) (*SubscribeEventResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubscribeEvent not implemented")
+}
+func (UnimplementedUserSessionServiceServer) mustEmbedUnimplementedUserSessionServiceServer() {}
+
+// UnsafeUserSessionServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserSessionServiceServer will
+// result in compilation errors.
+type UnsafeUserSessionServiceServer interface {
+	mustEmbedUnimplementedUserSessionServiceServer()
+}
+
+func RegisterUserSessionServiceServer(s grpc.ServiceRegistrar, srv UserSessionServiceServer) {
+	s.RegisterService(&UserSessionService_ServiceDesc, srv)
+}
+
+func _UserSessionService_SubscribeEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscribeEventRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserSessionServiceServer).SubscribeEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserSessionService_SubscribeEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserSessionServiceServer).SubscribeEvent(ctx, req.(*SubscribeEventRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// UserSessionService_ServiceDesc is the grpc.ServiceDesc for UserSessionService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var UserSessionService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "cloud.lazycat.apis.sys.UserSessionService",
+	HandlerType: (*UserSessionServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SubscribeEvent",
+			Handler:    _UserSessionService_SubscribeEvent_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "sys/ingress.proto",
+}

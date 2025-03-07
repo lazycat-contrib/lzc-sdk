@@ -13,6 +13,10 @@ service AccessControlerService {
   rpc GetAppLastAccessTime(IngressAppLastAccessTimeRequest) returns (IngressAppLastAccessTimeResponse) {}
 }
 
+service UserSessionService {
+  rpc SubscribeEvent(SubscribeEventRequest) returns (SubscribeEventResponse);
+}
+
 message AppAccessPolicyRequest {
   string uid = 1; //若为空则从context中获取实际UID
 
@@ -31,9 +35,19 @@ message AppAccessPolicy {
 }
 
 message IngressAppLastAccessTimeRequest {
-    string AppId = 1;
+  string AppId = 1;
 }
 
 message IngressAppLastAccessTimeResponse {
-    int64 UnixTime = 1;
+  int64 UnixTime = 1;
+}
+
+enum EventType {
+  Login = 0;
+  Logout = 1;
+}
+message SubscribeEventRequest {
+  EventType type = 1;
+}
+message SubscribeEventResponse {
 }
