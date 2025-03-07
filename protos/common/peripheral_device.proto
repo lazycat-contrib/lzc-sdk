@@ -71,6 +71,9 @@ message Filesystem {
 
   // for mounted partition only, show if partition is read-only.
   optional bool ro = 7;
+
+  // for mounted partition only, show partition usage in uint64
+  optional uint64 usedSize = 8;
 }
 
 message ListRemoteFilesystemReply {
