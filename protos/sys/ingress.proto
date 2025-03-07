@@ -48,6 +48,7 @@ enum EventType {
 }
 message SubscribeEventRequest {
   EventType type = 1;
+  string uid = 2;
 }
 message SubscribeEventResponse {
 }
