@@ -192,6 +192,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserSessionServiceClient interface {
+	// 订阅用户登录登出事件
 	SubscribeEvent(ctx context.Context, in *SubscribeEventRequest, opts ...grpc.CallOption) (UserSessionService_SubscribeEventClient, error)
 }
 
@@ -239,6 +240,7 @@ func (x *userSessionServiceSubscribeEventClient) Recv() (*SubscribeEventResponse
 // All implementations must embed UnimplementedUserSessionServiceServer
 // for forward compatibility
 type UserSessionServiceServer interface {
+	// 订阅用户登录登出事件
 	SubscribeEvent(*SubscribeEventRequest, UserSessionService_SubscribeEventServer) error
 	mustEmbedUnimplementedUserSessionServiceServer()
 }

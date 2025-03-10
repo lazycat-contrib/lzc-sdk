@@ -14,6 +14,7 @@ service AccessControlerService {
 }
 
 service UserSessionService {
+  // 订阅用户登录登出事件
   rpc SubscribeEvent(SubscribeEventRequest) returns (stream SubscribeEventResponse);
 }
 
@@ -42,13 +43,7 @@ message IngressAppLastAccessTimeResponse {
   int64 UnixTime = 1;
 }
 
-enum EventType {
-  Login = 0;
-  Logout = 1;
-}
 message SubscribeEventRequest {
-  EventType type = 1;
-  string uid = 2;
 }
 message SubscribeEventResponse {
 }
