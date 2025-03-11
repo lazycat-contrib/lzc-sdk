@@ -140,6 +140,33 @@ class AppCommon extends LzcAppSdkManage {
     console.error("OpenAppTemporaryWindow 方法暂未实现。")
   }
 
+
+    /**
+   * @description: IOS 客户端指定屏幕方向 1跟随系统 2横屏 3竖屏
+   * @param {number} ori
+   * @return {*}
+   */
+    @native(LzcAppPlatformType.IOS)
+    public static async SetScreenOrientation(ori: number): Promise<void> {
+      // 在浏览器环境中
+      if (!LzcAppSdk.isInApplication()) {
+        console.error("SetScreenOrientation 方法暂未实现。")
+        return
+      }
+      // 在 IOS 环境
+      if (LzcAppSdk.isIosWebShell()) {
+        const jsBridge = await LzcAppSdk.useNativeAsync()
+        jsBridge.SetScreenOrientation(ori)
+        return
+      }
+      // TODO: 其他环境中待实现
+      console.error("SetScreenOrientation 方法暂未实现。")
+    }
+
+
+
+  
+
   /**
    * @deprecated 该接口已弃用，预计后续版本可能会被删除，请使用 `ShareWithFiles` 接口替代
    * @description: 使用指定的原生应用打开在线文件
