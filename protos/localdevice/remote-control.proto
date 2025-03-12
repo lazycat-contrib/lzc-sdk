@@ -27,6 +27,8 @@ enum InputEvent {
   KEY_PAUSE = 15;
   KEY_PLAY = 16;
   KEY_FORWARD = 17;
+  KEY_ESC = 18;
+  KEY_FULL_SCREEN = 19;
 }
 
 enum EventState {
