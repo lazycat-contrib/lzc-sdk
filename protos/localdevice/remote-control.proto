@@ -182,6 +182,8 @@ message BrowserActionRequest {
     FORWARD_HISTORY = 4;
     SHOW_NUMBER_NAVIGATOR = 5;
     HIDDEN_NUMBER_NAVIGATOR = 6;
+    CLEAR_INPUT = 7;
+    QUICK_OPEN = 8;
   }
   Action action = 1;
 }

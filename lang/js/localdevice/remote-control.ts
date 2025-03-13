@@ -433,6 +433,8 @@ export enum BrowserActionRequest_Action {
   FORWARD_HISTORY = 4,
   SHOW_NUMBER_NAVIGATOR = 5,
   HIDDEN_NUMBER_NAVIGATOR = 6,
+  CLEAR_INPUT = 7,
+  QUICK_OPEN = 8,
   UNRECOGNIZED = -1,
 }
 
@@ -459,6 +461,12 @@ export function browserActionRequest_ActionFromJSON(object: any): BrowserActionR
     case 6:
     case "HIDDEN_NUMBER_NAVIGATOR":
       return BrowserActionRequest_Action.HIDDEN_NUMBER_NAVIGATOR;
+    case 7:
+    case "CLEAR_INPUT":
+      return BrowserActionRequest_Action.CLEAR_INPUT;
+    case 8:
+    case "QUICK_OPEN":
+      return BrowserActionRequest_Action.QUICK_OPEN;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -482,6 +490,10 @@ export function browserActionRequest_ActionToJSON(object: BrowserActionRequest_A
       return "SHOW_NUMBER_NAVIGATOR";
     case BrowserActionRequest_Action.HIDDEN_NUMBER_NAVIGATOR:
       return "HIDDEN_NUMBER_NAVIGATOR";
+    case BrowserActionRequest_Action.CLEAR_INPUT:
+      return "CLEAR_INPUT";
+    case BrowserActionRequest_Action.QUICK_OPEN:
+      return "QUICK_OPEN";
     case BrowserActionRequest_Action.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
