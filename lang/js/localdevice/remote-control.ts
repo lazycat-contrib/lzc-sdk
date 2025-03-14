@@ -558,6 +558,10 @@ export interface UseNumberNavigatorResponse {
   successful: boolean;
 }
 
+export interface OpenAppResquest {
+  appDomain: string;
+}
+
 function createBaseSendKeyboardEventRequest(): SendKeyboardEventRequest {
   return { code: 0, state: 0 };
 }
@@ -3348,6 +3352,64 @@ export const UseNumberNavigatorResponse = {
   },
 };
 
+function createBaseOpenAppResquest(): OpenAppResquest {
+  return { appDomain: "" };
+}
+
+export const OpenAppResquest = {
+  encode(message: OpenAppResquest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.appDomain !== "") {
+      writer.uint32(10).string(message.appDomain);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): OpenAppResquest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseOpenAppResquest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.appDomain = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): OpenAppResquest {
+    return { appDomain: isSet(object.appDomain) ? String(object.appDomain) : "" };
+  },
+
+  toJSON(message: OpenAppResquest): unknown {
+    const obj: any = {};
+    if (message.appDomain !== "") {
+      obj.appDomain = message.appDomain;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<OpenAppResquest>, I>>(base?: I): OpenAppResquest {
+    return OpenAppResquest.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<OpenAppResquest>, I>>(object: I): OpenAppResquest {
+    const message = createBaseOpenAppResquest();
+    message.appDomain = object.appDomain ?? "";
+    return message;
+  },
+};
+
 export interface RemoteControl {
   /** 发送键盘输入事件 */
   SendKeyboardEvent(
@@ -3625,6 +3687,8 @@ export interface RemoteControl {
     metadata?: grpc.Metadata,
     abortSignal?: AbortSignal,
   ): Promise<UseNumberNavigatorResponse>;
+  /** 打开某个app */
+  OpenApp(request: DeepPartial<OpenAppResquest>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty>;
 }
 
 export class RemoteControlClientImpl implements RemoteControl {
@@ -3683,6 +3747,7 @@ export class RemoteControlClientImpl implements RemoteControl {
     this.AsrRecordTime = this.AsrRecordTime.bind(this);
     this.ResetDisplay = this.ResetDisplay.bind(this);
     this.UseNumberNavigator = this.UseNumberNavigator.bind(this);
+    this.OpenApp = this.OpenApp.bind(this);
   }
 
   SendKeyboardEvent(
@@ -4156,6 +4221,10 @@ export class RemoteControlClientImpl implements RemoteControl {
       metadata,
       abortSignal,
     );
+  }
+
+  OpenApp(request: DeepPartial<OpenAppResquest>, metadata?: grpc.Metadata, abortSignal?: AbortSignal): Promise<Empty> {
+    return this.rpc.unary(RemoteControlOpenAppDesc, OpenAppResquest.fromPartial(request), metadata, abortSignal);
   }
 }
 
@@ -5278,6 +5347,29 @@ export const RemoteControlUseNumberNavigatorDesc: UnaryMethodDefinitionish = {
   responseType: {
     deserializeBinary(data: Uint8Array) {
       const value = UseNumberNavigatorResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const RemoteControlOpenAppDesc: UnaryMethodDefinitionish = {
+  methodName: "OpenApp",
+  service: RemoteControlDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return OpenAppResquest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = Empty.decode(data);
       return {
         ...value,
         toObject() {

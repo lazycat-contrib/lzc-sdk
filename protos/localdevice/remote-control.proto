@@ -257,6 +257,10 @@ message UseNumberNavigatorResponse {
   bool successful = 1;
 }
 
+message OpenAppResquest {
+  string appDomain = 1;
+}
+
 service RemoteControl{
   // 发送键盘输入事件
   rpc SendKeyboardEvent(SendKeyboardEventRequest) returns (google.protobuf.Empty) {}
@@ -368,4 +372,6 @@ service RemoteControl{
   rpc ResetDisplay(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   // 选择某个数字导航点击
   rpc UseNumberNavigator(UseNumberNavigatorRequest) returns (UseNumberNavigatorResponse) {}
+  // 打开某个app
+  rpc OpenApp(OpenAppResquest) returns  (google.protobuf.Empty) {}
 }
