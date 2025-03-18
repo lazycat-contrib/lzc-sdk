@@ -98,6 +98,8 @@ message WalkDirReply {
   // 给予服务端保存，代表本次walkdir结果的hash数据
   // 服务端拿着diffInfo调用CheckWalkDir，判断是否需要真正的walk
   optional bytes diffInfo = 6;
+  // 是否为软链接
+  bool isSymlink = 7;
 }
 
 message CreateDirRequest {
