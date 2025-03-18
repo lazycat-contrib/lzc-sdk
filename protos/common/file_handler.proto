@@ -125,6 +125,8 @@ message OpenRequest {
   string app_id = 1;
   // 文件路径
   string path = 2;
+  // 盒子名称
+  string box_name = 3;
 
   IntentAction intent_action = 4;
 }
