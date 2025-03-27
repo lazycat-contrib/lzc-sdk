@@ -100,6 +100,8 @@ message WalkDirReply {
   optional bytes diffInfo = 6;
   // 是否为软链接
   bool isSymlink = 7;
+  // 软链接指向的原始文件路径
+  optional string symlinkDst = 8;
 }
 
 message CreateDirRequest {
@@ -127,10 +129,11 @@ message OpenRequest {
   string app_id = 1;
   // 文件路径
   string path = 2;
-  // 盒子名称
-  string box_name = 3;
 
-  IntentAction intent_action = 4;
+  IntentAction intent_action = 3;
+
+  // 盒子名称
+  string box_name = 4;
 }
 
 
